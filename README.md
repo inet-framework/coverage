@@ -2,8 +2,8 @@
 
 This repository holds the code coverage reports of the master branch of the
 [INET Framework](https://github.com/inet-framework/inet). The workflow
-"Test: coverage" (`.github/workflows/coverage-tests.yml` in INET) writes it on
-each push to INET master. Do not edit it by hand.
+"Test: coverage" (`.github/workflows/coverage-tests.yml` in INET) writes it once
+a week, on Sunday, from INET master. Do not edit it by hand.
 
 The latest report is at <https://inet-framework.github.io/coverage/>.
 
@@ -16,8 +16,8 @@ The latest report is at <https://inet-framework.github.io/coverage/>.
     line, in percentage points.
   - `latest.json` is the full summary of the latest report, with the values of
     each source file.
-- **`gh-pages`** holds the HTML report of the latest INET master commit, made
-  by `genhtml`. The workflow replaces this branch with one new commit for each
+- **`gh-pages`** holds the HTML report of the latest weekly run, made by
+  `genhtml`. The workflow replaces this branch with one new commit for each
   report, so the repository does not grow with the HTML.
 
 ## What the values mean
