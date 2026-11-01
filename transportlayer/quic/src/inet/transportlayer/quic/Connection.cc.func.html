@@ -1,0 +1,392 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - transportlayer/quic/src/inet/transportlayer/quic/Connection.cc - functions</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">transportlayer/quic/src/inet/transportlayer/quic</a> - Connection.cc<span style="font-size: 80%;"> (<a href="Connection.cc.gcov.html">source</a> / functions)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryMed">89.9&nbsp;%</td>
+            <td class="headerCovTableEntry">505</td>
+            <td class="headerCovTableEntry">454</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">95.5&nbsp;%</td>
+            <td class="headerCovTableEntry">44</td>
+            <td class="headerCovTableEntry">42</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryMed">76.6&nbsp;%</td>
+            <td class="headerCovTableEntry">154</td>
+            <td class="headerCovTableEntry">118</td>
+          </tr>
+                  <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <center>
+          <table cellpadding=1 cellspacing=1 border=0>
+            <tr><td><br></td></tr>
+            <tr>
+              <td class="tableHead">Function Name <span  title="Click to sort table by function name" class="tableHeadSort"><img src="../../../../../../glass.png" width=10 height=14 alt="Sort by function name" title="Click to sort table by function name" border=0></span></td>
+              
+              <td class="tableHead">Hit count <span  title="Click to sort table by function hit count" class="tableHeadSort"><a href="Connection.cc.func-c.html"><img src="../../../../../../updown.png" width=10 height=14 alt="Sort by function hit count" title="Click to sort table by function hit count" border=0></a></span></td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L25">inet::quic::Connection::Connection(inet::quic::Quic*, inet::quic::UdpSocket*, inet::quic::AppSocket*, inet::L3Address, unsigned short, unsigned long)</a></td>
+              
+              <td class="coverFnHi">136</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L426">inet::quic::Connection::accountReceivedPacket(unsigned long, bool, inet::quic::PacketNumberSpace, bool)</a></td>
+              
+              <td class="coverFnHi">333638</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L704">inet::quic::Connection::addConnectionForInitialConnectionId(unsigned long)</a></td>
+              
+              <td class="coverFnHi">1</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L520">inet::quic::Connection::addDstConnectionId(unsigned long, unsigned char)</a></td>
+              
+              <td class="coverFnHi">203</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L607">inet::quic::Connection::belongsPacketTo(inet::Packet*, unsigned long)</a></td>
+              
+              <td class="coverFnHi">41</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L648">inet::quic::Connection::buildClientTokenAndSendToApp(unsigned int)</a></td>
+              
+              <td class="coverFnHi">8</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L529">inet::quic::Connection::clearDstConnectionIds()</a></td>
+              
+              <td class="coverFnHi">67</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L560">inet::quic::Connection::close(bool, bool)</a></td>
+              
+              <td class="coverFnHi">109</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L435">inet::quic::Connection::createTimer(inet::quic::TimerType, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;)</a></td>
+              
+              <td class="coverFnHi">391</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L441">inet::quic::Connection::createTimer(omnetpp::cMessage*)</a></td>
+              
+              <td class="coverFnHi">391</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L635">inet::quic::Connection::enqueueZeroRttTokenFrame()</a></td>
+              
+              <td class="coverFnHi">66</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L545">inet::quic::Connection::established()</a></td>
+              
+              <td class="coverFnHi">135</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L168">inet::quic::Connection::findOrCreateStream(unsigned long)</a></td>
+              
+              <td class="coverFnHi">426949</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L141">inet::quic::Connection::getStreamsSendQueueLength()</a></td>
+              
+              <td class="coverFnHi">150290</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L480">inet::quic::Connection::handleAckFrame(inet::IntrusivePtr&lt;inet::quic::AckFrameHeader const&gt; const&amp;, inet::quic::PacketNumberSpace)</a></td>
+              
+              <td class="coverFnHi">166972</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L719">inet::quic::Connection::initializeRemoteTransportParameters(inet::IntrusivePtr&lt;inet::quic::TransportParametersExtension const&gt;)</a></td>
+              
+              <td class="coverFnHi">135</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L733">inet::quic::Connection::initializeRemoteTransportParameters(unsigned long, unsigned long)</a></td>
+              
+              <td class="coverFnHi">2</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L514">inet::quic::Connection::isHandshakeConfirmed()</a></td>
+              
+              <td class="coverFnHi">334626</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L150">inet::quic::Connection::newStreamData(unsigned long, inet::IntrusivePtr&lt;inet::Chunk const&gt;)</a></td>
+              
+              <td class="coverFnHi">28925</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L475">inet::quic::Connection::onDataBlockedFrameReceived(unsigned long)</a></td>
+              
+              <td class="coverFnLo">0</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L454">inet::quic::Connection::onMaxDataFrameLost()</a></td>
+              
+              <td class="coverFnLo">0</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L447">inet::quic::Connection::onMaxDataFrameReceived(unsigned long)</a></td>
+              
+              <td class="coverFnHi">25</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L461">inet::quic::Connection::onMaxStreamDataFrameReceived(unsigned long, unsigned long)</a></td>
+              
+              <td class="coverFnHi">1865</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L469">inet::quic::Connection::onStreamDataBlockedFrameReceived(unsigned long, unsigned long)</a></td>
+              
+              <td class="coverFnHi">1846</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L130">inet::quic::Connection::processAppCommand(omnetpp::cMessage*)</a></td>
+              
+              <td class="coverFnHi">217651</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L660">inet::quic::Connection::processClientTokenExtractToken(char const*)</a></td>
+              
+              <td class="coverFnHi">4</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L222">inet::quic::Connection::processIcmpPtb(inet::Packet*, int)</a></td>
+              
+              <td class="coverFnHi">41</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L181">inet::quic::Connection::processPackets(inet::Packet*)</a></td>
+              
+              <td class="coverFnHi">334744</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L392">inet::quic::Connection::processReceivedData(unsigned long, unsigned long, inet::IntrusivePtr&lt;inet::Chunk const&gt;)</a></td>
+              
+              <td class="coverFnHi">208768</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L211">inet::quic::Connection::processTimeout(omnetpp::cMessage*)</a></td>
+              
+              <td class="coverFnHi">1280</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L711">inet::quic::Connection::removeConnectionForInitialConnectionId()</a></td>
+              
+              <td class="coverFnHi">66</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L496">inet::quic::Connection::reportPtb(unsigned long, int)</a></td>
+              
+              <td class="coverFnHi">41</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L537">inet::quic::Connection::sendAck(inet::quic::PacketNumberSpace)</a></td>
+              
+              <td class="coverFnHi">193</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L356">inet::quic::Connection::sendClientInitialPacket(unsigned int)</a></td>
+              
+              <td class="coverFnHi">68</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L598">inet::quic::Connection::sendConnectionClose(bool, bool, int)</a></td>
+              
+              <td class="coverFnHi">633</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L415">inet::quic::Connection::sendDataToApp(unsigned long, inet::units::value&lt;long, inet::units::intscale&lt;inet::units::units::b, 1, 8&gt; &gt;)</a></td>
+              
+              <td class="coverFnHi">188607</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L554">inet::quic::Connection::sendHandshakeDone()</a></td>
+              
+              <td class="coverFnHi">66</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L368">inet::quic::Connection::sendHandshakePacket(bool)</a></td>
+              
+              <td class="coverFnHi">135</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L381">inet::quic::Connection::sendPacket(inet::quic::QuicPacket*, inet::quic::PacketNumberSpace, bool)</a></td>
+              
+              <td class="coverFnHi">336507</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L233">inet::quic::Connection::sendPackets()</a></td>
+              
+              <td class="coverFnHi">321174</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L303">inet::quic::Connection::sendProbePacket(unsigned int)</a></td>
+              
+              <td class="coverFnHi">52</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L362">inet::quic::Connection::sendServerInitialPacket()</a></td>
+              
+              <td class="coverFnHi">68</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L509">inet::quic::Connection::setHandshakeConfirmed(bool)</a></td>
+              
+              <td class="coverFnHi">126</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="Connection.cc.gcov.html#L92">inet::quic::Connection::~Connection()</a></td>
+              
+              <td class="coverFnHi">136</td>
+              
+              
+            </tr>
+          </table>
+          <br>
+          </center>
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

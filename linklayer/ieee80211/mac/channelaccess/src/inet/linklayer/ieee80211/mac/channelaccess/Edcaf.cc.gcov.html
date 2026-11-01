@@ -1,0 +1,292 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - linklayer/ieee80211/mac/channelaccess/src/inet/linklayer/ieee80211/mac/channelaccess/Edcaf.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../../../index.html">top level</a> - <a href="index.html">linklayer/ieee80211/mac/channelaccess/src/inet/linklayer/ieee80211/mac/channelaccess</a> - Edcaf.cc<span style="font-size: 80%;"> (source / <a href="Edcaf.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">96.7&nbsp;%</td>
+            <td class="headerCovTableEntry">150</td>
+            <td class="headerCovTableEntry">145</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">94.4&nbsp;%</td>
+            <td class="headerCovTableEntry">18</td>
+            <td class="headerCovTableEntry">17</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryMed">83.9&nbsp;%</td>
+            <td class="headerCovTableEntry">62</td>
+            <td class="headerCovTableEntry">52</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2016 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #include &quot;inet/linklayer/ieee80211/mac/channelaccess/Edcaf.h&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : </span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &quot;inet/common/ModuleAccess.h&quot;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &quot;inet/common/Simsignals.h&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &quot;inet/networklayer/common/NetworkInterface.h&quot;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : </span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : namespace inet {</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : namespace ieee80211 {</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : </span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : using namespace inet::physicallayer;</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : </span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : Define_Module(Edcaf);</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : </span>
+<span id="L21"><span class="lineNum">      21</span>         [<span class="tlaGBC" title="Branch 0 was taken 228 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 7752 times"> + </span>]:<span class="tlaGNC tlaBgGNC">        7980 : inline double fallback(double a, double b) { return a != -1 ? a : b; }</span></span>
+<span id="L22"><span class="lineNum">      22</span>                 :<span class="tlaUNC tlaBgUNC">           0 : inline simtime_t fallback(simtime_t a, simtime_t b) { return a != -1 ? a : b; }</span></span>
+<span id="L23"><span class="lineNum">      23</span>                 :             : </span>
+<span id="L24"><span class="lineNum">      24</span>                 :             : Edcaf::~Edcaf()</span>
+<span id="L25"><span class="lineNum">      25</span>                 :<span class="tlaGNC tlaBgGNC">        4000 : {</span></span>
+<span id="L26"><span class="lineNum">      26</span>                 :<span class="tlaGNC">        4000 :     delete stationRetryCounters;</span></span>
+<span id="L27"><span class="lineNum">      27</span>                 :<span class="tlaGNC">        4000 : }</span></span>
+<span id="L28"><span class="lineNum">      28</span>                 :             : </span>
+<span id="L29"><span class="lineNum">      29</span>                 :             : void Edcaf::initialize(int stage)</span>
+<span id="L30"><span class="lineNum">      30</span>                 :<span class="tlaGNC">       95680 : {</span></span>
+<span id="L31"><span class="lineNum">      31</span>         [<span class="tlaGBC" title="Branch 0 was taken 3996 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 91684 times"> + </span>]:<span class="tlaGNC">       95680 :     if (stage == INITSTAGE_LOCAL) {</span></span>
+<span id="L32"><span class="lineNum">      32</span>                 :<span class="tlaGNC">        3996 :         getContainingNicModule(this)-&gt;subscribe(modesetChangedSignal, this);</span></span>
+<span id="L33"><span class="lineNum">      33</span>                 :<span class="tlaGNC">        3996 :         ac = getAccessCategory(par(&quot;accessCategory&quot;));</span></span>
+<span id="L34"><span class="lineNum">      34</span>                 :<span class="tlaGNC">        3996 :         contention = check_and_cast&lt;IContention *&gt;(getSubmodule(&quot;contention&quot;));</span></span>
+<span id="L35"><span class="lineNum">      35</span>                 :<span class="tlaGNC">        3996 :         collisionController = check_and_cast&lt;IEdcaCollisionController *&gt;(getModuleByPath(par(&quot;collisionControllerModule&quot;)));</span></span>
+<span id="L36"><span class="lineNum">      36</span>                 :<span class="tlaGNC">        3996 :         pendingQueue = check_and_cast&lt;queueing::IPacketQueue *&gt;(getSubmodule(&quot;pendingQueue&quot;));</span></span>
+<span id="L37"><span class="lineNum">      37</span>                 :<span class="tlaGNC">        3996 :         recoveryProcedure = check_and_cast&lt;QosRecoveryProcedure *&gt;(getSubmodule(&quot;recoveryProcedure&quot;));</span></span>
+<span id="L38"><span class="lineNum">      38</span>                 :<span class="tlaGNC">        3996 :         mgmtAndNonQoSRecoveryProcedure = check_and_cast&lt;NonQosRecoveryProcedure *&gt;(getSubmodule(&quot;mgmtAndNonQoSRecoveryProcedure&quot;));</span></span>
+<span id="L39"><span class="lineNum">      39</span>                 :<span class="tlaGNC">        3996 :         ackHandler = check_and_cast&lt;QosAckHandler *&gt;(getSubmodule(&quot;ackHandler&quot;));</span></span>
+<span id="L40"><span class="lineNum">      40</span>                 :<span class="tlaGNC">        3996 :         inProgressFrames = check_and_cast&lt;InProgressFrames *&gt;(getSubmodule(&quot;inProgressFrames&quot;));</span></span>
+<span id="L41"><span class="lineNum">      41</span>                 :<span class="tlaGNC">        3996 :         txopProcedure = check_and_cast&lt;TxopProcedure *&gt;(getSubmodule(&quot;txopProcedure&quot;));</span></span>
+<span id="L42"><span class="lineNum">      42</span>                 :<span class="tlaGNC">        3996 :         stationRetryCounters = new StationRetryCounters();</span></span>
+<span id="L43"><span class="lineNum">      43</span>                 :<span class="tlaGNC">        3996 :         WATCH(owning);</span></span>
+<span id="L44"><span class="lineNum">      44</span>                 :<span class="tlaGNC">        3996 :         WATCH(slotTime);</span></span>
+<span id="L45"><span class="lineNum">      45</span>                 :<span class="tlaGNC">        3996 :         WATCH(sifs);</span></span>
+<span id="L46"><span class="lineNum">      46</span>                 :<span class="tlaGNC">        3996 :         WATCH(ifs);</span></span>
+<span id="L47"><span class="lineNum">      47</span>                 :<span class="tlaGNC">        3996 :         WATCH(eifs);</span></span>
+<span id="L48"><span class="lineNum">      48</span>                 :<span class="tlaGNC">        3996 :         WATCH(ac);</span></span>
+<span id="L49"><span class="lineNum">      49</span>                 :<span class="tlaGNC">        3996 :         WATCH(cw);</span></span>
+<span id="L50"><span class="lineNum">      50</span>                 :<span class="tlaGNC">        3996 :         WATCH(cwMin);</span></span>
+<span id="L51"><span class="lineNum">      51</span>                 :<span class="tlaGNC">        3996 :         WATCH(cwMax);</span></span>
+<span id="L52"><span class="lineNum">      52</span>                 :<span class="tlaGNC">        3996 :         WATCH_EXPR(&quot;accessCategory&quot;, printAccessCategory(ac));</span></span>
+<span id="L53"><span class="lineNum">      53</span>                 :<span class="tlaGNC">        3996 :         WATCH_EXPR(&quot;contentionState&quot;, owning ? &quot;Owning&quot; : contention-&gt;isContentionInProgress() ? &quot;Contending&quot; : &quot;Idle&quot;);</span></span>
+<span id="L54"><span class="lineNum">      54</span>                 :<span class="tlaGNC">        3996 :     }</span></span>
+<span id="L55"><span class="lineNum">      55</span>         [<span class="tlaGBC" title="Branch 0 was taken 3980 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 87704 times"> + </span>]:<span class="tlaGNC">       91684 :     else if (stage == INITSTAGE_LINK_LAYER) {</span></span>
+<span id="L56"><span class="lineNum">      56</span>                 :<span class="tlaGNC">        3980 :         auto rx = check_and_cast&lt;IRx *&gt;(getModuleByPath(par(&quot;rxModule&quot;)));</span></span>
+<span id="L57"><span class="lineNum">      57</span>                 :<span class="tlaGNC">        3980 :         rx-&gt;registerContention(contention);</span></span>
+<span id="L58"><span class="lineNum">      58</span>                 :<span class="tlaGNC">        3980 :         calculateTimingParameters();</span></span>
+<span id="L59"><span class="lineNum">      59</span>                 :<span class="tlaGNC">        3980 :     }</span></span>
+<span id="L60"><span class="lineNum">      60</span>                 :<span class="tlaGNC">       95680 : }</span></span>
+<span id="L61"><span class="lineNum">      61</span>                 :             : </span>
+<span id="L62"><span class="lineNum">      62</span>                 :             : void Edcaf::calculateTimingParameters()</span>
+<span id="L63"><span class="lineNum">      63</span>                 :<span class="tlaGNC">        7980 : {</span></span>
+<span id="L64"><span class="lineNum">      64</span>                 :<span class="tlaGNC">        7980 :     slotTime = modeSet-&gt;getSlotTime();</span></span>
+<span id="L65"><span class="lineNum">      65</span>                 :<span class="tlaGNC">        7980 :     sifs = modeSet-&gt;getSifsTime();</span></span>
+<span id="L66"><span class="lineNum">      66</span>                 :<span class="tlaGNC">        7980 :     int aifsn = par(&quot;aifsn&quot;);</span></span>
+<span id="L67"><span class="lineNum">      67</span>                 :<span class="tlaGNC">        7980 :     simtime_t aifs = sifs + fallback(aifsn, getAifsNumber(ac)) * slotTime;</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :<span class="tlaGNC">        7980 :     ifs = aifs;</span></span>
+<span id="L69"><span class="lineNum">      69</span>                 :<span class="tlaGNC">        7980 :     eifs = sifs + aifs + modeSet-&gt;getSlowestMandatoryMode()-&gt;getDuration(LENGTH_ACK);</span></span>
+<span id="L70"><span class="lineNum">      70</span>                 :<span class="tlaGNC">        7980 :     EV_DEBUG &lt;&lt; &quot;Timing parameters are initialized: slotTime = &quot; &lt;&lt; slotTime &lt;&lt; &quot;, sifs = &quot; &lt;&lt; sifs &lt;&lt; &quot;, ifs = &quot; &lt;&lt; ifs &lt;&lt; &quot;, eifs = &quot; &lt;&lt; eifs &lt;&lt; std::endl;</span></span>
+<span id="L71"><span class="lineNum">      71</span>                 :<span class="tlaGNC">        7980 :     ASSERT(ifs &gt; sifs);</span></span>
+<span id="L72"><span class="lineNum">      72</span>                 :<span class="tlaGNC">        7980 :     cwMin = par(&quot;cwMin&quot;);</span></span>
+<span id="L73"><span class="lineNum">      73</span>                 :<span class="tlaGNC">        7980 :     cwMax = par(&quot;cwMax&quot;);</span></span>
+<span id="L74"><span class="lineNum">      74</span>         [<span class="tlaGBC" title="Branch 0 was taken 5732 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2248 times"> + </span>]:<span class="tlaGNC">        7980 :     if (cwMin == -1)</span></span>
+<span id="L75"><span class="lineNum">      75</span>                 :<span class="tlaGNC">        5732 :         cwMin = getCwMin(ac, modeSet-&gt;getCwMin());</span></span>
+<span id="L76"><span class="lineNum">      76</span>         [<span class="tlaGBC" title="Branch 0 was taken 5732 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2248 times"> + </span>]:<span class="tlaGNC">        7980 :     if (cwMax == -1)</span></span>
+<span id="L77"><span class="lineNum">      77</span>                 :<span class="tlaGNC">        5732 :         cwMax = getCwMax(ac, modeSet-&gt;getCwMax(), modeSet-&gt;getCwMin());</span></span>
+<span id="L78"><span class="lineNum">      78</span>                 :<span class="tlaGNC">        7980 :     cw = cwMin;</span></span>
+<span id="L79"><span class="lineNum">      79</span>                 :<span class="tlaGNC">        7980 :     EV_DEBUG &lt;&lt; &quot;Contention window parameters are initialized: cw = &quot; &lt;&lt; cw &lt;&lt; &quot;, cwMin = &quot; &lt;&lt; cwMin &lt;&lt; &quot;, cwMax = &quot; &lt;&lt; cwMax &lt;&lt; std::endl;</span></span>
+<span id="L80"><span class="lineNum">      80</span>                 :<span class="tlaGNC">        7980 : }</span></span>
+<span id="L81"><span class="lineNum">      81</span>                 :             : </span>
+<span id="L82"><span class="lineNum">      82</span>                 :             : void Edcaf::incrementCw()</span>
+<span id="L83"><span class="lineNum">      83</span>                 :<span class="tlaGNC">       84142 : {</span></span>
+<span id="L84"><span class="lineNum">      84</span>                 :<span class="tlaGNC">       84142 :     Enter_Method(&quot;incrementCw&quot;);</span></span>
+<span id="L85"><span class="lineNum">      85</span>                 :<span class="tlaGNC">       84142 :     int newCw = 2 * cw + 1;</span></span>
+<span id="L86"><span class="lineNum">      86</span>         [<span class="tlaGBC" title="Branch 0 was taken 54962 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 29180 times"> + </span>]:<span class="tlaGNC">       84142 :     if (newCw &gt; cwMax)</span></span>
+<span id="L87"><span class="lineNum">      87</span>                 :<span class="tlaGNC">       54962 :         cw = cwMax;</span></span>
+<span id="L88"><span class="lineNum">      88</span>                 :<span class="tlaGNC">       29180 :     else</span></span>
+<span id="L89"><span class="lineNum">      89</span>                 :<span class="tlaGNC">       29180 :         cw = newCw;</span></span>
+<span id="L90"><span class="lineNum">      90</span>                 :<span class="tlaGNC">       84142 :     EV_DEBUG &lt;&lt; &quot;Contention window is incremented: cw = &quot; &lt;&lt; cw &lt;&lt; std::endl;</span></span>
+<span id="L91"><span class="lineNum">      91</span>                 :<span class="tlaGNC">       84142 : }</span></span>
+<span id="L92"><span class="lineNum">      92</span>                 :             : </span>
+<span id="L93"><span class="lineNum">      93</span>                 :             : void Edcaf::resetCw()</span>
+<span id="L94"><span class="lineNum">      94</span>                 :<span class="tlaGNC">      254663 : {</span></span>
+<span id="L95"><span class="lineNum">      95</span>                 :<span class="tlaGNC">      254663 :     Enter_Method(&quot;resetCw&quot;);</span></span>
+<span id="L96"><span class="lineNum">      96</span>                 :<span class="tlaGNC">      254663 :     cw = cwMin;</span></span>
+<span id="L97"><span class="lineNum">      97</span>                 :<span class="tlaGNC">      254663 :     EV_DEBUG &lt;&lt; &quot;Contention window is reset: cw = &quot; &lt;&lt; cw &lt;&lt; std::endl;</span></span>
+<span id="L98"><span class="lineNum">      98</span>                 :<span class="tlaGNC">      254663 : }</span></span>
+<span id="L99"><span class="lineNum">      99</span>                 :             : </span>
+<span id="L100"><span class="lineNum">     100</span>                 :             : int Edcaf::getAifsNumber(AccessCategory ac)</span>
+<span id="L101"><span class="lineNum">     101</span>                 :<span class="tlaGNC">        7980 : {</span></span>
+<span id="L102"><span class="lineNum">     102</span>                 :<span class="tlaGNC">        7980 :     switch (ac) {</span></span>
+<span id="L103"><span class="lineNum">     103</span>         [<span class="tlaGBC" title="Branch 0 was taken 1995 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5985 times"> + </span>]:<span class="tlaGNC">        1995 :         case AC_BK: return 7;</span></span>
+<span id="L104"><span class="lineNum">     104</span>         [<span class="tlaGBC" title="Branch 0 was taken 1995 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5985 times"> + </span>]:<span class="tlaGNC">        1995 :         case AC_BE: return 3;</span></span>
+<span id="L105"><span class="lineNum">     105</span>         [<span class="tlaGBC" title="Branch 0 was taken 1995 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5985 times"> + </span>]:<span class="tlaGNC">        1995 :         case AC_VI: return 2;</span></span>
+<span id="L106"><span class="lineNum">     106</span>         [<span class="tlaGBC" title="Branch 0 was taken 1995 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5985 times"> + </span>]:<span class="tlaGNC">        1995 :         case AC_VO: return 2;</span></span>
+<span id="L107"><span class="lineNum">     107</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 7980 times"> + </span>]:<span class="tlaUNC tlaBgUNC">           0 :         default: throw cRuntimeError(&quot;Unknown access category = %d&quot;, ac);</span></span>
+<span id="L108"><span class="lineNum">     108</span>                 :<span class="tlaGNC tlaBgGNC">        7980 :     }</span></span>
+<span id="L109"><span class="lineNum">     109</span>                 :<span class="tlaGNC">        7980 : }</span></span>
+<span id="L110"><span class="lineNum">     110</span>                 :             : </span>
+<span id="L111"><span class="lineNum">     111</span>                 :             : AccessCategory Edcaf::getAccessCategory(const char *ac)</span>
+<span id="L112"><span class="lineNum">     112</span>                 :<span class="tlaGNC">        3996 : {</span></span>
+<span id="L113"><span class="lineNum">     113</span>         [<span class="tlaGBC" title="Branch 0 was taken 999 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2997 times"> + </span>]:<span class="tlaGNC">        3996 :     if (strcmp(&quot;AC_BK&quot;, ac) == 0)</span></span>
+<span id="L114"><span class="lineNum">     114</span>                 :<span class="tlaGNC">         999 :         return AC_BK;</span></span>
+<span id="L115"><span class="lineNum">     115</span>         [<span class="tlaGBC" title="Branch 0 was taken 999 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1998 times"> + </span>]:<span class="tlaGNC">        2997 :     if (strcmp(&quot;AC_VI&quot;, ac) == 0)</span></span>
+<span id="L116"><span class="lineNum">     116</span>                 :<span class="tlaGNC">         999 :         return AC_VI;</span></span>
+<span id="L117"><span class="lineNum">     117</span>         [<span class="tlaGBC" title="Branch 0 was taken 999 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 999 times"> + </span>]:<span class="tlaGNC">        1998 :     if (strcmp(&quot;AC_VO&quot;, ac) == 0)</span></span>
+<span id="L118"><span class="lineNum">     118</span>                 :<span class="tlaGNC">         999 :         return AC_VO;</span></span>
+<span id="L119"><span class="lineNum">     119</span>         [<span class="tlaGBC" title="Branch 0 was taken 999 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">         999 :     if (strcmp(&quot;AC_BE&quot;, ac) == 0)</span></span>
+<span id="L120"><span class="lineNum">     120</span>                 :<span class="tlaGNC">         999 :         return AC_BE;</span></span>
+<span id="L121"><span class="lineNum">     121</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     throw cRuntimeError(&quot;Unknown Access Category = %s&quot;, ac);</span></span>
+<span id="L122"><span class="lineNum">     122</span>                 :<span class="tlaGNC tlaBgGNC">         999 : }</span></span>
+<span id="L123"><span class="lineNum">     123</span>                 :             : </span>
+<span id="L124"><span class="lineNum">     124</span>                 :             : void Edcaf::channelAccessGranted()</span>
+<span id="L125"><span class="lineNum">     125</span>                 :<span class="tlaGNC">      282222 : {</span></span>
+<span id="L126"><span class="lineNum">     126</span>                 :<span class="tlaGNC">      282222 :     Enter_Method(&quot;channelAccessGranted&quot;);</span></span>
+<span id="L127"><span class="lineNum">     127</span>                 :<span class="tlaGNC">      282222 :     ASSERT(callback != nullptr);</span></span>
+<span id="L128"><span class="lineNum">     128</span>         [<span class="tlaGBC" title="Branch 0 was taken 276858 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5364 times"> + </span>]:<span class="tlaGNC">      282222 :     if (!collisionController-&gt;isInternalCollision(this)) {</span></span>
+<span id="L129"><span class="lineNum">     129</span>                 :<span class="tlaGNC">      276858 :         owning = true;</span></span>
+<span id="L130"><span class="lineNum">     130</span>                 :<span class="tlaGNC">      276858 :         emit(channelOwnershipChangedSignal, owning);</span></span>
+<span id="L131"><span class="lineNum">     131</span>                 :<span class="tlaGNC">      276858 :         callback-&gt;channelGranted(this);</span></span>
+<span id="L132"><span class="lineNum">     132</span>                 :<span class="tlaGNC">      276858 :     }</span></span>
+<span id="L133"><span class="lineNum">     133</span>                 :<span class="tlaGNC">        5364 :     else</span></span>
+<span id="L134"><span class="lineNum">     134</span>                 :<span class="tlaGNC">        5866 :         EV_WARN &lt;&lt; &quot;Ignoring channel access granted due to internal collision.\n&quot;;</span></span>
+<span id="L135"><span class="lineNum">     135</span>                 :<span class="tlaGNC">      282222 : }</span></span>
+<span id="L136"><span class="lineNum">     136</span>                 :             : </span>
+<span id="L137"><span class="lineNum">     137</span>                 :             : void Edcaf::releaseChannel(IChannelAccess::ICallback *callback)</span>
+<span id="L138"><span class="lineNum">     138</span>                 :<span class="tlaGNC">      276791 : {</span></span>
+<span id="L139"><span class="lineNum">     139</span>                 :<span class="tlaGNC">      276791 :     Enter_Method(&quot;releaseChannel&quot;);</span></span>
+<span id="L140"><span class="lineNum">     140</span>                 :<span class="tlaGNC">      276791 :     ASSERT(owning);</span></span>
+<span id="L141"><span class="lineNum">     141</span>                 :<span class="tlaGNC">      276791 :     owning = false;</span></span>
+<span id="L142"><span class="lineNum">     142</span>                 :<span class="tlaGNC">      276791 :     emit(channelOwnershipChangedSignal, owning);</span></span>
+<span id="L143"><span class="lineNum">     143</span>                 :<span class="tlaGNC">      276791 :     this-&gt;callback = nullptr;</span></span>
+<span id="L144"><span class="lineNum">     144</span>                 :<span class="tlaGNC">      276791 :     EV_INFO &lt;&lt; &quot;Channel released.\n&quot;;</span></span>
+<span id="L145"><span class="lineNum">     145</span>                 :<span class="tlaGNC">      276791 : }</span></span>
+<span id="L146"><span class="lineNum">     146</span>                 :             : </span>
+<span id="L147"><span class="lineNum">     147</span>                 :             : void Edcaf::requestChannel(IChannelAccess::ICallback *callback)</span>
+<span id="L148"><span class="lineNum">     148</span>                 :<span class="tlaGNC">     1265921 : {</span></span>
+<span id="L149"><span class="lineNum">     149</span>                 :<span class="tlaGNC">     1265921 :     Enter_Method(&quot;requestChannel&quot;);</span></span>
+<span id="L150"><span class="lineNum">     150</span>                 :<span class="tlaGNC">     1265921 :     this-&gt;callback = callback;</span></span>
+<span id="L151"><span class="lineNum">     151</span>                 :<span class="tlaGNC">     1265921 :     ASSERT(!owning);</span></span>
+<span id="L152"><span class="lineNum">     152</span>         [<span class="tlaGBC" title="Branch 0 was taken 983376 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 282545 times"> + </span>]:<span class="tlaGNC">     1265921 :     if (contention-&gt;isContentionInProgress())</span></span>
+<span id="L153"><span class="lineNum">     153</span>                 :<span class="tlaGNC">      998939 :         EV_DEBUG &lt;&lt; &quot;Contention has been already started.\n&quot;;</span></span>
+<span id="L154"><span class="lineNum">     154</span>                 :<span class="tlaGNC">      282545 :     else</span></span>
+<span id="L155"><span class="lineNum">     155</span>                 :<span class="tlaGNC">      282545 :         contention-&gt;startContention(cw, ifs, eifs, slotTime, this);</span></span>
+<span id="L156"><span class="lineNum">     156</span>                 :<span class="tlaGNC">     1265921 : }</span></span>
+<span id="L157"><span class="lineNum">     157</span>                 :             : </span>
+<span id="L158"><span class="lineNum">     158</span>                 :             : void Edcaf::expectedChannelAccess(simtime_t time)</span>
+<span id="L159"><span class="lineNum">     159</span>                 :<span class="tlaGNC">     1701542 : {</span></span>
+<span id="L160"><span class="lineNum">     160</span>                 :<span class="tlaGNC">     1701542 :     collisionController-&gt;expectedChannelAccess(this, time);</span></span>
+<span id="L161"><span class="lineNum">     161</span>                 :<span class="tlaGNC">     1701542 : }</span></span>
+<span id="L162"><span class="lineNum">     162</span>                 :             : </span>
+<span id="L163"><span class="lineNum">     163</span>                 :             : bool Edcaf::isInternalCollision()</span>
+<span id="L164"><span class="lineNum">     164</span>                 :<span class="tlaGNC">     1109176 : {</span></span>
+<span id="L165"><span class="lineNum">     165</span>                 :<span class="tlaGNC">     1109176 :     return collisionController-&gt;isInternalCollision(this);</span></span>
+<span id="L166"><span class="lineNum">     166</span>                 :<span class="tlaGNC">     1109176 : }</span></span>
+<span id="L167"><span class="lineNum">     167</span>                 :             : </span>
+<span id="L168"><span class="lineNum">     168</span>                 :             : bool Edcaf::hasEligibleFrames() const</span>
+<span id="L169"><span class="lineNum">     169</span>                 :<span class="tlaGNC">      576108 : {</span></span>
+<span id="L170"><span class="lineNum">     170</span> [<span class="tlaGBC" title="Branch 0 was taken 576108 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaGNC">      576108 :     return frameEligibility ? frameEligibility() : !pendingQueue-&gt;isEmpty() || inProgressFrames-&gt;getLength() != 0;</span></span>
+<span class="lineNum">        </span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L171"><span class="lineNum">     171</span>                 :<span class="tlaGNC">      576108 : }</span></span>
+<span id="L172"><span class="lineNum">     172</span>                 :             : </span>
+<span id="L173"><span class="lineNum">     173</span>                 :             : int Edcaf::getCwMax(AccessCategory ac, int aCwMax, int aCwMin)</span>
+<span id="L174"><span class="lineNum">     174</span>                 :<span class="tlaGNC">        5732 : {</span></span>
+<span id="L175"><span class="lineNum">     175</span>                 :<span class="tlaGNC">        5732 :     switch (ac) {</span></span>
+<span id="L176"><span class="lineNum">     176</span>         [<span class="tlaGBC" title="Branch 0 was taken 1451 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4281 times"> + </span>]:<span class="tlaGNC">        1451 :         case AC_BK: return aCwMax;</span></span>
+<span id="L177"><span class="lineNum">     177</span>         [<span class="tlaGBC" title="Branch 0 was taken 1451 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4281 times"> + </span>]:<span class="tlaGNC">        1451 :         case AC_BE: return aCwMax;</span></span>
+<span id="L178"><span class="lineNum">     178</span>         [<span class="tlaGBC" title="Branch 0 was taken 1451 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4281 times"> + </span>]:<span class="tlaGNC">        1451 :         case AC_VI: return aCwMin;</span></span>
+<span id="L179"><span class="lineNum">     179</span>         [<span class="tlaGBC" title="Branch 0 was taken 1379 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4353 times"> + </span>]:<span class="tlaGNC">        1379 :         case AC_VO: return (aCwMin + 1) / 2 - 1;</span></span>
+<span id="L180"><span class="lineNum">     180</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 5732 times"> + </span>]:<span class="tlaUNC tlaBgUNC">           0 :         default: throw cRuntimeError(&quot;Unknown access category = %d&quot;, ac);</span></span>
+<span id="L181"><span class="lineNum">     181</span>                 :<span class="tlaGNC tlaBgGNC">        5732 :     }</span></span>
+<span id="L182"><span class="lineNum">     182</span>                 :<span class="tlaGNC">        5732 : }</span></span>
+<span id="L183"><span class="lineNum">     183</span>                 :             : </span>
+<span id="L184"><span class="lineNum">     184</span>                 :             : int Edcaf::getCwMin(AccessCategory ac, int aCwMin)</span>
+<span id="L185"><span class="lineNum">     185</span>                 :<span class="tlaGNC">        5732 : {</span></span>
+<span id="L186"><span class="lineNum">     186</span>                 :<span class="tlaGNC">        5732 :     switch (ac) {</span></span>
+<span id="L187"><span class="lineNum">     187</span>         [<span class="tlaGBC" title="Branch 0 was taken 1451 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4281 times"> + </span>]:<span class="tlaGNC">        1451 :         case AC_BK: return aCwMin;</span></span>
+<span id="L188"><span class="lineNum">     188</span>         [<span class="tlaGBC" title="Branch 0 was taken 1451 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4281 times"> + </span>]:<span class="tlaGNC">        1451 :         case AC_BE: return aCwMin;</span></span>
+<span id="L189"><span class="lineNum">     189</span>         [<span class="tlaGBC" title="Branch 0 was taken 1451 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4281 times"> + </span>]:<span class="tlaGNC">        1451 :         case AC_VI: return (aCwMin + 1) / 2 - 1;</span></span>
+<span id="L190"><span class="lineNum">     190</span>         [<span class="tlaGBC" title="Branch 0 was taken 1379 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4353 times"> + </span>]:<span class="tlaGNC">        1379 :         case AC_VO: return (aCwMin + 1) / 4 - 1;</span></span>
+<span id="L191"><span class="lineNum">     191</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 5732 times"> + </span>]:<span class="tlaUNC tlaBgUNC">           0 :         default: throw cRuntimeError(&quot;Unknown access category = %d&quot;, ac);</span></span>
+<span id="L192"><span class="lineNum">     192</span>                 :<span class="tlaGNC tlaBgGNC">        5732 :     }</span></span>
+<span id="L193"><span class="lineNum">     193</span>                 :<span class="tlaGNC">        5732 : }</span></span>
+<span id="L194"><span class="lineNum">     194</span>                 :             : </span>
+<span id="L195"><span class="lineNum">     195</span>                 :             : void Edcaf::receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj, cObject *details)</span>
+<span id="L196"><span class="lineNum">     196</span>                 :<span class="tlaGNC">        4000 : {</span></span>
+<span id="L197"><span class="lineNum">     197</span>                 :<span class="tlaGNC">        4000 :     Enter_Method(&quot;%s&quot;, cComponent::getSignalName(signalID));</span></span>
+<span id="L198"><span class="lineNum">     198</span>                 :             : </span>
+<span id="L199"><span class="lineNum">     199</span>         [<span class="tlaGBC" title="Branch 0 was taken 4000 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        4000 :     if (signalID == modesetChangedSignal) {</span></span>
+<span id="L200"><span class="lineNum">     200</span>                 :<span class="tlaGNC">        4000 :         modeSet = check_and_cast&lt;Ieee80211ModeSet *&gt;(obj);</span></span>
+<span id="L201"><span class="lineNum">     201</span>                 :<span class="tlaGNC">        4000 :         calculateTimingParameters();</span></span>
+<span id="L202"><span class="lineNum">     202</span>                 :<span class="tlaGNC">        4000 :     }</span></span>
+<span id="L203"><span class="lineNum">     203</span>                 :<span class="tlaGNC">        4000 : }</span></span>
+<span id="L204"><span class="lineNum">     204</span>                 :             : </span>
+<span id="L205"><span class="lineNum">     205</span>                 :             : } // namespace ieee80211</span>
+<span id="L206"><span class="lineNum">     206</span>                 :             : } // namespace inet</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

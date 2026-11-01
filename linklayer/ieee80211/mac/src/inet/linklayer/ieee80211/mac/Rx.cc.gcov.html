@@ -1,0 +1,556 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - linklayer/ieee80211/mac/src/inet/linklayer/ieee80211/mac/Rx.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../index.html">top level</a> - <a href="index.html">linklayer/ieee80211/mac/src/inet/linklayer/ieee80211/mac</a> - Rx.cc<span style="font-size: 80%;"> (source / <a href="Rx.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryMed">88.3&nbsp;%</td>
+            <td class="headerCovTableEntry">359</td>
+            <td class="headerCovTableEntry">317</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">27</td>
+            <td class="headerCovTableEntry">27</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryMed">77.8&nbsp;%</td>
+            <td class="headerCovTableEntry">302</td>
+            <td class="headerCovTableEntry">235</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2016 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #include &quot;inet/linklayer/ieee80211/mac/Rx.h&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : </span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &quot;inet/common/ModuleAccess.h&quot;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &quot;inet/common/checksum/Checksum.h&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &quot;inet/common/ProtocolTag_m.h&quot;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : #include &quot;inet/linklayer/ieee80211/mac/Ieee80211InterframeInd_m.h&quot;</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : #include &quot;inet/physicallayer/wireless/common/contract/packetlevel/SignalTag_m.h&quot;</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : #include &quot;inet/physicallayer/wireless/ieee80211/packetlevel/Ieee80211Radio.h&quot;</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : #include &quot;inet/physicallayer/wireless/ieee80211/packetlevel/Ieee80211Tag_m.h&quot;</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : #include &quot;inet/linklayer/ieee80211/mac/Ieee80211Mac.h&quot;</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : #include &quot;inet/linklayer/ieee80211/mac/contract/IContention.h&quot;</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : #include &quot;inet/linklayer/ieee80211/mac/contract/ITx.h&quot;</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : </span>
+<span id="L21"><span class="lineNum">      21</span>                 :             : namespace inet {</span>
+<span id="L22"><span class="lineNum">      22</span>                 :             : namespace ieee80211 {</span>
+<span id="L23"><span class="lineNum">      23</span>                 :             : </span>
+<span id="L24"><span class="lineNum">      24</span>                 :             : using namespace inet::physicallayer;</span>
+<span id="L25"><span class="lineNum">      25</span>                 :             : </span>
+<span id="L26"><span class="lineNum">      26</span>                 :             : simsignal_t Rx::navChangedSignal = cComponent::registerSignal(&quot;navChanged&quot;);</span>
+<span id="L27"><span class="lineNum">      27</span>                 :             : </span>
+<span id="L28"><span class="lineNum">      28</span>                 :             : Define_Module(Rx);</span>
+<span id="L29"><span class="lineNum">      29</span>                 :             : </span>
+<span id="L30"><span class="lineNum">      30</span>                 :             : Rx::Rx()</span>
+<span id="L31"><span class="lineNum">      31</span>                 :<span class="tlaGNC tlaBgGNC">        2691 : {</span></span>
+<span id="L32"><span class="lineNum">      32</span>                 :<span class="tlaGNC">        2691 : }</span></span>
+<span id="L33"><span class="lineNum">      33</span>                 :             : </span>
+<span id="L34"><span class="lineNum">      34</span>                 :             : Rx::~Rx()</span>
+<span id="L35"><span class="lineNum">      35</span>                 :<span class="tlaGNC">        2691 : {</span></span>
+<span id="L36"><span class="lineNum">      36</span>         [<span class="tlaGBC" title="Branch 0 was taken 2686 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5 times"> + </span>]:<span class="tlaGNC">        2691 :     if (networkInterface) {</span></span>
+<span id="L37"><span class="lineNum">      37</span>         [<span class="tlaGBC" title="Branch 0 was taken 16116 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2686 times"> + </span>]:<span class="tlaGNC">        2686 :         for (auto signal : {receptionStartedSignal, receptionEndedSignal, transmissionStartedSignal,</span></span>
+<span id="L38"><span class="lineNum">      38</span>                 :<span class="tlaGNC">        2686 :                 transmissionEndedSignal, FlatRadioBase::listeningChangedSignal, IRadio::radioModeChangedSignal})</span></span>
+<span id="L39"><span class="lineNum">      39</span>                 :<span class="tlaGNC">       16116 :             networkInterface-&gt;unsubscribe(signal, this);</span></span>
+<span id="L40"><span class="lineNum">      40</span>                 :<span class="tlaGNC">        2686 :     }</span></span>
+<span id="L41"><span class="lineNum">      41</span>                 :<span class="tlaGNC">        2691 :     cancelAndDelete(endNavTimer);</span></span>
+<span id="L42"><span class="lineNum">      42</span>                 :<span class="tlaGNC">        2691 :     cancelAndDelete(endTxnavTimer);</span></span>
+<span id="L43"><span class="lineNum">      43</span>                 :<span class="tlaGNC">        2691 : }</span></span>
+<span id="L44"><span class="lineNum">      44</span>                 :             : </span>
+<span id="L45"><span class="lineNum">      45</span>                 :             : void Rx::initialize(int stage)</span>
+<span id="L46"><span class="lineNum">      46</span>                 :<span class="tlaGNC">       64407 : {</span></span>
+<span id="L47"><span class="lineNum">      47</span>                 :<span class="tlaGNC">       64407 :     ModeSetListener::initialize(stage);</span></span>
+<span id="L48"><span class="lineNum">      48</span>         [<span class="tlaGBC" title="Branch 0 was taken 2686 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 61721 times"> + </span>]:<span class="tlaGNC">       64407 :     if (stage == INITSTAGE_LOCAL) {</span></span>
+<span id="L49"><span class="lineNum">      49</span>                 :<span class="tlaGNC">        2686 :         mib.reference(this, &quot;mibModule&quot;, true);</span></span>
+<span id="L50"><span class="lineNum">      50</span>                 :<span class="tlaGNC">        2686 :         recipientAckPolicy.reference(this, &quot;recipientAckPolicyModule&quot;, *par(&quot;recipientAckPolicyModule&quot;).stringValue() != '\0');</span></span>
+<span id="L51"><span class="lineNum">      51</span>                 :<span class="tlaGNC">        2686 :         networkInterface = getContainingNicModule(this);</span></span>
+<span id="L52"><span class="lineNum">      52</span>         [<span class="tlaGBC" title="Branch 0 was taken 16116 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2686 times"> + </span>]:<span class="tlaGNC">        2686 :         for (auto signal : {receptionStartedSignal, receptionEndedSignal, transmissionStartedSignal,</span></span>
+<span id="L53"><span class="lineNum">      53</span>                 :<span class="tlaGNC">        2686 :                 transmissionEndedSignal, FlatRadioBase::listeningChangedSignal, IRadio::radioModeChangedSignal})</span></span>
+<span id="L54"><span class="lineNum">      54</span>                 :<span class="tlaGNC">       16116 :             networkInterface-&gt;subscribe(signal, this);</span></span>
+<span id="L55"><span class="lineNum">      55</span>                 :<span class="tlaGNC">        2686 :         endNavTimer = new cMessage(&quot;NAV&quot;);</span></span>
+<span id="L56"><span class="lineNum">      56</span>                 :<span class="tlaGNC">        2686 :         endTxnavTimer = new cMessage(&quot;endTxnavTimer&quot;);</span></span>
+<span id="L57"><span class="lineNum">      57</span>                 :<span class="tlaGNC">        2686 :         WATCH(address);</span></span>
+<span id="L58"><span class="lineNum">      58</span>                 :<span class="tlaGNC">        2686 :         WATCH(receptionState);</span></span>
+<span id="L59"><span class="lineNum">      59</span>                 :<span class="tlaGNC">        2686 :         WATCH(transmissionState);</span></span>
+<span id="L60"><span class="lineNum">      60</span>                 :<span class="tlaGNC">        2686 :         WATCH(receivedPart);</span></span>
+<span id="L61"><span class="lineNum">      61</span>                 :<span class="tlaGNC">        2686 :         WATCH(mediumFree);</span></span>
+<span id="L62"><span class="lineNum">      62</span>                 :<span class="tlaGNC">        2686 :         WATCH_EXPR(&quot;rxStatus&quot;, getRxStatusTxt());</span></span>
+<span id="L63"><span class="lineNum">      63</span>                 :<span class="tlaGNC">        2686 :     }</span></span>
+<span id="L64"><span class="lineNum">      64</span>                 :             :     // TODO INITSTAGE</span>
+<span id="L65"><span class="lineNum">      65</span>         [<span class="tlaGBC" title="Branch 0 was taken 2686 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 59035 times"> + </span>]:<span class="tlaGNC">       61721 :     else if (stage == INITSTAGE_NETWORK_INTERFACE_CONFIGURATION) {</span></span>
+<span id="L66"><span class="lineNum">      66</span>                 :<span class="tlaGNC">        2686 :         address = check_and_cast&lt;Ieee80211Mac *&gt;(getContainingNicModule(this)-&gt;getSubmodule(&quot;mac&quot;))-&gt;getAddress();</span></span>
+<span id="L67"><span class="lineNum">      67</span>                 :<span class="tlaGNC">        2686 :         recomputeMediumFree();</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :<span class="tlaGNC">        2686 :     }</span></span>
+<span id="L69"><span class="lineNum">      69</span>                 :<span class="tlaGNC">       64407 : }</span></span>
+<span id="L70"><span class="lineNum">      70</span>                 :             : </span>
+<span id="L71"><span class="lineNum">      71</span>                 :             : std::string Rx::getRxStatusTxt() const</span>
+<span id="L72"><span class="lineNum">      72</span>                 :<span class="tlaGNC">        2686 : {</span></span>
+<span id="L73"><span class="lineNum">      73</span>         [<span class="tlaGBC" title="Branch 0 was taken 2686 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        2686 :     if (contentionFree)</span></span>
+<span id="L74"><span class="lineNum">      74</span>                 :<span class="tlaGNC">        2686 :         return &quot;FREE&quot;;</span></span>
+<span id="L75"><span class="lineNum">      75</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     std::string s = &quot;BUSY (&quot;;</span></span>
+<span id="L76"><span class="lineNum">      76</span>                 :<span class="tlaUNC">           0 :     bool addSpace = false;</span></span>
+<span id="L77"><span class="lineNum">      77</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (transmissionState != IRadio::TRANSMISSION_STATE_UNDEFINED) {</span></span>
+<span id="L78"><span class="lineNum">      78</span>                 :<span class="tlaUNC">           0 :         switch (transmissionState) {</span></span>
+<span id="L79"><span class="lineNum">      79</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             case IRadio::TRANSMISSION_STATE_IDLE: s += &quot;Tx-Idle&quot;; break;</span></span>
+<span id="L80"><span class="lineNum">      80</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             case IRadio::TRANSMISSION_STATE_TRANSMITTING: s += &quot;Tx&quot;; break;</span></span>
+<span id="L81"><span class="lineNum">      81</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             default: break;</span></span>
+<span id="L82"><span class="lineNum">      82</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L83"><span class="lineNum">      83</span>                 :<span class="tlaUNC">           0 :         addSpace = true;</span></span>
+<span id="L84"><span class="lineNum">      84</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L85"><span class="lineNum">      85</span>                 :<span class="tlaUNC">           0 :     else {</span></span>
+<span id="L86"><span class="lineNum">      86</span>                 :<span class="tlaUNC">           0 :         switch (receptionState) {</span></span>
+<span id="L87"><span class="lineNum">      87</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             case IRadio::RECEPTION_STATE_UNDEFINED: s += &quot;Switching&quot;; break;</span></span>
+<span id="L88"><span class="lineNum">      88</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             case IRadio::RECEPTION_STATE_IDLE: s += &quot;Rx-Idle&quot;; break;</span></span>
+<span id="L89"><span class="lineNum">      89</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             case IRadio::RECEPTION_STATE_BUSY: s += &quot;Noise&quot;; break;</span></span>
+<span id="L90"><span class="lineNum">      90</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             case IRadio::RECEPTION_STATE_RECEIVING: s += &quot;Recv&quot;; break;</span></span>
+<span id="L91"><span class="lineNum">      91</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             default: break;</span></span>
+<span id="L92"><span class="lineNum">      92</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L93"><span class="lineNum">      93</span>                 :<span class="tlaUNC">           0 :         addSpace = true;</span></span>
+<span id="L94"><span class="lineNum">      94</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L95"><span class="lineNum">      95</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (endNavTimer-&gt;isScheduled())</span></span>
+<span id="L96"><span class="lineNum">      96</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         s += std::string(addSpace ? &quot; &quot; : &quot;&quot;) + &quot;NAV&quot;;</span></span>
+<span id="L97"><span class="lineNum">      97</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (getTxnavRemaining() &gt; 0)</span></span>
+<span id="L98"><span class="lineNum">      98</span>                 :<span class="tlaUNC">           0 :         s += &quot; TXNAV&quot;;</span></span>
+<span id="L99"><span class="lineNum">      99</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (contentionBlocked)</span></span>
+<span id="L100"><span class="lineNum">     100</span>                 :<span class="tlaUNC">           0 :         s += &quot; HCF&quot;;</span></span>
+<span id="L101"><span class="lineNum">     101</span>                 :<span class="tlaUNC">           0 :     s += &quot;)&quot;;</span></span>
+<span id="L102"><span class="lineNum">     102</span>                 :<span class="tlaUNC">           0 :     return s;</span></span>
+<span id="L103"><span class="lineNum">     103</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L104"><span class="lineNum">     104</span>                 :             : </span>
+<span id="L105"><span class="lineNum">     105</span>                 :             : void Rx::handleMessage(cMessage *msg)</span>
+<span id="L106"><span class="lineNum">     106</span>                 :<span class="tlaGNC tlaBgGNC">     1095432 : {</span></span>
+<span id="L107"><span class="lineNum">     107</span>         [<span class="tlaGBC" title="Branch 0 was taken 939271 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 156161 times"> + </span>]:<span class="tlaGNC">     1095432 :     if (msg == endNavTimer) {</span></span>
+<span id="L108"><span class="lineNum">     108</span>                 :<span class="tlaGNC">      939271 :         EV_INFO &lt;&lt; &quot;The radio channel has become free according to the NAV&quot; &lt;&lt; std::endl;</span></span>
+<span id="L109"><span class="lineNum">     109</span>                 :<span class="tlaGNC">      939271 :         emit(navChangedSignal, SimTime::ZERO);</span></span>
+<span id="L110"><span class="lineNum">     110</span>                 :<span class="tlaGNC">      939271 :         recomputeMediumFree();</span></span>
+<span id="L111"><span class="lineNum">     111</span>                 :<span class="tlaGNC">      939271 :     }</span></span>
+<span id="L112"><span class="lineNum">     112</span>         [<span class="tlaGBC" title="Branch 0 was taken 156161 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">      156161 :     else if (msg == endTxnavTimer) {</span></span>
+<span id="L113"><span class="lineNum">     113</span>                 :<span class="tlaGNC">      156161 :         recomputeMediumFree();</span></span>
+<span id="L114"><span class="lineNum">     114</span>                 :<span class="tlaGNC">      156161 :     }</span></span>
+<span id="L115"><span class="lineNum">     115</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     else</span></span>
+<span id="L116"><span class="lineNum">     116</span>                 :<span class="tlaUNC">           0 :         throw cRuntimeError(&quot;Unexpected self message&quot;);</span></span>
+<span id="L117"><span class="lineNum">     117</span>                 :<span class="tlaGNC tlaBgGNC">     1095432 : }</span></span>
+<span id="L118"><span class="lineNum">     118</span>                 :             : </span>
+<span id="L119"><span class="lineNum">     119</span>                 :             : bool Rx::lowerFrameReceived(Packet *packet)</span>
+<span id="L120"><span class="lineNum">     120</span>                 :<span class="tlaGNC">     3121508 : {</span></span>
+<span id="L121"><span class="lineNum">     121</span>                 :<span class="tlaGNC">     3121508 :     Enter_Method(&quot;lowerFrameReceived(\&quot;%s\&quot;)&quot;, packet-&gt;getName());</span></span>
+<span id="L122"><span class="lineNum">     122</span>                 :<span class="tlaGNC">     3121508 :     take(packet);</span></span>
+<span id="L123"><span class="lineNum">     123</span>                 :             : </span>
+<span id="L124"><span class="lineNum">     124</span>                 :<span class="tlaGNC">     3121508 :     bool isFrameOk = isFcsOk(packet);</span></span>
+<span id="L125"><span class="lineNum">     125</span>                 :<span class="tlaGNC">     3121508 :     attachInterframeResult(packet, isFrameOk);</span></span>
+<span id="L126"><span class="lineNum">     126</span>         [<span class="tlaGBC" title="Branch 0 was taken 2949972 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 171536 times"> + </span>]:<span class="tlaGNC">     3121508 :     if (isFrameOk) {</span></span>
+<span id="L127"><span class="lineNum">     127</span>                 :<span class="tlaGNC">     2949972 :         EV_INFO &lt;&lt; &quot;Received frame from PHY: &quot; &lt;&lt; packet &lt;&lt; endl;</span></span>
+<span id="L128"><span class="lineNum">     128</span>                 :<span class="tlaGNC">     2949972 :         const auto&amp; header = packet-&gt;peekAtFront&lt;Ieee80211MacHeader&gt;();</span></span>
+<span id="L129"><span class="lineNum">     129</span>         [<span class="tlaGBC" title="Branch 0 was taken 1318105 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1631867 times"> + </span>]:<span class="tlaGNC">     2949972 :         if (header-&gt;getReceiverAddress() != address)</span></span>
+<span id="L130"><span class="lineNum">     130</span>                 :<span class="tlaGNC">     1318105 :             setOrExtendNav(header-&gt;getDurationField());</span></span>
+<span id="L131"><span class="lineNum">     131</span>                 :<span class="tlaGNC">     2949972 :         return true;</span></span>
+<span id="L132"><span class="lineNum">     132</span>                 :<span class="tlaGNC">     2949972 :     }</span></span>
+<span id="L133"><span class="lineNum">     133</span>                 :<span class="tlaGNC">      171536 :     else {</span></span>
+<span id="L134"><span class="lineNum">     134</span>                 :<span class="tlaGNC">      171536 :         EV_INFO &lt;&lt; &quot;Received an erroneous frame from PHY, dropping it.&quot; &lt;&lt; std::endl;</span></span>
+<span id="L135"><span class="lineNum">     135</span>                 :<span class="tlaGNC">      171536 :         PacketDropDetails details;</span></span>
+<span id="L136"><span class="lineNum">     136</span>                 :<span class="tlaGNC">      171536 :         details.setReason(INCORRECTLY_RECEIVED);</span></span>
+<span id="L137"><span class="lineNum">     137</span>                 :<span class="tlaGNC">      171536 :         emit(packetDroppedSignal, packet, &amp;details);</span></span>
+<span id="L138"><span class="lineNum">     138</span>                 :<span class="tlaGNC">      171536 :         delete packet;</span></span>
+<span id="L139"><span class="lineNum">     139</span>         [<span class="tlaGBC" title="Branch 0 was taken 552256 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 171536 times"> + </span>]:<span class="tlaGNC">      171536 :         for (auto contention : contentions)</span></span>
+<span id="L140"><span class="lineNum">     140</span>                 :<span class="tlaGNC">      552256 :             contention-&gt;corruptedFrameReceived();</span></span>
+<span id="L141"><span class="lineNum">     141</span>                 :<span class="tlaGNC">      171536 :         return false;</span></span>
+<span id="L142"><span class="lineNum">     142</span>                 :<span class="tlaGNC">      171536 :     }</span></span>
+<span id="L143"><span class="lineNum">     143</span>                 :<span class="tlaGNC">     3121508 : }</span></span>
+<span id="L144"><span class="lineNum">     144</span>                 :             : </span>
+<span id="L145"><span class="lineNum">     145</span>                 :             : void Rx::frameTransmitted(simtime_t durationField)</span>
+<span id="L146"><span class="lineNum">     146</span>                 :<span class="tlaGNC">      726800 : {</span></span>
+<span id="L147"><span class="lineNum">     147</span>                 :<span class="tlaGNC">      726800 :     Enter_Method(&quot;frameTransmitted&quot;);</span></span>
+<span id="L148"><span class="lineNum">     148</span>                 :             :     // the txIndex that transmitted the frame should already own the TXOP, so</span>
+<span id="L149"><span class="lineNum">     149</span>                 :             :     // it has no need to (and should not) check the NAV.</span>
+<span id="L150"><span class="lineNum">     150</span>                 :<span class="tlaGNC">      726800 :     setOrExtendNav(durationField);</span></span>
+<span id="L151"><span class="lineNum">     151</span>                 :<span class="tlaGNC">      726800 : }</span></span>
+<span id="L152"><span class="lineNum">     152</span>                 :             : </span>
+<span id="L153"><span class="lineNum">     153</span>                 :             : bool Rx::isReceptionInProgress() const</span>
+<span id="L154"><span class="lineNum">     154</span>                 :<span class="tlaGNC">      337204 : {</span></span>
+<span id="L155"><span class="lineNum">     155</span>         [<span class="tlaGBC" title="Branch 0 was taken 195199 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 142005 times"> + </span>]:<span class="tlaGNC">      337204 :     return receptionState == IRadio::RECEPTION_STATE_RECEIVING &amp;&amp;</span></span>
+<span id="L156"><span class="lineNum">     156</span> [<span class="tlaGBC" title="Branch 0 was taken 192730 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2469 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 2469 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">      337204 :            (receivedPart == IRadioSignal::SIGNAL_PART_WHOLE || receivedPart == IRadioSignal::SIGNAL_PART_DATA);</span></span>
+<span id="L157"><span class="lineNum">     157</span>                 :<span class="tlaGNC">      337204 : }</span></span>
+<span id="L158"><span class="lineNum">     158</span>                 :             : </span>
+<span id="L159"><span class="lineNum">     159</span>                 :             : bool Rx::isFcsOk(Packet *packet) const</span>
+<span id="L160"><span class="lineNum">     160</span>                 :<span class="tlaGNC">     3121512 : {</span></span>
+<span id="L161"><span class="lineNum">     161</span> [<span class="tlaGBC" title="Branch 0 was taken 171540 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2949972 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 171540 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2949972 times"> + </span>]:<span class="tlaGNC">     3121512 :     if (packet-&gt;hasBitError() || !packet-&gt;peekData()-&gt;isCorrect())</span></span>
+<span class="lineNum">        </span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2949972 times"> + </span>]
+<span id="L162"><span class="lineNum">     162</span>                 :<span class="tlaGNC">      171540 :         return false;</span></span>
+<span id="L163"><span class="lineNum">     163</span>                 :<span class="tlaGNC">     2949972 :     else {</span></span>
+<span id="L164"><span class="lineNum">     164</span>                 :<span class="tlaGNC">     2949972 :         const auto&amp; trailer = packet-&gt;peekAtBack&lt;Ieee80211MacTrailer&gt;(B(4));</span></span>
+<span id="L165"><span class="lineNum">     165</span>                 :<span class="tlaGNC">     2949972 :         switch (trailer-&gt;getFcsMode()) {</span></span>
+<span id="L166"><span class="lineNum">     166</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2949972 times"> + </span>]:<span class="tlaUNC tlaBgUNC">           0 :             case FCS_DECLARED_INCORRECT:</span></span>
+<span id="L167"><span class="lineNum">     167</span>                 :<span class="tlaUNC">           0 :                 return false;</span></span>
+<span id="L168"><span class="lineNum">     168</span>         [<span class="tlaGBC" title="Branch 0 was taken 781809 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2168163 times"> + </span>]:<span class="tlaGNC tlaBgGNC">      781809 :             case FCS_DECLARED_CORRECT:</span></span>
+<span id="L169"><span class="lineNum">     169</span>                 :<span class="tlaGNC">      781809 :                 return true;</span></span>
+<span id="L170"><span class="lineNum">     170</span>         [<span class="tlaGBC" title="Branch 0 was taken 2168163 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 781809 times"> + </span>]:<span class="tlaGNC">     2168163 :             case FCS_COMPUTED: {</span></span>
+<span id="L171"><span class="lineNum">     171</span>                 :<span class="tlaGNC">     2168163 :                 const auto&amp; fcsBytes = packet-&gt;peekDataAt&lt;BytesChunk&gt;(B(0), packet-&gt;getDataLength() - trailer-&gt;getChunkLength());</span></span>
+<span id="L172"><span class="lineNum">     172</span>                 :<span class="tlaGNC">     2168163 :                 auto bufferLength = fcsBytes-&gt;getChunkLength().get&lt;B&gt;();</span></span>
+<span id="L173"><span class="lineNum">     173</span>                 :<span class="tlaGNC">     2168163 :                 auto buffer = new uint8_t[bufferLength];</span></span>
+<span id="L174"><span class="lineNum">     174</span>                 :<span class="tlaGNC">     2168163 :                 fcsBytes-&gt;copyToBuffer(buffer, bufferLength);</span></span>
+<span id="L175"><span class="lineNum">     175</span>                 :<span class="tlaGNC">     2168163 :                 auto computedFcs = ethernetFcs(buffer, bufferLength);</span></span>
+<span id="L176"><span class="lineNum">     176</span>                 :<span class="tlaGNC">     2168163 :                 delete[] buffer;</span></span>
+<span id="L177"><span class="lineNum">     177</span>                 :<span class="tlaGNC">     2168163 :                 return computedFcs == trailer-&gt;getFcs();</span></span>
+<span id="L178"><span class="lineNum">     178</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             }</span></span>
+<span id="L179"><span class="lineNum">     179</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2949972 times"> + </span>]:<span class="tlaUNC">           0 :             default:</span></span>
+<span id="L180"><span class="lineNum">     180</span>                 :<span class="tlaUNC">           0 :                 throw cRuntimeError(&quot;Unknown FCS mode&quot;);</span></span>
+<span id="L181"><span class="lineNum">     181</span>                 :<span class="tlaGNC tlaBgGNC">     2949972 :         }</span></span>
+<span id="L182"><span class="lineNum">     182</span>                 :<span class="tlaGNC">     2949972 :     }</span></span>
+<span id="L183"><span class="lineNum">     183</span>                 :<span class="tlaGNC">     3121512 : }</span></span>
+<span id="L184"><span class="lineNum">     184</span>                 :             : </span>
+<span id="L185"><span class="lineNum">     185</span>                 :             : void Rx::recomputeMediumFree()</span>
+<span id="L186"><span class="lineNum">     186</span>                 :<span class="tlaGNC">    24674628 : {</span></span>
+<span id="L187"><span class="lineNum">     187</span>                 :<span class="tlaGNC">    24674628 :     bool oldContentionFree = contentionFree;</span></span>
+<span id="L188"><span class="lineNum">     188</span>                 :             :     // note: the duration of mode switching (rx-to-tx or tx-to-rx) should also count as busy</span>
+<span id="L189"><span class="lineNum">     189</span> [<span class="tlaGBC" title="Branch 0 was taken 8828000 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 15846628 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 6873926 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1954074 times"> + </span>]:<span class="tlaGNC">    24674628 :     mediumFree = receptionState == IRadio::RECEPTION_STATE_IDLE &amp;&amp; transmissionState == IRadio::TRANSMISSION_STATE_UNDEFINED &amp;&amp; !endNavTimer-&gt;isScheduled();</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 5553488 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1320438 times"> + </span>]
+<span id="L190"><span class="lineNum">     190</span>                 :             :     // IEEE Std 802.11-2024, 10.23.2.2: active TXNAV excludes local contention.</span>
+<span id="L191"><span class="lineNum">     191</span> [<span class="tlaGBC" title="Branch 0 was taken 5553488 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 19121140 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 5235756 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 317732 times"> + </span>]:<span class="tlaGNC">    24674628 :     contentionFree = mediumFree &amp;&amp; getTxnavRemaining() == 0 &amp;&amp; !contentionBlocked;</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 4291121 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 944635 times"> + </span>]
+<span id="L192"><span class="lineNum">     192</span>         [<span class="tlaGBC" title="Branch 0 was taken 8122276 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 16552352 times"> + </span>]:<span class="tlaGNC">    24674628 :     if (contentionFree != oldContentionFree) {</span></span>
+<span id="L193"><span class="lineNum">     193</span>         [<span class="tlaGBC" title="Branch 0 was taken 18030360 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 8122276 times"> + </span>]:<span class="tlaGNC">     8122276 :         for (auto contention : contentions)</span></span>
+<span id="L194"><span class="lineNum">     194</span>                 :<span class="tlaGNC">    18030360 :             contention-&gt;mediumStateChanged(contentionFree);</span></span>
+<span id="L195"><span class="lineNum">     195</span>                 :<span class="tlaGNC">     8122276 :     }</span></span>
+<span id="L196"><span class="lineNum">     196</span>                 :<span class="tlaGNC">    24674628 : }</span></span>
+<span id="L197"><span class="lineNum">     197</span>                 :             : </span>
+<span id="L198"><span class="lineNum">     198</span>                 :             : void Rx::receptionStateChanged(IRadio::ReceptionState state)</span>
+<span id="L199"><span class="lineNum">     199</span>                 :<span class="tlaGNC">    10284512 : {</span></span>
+<span id="L200"><span class="lineNum">     200</span>                 :<span class="tlaGNC">    10284512 :     Enter_Method(&quot;receptionStateChanged&quot;);</span></span>
+<span id="L201"><span class="lineNum">     201</span>                 :<span class="tlaGNC">    10284512 :     discardExpiredReception();</span></span>
+<span id="L202"><span class="lineNum">     202</span>         [<span class="tlaGBC" title="Branch 0 was taken 72147 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 10212365 times"> + </span>]:<span class="tlaGNC">    10284512 :     if (state == IRadio::RECEPTION_STATE_BUSY)</span></span>
+<span id="L203"><span class="lineNum">     203</span>                 :<span class="tlaGNC">       72147 :         invalidateFutureInterframeHistory();</span></span>
+<span id="L204"><span class="lineNum">     204</span> [<span class="tlaGBC" title="Branch 0 was taken 5122285 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5090080 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 5122285 times"> + </span>]:<span class="tlaGNC">    10212365 :     else if (state == IRadio::RECEPTION_STATE_IDLE &amp;&amp; activeReception) {</span></span>
+<span id="L205"><span class="lineNum">     205</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         activeReception.reset();</span></span>
+<span id="L206"><span class="lineNum">     206</span>                 :<span class="tlaUNC">           0 :         precedingFrame.reset();</span></span>
+<span id="L207"><span class="lineNum">     207</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L208"><span class="lineNum">     208</span>                 :<span class="tlaGNC tlaBgGNC">    10284512 :     receptionState = state;</span></span>
+<span id="L209"><span class="lineNum">     209</span>                 :<span class="tlaGNC">    10284512 :     recomputeMediumFree();</span></span>
+<span id="L210"><span class="lineNum">     210</span>                 :<span class="tlaGNC">    10284512 : }</span></span>
+<span id="L211"><span class="lineNum">     211</span>                 :             : </span>
+<span id="L212"><span class="lineNum">     212</span>                 :             : void Rx::receivedSignalPartChanged(IRadioSignal::SignalPart part)</span>
+<span id="L213"><span class="lineNum">     213</span>                 :<span class="tlaGNC">     3374244 : {</span></span>
+<span id="L214"><span class="lineNum">     214</span>                 :<span class="tlaGNC">     3374244 :     Enter_Method(&quot;receivedSignalPartChanged&quot;);</span></span>
+<span id="L215"><span class="lineNum">     215</span>                 :<span class="tlaGNC">     3374244 :     receivedPart = part;</span></span>
+<span id="L216"><span class="lineNum">     216</span>                 :<span class="tlaGNC">     3374244 :     recomputeMediumFree();</span></span>
+<span id="L217"><span class="lineNum">     217</span>                 :<span class="tlaGNC">     3374244 : }</span></span>
+<span id="L218"><span class="lineNum">     218</span>                 :             : </span>
+<span id="L219"><span class="lineNum">     219</span>                 :             : void Rx::transmissionStateChanged(IRadio::TransmissionState state)</span>
+<span id="L220"><span class="lineNum">     220</span>                 :<span class="tlaGNC">     7872338 : {</span></span>
+<span id="L221"><span class="lineNum">     221</span>                 :<span class="tlaGNC">     7872338 :     Enter_Method(&quot;transmissionStateChanged&quot;);</span></span>
+<span id="L222"><span class="lineNum">     222</span>                 :<span class="tlaGNC">     7872338 :     transmissionState = state;</span></span>
+<span id="L223"><span class="lineNum">     223</span>                 :<span class="tlaGNC">     7872338 :     recomputeMediumFree();</span></span>
+<span id="L224"><span class="lineNum">     224</span>                 :<span class="tlaGNC">     7872338 : }</span></span>
+<span id="L225"><span class="lineNum">     225</span>                 :             : </span>
+<span id="L226"><span class="lineNum">     226</span>                 :             : void Rx::setOrExtendNav(simtime_t navInterval)</span>
+<span id="L227"><span class="lineNum">     227</span>                 :<span class="tlaGNC">     2044909 : {</span></span>
+<span id="L228"><span class="lineNum">     228</span>                 :<span class="tlaGNC">     2044909 :     ASSERT(navInterval &gt;= 0);</span></span>
+<span id="L229"><span class="lineNum">     229</span>         [<span class="tlaGBC" title="Branch 0 was taken 1101853 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 943056 times"> + </span>]:<span class="tlaGNC">     2044909 :     if (navInterval &gt; 0) {</span></span>
+<span id="L230"><span class="lineNum">     230</span>                 :<span class="tlaGNC">     1101853 :         simtime_t endNav = simTime() + navInterval;</span></span>
+<span id="L231"><span class="lineNum">     231</span>         [<span class="tlaGBC" title="Branch 0 was taken 162554 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 939299 times"> + </span>]:<span class="tlaGNC">     1101853 :         if (endNavTimer-&gt;isScheduled()) {</span></span>
+<span id="L232"><span class="lineNum">     232</span>                 :<span class="tlaGNC">      162554 :             simtime_t oldEndNav = endNavTimer-&gt;getArrivalTime();</span></span>
+<span id="L233"><span class="lineNum">     233</span>         [<span class="tlaGBC" title="Branch 0 was taken 34 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 162520 times"> + </span>]:<span class="tlaGNC">      162554 :             if (endNav &lt; oldEndNav)</span></span>
+<span id="L234"><span class="lineNum">     234</span>                 :<span class="tlaGNC">          34 :                 return; // never decrease NAV</span></span>
+<span id="L235"><span class="lineNum">     235</span>                 :<span class="tlaGNC">      162520 :             emit(navChangedSignal, endNavTimer-&gt;getArrivalTime() - simTime());</span></span>
+<span id="L236"><span class="lineNum">     236</span>                 :<span class="tlaGNC">      162520 :             cancelEvent(endNavTimer);</span></span>
+<span id="L237"><span class="lineNum">     237</span>                 :<span class="tlaGNC">      162520 :         }</span></span>
+<span id="L238"><span class="lineNum">     238</span>                 :<span class="tlaGNC">      939299 :         else</span></span>
+<span id="L239"><span class="lineNum">     239</span>                 :<span class="tlaGNC">      939299 :             emit(navChangedSignal, SimTime::ZERO);</span></span>
+<span id="L240"><span class="lineNum">     240</span>                 :<span class="tlaGNC">     1101819 :         EV_INFO &lt;&lt; &quot;Setting NAV to &quot; &lt;&lt; navInterval &lt;&lt; std::endl;</span></span>
+<span id="L241"><span class="lineNum">     241</span>                 :<span class="tlaGNC">     1101819 :         scheduleAt(endNav, endNavTimer);</span></span>
+<span id="L242"><span class="lineNum">     242</span>                 :<span class="tlaGNC">     1101819 :         emit(navChangedSignal, endNav - simTime());</span></span>
+<span id="L243"><span class="lineNum">     243</span>                 :<span class="tlaGNC">     1101819 :         recomputeMediumFree();</span></span>
+<span id="L244"><span class="lineNum">     244</span>                 :<span class="tlaGNC">     1101819 :     }</span></span>
+<span id="L245"><span class="lineNum">     245</span>                 :<span class="tlaGNC">     2044909 : }</span></span>
+<span id="L246"><span class="lineNum">     246</span>                 :             : </span>
+<span id="L247"><span class="lineNum">     247</span>                 :             : void Rx::registerContention(IContention *contention)</span>
+<span id="L248"><span class="lineNum">     248</span>                 :<span class="tlaGNC">        6666 : {</span></span>
+<span id="L249"><span class="lineNum">     249</span>                 :<span class="tlaGNC">        6666 :     contention-&gt;mediumStateChanged(contentionFree);</span></span>
+<span id="L250"><span class="lineNum">     250</span>                 :<span class="tlaGNC">        6666 :     contentions.push_back(contention);</span></span>
+<span id="L251"><span class="lineNum">     251</span>                 :<span class="tlaGNC">        6666 : }</span></span>
+<span id="L252"><span class="lineNum">     252</span>                 :             : </span>
+<span id="L253"><span class="lineNum">     253</span>                 :             : simtime_t Rx::getTxnavRemaining() const</span>
+<span id="L254"><span class="lineNum">     254</span>                 :<span class="tlaGNC">     5690042 : {</span></span>
+<span id="L255"><span class="lineNum">     255</span> [<span class="tlaGBC" title="Branch 0 was taken 5690042 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 429393 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5260649 times"> + </span>]:<span class="tlaGNC">     5690042 :     return endTxnavTimer &amp;&amp; endTxnavTimer-&gt;isScheduled() ?</span></span>
+<span id="L256"><span class="lineNum">     256</span>                 :<span class="tlaGNC">      429393 :         std::max(SIMTIME_ZERO, endTxnavTimer-&gt;getArrivalTime() - simTime()) : SIMTIME_ZERO;</span></span>
+<span id="L257"><span class="lineNum">     257</span>                 :<span class="tlaGNC">     5690042 : }</span></span>
+<span id="L258"><span class="lineNum">     258</span>                 :             : </span>
+<span id="L259"><span class="lineNum">     259</span>                 :             : void Rx::successfulFrameTransmitted(simtime_t ppduEnd, simtime_t durationField)</span>
+<span id="L260"><span class="lineNum">     260</span>                 :<span class="tlaGNC">      389655 : {</span></span>
+<span id="L261"><span class="lineNum">     261</span>                 :<span class="tlaGNC">      389655 :     Enter_Method(&quot;successfulFrameTransmitted&quot;);</span></span>
+<span id="L262"><span class="lineNum">     262</span>                 :<span class="tlaGNC">      389655 :     ASSERT(durationField &gt;= 0);</span></span>
+<span id="L263"><span class="lineNum">     263</span>                 :             :     // IEEE Std 802.11-2024, 10.23.2.2: the latest successful holder field replaces TXNAV.</span>
+<span id="L264"><span class="lineNum">     264</span>                 :             :     // The countdown starts at PPDU end, not at response reception.</span>
+<span id="L265"><span class="lineNum">     265</span>                 :<span class="tlaGNC">      389655 :     cancelEvent(endTxnavTimer);</span></span>
+<span id="L266"><span class="lineNum">     266</span>                 :<span class="tlaGNC">      389655 :     auto endpoint = ppduEnd + durationField;</span></span>
+<span id="L267"><span class="lineNum">     267</span> [<span class="tlaGBC" title="Branch 0 was taken 340978 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 48677 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 193979 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 195676 times"> + </span>]:<span class="tlaGNC">      389655 :     if (durationField &gt; 0 &amp;&amp; endpoint &gt; simTime())</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 193979 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 146999 times"> + </span>]
+<span id="L268"><span class="lineNum">     268</span>                 :<span class="tlaGNC">      193979 :         scheduleAt(endpoint, endTxnavTimer);</span></span>
+<span id="L269"><span class="lineNum">     269</span>                 :<span class="tlaGNC">      389655 :     recomputeMediumFree();</span></span>
+<span id="L270"><span class="lineNum">     270</span>                 :<span class="tlaGNC">      389655 : }</span></span>
+<span id="L271"><span class="lineNum">     271</span>                 :             : </span>
+<span id="L272"><span class="lineNum">     272</span>                 :             : void Rx::setContentionBlocked(bool blocked)</span>
+<span id="L273"><span class="lineNum">     273</span>                 :<span class="tlaGNC">      553942 : {</span></span>
+<span id="L274"><span class="lineNum">     274</span>                 :<span class="tlaGNC">      553942 :     Enter_Method(&quot;setContentionBlocked&quot;);</span></span>
+<span id="L275"><span class="lineNum">     275</span>                 :<span class="tlaGNC">      553942 :     contentionBlocked = blocked;</span></span>
+<span id="L276"><span class="lineNum">     276</span>                 :<span class="tlaGNC">      553942 :     recomputeMediumFree();</span></span>
+<span id="L277"><span class="lineNum">     277</span>                 :<span class="tlaGNC">      553942 : }</span></span>
+<span id="L278"><span class="lineNum">     278</span>                 :             : </span>
+<span id="L279"><span class="lineNum">     279</span>                 :             : void Rx::discardExpiredReception()</span>
+<span id="L280"><span class="lineNum">     280</span>                 :<span class="tlaGNC">    27537604 : {</span></span>
+<span id="L281"><span class="lineNum">     281</span> [<span class="tlaGBC" title="Branch 0 was taken 6246611 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 21290993 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 3495 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 27534109 times"> + </span>]:<span class="tlaGNC">    27537604 :     if (completedReception &amp;&amp; completedReception-&gt;end &lt; simTime())</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 3495 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 6243116 times"> + </span>]
+<span id="L282"><span class="lineNum">     282</span>                 :<span class="tlaGNC">        3495 :         completedReception.reset();</span></span>
+<span id="L283"><span class="lineNum">     283</span>                 :<span class="tlaGNC">    27537604 : }</span></span>
+<span id="L284"><span class="lineNum">     284</span>                 :             : </span>
+<span id="L285"><span class="lineNum">     285</span>                 :             : void Rx::invalidateFutureInterframeHistory()</span>
+<span id="L286"><span class="lineNum">     286</span>                 :<span class="tlaGNC">     5998747 : {</span></span>
+<span id="L287"><span class="lineNum">     287</span>                 :<span class="tlaGNC">     5998747 :     precedingFrame.reset();</span></span>
+<span id="L288"><span class="lineNum">     288</span>                 :<span class="tlaGNC">     5998747 :     activeReception.reset();</span></span>
+<span id="L289"><span class="lineNum">     289</span>         [<span class="tlaGBC" title="Branch 0 was taken 28165 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5970582 times"> + </span>]:<span class="tlaGNC">     5998747 :     if (completedReception)</span></span>
+<span id="L290"><span class="lineNum">     290</span>                 :<span class="tlaGNC">       28165 :         completedReception-&gt;mayBecomePredecessor = false;</span></span>
+<span id="L291"><span class="lineNum">     291</span>                 :<span class="tlaGNC">     5998747 : }</span></span>
+<span id="L292"><span class="lineNum">     292</span>                 :             : </span>
+<span id="L293"><span class="lineNum">     293</span>                 :             : void Rx::invalidateInterframeHistory()</span>
+<span id="L294"><span class="lineNum">     294</span>                 :<span class="tlaGNC">       11296 : {</span></span>
+<span id="L295"><span class="lineNum">     295</span>                 :<span class="tlaGNC">       11296 :     Enter_Method(&quot;invalidateInterframeHistory&quot;);</span></span>
+<span id="L296"><span class="lineNum">     296</span>                 :<span class="tlaGNC">       11296 :     invalidateFutureInterframeHistory();</span></span>
+<span id="L297"><span class="lineNum">     297</span>                 :<span class="tlaGNC">       11296 :     completedReception.reset();</span></span>
+<span id="L298"><span class="lineNum">     298</span>                 :<span class="tlaGNC">       11296 :     ambiguityEnd = -1;</span></span>
+<span id="L299"><span class="lineNum">     299</span>                 :<span class="tlaGNC">       11296 : }</span></span>
+<span id="L300"><span class="lineNum">     300</span>                 :             : </span>
+<span id="L301"><span class="lineNum">     301</span>                 :             : void Rx::observeReceptionStart(const IReception *reception)</span>
+<span id="L302"><span class="lineNum">     302</span>                 :<span class="tlaGNC">     3121794 : {</span></span>
+<span id="L303"><span class="lineNum">     303</span>                 :<span class="tlaGNC">     3121794 :     auto start = reception-&gt;getStartTime();</span></span>
+<span id="L304"><span class="lineNum">     304</span>                 :<span class="tlaGNC">     3121794 :     auto end = reception-&gt;getEndTime();</span></span>
+<span id="L305"><span class="lineNum">     305</span>         [<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaGBC" title="Branch 1 was taken 3121793 times"> + </span>]:<span class="tlaGNC">     3121794 :     if (completedReception)</span></span>
+<span id="L306"><span class="lineNum">     306</span>                 :<span class="tlaGNC">           1 :         completedReception-&gt;mayBecomePredecessor = false;</span></span>
+<span id="L307"><span class="lineNum">     307</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 3121794 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3121792 times"> + </span>]:<span class="tlaGNC">     3121794 :     if (start &lt; ambiguityEnd || (activeReception &amp;&amp; start &lt; activeReception-&gt;end)) {</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span id="L308"><span class="lineNum">     308</span>                 :<span class="tlaGNC">           2 :         ambiguityEnd = std::max(ambiguityEnd, end);</span></span>
+<span id="L309"><span class="lineNum">     309</span>         [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">           2 :         if (activeReception)</span></span>
+<span id="L310"><span class="lineNum">     310</span>                 :<span class="tlaGNC">           2 :             ambiguityEnd = std::max(ambiguityEnd, activeReception-&gt;end);</span></span>
+<span id="L311"><span class="lineNum">     311</span>                 :<span class="tlaGNC">           2 :         invalidateFutureInterframeHistory();</span></span>
+<span id="L312"><span class="lineNum">     312</span>                 :<span class="tlaGNC">           2 :         return;</span></span>
+<span id="L313"><span class="lineNum">     313</span>                 :<span class="tlaGNC">           2 :     }</span></span>
+<span id="L314"><span class="lineNum">     314</span>                 :<span class="tlaGNC">     3121792 :     ambiguityEnd = -1;</span></span>
+<span id="L315"><span class="lineNum">     315</span>                 :<span class="tlaGNC">     3121792 :     activeReception = ReceptionEvidence{start, end, precedingFrame,</span></span>
+<span id="L316"><span class="lineNum">     316</span>         [<span class="tlaGBC" title="Branch 0 was taken 3121792 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">     3121792 :         modeSet ? modeSet-&gt;getSifsTime() : SIMTIME_ZERO,</span></span>
+<span id="L317"><span class="lineNum">     317</span>         [<span class="tlaGBC" title="Branch 0 was taken 3121792 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">     3121792 :         modeSet ? modeSet-&gt;getSlotTime() / 10 : SIMTIME_ZERO, true};</span></span>
+<span id="L318"><span class="lineNum">     318</span>                 :             :     // IEEE Std 802.11-2024, 10.27.3.1, 10.27.3.3, and 11.38.1: freeze BSS permission at reception start.</span>
+<span id="L319"><span class="lineNum">     319</span> [<span class="tlaGBC" title="Branch 0 was taken 1008749 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2113043 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 1008749 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">     3121792 :     activeReception-&gt;rifsPermitted = recipientAckPolicy &amp;&amp; modeSet &amp;&amp;</span></span>
+<span id="L320"><span class="lineNum">     320</span>         [<span class="tlaGBC" title="Branch 0 was taken 72906 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 935843 times"> + </span>]:<span class="tlaGNC">     3121792 :         modeSet-&gt;getPhyType() == Ieee80211ModeSet::PhyType::HT &amp;&amp;</span></span>
+<span id="L321"><span class="lineNum">     321</span> [<span class="tlaGBC" title="Branch 0 was taken 10544 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 62362 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 62362 times"> + </span>]:<span class="tlaGNC">     3121792 :         (mib-&gt;mode == Ieee80211Mib::INDEPENDENT || mib-&gt;mode == Ieee80211Mib::MESH ||</span></span>
+<span id="L322"><span class="lineNum">     322</span> [<span class="tlaGBC" title="Branch 0 was taken 15355 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 47007 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 15319 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 36 times"> + </span>]:<span class="tlaGNC">       72906 :             (mib-&gt;hasPrimaryChannel() &amp;&amp; mib-&gt;getHtOperation().rifsMode));</span></span>
+<span id="L323"><span class="lineNum">     323</span>         [<span class="tlaGBC" title="Branch 0 was taken 25863 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3095929 times"> + </span>]:<span class="tlaGNC">     3121792 :     if (activeReception-&gt;rifsPermitted)</span></span>
+<span id="L324"><span class="lineNum">     324</span>                 :<span class="tlaGNC">       25863 :         activeReception-&gt;rifs = modeSet-&gt;getReferenceMode()-&gt;getRifsTime();</span></span>
+<span id="L325"><span class="lineNum">     325</span>                 :<span class="tlaGNC">     3121792 :     precedingFrame.reset();</span></span>
+<span id="L326"><span class="lineNum">     326</span>                 :<span class="tlaGNC">     3121792 : }</span></span>
+<span id="L327"><span class="lineNum">     327</span>                 :             : </span>
+<span id="L328"><span class="lineNum">     328</span>                 :             : void Rx::observeReceptionEnd(const IReception *reception)</span>
+<span id="L329"><span class="lineNum">     329</span>                 :<span class="tlaGNC">     3121641 : {</span></span>
+<span id="L330"><span class="lineNum">     330</span> [<span class="tlaGBC" title="Branch 0 was taken 3121637 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 3121637 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4 times"> + </span>]:<span class="tlaGNC">     3121641 :     if (activeReception &amp;&amp; activeReception-&gt;start == reception-&gt;getStartTime() &amp;&amp;</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 3121637 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span id="L331"><span class="lineNum">     331</span>         [<span class="tlaGBC" title="Branch 0 was taken 3121637 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">     3121641 :             activeReception-&gt;end == reception-&gt;getEndTime()) {</span></span>
+<span id="L332"><span class="lineNum">     332</span>                 :<span class="tlaGNC">     3121637 :         completedReception = std::move(activeReception);</span></span>
+<span id="L333"><span class="lineNum">     333</span>                 :<span class="tlaGNC">     3121637 :         activeReception.reset();</span></span>
+<span id="L334"><span class="lineNum">     334</span>                 :<span class="tlaGNC">     3121637 :     }</span></span>
+<span id="L335"><span class="lineNum">     335</span>                 :<span class="tlaGNC">     3121641 : }</span></span>
+<span id="L336"><span class="lineNum">     336</span>                 :             : </span>
+<span id="L337"><span class="lineNum">     337</span>                 :             : bool Rx::isCompletedAck(const ITransmission *transmission) const</span>
+<span id="L338"><span class="lineNum">     338</span>                 :<span class="tlaGNC">     1968095 : {</span></span>
+<span id="L339"><span class="lineNum">     339</span>         [<span class="tlaGBC" title="Branch 0 was taken 1968095 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">     1968095 :     auto packet = transmission ? transmission-&gt;getPacket() : nullptr;</span></span>
+<span id="L340"><span class="lineNum">     340</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1968095 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1968095 times"> + </span>]:<span class="tlaGNC">     1968095 :     if (!packet || !packet-&gt;findTag&lt;PacketProtocolTag&gt;() || packet-&gt;getDataLength() &lt;= b(0))</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1968095 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1968095 times"> + </span>]
+<span id="L341"><span class="lineNum">     341</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         return false;</span></span>
+<span id="L342"><span class="lineNum">     342</span>                 :<span class="tlaGNC tlaBgGNC">     1968095 :     auto protocol = packet-&gt;getTag&lt;PacketProtocolTag&gt;()-&gt;getProtocol();</span></span>
+<span id="L343"><span class="lineNum">     343</span> [<span class="tlaGBC" title="Branch 0 was taken 1968095 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 1968095 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">     1968095 :     if (protocol != &amp;Protocol::ieee80211FhssPhy &amp;&amp; protocol != &amp;Protocol::ieee80211IrPhy &amp;&amp;</span></span>
+<span id="L344"><span class="lineNum">     344</span> [<span class="tlaGBC" title="Branch 0 was taken 1827773 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 140322 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 1792565 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 35208 times"> + </span>]:<span class="tlaGNC">     1968095 :             protocol != &amp;Protocol::ieee80211DsssPhy &amp;&amp; protocol != &amp;Protocol::ieee80211HrDsssPhy &amp;&amp;</span></span>
+<span id="L345"><span class="lineNum">     345</span> [<span class="tlaGBC" title="Branch 0 was taken 1781976 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 10589 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 141631 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1640345 times"> + </span>]:<span class="tlaGNC">     1968095 :             protocol != &amp;Protocol::ieee80211OfdmPhy &amp;&amp; protocol != &amp;Protocol::ieee80211ErpOfdmPhy &amp;&amp;</span></span>
+<span id="L346"><span class="lineNum">     346</span> [<span class="tlaGBC" title="Branch 0 was taken 812 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 140819 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 812 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">     1968095 :             protocol != &amp;Protocol::ieee80211HtPhy &amp;&amp; protocol != &amp;Protocol::ieee80211VhtPhy)</span></span>
+<span id="L347"><span class="lineNum">     347</span>                 :<span class="tlaGNC">         812 :         return false;</span></span>
+<span id="L348"><span class="lineNum">     348</span>                 :             :     // Optional evidence must not turn an unsupported representation into a MAC error.</span>
+<span id="L349"><span class="lineNum">     349</span>                 :<span class="tlaGNC">     1967283 :     try {</span></span>
+<span id="L350"><span class="lineNum">     350</span>                 :<span class="tlaGNC">     1967283 :         int flags = Chunk::PF_ALLOW_INCORRECT | Chunk::PF_ALLOW_INCOMPLETE | Chunk::PF_ALLOW_IMPROPERLY_REPRESENTED;</span></span>
+<span id="L351"><span class="lineNum">     351</span>                 :<span class="tlaGNC">     1967283 :         auto phy = Ieee80211Radio::peekIeee80211PhyHeaderAtFront(packet, b(-1), flags);</span></span>
+<span id="L352"><span class="lineNum">     352</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1967283 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1967281 times"> + </span>]:<span class="tlaGNC">     1967283 :         if (!phy-&gt;isCorrect() || phy-&gt;isIncomplete() || phy-&gt;isImproperlyRepresented() ||</span></span>
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1967281 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1967281 times"> + </span>]
+<span id="L353"><span class="lineNum">     353</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1967281 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1967281 times"> + </span>]:<span class="tlaGNC">     1967283 :                 phy-&gt;getChunkLength() &lt;= b(0) || phy-&gt;getChunkLength() + LENGTH_ACK &gt; packet-&gt;getDataLength())</span></span>
+<span id="L354"><span class="lineNum">     354</span>                 :<span class="tlaGNC">           2 :             return false;</span></span>
+<span id="L355"><span class="lineNum">     355</span>                 :<span class="tlaGNC">     1967281 :         auto mac = packet-&gt;peekAt&lt;Ieee80211MacHeader&gt;(phy-&gt;getChunkLength(), b(-1), flags);</span></span>
+<span id="L356"><span class="lineNum">     356</span> [<span class="tlaGBC" title="Branch 0 was taken 1967281 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 1967281 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">     1967281 :         return mac-&gt;isCorrect() &amp;&amp; !mac-&gt;isIncomplete() &amp;&amp; !mac-&gt;isImproperlyRepresented() &amp;&amp; mac-&gt;getType() == ST_ACK;</span></span>
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 1967281 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 725503 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1241778 times"> + </span>]
+<span id="L357"><span class="lineNum">     357</span>                 :<span class="tlaGNC">     1967283 :     }</span></span>
+<span id="L358"><span class="lineNum">     358</span>                 :<span class="tlaGNC">     1967283 :     catch (const cRuntimeError&amp;) {</span></span>
+<span id="L359"><span class="lineNum">     359</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         return false;</span></span>
+<span id="L360"><span class="lineNum">     360</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L361"><span class="lineNum">     361</span>                 :<span class="tlaGNC tlaBgGNC">     1967283 : }</span></span>
+<span id="L362"><span class="lineNum">     362</span>                 :             : </span>
+<span id="L363"><span class="lineNum">     363</span>                 :             : void Rx::attachInterframeResult(Packet *packet, bool accepted)</span>
+<span id="L364"><span class="lineNum">     364</span>                 :<span class="tlaGNC">     3121508 : {</span></span>
+<span id="L365"><span class="lineNum">     365</span>                 :<span class="tlaGNC">     3121508 :     discardExpiredReception();</span></span>
+<span id="L366"><span class="lineNum">     366</span>                 :<span class="tlaGNC">     3121508 :     auto time = packet-&gt;findTag&lt;SignalTimeInd&gt;();</span></span>
+<span id="L367"><span class="lineNum">     367</span> [<span class="tlaGBC" title="Branch 0 was taken 3318 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3118190 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 3404 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3118104 times"> + </span>]:<span class="tlaGNC">     3121508 :     if (!time || time-&gt;getStartTime() &lt; SIMTIME_ZERO || time-&gt;getEndTime() &lt;= time-&gt;getStartTime()) {</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 3118190 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 86 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3118104 times"> + </span>]
+<span id="L368"><span class="lineNum">     368</span>                 :<span class="tlaGNC">        3404 :         invalidateFutureInterframeHistory();</span></span>
+<span id="L369"><span class="lineNum">     369</span>         [<span class="tlaGBC" title="Branch 0 was taken 3400 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4 times"> + </span>]:<span class="tlaGNC">        3404 :         if (accepted)</span></span>
+<span id="L370"><span class="lineNum">     370</span>                 :<span class="tlaGNC">        3400 :             packet-&gt;addTagIfAbsent&lt;Ieee80211InterframeInd&gt;()-&gt;setRelated(false);</span></span>
+<span id="L371"><span class="lineNum">     371</span>                 :<span class="tlaGNC">        3404 :         return;</span></span>
+<span id="L372"><span class="lineNum">     372</span>                 :<span class="tlaGNC">        3404 :     }</span></span>
+<span id="L373"><span class="lineNum">     373</span>                 :<span class="tlaGNC">     3118104 :     bool related = false;</span></span>
+<span id="L374"><span class="lineNum">     374</span> [<span class="tlaGBC" title="Branch 0 was taken 3118098 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 6 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 3118098 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 6 times"> + </span>]:<span class="tlaGNC">     3118104 :     if (completedReception &amp;&amp; completedReception-&gt;start == time-&gt;getStartTime() &amp;&amp;</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 3118098 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span id="L375"><span class="lineNum">     375</span>         [<span class="tlaGBC" title="Branch 0 was taken 3118098 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">     3118104 :             completedReception-&gt;end == time-&gt;getEndTime()) {</span></span>
+<span id="L376"><span class="lineNum">     376</span>                 :<span class="tlaGNC">     3118098 :         auto evidence = std::move(*completedReception);</span></span>
+<span id="L377"><span class="lineNum">     377</span>                 :<span class="tlaGNC">     3118098 :         completedReception.reset();</span></span>
+<span id="L378"><span class="lineNum">     378</span>         [<span class="tlaGBC" title="Branch 0 was taken 2946571 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 171527 times"> + </span>]:<span class="tlaGNC">     3118098 :         if (accepted) {</span></span>
+<span id="L379"><span class="lineNum">     379</span>                 :<span class="tlaGNC">     2946571 :             auto header = packet-&gt;peekAtFront&lt;Ieee80211MacHeader&gt;();</span></span>
+<span id="L380"><span class="lineNum">     380</span>                 :<span class="tlaGNC">     2946571 :             auto twoAddress = dynamicPtrCast&lt;const Ieee80211TwoAddressHeader&gt;(header);</span></span>
+<span id="L381"><span class="lineNum">     381</span>                 :<span class="tlaGNC">     2946571 :             auto indication = packet-&gt;findTag&lt;Ieee80211ModeInd&gt;();</span></span>
+<span id="L382"><span class="lineNum">     382</span> [<span class="tlaGBC" title="Branch 0 was taken 2946168 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 403 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 2946168 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">     2946571 :             bool ht = indication &amp;&amp; indication-&gt;getMode() &amp;&amp;</span></span>
+<span id="L383"><span class="lineNum">     383</span>         [<span class="tlaGBC" title="Branch 0 was taken 57256 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2888912 times"> + </span>]:<span class="tlaGNC">     2946571 :                 indication-&gt;getMode()-&gt;getModulationClass() == IIeee80211Mode::ModulationClass::HT;</span></span>
+<span id="L384"><span class="lineNum">     384</span>                 :             :             // Model rule for coverage class zero, based on IEEE Std 802.11-2024, 10.3.2.3.3.</span>
+<span id="L385"><span class="lineNum">     385</span> [<span class="tlaGBC" title="Branch 0 was taken 1998016 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 948555 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 1998016 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">     2946571 :             if (evidence.preceding &amp;&amp; evidence.sifs &gt; SIMTIME_ZERO) {</span></span>
+<span id="L386"><span class="lineNum">     386</span>                 :<span class="tlaGNC">     1998016 :                 auto gap = evidence.start - evidence.preceding-&gt;end;</span></span>
+<span id="L387"><span class="lineNum">     387</span> [<span class="tlaGBC" title="Branch 0 was taken 1997831 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 185 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 603176 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1394655 times"> + </span>]:<span class="tlaGNC">     1998016 :                 related = gap &gt;= evidence.sifs - evidence.tolerance &amp;&amp; gap &lt;= evidence.sifs + evidence.tolerance;</span></span>
+<span id="L388"><span class="lineNum">     388</span>                 :<span class="tlaGNC">     1998016 :                 auto&amp; preceding = *evidence.preceding;</span></span>
+<span id="L389"><span class="lineNum">     389</span>                 :             :                 // IEEE Std 802.11-2024, 10.3.2.3.2: RIFS requires HT, the same TA and RA, and no SIFS response.</span>
+<span id="L390"><span class="lineNum">     390</span> [<span class="tlaGBC" title="Branch 0 was taken 11118 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1986898 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 5528 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5590 times"> + </span>]:<span class="tlaGNC">     1998016 :                 if (evidence.rifsPermitted &amp;&amp; preceding.ht &amp;&amp; ht &amp;&amp; preceding.noSifsResponse &amp;&amp;</span></span>
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 5519 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 9 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 5512 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 7 times"> + </span>]
+<span id="L391"><span class="lineNum">     391</span> [<span class="tlaGBC" title="Branch 0 was taken 5510 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 5510 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">     1998016 :                         preceding.extension &gt;= SIMTIME_ZERO &amp;&amp; twoAddress &amp;&amp; !preceding.transmitter.isUnspecified() &amp;&amp;</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 156 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5354 times"> + </span>]
+<span id="L392"><span class="lineNum">     392</span>         [<span class="tlaGBC" title="Branch 0 was taken 147 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 9 times"> + </span>]:<span class="tlaGNC">     1998016 :                         preceding.transmitter == twoAddress-&gt;getTransmitterAddress() &amp;&amp;</span></span>
+<span id="L393"><span class="lineNum">     393</span>         [<span class="tlaGBC" title="Branch 0 was taken 146 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:<span class="tlaGNC">     1998016 :                         preceding.receiver == header-&gt;getReceiverAddress()) {</span></span>
+<span id="L394"><span class="lineNum">     394</span>                 :<span class="tlaGNC">         146 :                     auto correctedGap = gap + preceding.extension;</span></span>
+<span id="L395"><span class="lineNum">     395</span>         [<span class="tlaGBC" title="Branch 0 was taken 145 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:<span class="tlaGNC">         146 :                     related |= correctedGap &gt;= evidence.rifs - evidence.rifs / 10 &amp;&amp;</span></span>
+<span id="L396"><span class="lineNum">     396</span>         [<span class="tlaGBC" title="Branch 0 was taken 8 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 137 times"> + </span>]:<span class="tlaGNC">         146 :                         correctedGap &lt;= evidence.rifs + evidence.rifs / 10;</span></span>
+<span id="L397"><span class="lineNum">     397</span>                 :<span class="tlaGNC">         146 :                 }</span></span>
+<span id="L398"><span class="lineNum">     398</span>                 :<span class="tlaGNC">     1998016 :             }</span></span>
+<span id="L399"><span class="lineNum">     399</span>         [<span class="tlaGBC" title="Branch 0 was taken 2944944 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1627 times"> + </span>]:<span class="tlaGNC">     2946571 :             if (evidence.mayBecomePredecessor) {</span></span>
+<span id="L400"><span class="lineNum">     400</span>                 :<span class="tlaGNC">     2944944 :                 PrecedingFrame preceding{evidence.end, false};</span></span>
+<span id="L401"><span class="lineNum">     401</span>                 :<span class="tlaGNC">     2944944 :                 preceding.ht = ht;</span></span>
+<span id="L402"><span class="lineNum">     402</span>         [<span class="tlaGBC" title="Branch 0 was taken 1745757 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1199187 times"> + </span>]:<span class="tlaGNC">     2944944 :                 preceding.transmitter = twoAddress ? twoAddress-&gt;getTransmitterAddress() : MacAddress();</span></span>
+<span id="L403"><span class="lineNum">     403</span>                 :<span class="tlaGNC">     2944944 :                 preceding.receiver = header-&gt;getReceiverAddress();</span></span>
+<span id="L404"><span class="lineNum">     404</span>         [<span class="tlaGBC" title="Branch 0 was taken 2944541 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 403 times"> + </span>]:<span class="tlaGNC">     2944944 :                 preceding.extension = indication ? indication-&gt;getSignalExtensionDuration() : SimTime(-1);</span></span>
+<span id="L405"><span class="lineNum">     405</span>                 :<span class="tlaGNC">     2944944 :                 auto dataOrMgmt = dynamicPtrCast&lt;const Ieee80211DataOrMgmtHeader&gt;(header);</span></span>
+<span id="L406"><span class="lineNum">     406</span> [<span class="tlaGBC" title="Branch 0 was taken 913329 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2031615 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 505586 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 407743 times"> + </span>]:<span class="tlaGNC">     2944944 :                 preceding.noSifsResponse = recipientAckPolicy &amp;&amp; (dataOrMgmt ? !recipientAckPolicy-&gt;isAckNeeded(dataOrMgmt) :</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 451407 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 461922 times"> + </span>]
+<span id="L407"><span class="lineNum">     407</span> [<span class="tlaGBC" title="Branch 0 was taken 426908 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 35014 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 399839 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 27069 times"> + </span>]:<span class="tlaGNC">      913329 :                     !dynamicPtrCast&lt;const Ieee80211RtsFrame&gt;(header) &amp;&amp; !dynamicPtrCast&lt;const Ieee80211BlockAckReq&gt;(header));</span></span>
+<span id="L408"><span class="lineNum">     408</span>                 :<span class="tlaGNC">     2944944 :                 precedingFrame = preceding;</span></span>
+<span id="L409"><span class="lineNum">     409</span>                 :<span class="tlaGNC">     2944944 :             }</span></span>
+<span id="L410"><span class="lineNum">     410</span>                 :<span class="tlaGNC">     2946571 :         }</span></span>
+<span id="L411"><span class="lineNum">     411</span>                 :<span class="tlaGNC">     3118098 :     }</span></span>
+<span id="L412"><span class="lineNum">     412</span>         [<span class="tlaGBC" title="Branch 0 was taken 2946572 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 171532 times"> + </span>]:<span class="tlaGNC">     3118104 :     if (accepted)</span></span>
+<span id="L413"><span class="lineNum">     413</span>                 :<span class="tlaGNC">     2946572 :         packet-&gt;addTagIfAbsent&lt;Ieee80211InterframeInd&gt;()-&gt;setRelated(related);</span></span>
+<span id="L414"><span class="lineNum">     414</span>                 :<span class="tlaGNC">     3118104 : }</span></span>
+<span id="L415"><span class="lineNum">     415</span>                 :             : </span>
+<span id="L416"><span class="lineNum">     416</span>                 :             : void Rx::receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj, cObject *details)</span>
+<span id="L417"><span class="lineNum">     417</span>                 :<span class="tlaGNC">    10182284 : {</span></span>
+<span id="L418"><span class="lineNum">     418</span>                 :<span class="tlaGNC">    10182284 :     Enter_Method_Silent();</span></span>
+<span id="L419"><span class="lineNum">     419</span>                 :<span class="tlaGNC">    10182284 :     discardExpiredReception();</span></span>
+<span id="L420"><span class="lineNum">     420</span> [<span class="tlaGBC" title="Branch 0 was taken 10182269 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 15 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 10179582 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2687 times"> + </span>]:<span class="tlaGNC">    10182284 :     if (source-&gt;getParentModule() == networkInterface &amp;&amp; dynamic_cast&lt;IRadio *&gt;(source)) {</span></span>
+<span id="L421"><span class="lineNum">     421</span>         [<span class="tlaGBC" title="Branch 0 was taken 3121794 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 7057788 times"> + </span>]:<span class="tlaGNC">    10179582 :         if (signalID == receptionStartedSignal)</span></span>
+<span id="L422"><span class="lineNum">     422</span>                 :<span class="tlaGNC">     3121794 :             observeReceptionStart(check_and_cast&lt;const IReception *&gt;(obj));</span></span>
+<span id="L423"><span class="lineNum">     423</span>         [<span class="tlaGBC" title="Branch 0 was taken 3121641 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3936147 times"> + </span>]:<span class="tlaGNC">     7057788 :         else if (signalID == receptionEndedSignal)</span></span>
+<span id="L424"><span class="lineNum">     424</span>                 :<span class="tlaGNC">     3121641 :             observeReceptionEnd(check_and_cast&lt;const IReception *&gt;(obj));</span></span>
+<span id="L425"><span class="lineNum">     425</span>         [<span class="tlaGBC" title="Branch 0 was taken 1968151 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1967996 times"> + </span>]:<span class="tlaGNC">     3936147 :         else if (signalID == transmissionStartedSignal)</span></span>
+<span id="L426"><span class="lineNum">     426</span>                 :<span class="tlaGNC">     1968151 :             invalidateFutureInterframeHistory();</span></span>
+<span id="L427"><span class="lineNum">     427</span>         [<span class="tlaGBC" title="Branch 0 was taken 1967996 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">     1967996 :         else if (signalID == transmissionEndedSignal) {</span></span>
+<span id="L428"><span class="lineNum">     428</span>                 :<span class="tlaGNC">     1967996 :             invalidateFutureInterframeHistory();</span></span>
+<span id="L429"><span class="lineNum">     429</span>         [<span class="tlaGBC" title="Branch 0 was taken 725443 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1242553 times"> + </span>]:<span class="tlaGNC">     1967996 :             if (isCompletedAck(dynamic_cast&lt;const ITransmission *&gt;(obj)))</span></span>
+<span id="L430"><span class="lineNum">     430</span>                 :<span class="tlaGNC">      725443 :                 precedingFrame = PrecedingFrame{simTime(), true};</span></span>
+<span id="L431"><span class="lineNum">     431</span>                 :<span class="tlaGNC">     1967996 :         }</span></span>
+<span id="L432"><span class="lineNum">     432</span>                 :<span class="tlaGNC">    10179582 :     }</span></span>
+<span id="L433"><span class="lineNum">     433</span>         [<span class="tlaGBC" title="Branch 0 was taken 2688 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 10179596 times"> + </span>]:<span class="tlaGNC">    10182284 :     if (signalID == modesetChangedSignal) {</span></span>
+<span id="L434"><span class="lineNum">     434</span>                 :<span class="tlaGNC">        2688 :         invalidateFutureInterframeHistory();</span></span>
+<span id="L435"><span class="lineNum">     435</span>                 :<span class="tlaGNC">        2688 :         ModeSetListener::receiveSignal(source, signalID, obj, details);</span></span>
+<span id="L436"><span class="lineNum">     436</span>                 :<span class="tlaGNC">        2688 :     }</span></span>
+<span id="L437"><span class="lineNum">     437</span>                 :<span class="tlaGNC">    10182284 : }</span></span>
+<span id="L438"><span class="lineNum">     438</span>                 :             : </span>
+<span id="L439"><span class="lineNum">     439</span>                 :             : void Rx::receiveSignal(cComponent *source, simsignal_t signalID, intval_t value, cObject *details)</span>
+<span id="L440"><span class="lineNum">     440</span>                 :<span class="tlaGNC">     3949300 : {</span></span>
+<span id="L441"><span class="lineNum">     441</span>                 :<span class="tlaGNC">     3949300 :     Enter_Method_Silent();</span></span>
+<span id="L442"><span class="lineNum">     442</span>                 :<span class="tlaGNC">     3949300 :     discardExpiredReception();</span></span>
+<span id="L443"><span class="lineNum">     443</span> [<span class="tlaGBC" title="Branch 0 was taken 14 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3949286 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 3949286 times"> + </span>]:<span class="tlaGNC">     3949300 :     if (source-&gt;getParentModule() != networkInterface || !dynamic_cast&lt;IRadio *&gt;(source))</span></span>
+<span id="L444"><span class="lineNum">     444</span>                 :<span class="tlaGNC">          14 :         return;</span></span>
+<span id="L445"><span class="lineNum">     445</span>         [<span class="tlaGBC" title="Branch 0 was taken 4871 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3944415 times"> + </span>]:<span class="tlaGNC">     3949286 :     if (signalID == FlatRadioBase::listeningChangedSignal)</span></span>
+<span id="L446"><span class="lineNum">     446</span>                 :<span class="tlaGNC">        4871 :         invalidateFutureInterframeHistory();</span></span>
+<span id="L447"><span class="lineNum">     447</span>         [<span class="tlaGBC" title="Branch 0 was taken 3944415 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">     3944415 :     else if (signalID == IRadio::radioModeChangedSignal) {</span></span>
+<span id="L448"><span class="lineNum">     448</span>         [<span class="tlaGBC" title="Branch 0 was taken 5496 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3938919 times"> + </span>]:<span class="tlaGNC">     3944415 :         if (value == IRadio::RADIO_MODE_OFF)</span></span>
+<span id="L449"><span class="lineNum">     449</span>                 :<span class="tlaGNC">        5496 :             invalidateInterframeHistory();</span></span>
+<span id="L450"><span class="lineNum">     450</span> [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3938917 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 1968190 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1970727 times"> + </span>]:<span class="tlaGNC">     3938919 :         else if (value == IRadio::RADIO_MODE_SLEEP || value == IRadio::RADIO_MODE_TRANSMITTER)</span></span>
+<span id="L451"><span class="lineNum">     451</span>                 :<span class="tlaGNC">     1968192 :             invalidateFutureInterframeHistory();</span></span>
+<span id="L452"><span class="lineNum">     452</span>                 :<span class="tlaGNC">     3944415 :     }</span></span>
+<span id="L453"><span class="lineNum">     453</span>                 :<span class="tlaGNC">     3949286 : }</span></span>
+<span id="L454"><span class="lineNum">     454</span>                 :             : </span>
+<span id="L455"><span class="lineNum">     455</span>                 :             : } // namespace ieee80211</span>
+<span id="L456"><span class="lineNum">     456</span>                 :             : } // namespace inet</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

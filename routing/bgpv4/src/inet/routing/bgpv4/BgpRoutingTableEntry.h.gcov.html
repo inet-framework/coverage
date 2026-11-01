@@ -1,0 +1,290 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - routing/bgpv4/src/inet/routing/bgpv4/BgpRoutingTableEntry.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">routing/bgpv4/src/inet/routing/bgpv4</a> - BgpRoutingTableEntry.h<span style="font-size: 80%;"> (source / <a href="BgpRoutingTableEntry.h.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">50.5&nbsp;%</td>
+            <td class="headerCovTableEntry">111</td>
+            <td class="headerCovTableEntry">56</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryMed">79.5&nbsp;%</td>
+            <td class="headerCovTableEntry">44</td>
+            <td class="headerCovTableEntry">35</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryLo">0.0&nbsp;%</td>
+            <td class="headerCovTableEntry">24</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2010 Helene Lageber</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : #ifndef __INET_BGPROUTINGTABLEENTRY_H</span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #define __INET_BGPROUTINGTABLEENTRY_H</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : </span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &quot;inet/networklayer/contract/IRoute.h&quot;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &quot;inet/networklayer/ipv4/Ipv4RoutingTable.h&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #ifdef INET_WITH_IPv6</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : #include &quot;inet/networklayer/ipv6/Ipv6Route.h&quot;</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : #endif</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : #include &quot;inet/routing/bgpv4/BgpCommon.h&quot;</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : </span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : namespace inet {</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : </span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : namespace bgp {</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : </span>
+<span id="L21"><span class="lineNum">      21</span>                 :             : // BGP per-route attributes, mixed into an address-family-specific route so a single object</span>
+<span id="L22"><span class="lineNum">      22</span>                 :             : // can live both in the BGP RIB (bgpRoutingTable) and in the system routing table. The</span>
+<span id="L23"><span class="lineNum">      23</span>                 :             : // decision process holds BgpRouteInfo* and reaches the underlying route via asRoute() (or</span>
+<span id="L24"><span class="lineNum">      24</span>                 :             : // the generic forwarders below), so it is address-family agnostic; concrete entries are</span>
+<span id="L25"><span class="lineNum">      25</span>                 :             : // BgpRoutingTableEntry (over Ipv4Route) and BgpRoutingTableEntry6 (over Ipv6Route).</span>
+<span id="L26"><span class="lineNum">      26</span>                 :             : class INET_API BgpRouteInfo</span>
+<span id="L27"><span class="lineNum">      27</span>                 :             : {</span>
+<span id="L28"><span class="lineNum">      28</span>                 :             :   public:</span>
+<span id="L29"><span class="lineNum">      29</span>                 :             :     enum { DEFAULT_COST = 1 };</span>
+<span id="L30"><span class="lineNum">      30</span>                 :             :     typedef unsigned char RoutingPathType;</span>
+<span id="L31"><span class="lineNum">      31</span>                 :             : </span>
+<span id="L32"><span class="lineNum">      32</span>                 :             :   protected:</span>
+<span id="L33"><span class="lineNum">      33</span>                 :             :     RoutingPathType _pathType = INCOMPLETE;</span>
+<span id="L34"><span class="lineNum">      34</span>                 :             :     std::vector&lt;AsId&gt; _ASList;</span>
+<span id="L35"><span class="lineNum">      35</span>                 :             :     int localPreference = 0;</span>
+<span id="L36"><span class="lineNum">      36</span>                 :             :     bool iBgpLearned = false;</span>
+<span id="L37"><span class="lineNum">      37</span>                 :             :     SessionId sourceSessionId = 0;</span>
+<span id="L38"><span class="lineNum">      38</span>                 :             :     L3Address sourcePeerAddress;</span>
+<span id="L39"><span class="lineNum">      39</span>                 :             : </span>
+<span id="L40"><span class="lineNum">      40</span>                 :             :   public:</span>
+<span id="L41"><span class="lineNum">      41</span>                 :<span class="tlaGNC tlaBgGNC">        2991 :     virtual ~BgpRouteInfo() {}</span></span>
+<span id="L42"><span class="lineNum">      42</span>                 :             : </span>
+<span id="L43"><span class="lineNum">      43</span>                 :             :     // the underlying address-family route (this object, viewed as an IRoute)</span>
+<span id="L44"><span class="lineNum">      44</span>                 :             :     virtual IRoute *asRoute() = 0;</span>
+<span id="L45"><span class="lineNum">      45</span>                 :             :     virtual const IRoute *asRoute() const = 0;</span>
+<span id="L46"><span class="lineNum">      46</span>                 :             :     virtual BgpRouteInfo *clone() const = 0;</span>
+<span id="L47"><span class="lineNum">      47</span>                 :             : </span>
+<span id="L48"><span class="lineNum">      48</span>                 :             :     // BGP attributes</span>
+<span id="L49"><span class="lineNum">      49</span>                 :<span class="tlaGNC">        1014 :     void setPathType(RoutingPathType type) { _pathType = type; }</span></span>
+<span id="L50"><span class="lineNum">      50</span>                 :<span class="tlaGNC">        1397 :     RoutingPathType getPathType() const { return _pathType; }</span></span>
+<span id="L51"><span class="lineNum">      51</span>                 :             :     static const std::string getPathTypeString(RoutingPathType type);</span>
+<span id="L52"><span class="lineNum">      52</span>                 :<span class="tlaGNC">        1783 :     void addAS(AsId newAs) { _ASList.push_back(newAs); }</span></span>
+<span id="L53"><span class="lineNum">      53</span>                 :<span class="tlaGNC">        3706 :     unsigned int getASCount() const { return _ASList.size(); }</span></span>
+<span id="L54"><span class="lineNum">      54</span>                 :<span class="tlaGNC">        2555 :     AsId getAS(unsigned int index) const { return _ASList[index]; }</span></span>
+<span id="L55"><span class="lineNum">      55</span>                 :<span class="tlaGNC">        1777 :     int getLocalPreference() const { return localPreference; }</span></span>
+<span id="L56"><span class="lineNum">      56</span>                 :<span class="tlaGNC">        1014 :     void setLocalPreference(int l) { localPreference = l; }</span></span>
+<span id="L57"><span class="lineNum">      57</span>                 :<span class="tlaGNC">        4754 :     bool isIBgpLearned() const { return iBgpLearned; }</span></span>
+<span id="L58"><span class="lineNum">      58</span>                 :<span class="tlaGNC">         264 :     void setIBgpLearned(bool i) { iBgpLearned = i; }</span></span>
+<span id="L59"><span class="lineNum">      59</span>                 :<span class="tlaGNC">       21622 :     SessionId getSourceSessionId() const { return sourceSessionId; }</span></span>
+<span id="L60"><span class="lineNum">      60</span>                 :<span class="tlaGNC">         968 :     void setSourceSessionId(SessionId id) { sourceSessionId = id; }</span></span>
+<span id="L61"><span class="lineNum">      61</span>                 :<span class="tlaGNC">          46 :     const L3Address&amp; getSourcePeerAddress() const { return sourcePeerAddress; }</span></span>
+<span id="L62"><span class="lineNum">      62</span>                 :<span class="tlaGNC">         933 :     void setSourcePeerAddress(const L3Address&amp; addr) { sourcePeerAddress = addr; }</span></span>
+<span id="L63"><span class="lineNum">      63</span>                 :             : </span>
+<span id="L64"><span class="lineNum">      64</span>                 :             :     // generic route accessors, forwarded to the underlying IRoute</span>
+<span id="L65"><span class="lineNum">      65</span>                 :<span class="tlaGNC">       27244 :     L3Address getDestinationAsGeneric() const { return asRoute()-&gt;getDestinationAsGeneric(); }</span></span>
+<span id="L66"><span class="lineNum">      66</span>                 :<span class="tlaGNC">         987 :     void setDestination(const L3Address&amp; dest) { asRoute()-&gt;setDestination(dest); }</span></span>
+<span id="L67"><span class="lineNum">      67</span>                 :<span class="tlaGNC">       27974 :     int getPrefixLength() const { return asRoute()-&gt;getPrefixLength(); }</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :<span class="tlaGNC">         987 :     void setPrefixLength(int len) { asRoute()-&gt;setPrefixLength(len); }</span></span>
+<span id="L69"><span class="lineNum">      69</span>                 :<span class="tlaGNC">        3527 :     L3Address getNextHopAsGeneric() const { return asRoute()-&gt;getNextHopAsGeneric(); }</span></span>
+<span id="L70"><span class="lineNum">      70</span>                 :<span class="tlaGNC">        1091 :     void setNextHop(const L3Address&amp; nextHop) { asRoute()-&gt;setNextHop(nextHop); }</span></span>
+<span id="L71"><span class="lineNum">      71</span>                 :<span class="tlaGNC">          27 :     NetworkInterface *getInterface() const { return asRoute()-&gt;getInterface(); }</span></span>
+<span id="L72"><span class="lineNum">      72</span>                 :<span class="tlaGNC">        1727 :     void setInterface(NetworkInterface *ie) { asRoute()-&gt;setInterface(ie); }</span></span>
+<span id="L73"><span class="lineNum">      73</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     IRoute::SourceType getSourceType() const { return asRoute()-&gt;getSourceType(); }</span></span>
+<span id="L74"><span class="lineNum">      74</span>                 :<span class="tlaUNC">           0 :     void setSourceType(IRoute::SourceType type) { asRoute()-&gt;setSourceType(type); }</span></span>
+<span id="L75"><span class="lineNum">      75</span>                 :<span class="tlaUNC">           0 :     int getMetric() const { return asRoute()-&gt;getMetric(); }</span></span>
+<span id="L76"><span class="lineNum">      76</span>                 :<span class="tlaUNC">           0 :     void setMetric(int m) { asRoute()-&gt;setMetric(m); }</span></span>
+<span id="L77"><span class="lineNum">      77</span>                 :<span class="tlaGNC tlaBgGNC">         933 :     void setAdminDist(unsigned int d) { asRoute()-&gt;setAdminDist(d); }</span></span>
+<span id="L78"><span class="lineNum">      78</span>                 :             : </span>
+<span id="L79"><span class="lineNum">      79</span>                 :             :     std::string bgpStr() const;</span>
+<span id="L80"><span class="lineNum">      80</span>                 :             : };</span>
+<span id="L81"><span class="lineNum">      81</span>                 :             : </span>
+<span id="L82"><span class="lineNum">      82</span>                 :             : // IPv4 BGP RIB entry: an Ipv4Route carrying BGP attributes.</span>
+<span id="L83"><span class="lineNum">      83</span>                 :             : class INET_API BgpRoutingTableEntry : public Ipv4Route, public BgpRouteInfo</span>
+<span id="L84"><span class="lineNum">      84</span>                 :             : {</span>
+<span id="L85"><span class="lineNum">      85</span>                 :             :   public:</span>
+<span id="L86"><span class="lineNum">      86</span>                 :             :     BgpRoutingTableEntry();</span>
+<span id="L87"><span class="lineNum">      87</span>                 :             :     BgpRoutingTableEntry(const IRoute *entry);</span>
+<span id="L88"><span class="lineNum">      88</span>                 :<span class="tlaGNC">        2847 :     virtual ~BgpRoutingTableEntry() {}</span></span>
+<span id="L89"><span class="lineNum">      89</span>                 :<span class="tlaGNC">        6226 :     virtual IRoute *asRoute() override { return this; }</span></span>
+<span id="L90"><span class="lineNum">      90</span>                 :<span class="tlaGNC">       57949 :     virtual const IRoute *asRoute() const override { return this; }</span></span>
+<span id="L91"><span class="lineNum">      91</span>                 :<span class="tlaGNC">        1573 :     virtual BgpRouteInfo *clone() const override { return new BgpRoutingTableEntry(*this); }</span></span>
+<span id="L92"><span class="lineNum">      92</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     virtual std::string str() const override { return bgpStr(); }</span></span>
+<span id="L93"><span class="lineNum">      93</span>                 :             : };</span>
+<span id="L94"><span class="lineNum">      94</span>                 :             : </span>
+<span id="L95"><span class="lineNum">      95</span>                 :             : inline BgpRoutingTableEntry::BgpRoutingTableEntry()</span>
+<span id="L96"><span class="lineNum">      96</span>                 :<span class="tlaGNC tlaBgGNC">         944 : {</span></span>
+<span id="L97"><span class="lineNum">      97</span>                 :<span class="tlaGNC">         944 :     Ipv4Route::setNetmask(Ipv4Address::ALLONES_ADDRESS);</span></span>
+<span id="L98"><span class="lineNum">      98</span>                 :<span class="tlaGNC">         944 :     Ipv4Route::setMetric(DEFAULT_COST);</span></span>
+<span id="L99"><span class="lineNum">      99</span>                 :<span class="tlaGNC">         944 :     Ipv4Route::setSourceType(IRoute::BGP);</span></span>
+<span id="L100"><span class="lineNum">     100</span>                 :<span class="tlaGNC">         944 : }</span></span>
+<span id="L101"><span class="lineNum">     101</span>                 :             : </span>
+<span id="L102"><span class="lineNum">     102</span>                 :             : inline BgpRoutingTableEntry::BgpRoutingTableEntry(const IRoute *entry)</span>
+<span id="L103"><span class="lineNum">     103</span>                 :<span class="tlaGNC">         330 : {</span></span>
+<span id="L104"><span class="lineNum">     104</span>                 :<span class="tlaGNC">         330 :     Ipv4Route::setDestination(entry-&gt;getDestinationAsGeneric().toIpv4());</span></span>
+<span id="L105"><span class="lineNum">     105</span>                 :<span class="tlaGNC">         330 :     Ipv4Route::setPrefixLength(entry-&gt;getPrefixLength());</span></span>
+<span id="L106"><span class="lineNum">     106</span>                 :<span class="tlaGNC">         330 :     Ipv4Route::setNextHop(entry-&gt;getNextHopAsGeneric());</span></span>
+<span id="L107"><span class="lineNum">     107</span>                 :<span class="tlaGNC">         330 :     Ipv4Route::setInterface(entry-&gt;getInterface());</span></span>
+<span id="L108"><span class="lineNum">     108</span>                 :<span class="tlaGNC">         330 :     Ipv4Route::setMetric(DEFAULT_COST);</span></span>
+<span id="L109"><span class="lineNum">     109</span>                 :<span class="tlaGNC">         330 :     Ipv4Route::setSourceType(IRoute::BGP);</span></span>
+<span id="L110"><span class="lineNum">     110</span>                 :<span class="tlaGNC">         330 :     Ipv4Route::setAdminDist(Ipv4Route::dBGPExternal);</span></span>
+<span id="L111"><span class="lineNum">     111</span>                 :<span class="tlaGNC">         330 : }</span></span>
+<span id="L112"><span class="lineNum">     112</span>                 :             : </span>
+<span id="L113"><span class="lineNum">     113</span>                 :             : #ifdef INET_WITH_IPv6</span>
+<span id="L114"><span class="lineNum">     114</span>                 :             : // IPv6 BGP RIB entry: an Ipv6Route carrying BGP attributes.</span>
+<span id="L115"><span class="lineNum">     115</span>                 :             : class INET_API BgpRoutingTableEntry6 : public Ipv6Route, public BgpRouteInfo</span>
+<span id="L116"><span class="lineNum">     116</span>                 :             : {</span>
+<span id="L117"><span class="lineNum">     117</span>                 :             :   public:</span>
+<span id="L118"><span class="lineNum">     118</span>                 :             :     BgpRoutingTableEntry6();</span>
+<span id="L119"><span class="lineNum">     119</span>                 :             :     BgpRoutingTableEntry6(const IRoute *entry);</span>
+<span id="L120"><span class="lineNum">     120</span>                 :<span class="tlaGNC">         144 :     virtual ~BgpRoutingTableEntry6() {}</span></span>
+<span id="L121"><span class="lineNum">     121</span>                 :<span class="tlaGNC">         293 :     virtual IRoute *asRoute() override { return this; }</span></span>
+<span id="L122"><span class="lineNum">     122</span>                 :<span class="tlaGNC">         823 :     virtual const IRoute *asRoute() const override { return this; }</span></span>
+<span id="L123"><span class="lineNum">     123</span>                 :<span class="tlaGNC">          90 :     virtual BgpRouteInfo *clone() const override { return new BgpRoutingTableEntry6(*this); }</span></span>
+<span id="L124"><span class="lineNum">     124</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     virtual std::string str() const override { return bgpStr(); }</span></span>
+<span id="L125"><span class="lineNum">     125</span>                 :             : };</span>
+<span id="L126"><span class="lineNum">     126</span>                 :             : </span>
+<span id="L127"><span class="lineNum">     127</span>                 :             : inline BgpRoutingTableEntry6::BgpRoutingTableEntry6()</span>
+<span id="L128"><span class="lineNum">     128</span>                 :<span class="tlaGNC tlaBgGNC">          43 :     : Ipv6Route(Ipv6Address(), 128, IRoute::BGP)</span></span>
+<span id="L129"><span class="lineNum">     129</span>                 :<span class="tlaGNC">          43 : {</span></span>
+<span id="L130"><span class="lineNum">     130</span>                 :<span class="tlaGNC">          43 :     Ipv6Route::setMetric(DEFAULT_COST);</span></span>
+<span id="L131"><span class="lineNum">     131</span>                 :<span class="tlaGNC">          43 : }</span></span>
+<span id="L132"><span class="lineNum">     132</span>                 :             : </span>
+<span id="L133"><span class="lineNum">     133</span>                 :             : inline BgpRoutingTableEntry6::BgpRoutingTableEntry6(const IRoute *entry)</span>
+<span id="L134"><span class="lineNum">     134</span>                 :<span class="tlaGNC">          11 :     : Ipv6Route(entry-&gt;getDestinationAsGeneric().toIpv6(), entry-&gt;getPrefixLength(), IRoute::BGP)</span></span>
+<span id="L135"><span class="lineNum">     135</span>                 :<span class="tlaGNC">          11 : {</span></span>
+<span id="L136"><span class="lineNum">     136</span>                 :<span class="tlaGNC">          11 :     Ipv6Route::setNextHop(entry-&gt;getNextHopAsGeneric());</span></span>
+<span id="L137"><span class="lineNum">     137</span>                 :<span class="tlaGNC">          11 :     Ipv6Route::setInterface(entry-&gt;getInterface());</span></span>
+<span id="L138"><span class="lineNum">     138</span>                 :<span class="tlaGNC">          11 :     Ipv6Route::setMetric(DEFAULT_COST);</span></span>
+<span id="L139"><span class="lineNum">     139</span>                 :<span class="tlaGNC">          11 :     Ipv6Route::setAdminDist(Ipv6Route::dBGPExternal);</span></span>
+<span id="L140"><span class="lineNum">     140</span>                 :<span class="tlaGNC">          11 : }</span></span>
+<span id="L141"><span class="lineNum">     141</span>                 :             : #endif // INET_WITH_IPv6</span>
+<span id="L142"><span class="lineNum">     142</span>                 :             : </span>
+<span id="L143"><span class="lineNum">     143</span>                 :             : inline const std::string BgpRouteInfo::getPathTypeString(RoutingPathType type)</span>
+<span id="L144"><span class="lineNum">     144</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L145"><span class="lineNum">     145</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (type == IGP)</span></span>
+<span id="L146"><span class="lineNum">     146</span>                 :<span class="tlaUNC">           0 :         return &quot;IGP&quot;;</span></span>
+<span id="L147"><span class="lineNum">     147</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     else if (type == EGP)</span></span>
+<span id="L148"><span class="lineNum">     148</span>                 :<span class="tlaUNC">           0 :         return &quot;EGP&quot;;</span></span>
+<span id="L149"><span class="lineNum">     149</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     else if (type == INCOMPLETE)</span></span>
+<span id="L150"><span class="lineNum">     150</span>                 :<span class="tlaUNC">           0 :         return &quot;INCOMPLETE&quot;;</span></span>
+<span id="L151"><span class="lineNum">     151</span>                 :             : </span>
+<span id="L152"><span class="lineNum">     152</span>                 :<span class="tlaUNC">           0 :     return &quot;Unknown&quot;;</span></span>
+<span id="L153"><span class="lineNum">     153</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L154"><span class="lineNum">     154</span>                 :             : </span>
+<span id="L155"><span class="lineNum">     155</span>                 :             : inline std::string BgpRouteInfo::bgpStr() const</span>
+<span id="L156"><span class="lineNum">     156</span>                 :<span class="tlaUNC">           0 : {</span></span>
+<span id="L157"><span class="lineNum">     157</span>                 :<span class="tlaUNC">           0 :     std::stringstream out;</span></span>
+<span id="L158"><span class="lineNum">     158</span>                 :<span class="tlaUNC">           0 :     out &lt;&lt; &quot;BGP &quot;;</span></span>
+<span id="L159"><span class="lineNum">     159</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (getDestinationAsGeneric().isUnspecified())</span></span>
+<span id="L160"><span class="lineNum">     160</span>                 :<span class="tlaUNC">           0 :         out &lt;&lt; &quot;*&quot;;</span></span>
+<span id="L161"><span class="lineNum">     161</span>                 :<span class="tlaUNC">           0 :     else</span></span>
+<span id="L162"><span class="lineNum">     162</span>                 :<span class="tlaUNC">           0 :         out &lt;&lt; getDestinationAsGeneric();</span></span>
+<span id="L163"><span class="lineNum">     163</span>                 :<span class="tlaUNC">           0 :     out &lt;&lt; &quot;/&quot; &lt;&lt; getPrefixLength();</span></span>
+<span id="L164"><span class="lineNum">     164</span>                 :<span class="tlaUNC">           0 :     out &lt;&lt; &quot; gw:&quot;;</span></span>
+<span id="L165"><span class="lineNum">     165</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (getNextHopAsGeneric().isUnspecified())</span></span>
+<span id="L166"><span class="lineNum">     166</span>                 :<span class="tlaUNC">           0 :         out &lt;&lt; &quot;*  &quot;;</span></span>
+<span id="L167"><span class="lineNum">     167</span>                 :<span class="tlaUNC">           0 :     else</span></span>
+<span id="L168"><span class="lineNum">     168</span>                 :<span class="tlaUNC">           0 :         out &lt;&lt; getNextHopAsGeneric() &lt;&lt; &quot;  &quot;;</span></span>
+<span id="L169"><span class="lineNum">     169</span>                 :<span class="tlaUNC">           0 :     out &lt;&lt; &quot;metric:&quot; &lt;&lt; getMetric() &lt;&lt; &quot;  &quot;;</span></span>
+<span id="L170"><span class="lineNum">     170</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     out &lt;&lt; &quot;if:&quot; &lt;&lt; (getInterface() ? getInterface()-&gt;getInterfaceName() : &quot;*&quot;);</span></span>
+<span id="L171"><span class="lineNum">     171</span>                 :<span class="tlaUNC">           0 :     out &lt;&lt; &quot; origin: &quot; &lt;&lt; getPathTypeString(_pathType);</span></span>
+<span id="L172"><span class="lineNum">     172</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (iBgpLearned)</span></span>
+<span id="L173"><span class="lineNum">     173</span>                 :<span class="tlaUNC">           0 :         out &lt;&lt; &quot; localPref: &quot; &lt;&lt; localPreference;</span></span>
+<span id="L174"><span class="lineNum">     174</span>                 :<span class="tlaUNC">           0 :     out &lt;&lt; &quot; ASlist: &quot;;</span></span>
+<span id="L175"><span class="lineNum">     175</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     for (auto&amp; element : _ASList)</span></span>
+<span id="L176"><span class="lineNum">     176</span>                 :<span class="tlaUNC">           0 :         out &lt;&lt; element &lt;&lt; ' ';</span></span>
+<span id="L177"><span class="lineNum">     177</span>                 :             : </span>
+<span id="L178"><span class="lineNum">     178</span>                 :<span class="tlaUNC">           0 :     return out.str();</span></span>
+<span id="L179"><span class="lineNum">     179</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L180"><span class="lineNum">     180</span>                 :             : </span>
+<span id="L181"><span class="lineNum">     181</span>                 :             : inline std::ostream&amp; operator&lt;&lt;(std::ostream&amp; out, const BgpRouteInfo&amp; entry)</span>
+<span id="L182"><span class="lineNum">     182</span>                 :<span class="tlaUNC">           0 : {</span></span>
+<span id="L183"><span class="lineNum">     183</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (entry.getDestinationAsGeneric().isUnspecified())</span></span>
+<span id="L184"><span class="lineNum">     184</span>                 :<span class="tlaUNC">           0 :         out &lt;&lt; &quot;*&quot;;</span></span>
+<span id="L185"><span class="lineNum">     185</span>                 :<span class="tlaUNC">           0 :     else</span></span>
+<span id="L186"><span class="lineNum">     186</span>                 :<span class="tlaUNC">           0 :         out &lt;&lt; entry.getDestinationAsGeneric();</span></span>
+<span id="L187"><span class="lineNum">     187</span>                 :<span class="tlaUNC">           0 :     out &lt;&lt; &quot;/&quot; &lt;&lt; entry.getPrefixLength()</span></span>
+<span id="L188"><span class="lineNum">     188</span>                 :<span class="tlaUNC">           0 :         &lt;&lt; &quot; nextHop: &quot; &lt;&lt; entry.getNextHopAsGeneric()</span></span>
+<span id="L189"><span class="lineNum">     189</span>                 :<span class="tlaUNC">           0 :         &lt;&lt; &quot; cost: &quot; &lt;&lt; entry.getMetric()</span></span>
+<span id="L190"><span class="lineNum">     190</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         &lt;&lt; &quot; if: &quot; &lt;&lt; (entry.getInterface() ? entry.getInterface()-&gt;getInterfaceName() : &quot;*&quot;)</span></span>
+<span id="L191"><span class="lineNum">     191</span>                 :<span class="tlaUNC">           0 :         &lt;&lt; &quot; origin: &quot; &lt;&lt; BgpRouteInfo::getPathTypeString(entry.getPathType());</span></span>
+<span id="L192"><span class="lineNum">     192</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (entry.isIBgpLearned())</span></span>
+<span id="L193"><span class="lineNum">     193</span>                 :<span class="tlaUNC">           0 :         out &lt;&lt; &quot; localPref: &quot; &lt;&lt; entry.getLocalPreference();</span></span>
+<span id="L194"><span class="lineNum">     194</span>                 :<span class="tlaUNC">           0 :     out &lt;&lt; &quot; ASlist: &quot;;</span></span>
+<span id="L195"><span class="lineNum">     195</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     for (unsigned int i = 0; i &lt; entry.getASCount(); i++)</span></span>
+<span id="L196"><span class="lineNum">     196</span>                 :<span class="tlaUNC">           0 :         out &lt;&lt; entry.getAS(i) &lt;&lt; ' ';</span></span>
+<span id="L197"><span class="lineNum">     197</span>                 :             : </span>
+<span id="L198"><span class="lineNum">     198</span>                 :<span class="tlaUNC">           0 :     return out;</span></span>
+<span id="L199"><span class="lineNum">     199</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L200"><span class="lineNum">     200</span>                 :             : </span>
+<span id="L201"><span class="lineNum">     201</span>                 :             : } // namespace bgp</span>
+<span id="L202"><span class="lineNum">     202</span>                 :             : </span>
+<span id="L203"><span class="lineNum">     203</span>                 :             : } // namespace inet</span>
+<span id="L204"><span class="lineNum">     204</span>                 :             : </span>
+<span id="L205"><span class="lineNum">     205</span>                 :             : #endif</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

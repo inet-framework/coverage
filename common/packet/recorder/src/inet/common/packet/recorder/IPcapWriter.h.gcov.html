@@ -1,0 +1,305 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - common/packet/recorder/src/inet/common/packet/recorder/IPcapWriter.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../index.html">top level</a> - <a href="index.html">common/packet/recorder/src/inet/common/packet/recorder</a> - IPcapWriter.h<span style="font-size: 80%;"> (source / <a href="IPcapWriter.h.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2020 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #ifndef __INET_IPCAPWRITER_H</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : #define __INET_IPCAPWRITER_H</span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : </span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &quot;inet/common/DirectionTag_m.h&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &quot;inet/common/packet/Packet.h&quot;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : #include &quot;inet/networklayer/common/NetworkInterface.h&quot;</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : </span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : namespace inet {</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : </span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : enum PcapLinkType {</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             :     LINKTYPE_INVALID                    = -1,</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             :     /** BSD loopback encapsulation */</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             :     LINKTYPE_NULL                       = 0,</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             :     /** IEEE 802.3 Ethernet */</span>
+<span id="L22"><span class="lineNum">      22</span>                 :             :     LINKTYPE_ETHERNET                   = 1,</span>
+<span id="L23"><span class="lineNum">      23</span>                 :             :     /** AX.25 packet */</span>
+<span id="L24"><span class="lineNum">      24</span>                 :             :     LINKTYPE_AX25                       = 3,</span>
+<span id="L25"><span class="lineNum">      25</span>                 :             :     /** IEEE 802.5 Token Ring */</span>
+<span id="L26"><span class="lineNum">      26</span>                 :             :     LINKTYPE_IEEE802_5                  = 6,</span>
+<span id="L27"><span class="lineNum">      27</span>                 :             :     /** ARCNET Data Packets */</span>
+<span id="L28"><span class="lineNum">      28</span>                 :             :     LINKTYPE_ARCNET_BSD                 = 7,</span>
+<span id="L29"><span class="lineNum">      29</span>                 :             :     /** SLIP, encapsulated with a LINKTYPE_SLIP header */</span>
+<span id="L30"><span class="lineNum">      30</span>                 :             :     LINKTYPE_SLIP                       = 8,</span>
+<span id="L31"><span class="lineNum">      31</span>                 :             :     /** PPP, as per RFC 1661 and RFC 1662 */</span>
+<span id="L32"><span class="lineNum">      32</span>                 :             :     LINKTYPE_PPP                        = 9,</span>
+<span id="L33"><span class="lineNum">      33</span>                 :             :     /** FDDI, as specified by ANSI INCITS 239-1994 */</span>
+<span id="L34"><span class="lineNum">      34</span>                 :             :     LINKTYPE_FDDI                       = 10,</span>
+<span id="L35"><span class="lineNum">      35</span>                 :             :     /** Raw IP */</span>
+<span id="L36"><span class="lineNum">      36</span>                 :             :     LINKTYPE_DLT_RAW1                   = 12,</span>
+<span id="L37"><span class="lineNum">      37</span>                 :             :     /** Raw IP (OpenBSD) */</span>
+<span id="L38"><span class="lineNum">      38</span>                 :             :     LINKTYPE_DLT_RAW2                   = 14,</span>
+<span id="L39"><span class="lineNum">      39</span>                 :             :     /** PPP in HDLC-like framing, as per RFC 1662, or Cisco PPP with HDLC framing, as per section 4.3.1 of RFC 1547 */</span>
+<span id="L40"><span class="lineNum">      40</span>                 :             :     LINKTYPE_PPP_HDLC                   = 50,</span>
+<span id="L41"><span class="lineNum">      41</span>                 :             :     /** PPPoE */</span>
+<span id="L42"><span class="lineNum">      42</span>                 :             :     LINKTYPE_PPP_ETHER                  = 51,</span>
+<span id="L43"><span class="lineNum">      43</span>                 :             :     /** RFC 1483 LLC/SNAP-encapsulated ATM */</span>
+<span id="L44"><span class="lineNum">      44</span>                 :             :     LINKTYPE_ATM_RFC1483                = 100,</span>
+<span id="L45"><span class="lineNum">      45</span>                 :             :     /** Raw IP */</span>
+<span id="L46"><span class="lineNum">      46</span>                 :             :     LINKTYPE_RAW                        = 101,</span>
+<span id="L47"><span class="lineNum">      47</span>                 :             :     /** Cisco PPP with HDLC framing */</span>
+<span id="L48"><span class="lineNum">      48</span>                 :             :     LINKTYPE_C_HDLC                     = 104,</span>
+<span id="L49"><span class="lineNum">      49</span>                 :             :     /** IEEE 802.11 wireless LAN */</span>
+<span id="L50"><span class="lineNum">      50</span>                 :             :     LINKTYPE_IEEE802_11                 = 105,</span>
+<span id="L51"><span class="lineNum">      51</span>                 :             :     /** Frame Relay */</span>
+<span id="L52"><span class="lineNum">      52</span>                 :             :     LINKTYPE_FRELAY                     = 107,</span>
+<span id="L53"><span class="lineNum">      53</span>                 :             :     /** OpenBSD loopback encapsulation */</span>
+<span id="L54"><span class="lineNum">      54</span>                 :             :     LINKTYPE_LOOP                       = 108,</span>
+<span id="L55"><span class="lineNum">      55</span>                 :             :     /** Linux &quot;cooked&quot; capture encapsulation */</span>
+<span id="L56"><span class="lineNum">      56</span>                 :             :     LINKTYPE_LINUX_SLL                  = 113,</span>
+<span id="L57"><span class="lineNum">      57</span>                 :             :     /** Apple LocalTalk */</span>
+<span id="L58"><span class="lineNum">      58</span>                 :             :     LINKTYPE_LTALK                      = 114,</span>
+<span id="L59"><span class="lineNum">      59</span>                 :             :     /** OpenBSD pflog */</span>
+<span id="L60"><span class="lineNum">      60</span>                 :             :     LINKTYPE_PFLOG                      = 117,</span>
+<span id="L61"><span class="lineNum">      61</span>                 :             :     /** Prism monitor mode information followed by an 802.11 header */</span>
+<span id="L62"><span class="lineNum">      62</span>                 :             :     LINKTYPE_IEEE802_11_PRISM           = 119,</span>
+<span id="L63"><span class="lineNum">      63</span>                 :             :     /** RFC 2625 IP-over-Fibre Channel */</span>
+<span id="L64"><span class="lineNum">      64</span>                 :             :     LINKTYPE_IP_OVER_FC                 = 122,</span>
+<span id="L65"><span class="lineNum">      65</span>                 :             :     /** ATM traffic, encapsulated as per the scheme used by SunATM devices */</span>
+<span id="L66"><span class="lineNum">      66</span>                 :             :     LINKTYPE_SUNATM                     = 123,</span>
+<span id="L67"><span class="lineNum">      67</span>                 :             :     /** Radiotap link-layer information followed by an 802.11 header */</span>
+<span id="L68"><span class="lineNum">      68</span>                 :             :     LINKTYPE_IEEE802_11_RADIOTAP        = 127,</span>
+<span id="L69"><span class="lineNum">      69</span>                 :             :     /** ARCNET Data Packets, as described by the ARCNET Trade Association standard ATA 878.1-1999 */</span>
+<span id="L70"><span class="lineNum">      70</span>                 :             :     LINKTYPE_ARCNET_LINUX               = 129,</span>
+<span id="L71"><span class="lineNum">      71</span>                 :             :     /** Apple IP-over-IEEE 1394 cooked header */</span>
+<span id="L72"><span class="lineNum">      72</span>                 :             :     LINKTYPE_APPLE_IP_OVER_IEEE1394     = 138,</span>
+<span id="L73"><span class="lineNum">      73</span>                 :             :     /** Signaling System 7 Message Transfer Part Level 2 */</span>
+<span id="L74"><span class="lineNum">      74</span>                 :             :     LINKTYPE_MTP2_WITH_PHDR             = 139,</span>
+<span id="L75"><span class="lineNum">      75</span>                 :             :     /** Signaling System 7 Message Transfer Part Level 2 */</span>
+<span id="L76"><span class="lineNum">      76</span>                 :             :     LINKTYPE_MTP2                       = 140,</span>
+<span id="L77"><span class="lineNum">      77</span>                 :             :     /** Signaling System 7 Message Transfer Part Level 3 */</span>
+<span id="L78"><span class="lineNum">      78</span>                 :             :     LINKTYPE_MTP3                       = 141,</span>
+<span id="L79"><span class="lineNum">      79</span>                 :             :     /** Signaling System 7 Signalling Connection Control Part */</span>
+<span id="L80"><span class="lineNum">      80</span>                 :             :     LINKTYPE_SCCP                       = 142,</span>
+<span id="L81"><span class="lineNum">      81</span>                 :             :     /** Signaling System 7 Signalling Connection Control Part */</span>
+<span id="L82"><span class="lineNum">      82</span>                 :             :     LINKTYPE_DOCSIS                     = 143,</span>
+<span id="L83"><span class="lineNum">      83</span>                 :             :     /** Linux-IrDA packets */</span>
+<span id="L84"><span class="lineNum">      84</span>                 :             :     LINKTYPE_LINUX_IRDA                 = 144,</span>
+<span id="L85"><span class="lineNum">      85</span>                 :             :     /** AVS monitor mode information followed by an 802.11 header */</span>
+<span id="L86"><span class="lineNum">      86</span>                 :             :     LINKTYPE_IEEE802_11_AVS             = 163,</span>
+<span id="L87"><span class="lineNum">      87</span>                 :             :     /** BACnet MS/TP frames */</span>
+<span id="L88"><span class="lineNum">      88</span>                 :             :     LINKTYPE_BACNET_MS_TP               = 165,</span>
+<span id="L89"><span class="lineNum">      89</span>                 :             :     /** PPP in HDLC-like encapsulation, like LINKTYPE_PPP_HDLC, but with the 0xff address byte replaced by a direction indication - 0x00 for incoming and 0x01 for outgoing */</span>
+<span id="L90"><span class="lineNum">      90</span>                 :             :     LINKTYPE_PPP_PPPD                   = 166,</span>
+<span id="L91"><span class="lineNum">      91</span>                 :             :     /** General Packet Radio Service Logical Link Control */</span>
+<span id="L92"><span class="lineNum">      92</span>                 :             :     LINKTYPE_GPRS_LLC                   = 169,</span>
+<span id="L93"><span class="lineNum">      93</span>                 :             :     /** Transparent-mapped generic framing procedure */</span>
+<span id="L94"><span class="lineNum">      94</span>                 :             :     LINKTYPE_GPF_T                      = 170,</span>
+<span id="L95"><span class="lineNum">      95</span>                 :             :     /** Frame-mapped generic framing procedure */</span>
+<span id="L96"><span class="lineNum">      96</span>                 :             :     LINKTYPE_GPF_F                      = 171,</span>
+<span id="L97"><span class="lineNum">      97</span>                 :             :     /** Link Access Procedures on the D Channel (LAPD) frames */</span>
+<span id="L98"><span class="lineNum">      98</span>                 :             :     LINKTYPE_LINUX_LAPD                 = 177,</span>
+<span id="L99"><span class="lineNum">      99</span>                 :             :     /** Bluetooth HCI UART transport layer */</span>
+<span id="L100"><span class="lineNum">     100</span>                 :             :     LINKTYPE_BLUETOOTH_HCI_H4           = 187,</span>
+<span id="L101"><span class="lineNum">     101</span>                 :             :     /** USB packets, beginning with a Linux USB header */</span>
+<span id="L102"><span class="lineNum">     102</span>                 :             :     LINKTYPE_USB_LINUX                  = 189,</span>
+<span id="L103"><span class="lineNum">     103</span>                 :             :     /** Per-Packet Information information */</span>
+<span id="L104"><span class="lineNum">     104</span>                 :             :     LINKTYPE_PPI                        = 192,</span>
+<span id="L105"><span class="lineNum">     105</span>                 :             :     /** IEEE 802.15.4 wireless Personal Area Network */</span>
+<span id="L106"><span class="lineNum">     106</span>                 :             :     LINKTYPE_IEEE802_15_4               = 195,</span>
+<span id="L107"><span class="lineNum">     107</span>                 :             :     /** Various link-layer types, with a pseudo-header, for SITA */</span>
+<span id="L108"><span class="lineNum">     108</span>                 :             :     LINKTYPE_SITA                       = 196,</span>
+<span id="L109"><span class="lineNum">     109</span>                 :             :     /** Various link-layer types, with a pseudo-header, for Endace DAG cards; encapsulates Endace ERF record */</span>
+<span id="L110"><span class="lineNum">     110</span>                 :             :     LINKTYPE_ERF                        = 197,</span>
+<span id="L111"><span class="lineNum">     111</span>                 :             :     /** Bluetooth HCI UART transport layer */</span>
+<span id="L112"><span class="lineNum">     112</span>                 :             :     LINKTYPE_BLUETOOTH_HCI_H4_WITH_PHDR = 201,</span>
+<span id="L113"><span class="lineNum">     113</span>                 :             :     /** AX.25 packet, with a 1-byte KISS header containing a type indicator */</span>
+<span id="L114"><span class="lineNum">     114</span>                 :             :     LINKTYPE_AX25_KISS                  = 202,</span>
+<span id="L115"><span class="lineNum">     115</span>                 :             :     /** Link Access Procedures on the D Channel (LAPD) frames */</span>
+<span id="L116"><span class="lineNum">     116</span>                 :             :     LINKTYPE_LAPD                       = 203,</span>
+<span id="L117"><span class="lineNum">     117</span>                 :             :     /** PPP, as per RFC 1661 and RFC 1662, preceded with a one-byte pseudo-header with a zero value meaning &quot;received by this host&quot; and a non-zero value meaning  &quot;sent by this host&quot; */</span>
+<span id="L118"><span class="lineNum">     118</span>                 :             :     LINKTYPE_PPP_WITH_DIR               = 204,</span>
+<span id="L119"><span class="lineNum">     119</span>                 :             :     /** Cisco PPP with HDLC framing */</span>
+<span id="L120"><span class="lineNum">     120</span>                 :             :     LINKTYPE_C_HDLC_WITH_DIR            = 205,</span>
+<span id="L121"><span class="lineNum">     121</span>                 :             :     /** Frame Relay */</span>
+<span id="L122"><span class="lineNum">     122</span>                 :             :     LINKTYPE_FRELAY_WITH_DIR            = 206,</span>
+<span id="L123"><span class="lineNum">     123</span>                 :             :     /** IPMB over an I2C circuit */</span>
+<span id="L124"><span class="lineNum">     124</span>                 :             :     LINKTYPE_IPMB_LINUX                 = 209,</span>
+<span id="L125"><span class="lineNum">     125</span>                 :             :     /** IEEE 802.15.4 wireless Personal Area Network */</span>
+<span id="L126"><span class="lineNum">     126</span>                 :             :     LINKTYPE_IEEE802_15_4_NONASK_PHY    = 215,</span>
+<span id="L127"><span class="lineNum">     127</span>                 :             :     /** USB packets, beginning with a Linux USB header */</span>
+<span id="L128"><span class="lineNum">     128</span>                 :             :     LINKTYPE_USB_LINUX_MMAPPED          = 220,</span>
+<span id="L129"><span class="lineNum">     129</span>                 :             :     /** Fibre Channel FC-2 frames, beginning with a Frame_Header */</span>
+<span id="L130"><span class="lineNum">     130</span>                 :             :     LINKTYPE_FC_2                       = 224,</span>
+<span id="L131"><span class="lineNum">     131</span>                 :             :     /** Fibre Channel FC-2 frames */</span>
+<span id="L132"><span class="lineNum">     132</span>                 :             :     LINKTYPE_FC_2_WITH_FRAME_DELIMS     = 225,</span>
+<span id="L133"><span class="lineNum">     133</span>                 :             :     /** Solaris ipnet pseudo-header */</span>
+<span id="L134"><span class="lineNum">     134</span>                 :             :     LINKTYPE_IPNET                      = 226,</span>
+<span id="L135"><span class="lineNum">     135</span>                 :             :     /** CAN (Controller Area Network) frames, with a pseudo-header as supplied by Linux SocketCAN */</span>
+<span id="L136"><span class="lineNum">     136</span>                 :             :     LINKTYPE_CAN_SOCKETCAN              = 227,</span>
+<span id="L137"><span class="lineNum">     137</span>                 :             :     /** Raw IPv4; the packet begins with an IPv4 header */</span>
+<span id="L138"><span class="lineNum">     138</span>                 :             :     LINKTYPE_IPV4                       = 228,</span>
+<span id="L139"><span class="lineNum">     139</span>                 :             :     /** Raw IPv6; the packet begins with an IPv6 header */</span>
+<span id="L140"><span class="lineNum">     140</span>                 :             :     LINKTYPE_IPV6                       = 229,</span>
+<span id="L141"><span class="lineNum">     141</span>                 :             :     /** IEEE 802.15.4 wireless Personal Area Network, without the FCS at the end of the frame */</span>
+<span id="L142"><span class="lineNum">     142</span>                 :             :     LINKTYPE_IEEE802_15_4_NOFCS         = 230,</span>
+<span id="L143"><span class="lineNum">     143</span>                 :             :     /** Raw D-Bus messages, starting with the endianness flag, followed by the message type, etc., but without the authentication handshake before the message sequence */</span>
+<span id="L144"><span class="lineNum">     144</span>                 :             :     LINKTYPE_DBUS                       = 231,</span>
+<span id="L145"><span class="lineNum">     145</span>                 :             :     /** DVB-CI (DVB Common Interface for communication between a PC Card module and a DVB receiver), with the message format specified by the PCAP format for DVB-CI specification */</span>
+<span id="L146"><span class="lineNum">     146</span>                 :             :     LINKTYPE_DVB_CI                     = 235,</span>
+<span id="L147"><span class="lineNum">     147</span>                 :             :     /** Variant of 3GPP TS 27.010 multiplexing protocol (similar to, but not the same as, 27.010) */</span>
+<span id="L148"><span class="lineNum">     148</span>                 :             :     LINKTYPE_MUX27010                   = 236,</span>
+<span id="L149"><span class="lineNum">     149</span>                 :             :     /** D_PDUs as described by NATO standard STANAG 5066, starting with the synchronization sequence, and including both header and data CRCs */</span>
+<span id="L150"><span class="lineNum">     150</span>                 :             :     LINKTYPE_STANAG_5066_D_PDU          = 237,</span>
+<span id="L151"><span class="lineNum">     151</span>                 :             :     /** Linux netlink NETLINK NFLOG socket log messages */</span>
+<span id="L152"><span class="lineNum">     152</span>                 :             :     LINKTYPE_NFLOG                      = 239,</span>
+<span id="L153"><span class="lineNum">     153</span>                 :             :     /** Pseudo-header for Hilscher Gesellschaft für Systemautomation mbH netANALYZER devices, followed by an Ethernet frame, beginning with the MAC header and ending with the FCS */</span>
+<span id="L154"><span class="lineNum">     154</span>                 :             :     LINKTYPE_NETANALYZER                = 240,</span>
+<span id="L155"><span class="lineNum">     155</span>                 :             :     /** Pseudo-header for Hilscher Gesellschaft für Systemautomation mbH netANALYZER devices, followed by an Ethernet frame, beginning with the preamble, SFD, and MAC header, and ending with the FCS */</span>
+<span id="L156"><span class="lineNum">     156</span>                 :             :     LINKTYPE_NETANALYZER_TRANSPARENT    = 241,</span>
+<span id="L157"><span class="lineNum">     157</span>                 :             :     /** IP-over-InfiniBand, as specified by RFC 4391 section 6 */</span>
+<span id="L158"><span class="lineNum">     158</span>                 :             :     LINKTYPE_IPOIB                      = 242,</span>
+<span id="L159"><span class="lineNum">     159</span>                 :             :     /** MPEG-2 Transport Stream transport packets, as specified by ISO 13818-1/ITU-T Recommendation H.222.0 */</span>
+<span id="L160"><span class="lineNum">     160</span>                 :             :     LINKTYPE_MPEG_2_TS                  = 243,</span>
+<span id="L161"><span class="lineNum">     161</span>                 :             :     /** Pseudo-header for ng4T GmbH's UMTS Iub/Iur-over-ATM and Iub/Iur-over-IP format as used by their ng40 protocol tester */</span>
+<span id="L162"><span class="lineNum">     162</span>                 :             :     LINKTYPE_NG40                       = 244,</span>
+<span id="L163"><span class="lineNum">     163</span>                 :             :     /** Pseudo-header for NFC LLCP packet captures, followed by frame data for the LLCP Protocol as specified by NFCForum-TS-LLCP_1.1 */</span>
+<span id="L164"><span class="lineNum">     164</span>                 :             :     LINKTYPE_NFC_LLCP                   = 245,</span>
+<span id="L165"><span class="lineNum">     165</span>                 :             :     /** Raw InfiniBand frames, starting with the Local Routing Header */</span>
+<span id="L166"><span class="lineNum">     166</span>                 :             :     LINKTYPE_INFINIBAND                 = 247,</span>
+<span id="L167"><span class="lineNum">     167</span>                 :             :     /** SCTP packets, as defined by RFC 4960, with no lower-level protocols such as IPv4 or IPv6 */</span>
+<span id="L168"><span class="lineNum">     168</span>                 :             :     LINKTYPE_SCTP                       = 248,</span>
+<span id="L169"><span class="lineNum">     169</span>                 :             :     /** USB packets, beginning with a USBPcap header */</span>
+<span id="L170"><span class="lineNum">     170</span>                 :             :     LINKTYPE_USBPCAP                    = 249,</span>
+<span id="L171"><span class="lineNum">     171</span>                 :             :     /** Serial-line packet header for the Schweitzer Engineering Laboratories &quot;RTAC&quot; product */</span>
+<span id="L172"><span class="lineNum">     172</span>                 :             :     LINKTYPE_RTAC_SERIAL                = 250,</span>
+<span id="L173"><span class="lineNum">     173</span>                 :             :     /** Bluetooth Low Energy air interface Link Layer packets */</span>
+<span id="L174"><span class="lineNum">     174</span>                 :             :     LINKTYPE_BLUETOOTH_LE_LL            = 251,</span>
+<span id="L175"><span class="lineNum">     175</span>                 :             :     /** Linux Netlink capture encapsulation */</span>
+<span id="L176"><span class="lineNum">     176</span>                 :             :     LINKTYPE_NETLINK                    = 253,</span>
+<span id="L177"><span class="lineNum">     177</span>                 :             :     /** Bluetooth Linux Monitor encapsulation of traffic for the BlueZ stack */</span>
+<span id="L178"><span class="lineNum">     178</span>                 :             :     LINKTYPE_BLUETOOTH_LINUX_MONITOR    = 254,</span>
+<span id="L179"><span class="lineNum">     179</span>                 :             :     /** Bluetooth Basic Rate and Enhanced Data Rate baseband packets */</span>
+<span id="L180"><span class="lineNum">     180</span>                 :             :     LINKTYPE_BLUETOOTH_BREDR_BB         = 255,</span>
+<span id="L181"><span class="lineNum">     181</span>                 :             :     /** Bluetooth Low Energy link-layer packets */</span>
+<span id="L182"><span class="lineNum">     182</span>                 :             :     LINKTYPE_BLUETOOTH_LE_LL_WITH_PHDR  = 256,</span>
+<span id="L183"><span class="lineNum">     183</span>                 :             :     /** PROFIBUS data link layer packets, as specified by IEC standard 61158-6-3 */</span>
+<span id="L184"><span class="lineNum">     184</span>                 :             :     LINKTYPE_PROFIBUS_DL                = 257,</span>
+<span id="L185"><span class="lineNum">     185</span>                 :             :     /** Apple PKTAP capture encapsulation */</span>
+<span id="L186"><span class="lineNum">     186</span>                 :             :     LINKTYPE_PKTAP                      = 258,</span>
+<span id="L187"><span class="lineNum">     187</span>                 :             :     /** Ethernet-over-passive-optical-network packets */</span>
+<span id="L188"><span class="lineNum">     188</span>                 :             :     LINKTYPE_EPON                       = 259,</span>
+<span id="L189"><span class="lineNum">     189</span>                 :             :     /** IPMI trace packets, as specified by Table 3-20 &quot;Trace Data Block Format&quot; in the PICMG HPM.2 specification */</span>
+<span id="L190"><span class="lineNum">     190</span>                 :             :     LINKTYPE_IPMI_HPM_2                 = 260,</span>
+<span id="L191"><span class="lineNum">     191</span>                 :             :     /** Per Joshua Wright &lt;jwright@hasborg.com&gt;, formats for Z-Wave RF profiles R1 and R2 captures */</span>
+<span id="L192"><span class="lineNum">     192</span>                 :             :     LINKTYPE_ZWAVE_R1_R2                = 261,</span>
+<span id="L193"><span class="lineNum">     193</span>                 :             :     /** Per Joshua Wright &lt;jwright@hasborg.com&gt;, formats for Z-Wave RF profile R3 captures */</span>
+<span id="L194"><span class="lineNum">     194</span>                 :             :     LINKTYPE_ZWAVE_R3                   = 262,</span>
+<span id="L195"><span class="lineNum">     195</span>                 :             :     /** Formats for WattStopper Digital Lighting Management (DLM) and Legrand Nitoo Open protocol common packet structure captures */</span>
+<span id="L196"><span class="lineNum">     196</span>                 :             :     LINKTYPE_WATTSTOPPER_DLM            = 263,</span>
+<span id="L197"><span class="lineNum">     197</span>                 :             :     /** Messages between ISO 14443 contactless smartcards (Proximity Integrated Circuit Card, PICC) and card readers (Proximity Coupling Device, PCD), with the message format specified by the PCAP format for ISO14443 specification */</span>
+<span id="L198"><span class="lineNum">     198</span>                 :             :     LINKTYPE_ISO_14443                  = 264,</span>
+<span id="L199"><span class="lineNum">     199</span>                 :             :     /** mPackets, as specified by IEEE 802.3br Figure 99-4, starting with the preamble and always ending with a CRC field. */</span>
+<span id="L200"><span class="lineNum">     200</span>                 :             :     LINKTYPE_ETHERNET_MPACKET           = 274,</span>
+<span id="L201"><span class="lineNum">     201</span>                 :             : };</span>
+<span id="L202"><span class="lineNum">     202</span>                 :             : </span>
+<span id="L203"><span class="lineNum">     203</span>                 :             : class INET_API IPcapWriter</span>
+<span id="L204"><span class="lineNum">     204</span>                 :             : {</span>
+<span id="L205"><span class="lineNum">     205</span>                 :             :   public:</span>
+<span id="L206"><span class="lineNum">     206</span>                 :<span class="tlaGNC tlaBgGNC">         618 :     virtual ~IPcapWriter() {}</span></span>
+<span id="L207"><span class="lineNum">     207</span>                 :             : </span>
+<span id="L208"><span class="lineNum">     208</span>                 :             :     virtual void open(const char *filename, unsigned int snaplen, int timePrecision) = 0;</span>
+<span id="L209"><span class="lineNum">     209</span>                 :             :     virtual void close() = 0;</span>
+<span id="L210"><span class="lineNum">     210</span>                 :             :     virtual bool isOpen() const = 0;</span>
+<span id="L211"><span class="lineNum">     211</span>                 :             : </span>
+<span id="L212"><span class="lineNum">     212</span>                 :             :     virtual void setFlush(bool flush) = 0;</span>
+<span id="L213"><span class="lineNum">     213</span>                 :             : </span>
+<span id="L214"><span class="lineNum">     214</span>                 :             :     virtual void writePacket(simtime_t time, const Packet *packet, b frontOffset, b backOffset, Direction direction, NetworkInterface *ie, PcapLinkType linkType) = 0;</span>
+<span id="L215"><span class="lineNum">     215</span>                 :             : };</span>
+<span id="L216"><span class="lineNum">     216</span>                 :             : </span>
+<span id="L217"><span class="lineNum">     217</span>                 :             : } // namespace inet</span>
+<span id="L218"><span class="lineNum">     218</span>                 :             : </span>
+<span id="L219"><span class="lineNum">     219</span>                 :             : #endif</span>
+<span id="L220"><span class="lineNum">     220</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

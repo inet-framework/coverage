@@ -1,0 +1,381 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - linklayer/ieee80211/mac/contention/src/inet/linklayer/ieee80211/mac/contention/Contention.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../../../index.html">top level</a> - <a href="index.html">linklayer/ieee80211/mac/contention/src/inet/linklayer/ieee80211/mac/contention</a> - Contention.cc<span style="font-size: 80%;"> (source / <a href="Contention.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">91.3&nbsp;%</td>
+            <td class="headerCovTableEntry">208</td>
+            <td class="headerCovTableEntry">190</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">93.3&nbsp;%</td>
+            <td class="headerCovTableEntry">15</td>
+            <td class="headerCovTableEntry">14</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryLo">68.7&nbsp;%</td>
+            <td class="headerCovTableEntry">182</td>
+            <td class="headerCovTableEntry">125</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2016 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #include &quot;inet/linklayer/ieee80211/mac/contention/Contention.h&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : </span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &quot;inet/common/ModuleAccess.h&quot;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &quot;inet/linklayer/ieee80211/mac/Ieee80211Frame_m.h&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : </span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : namespace inet {</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : namespace ieee80211 {</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : </span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : simsignal_t Contention::stateChangedSignal = registerSignal(&quot;stateChanged&quot;);</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : </span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : // for @statistic; don't forget to keep synchronized the C++ enum and the runtime enum definition</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : Register_Enum(Contention::State,</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             :         (Contention::IDLE,</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             :          Contention::DEFER,</span>
+<span id="L22"><span class="lineNum">      22</span>                 :             :          Contention::IFS_AND_BACKOFF));</span>
+<span id="L23"><span class="lineNum">      23</span>                 :             : </span>
+<span id="L24"><span class="lineNum">      24</span>                 :             : Define_Module(Contention);</span>
+<span id="L25"><span class="lineNum">      25</span>                 :             : </span>
+<span id="L26"><span class="lineNum">      26</span>                 :             : void Contention::initialize(int stage)</span>
+<span id="L27"><span class="lineNum">      27</span>                 :<span class="tlaGNC tlaBgGNC">      160091 : {</span></span>
+<span id="L28"><span class="lineNum">      28</span>         [<span class="tlaGBC" title="Branch 0 was taken 6682 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 153409 times"> + </span>]:<span class="tlaGNC">      160091 :     if (stage == INITSTAGE_LOCAL) {</span></span>
+<span id="L29"><span class="lineNum">      29</span>                 :<span class="tlaGNC">        6682 :         backoffOptimization = par(&quot;backoffOptimization&quot;);</span></span>
+<span id="L30"><span class="lineNum">      30</span>                 :<span class="tlaGNC">        6682 :         lastIdleStartTime = simTime() - SimTime::getMaxTime() / 2;</span></span>
+<span id="L31"><span class="lineNum">      31</span>                 :<span class="tlaGNC">        6682 :         mac = check_and_cast&lt;Ieee80211Mac *&gt;(getContainingNicModule(this)-&gt;getSubmodule(&quot;mac&quot;));</span></span>
+<span id="L32"><span class="lineNum">      32</span>                 :<span class="tlaGNC">        6682 :         startTxEvent = new cMessage(&quot;startTx&quot;);</span></span>
+<span id="L33"><span class="lineNum">      33</span>                 :<span class="tlaGNC">        6682 :         startTxEvent-&gt;setSchedulingPriority(1000); // low priority, i.e. processed later than most events for the same time</span></span>
+<span id="L34"><span class="lineNum">      34</span>                 :             :         // KLUDGE</span>
+<span id="L35"><span class="lineNum">      35</span>                 :             :         // The callback-&gt;channelAccessGranted() call should be the last</span>
+<span id="L36"><span class="lineNum">      36</span>                 :             :         // event at a simulation time in order to handle internal collisions</span>
+<span id="L37"><span class="lineNum">      37</span>                 :             :         // properly.</span>
+<span id="L38"><span class="lineNum">      38</span>                 :<span class="tlaGNC">        6682 :         channelGrantedEvent = new cMessage(&quot;channelGranted&quot;);</span></span>
+<span id="L39"><span class="lineNum">      39</span>                 :<span class="tlaGNC">        6682 :         channelGrantedEvent-&gt;setSchedulingPriority(1000);</span></span>
+<span id="L40"><span class="lineNum">      40</span>                 :<span class="tlaGNC">        6682 :         fsm.setName(&quot;Backoff procedure&quot;);</span></span>
+<span id="L41"><span class="lineNum">      41</span>                 :<span class="tlaGNC">        6682 :         fsm.setState(IDLE, &quot;IDLE&quot;);</span></span>
+<span id="L42"><span class="lineNum">      42</span>                 :             : </span>
+<span id="L43"><span class="lineNum">      43</span>                 :<span class="tlaGNC">        6682 :         WATCH(fsm);</span></span>
+<span id="L44"><span class="lineNum">      44</span>                 :<span class="tlaGNC">        6682 :         WATCH_EXPR(&quot;fsmState&quot;, fsm.getStateName());</span></span>
+<span id="L45"><span class="lineNum">      45</span>                 :<span class="tlaGNC">        6682 :         WATCH(ifs);</span></span>
+<span id="L46"><span class="lineNum">      46</span>                 :<span class="tlaGNC">        6682 :         WATCH(eifs);</span></span>
+<span id="L47"><span class="lineNum">      47</span>                 :<span class="tlaGNC">        6682 :         WATCH(slotTime);</span></span>
+<span id="L48"><span class="lineNum">      48</span>                 :<span class="tlaGNC">        6682 :         WATCH(endEifsTime);</span></span>
+<span id="L49"><span class="lineNum">      49</span>                 :<span class="tlaGNC">        6682 :         WATCH(backoffSlots);</span></span>
+<span id="L50"><span class="lineNum">      50</span>                 :<span class="tlaGNC">        6682 :         WATCH(scheduledTransmissionTime);</span></span>
+<span id="L51"><span class="lineNum">      51</span>                 :<span class="tlaGNC">        6682 :         WATCH(lastChannelBusyTime);</span></span>
+<span id="L52"><span class="lineNum">      52</span>                 :<span class="tlaGNC">        6682 :         WATCH(lastIdleStartTime);</span></span>
+<span id="L53"><span class="lineNum">      53</span>                 :<span class="tlaGNC">        6682 :         WATCH(backoffOptimizationDelta);</span></span>
+<span id="L54"><span class="lineNum">      54</span>                 :<span class="tlaGNC">        6682 :         WATCH(mediumFree);</span></span>
+<span id="L55"><span class="lineNum">      55</span>                 :<span class="tlaGNC">        6682 :         WATCH(backoffOptimization);</span></span>
+<span id="L56"><span class="lineNum">      56</span>                 :<span class="tlaGNC">        6682 :         WATCH(startTime);</span></span>
+<span id="L57"><span class="lineNum">      57</span>                 :<span class="tlaGNC">        6682 :         updateDisplayString(-1);</span></span>
+<span id="L58"><span class="lineNum">      58</span>                 :<span class="tlaGNC">        6682 :     }</span></span>
+<span id="L59"><span class="lineNum">      59</span>         [<span class="tlaGBC" title="Branch 0 was taken 6661 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 146748 times"> + </span>]:<span class="tlaGNC">      153409 :     else if (stage == INITSTAGE_LAST) {</span></span>
+<span id="L60"><span class="lineNum">      60</span> [<span class="tlaGBC" title="Branch 0 was taken 10 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 6651 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 10 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 6651 times"> + </span>]:<span class="tlaGNC">        6661 :         if (!par(&quot;initialChannelBusy&quot;) &amp;&amp; simTime() == 0)</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 10 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span id="L61"><span class="lineNum">      61</span>                 :<span class="tlaGNC">          10 :             lastChannelBusyTime = simTime() - SimTime().getMaxTime() / 2;</span></span>
+<span id="L62"><span class="lineNum">      62</span>                 :<span class="tlaGNC">        6661 :     }</span></span>
+<span id="L63"><span class="lineNum">      63</span>                 :<span class="tlaGNC">      160091 : }</span></span>
+<span id="L64"><span class="lineNum">      64</span>                 :             : </span>
+<span id="L65"><span class="lineNum">      65</span>                 :             : Contention::~Contention()</span>
+<span id="L66"><span class="lineNum">      66</span>                 :<span class="tlaGNC">        6687 : {</span></span>
+<span id="L67"><span class="lineNum">      67</span>                 :<span class="tlaGNC">        6687 :     cancelAndDelete(channelGrantedEvent);</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :<span class="tlaGNC">        6687 :     cancelAndDelete(startTxEvent);</span></span>
+<span id="L69"><span class="lineNum">      69</span>                 :<span class="tlaGNC">        6687 : }</span></span>
+<span id="L70"><span class="lineNum">      70</span>                 :             : </span>
+<span id="L71"><span class="lineNum">      71</span>                 :             : void Contention::startContention(int cw, simtime_t ifs, simtime_t eifs, simtime_t slotTime, ICallback *callback)</span>
+<span id="L72"><span class="lineNum">      72</span>                 :<span class="tlaGNC">      960140 : {</span></span>
+<span id="L73"><span class="lineNum">      73</span>                 :<span class="tlaGNC">      960140 :     startTime = simTime();</span></span>
+<span id="L74"><span class="lineNum">      74</span>                 :<span class="tlaGNC">      960140 :     ASSERT(ifs &gt;= 0 &amp;&amp; eifs &gt;= 0 &amp;&amp; slotTime &gt;= 0 &amp;&amp; cw &gt;= 0);</span></span>
+<span id="L75"><span class="lineNum">      75</span>                 :<span class="tlaGNC">      960140 :     Enter_Method(&quot;startContention&quot;);</span></span>
+<span id="L76"><span class="lineNum">      76</span>                 :<span class="tlaGNC">      960140 :     cancelEvent(channelGrantedEvent);</span></span>
+<span id="L77"><span class="lineNum">      77</span>                 :<span class="tlaGNC">      960140 :     ASSERT(fsm.getState() == IDLE);</span></span>
+<span id="L78"><span class="lineNum">      78</span>                 :<span class="tlaGNC">      960140 :     this-&gt;ifs = ifs;</span></span>
+<span id="L79"><span class="lineNum">      79</span>                 :<span class="tlaGNC">      960140 :     this-&gt;eifs = eifs;</span></span>
+<span id="L80"><span class="lineNum">      80</span>                 :<span class="tlaGNC">      960140 :     this-&gt;slotTime = slotTime;</span></span>
+<span id="L81"><span class="lineNum">      81</span>                 :<span class="tlaGNC">      960140 :     this-&gt;callback = callback;</span></span>
+<span id="L82"><span class="lineNum">      82</span>                 :<span class="tlaGNC">      960140 :     backoffSlots = intrand(cw + 1);</span></span>
+<span id="L83"><span class="lineNum">      83</span>                 :<span class="tlaGNC">      960140 :     emit(backoffPeriodGeneratedSignal, backoffSlots);</span></span>
+<span id="L84"><span class="lineNum">      84</span>                 :<span class="tlaGNC">      960140 :     EV_DETAIL &lt;&lt; &quot;Starting contention: cw = &quot; &lt;&lt; cw &lt;&lt; &quot;, slots = &quot; &lt;&lt; backoffSlots &lt;&lt; &quot;, slotTime = &quot; &lt;&lt; slotTime &lt;&lt; &quot;, ifs = &quot; &lt;&lt; ifs &lt;&lt; &quot;, eifs = &quot; &lt;&lt; eifs &lt;&lt; endl;</span></span>
+<span id="L85"><span class="lineNum">      85</span>                 :<span class="tlaGNC">      960140 :     handleWithFSM(START);</span></span>
+<span id="L86"><span class="lineNum">      86</span>                 :<span class="tlaGNC">      960140 : }</span></span>
+<span id="L87"><span class="lineNum">      87</span>                 :             : </span>
+<span id="L88"><span class="lineNum">      88</span>                 :             : void Contention::handleWithFSM(EventType event)</span>
+<span id="L89"><span class="lineNum">      89</span>                 :<span class="tlaGNC">    20509415 : {</span></span>
+<span id="L90"><span class="lineNum">      90</span>                 :<span class="tlaGNC">    20509415 :     emit(stateChangedSignal, fsm.getState());</span></span>
+<span id="L91"><span class="lineNum">      91</span>                 :<span class="tlaGNC">    20509415 :     EV_TRACE &lt;&lt; &quot;handleWithFSM: processing event &quot; &lt;&lt; getEventName(event) &lt;&lt; &quot;\n&quot;;</span></span>
+<span id="L92"><span class="lineNum">      92</span>                 :<span class="tlaGNC">    20509415 :     bool finallyReportChannelAccessGranted = false;</span></span>
+<span id="L93"><span class="lineNum">      93</span> [<span class="tlaGBC" title="Branch 0 was taken 20509415 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 24646909 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 20509415 times"> + </span>]:<span class="tlaGNC">    24646909 :     FSMA_Switch(fsm) {</span></span>
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 24646909 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 20509415 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 24646909 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span class="lineNum">        </span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L94"><span class="lineNum">      94</span>         [<span class="tlaGBC" title="Branch 0 was taken 18292054 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 6354855 times"> + </span>]:<span class="tlaGNC">    24646909 :         FSMA_State(IDLE) {</span></span>
+<span id="L95"><span class="lineNum">      95</span> [<span class="tlaGBC" title="Branch 0 was taken 959993 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 17332061 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 959993 times"> + </span>]:<span class="tlaGNC">    18292054 :             FSMA_Enter(mac-&gt;sendDownPendingRadioConfigMsg());</span></span>
+<span id="L96"><span class="lineNum">      96</span> [<span class="tlaGBC" title="Branch 0 was taken 843679 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 843679 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">    18292054 :             FSMA_Event_Transition(Starting-IFS-and-Backoff,</span></span>
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 843679 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 843679 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 843679 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 116461 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 960140 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 17331914 times"> + </span>]
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 843679 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span id="L97"><span class="lineNum">      97</span>                 :<span class="tlaGNC">    17448375 :                     event == START &amp;&amp; mediumFree,</span></span>
+<span id="L98"><span class="lineNum">      98</span>                 :<span class="tlaGNC">    17448375 :                     IFS_AND_BACKOFF,</span></span>
+<span id="L99"><span class="lineNum">      99</span>                 :<span class="tlaGNC">    17448375 :                     scheduleTransmissionRequest();</span></span>
+<span id="L100"><span class="lineNum">     100</span>                 :<span class="tlaGNC">    17448375 :                     );</span></span>
+<span id="L101"><span class="lineNum">     101</span> [<span class="tlaGBC" title="Branch 0 was taken 116461 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 116461 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">    17448375 :             FSMA_Event_Transition(Busy,</span></span>
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 116461 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 116461 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 116461 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 17331914 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 116461 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 116461 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span id="L102"><span class="lineNum">     102</span>                 :<span class="tlaGNC">    17331914 :                     event == START &amp;&amp; !mediumFree,</span></span>
+<span id="L103"><span class="lineNum">     103</span>                 :<span class="tlaGNC">    17331914 :                     DEFER,</span></span>
+<span id="L104"><span class="lineNum">     104</span>                 :<span class="tlaGNC">    17331914 :                     ;</span></span>
+<span id="L105"><span class="lineNum">     105</span>                 :<span class="tlaGNC">    17331914 :                     );</span></span>
+<span id="L106"><span class="lineNum">     106</span> [<span class="tlaGBC" title="Branch 0 was taken 15833385 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 15833385 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1498529 times"> + </span>]:<span class="tlaGNC">    17331914 :             FSMA_Ignore_Event(event==MEDIUM_STATE_CHANGED);</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 15833385 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span id="L107"><span class="lineNum">     107</span> [<span class="tlaGBC" title="Branch 0 was taken 538536 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 538536 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 16793378 times"> + </span>]:<span class="tlaGNC">    17331914 :             FSMA_Ignore_Event(event==CORRUPTED_FRAME_RECEIVED);</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 538536 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span id="L108"><span class="lineNum">     108</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 17331914 times"> + </span>]:<span class="tlaGNC">    17331914 :             FSMA_Fail_On_Unhandled_Event();</span></span>
+<span id="L109"><span class="lineNum">     109</span>                 :<span class="tlaGNC">    17331914 :         }</span></span>
+<span id="L110"><span class="lineNum">     110</span>         [<span class="tlaGBC" title="Branch 0 was taken 2335942 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 21350827 times"> + </span>]:<span class="tlaGNC">    23686769 :         FSMA_State(DEFER) {</span></span>
+<span id="L111"><span class="lineNum">     111</span> [<span class="tlaGBC" title="Branch 0 was taken 1168006 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1167936 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1168006 times"> + </span>]:<span class="tlaGNC">     2335942 :             FSMA_Enter(mac-&gt;sendDownPendingRadioConfigMsg());</span></span>
+<span id="L112"><span class="lineNum">     112</span> [<span class="tlaGBC" title="Branch 0 was taken 1160016 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 1160016 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">     2335942 :             FSMA_Event_Transition(Restarting-IFS-and-Backoff,</span></span>
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 1160016 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 1160016 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 1160016 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1043625 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 2203641 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 132301 times"> + </span>]
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 1160016 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span id="L113"><span class="lineNum">     113</span>                 :<span class="tlaGNC">     1175926 :                     event == MEDIUM_STATE_CHANGED &amp;&amp; mediumFree,</span></span>
+<span id="L114"><span class="lineNum">     114</span>                 :<span class="tlaGNC">     1175926 :                     IFS_AND_BACKOFF,</span></span>
+<span id="L115"><span class="lineNum">     115</span>                 :<span class="tlaGNC">     1175926 :                     scheduleTransmissionRequest();</span></span>
+<span id="L116"><span class="lineNum">     116</span>                 :<span class="tlaGNC">     1175926 :                     );</span></span>
+<span id="L117"><span class="lineNum">     117</span> [<span class="tlaGBC" title="Branch 0 was taken 7920 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 7920 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">     1175926 :             FSMA_Event_Transition(Use-EIFS,</span></span>
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 7920 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 7920 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 15840 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1160086 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 7920 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 7920 times"> + </span>]
+<span id="L118"><span class="lineNum">     118</span>                 :<span class="tlaGNC">     1168006 :                     event == CORRUPTED_FRAME_RECEIVED,</span></span>
+<span id="L119"><span class="lineNum">     119</span>                 :<span class="tlaGNC">     1168006 :                     DEFER,</span></span>
+<span id="L120"><span class="lineNum">     120</span>                 :<span class="tlaGNC">     1168006 :                     endEifsTime = simTime() + eifs;</span></span>
+<span id="L121"><span class="lineNum">     121</span>                 :<span class="tlaGNC">     1168006 :                     );</span></span>
+<span id="L122"><span class="lineNum">     122</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1168006 times"> + </span>]:<span class="tlaGNC">     1168006 :             FSMA_Fail_On_Unhandled_Event();</span></span>
+<span id="L123"><span class="lineNum">     123</span>                 :<span class="tlaGNC">     1168006 :         }</span></span>
+<span id="L124"><span class="lineNum">     124</span>         [<span class="tlaGBC" title="Branch 0 was taken 4018913 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 18499920 times"> + </span>]:<span class="tlaGNC">    22518833 :         FSMA_State(IFS_AND_BACKOFF) {</span></span>
+<span id="L125"><span class="lineNum">     125</span> [<span class="tlaGBC" title="Branch 0 was taken 2009495 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2009418 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2009495 times"> + </span>]:<span class="tlaGNC">     4018913 :             FSMA_Enter();</span></span>
+<span id="L126"><span class="lineNum">     126</span> [<span class="tlaGBC" title="Branch 0 was taken 959993 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 959993 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">     4018913 :             FSMA_Event_Transition(Backoff-expired,</span></span>
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 959993 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 959993 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 959993 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3058920 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 959993 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span id="L127"><span class="lineNum">     127</span>                 :<span class="tlaGNC">     3058920 :                     event == CHANNEL_ACCESS_GRANTED,</span></span>
+<span id="L128"><span class="lineNum">     128</span>                 :<span class="tlaGNC">     3058920 :                     IDLE,</span></span>
+<span id="L129"><span class="lineNum">     129</span>                 :<span class="tlaGNC">     3058920 :                     lastIdleStartTime = simTime();</span></span>
+<span id="L130"><span class="lineNum">     130</span>                 :<span class="tlaGNC">     3058920 :                     finallyReportChannelAccessGranted = true;</span></span>
+<span id="L131"><span class="lineNum">     131</span>                 :<span class="tlaGNC">     3058920 :                     );</span></span>
+<span id="L132"><span class="lineNum">     132</span> [<span class="tlaGBC" title="Branch 0 was taken 1043625 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 1043625 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">     3058920 :             FSMA_Event_Transition(Defer-on-channel-busy,</span></span>
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 1043625 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 1043625 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 2203641 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 855279 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 1043625 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1160016 times"> + </span>]
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 1043625 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span id="L133"><span class="lineNum">     133</span>                 :<span class="tlaGNC">     2015295 :                     event == MEDIUM_STATE_CHANGED &amp;&amp; !mediumFree,</span></span>
+<span id="L134"><span class="lineNum">     134</span>                 :<span class="tlaGNC">     2015295 :                     DEFER,</span></span>
+<span id="L135"><span class="lineNum">     135</span>                 :<span class="tlaGNC">     2015295 :                     cancelTransmissionRequest();</span></span>
+<span id="L136"><span class="lineNum">     136</span>                 :<span class="tlaGNC">     2015295 :                     computeRemainingBackoffSlots();</span></span>
+<span id="L137"><span class="lineNum">     137</span>                 :<span class="tlaGNC">     2015295 :                     );</span></span>
+<span id="L138"><span class="lineNum">     138</span> [<span class="tlaGBC" title="Branch 0 was taken 5800 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 5800 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">     2015295 :             FSMA_Event_Transition(Use-EIFS,</span></span>
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 5800 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 5800 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 11600 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2003695 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 5800 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5800 times"> + </span>]
+<span id="L139"><span class="lineNum">     139</span>                 :<span class="tlaGNC">     2009495 :                     event == CORRUPTED_FRAME_RECEIVED,</span></span>
+<span id="L140"><span class="lineNum">     140</span>                 :<span class="tlaGNC">     2009495 :                     IFS_AND_BACKOFF,</span></span>
+<span id="L141"><span class="lineNum">     141</span>                 :<span class="tlaGNC">     2009495 :                     switchToEifs();</span></span>
+<span id="L142"><span class="lineNum">     142</span>                 :<span class="tlaGNC">     2009495 :                     );</span></span>
+<span id="L143"><span class="lineNum">     143</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2009495 times"> + </span>]:<span class="tlaGNC">     2009495 :             FSMA_Fail_On_Unhandled_Event();</span></span>
+<span id="L144"><span class="lineNum">     144</span>                 :<span class="tlaGNC">     2009495 :         }</span></span>
+<span id="L145"><span class="lineNum">     145</span>                 :<span class="tlaGNC">    22518833 :     }</span></span>
+<span id="L146"><span class="lineNum">     146</span>                 :<span class="tlaGNC">    20509415 :     emit(stateChangedSignal, fsm.getState());</span></span>
+<span id="L147"><span class="lineNum">     147</span>         [<span class="tlaGBC" title="Branch 0 was taken 959993 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 19549422 times"> + </span>]:<span class="tlaGNC">    20509415 :     if (finallyReportChannelAccessGranted)</span></span>
+<span id="L148"><span class="lineNum">     148</span>                 :<span class="tlaGNC">      959993 :         scheduleAfter(SIMTIME_ZERO, channelGrantedEvent);</span></span>
+<span id="L149"><span class="lineNum">     149</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 20509415 times"> + </span>]:<span class="tlaGNC">    20509415 :     if (hasGUI()) {</span></span>
+<span id="L150"><span class="lineNum">     150</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC tlaBgUNC">           0 :         if (startTxEvent-&gt;isScheduled())</span></span>
+<span id="L151"><span class="lineNum">     151</span>                 :<span class="tlaUNC">           0 :             updateDisplayString(startTxEvent-&gt;getArrivalTime());</span></span>
+<span id="L152"><span class="lineNum">     152</span>                 :<span class="tlaUNC">           0 :         else</span></span>
+<span id="L153"><span class="lineNum">     153</span>                 :<span class="tlaUNC">           0 :             updateDisplayString(-1);</span></span>
+<span id="L154"><span class="lineNum">     154</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L155"><span class="lineNum">     155</span>                 :<span class="tlaGNC tlaBgGNC">    20509415 : }</span></span>
+<span id="L156"><span class="lineNum">     156</span>                 :             : </span>
+<span id="L157"><span class="lineNum">     157</span>                 :             : void Contention::mediumStateChanged(bool mediumFree)</span>
+<span id="L158"><span class="lineNum">     158</span>                 :<span class="tlaGNC">    18037026 : {</span></span>
+<span id="L159"><span class="lineNum">     159</span>                 :<span class="tlaGNC">    18037026 :     Enter_Method(mediumFree ? &quot;medium FREE&quot; : &quot;medium BUSY&quot;);</span></span>
+<span id="L160"><span class="lineNum">     160</span>                 :<span class="tlaGNC">    18037026 :     this-&gt;mediumFree = mediumFree;</span></span>
+<span id="L161"><span class="lineNum">     161</span>                 :<span class="tlaGNC">    18037026 :     lastChannelBusyTime = simTime();</span></span>
+<span id="L162"><span class="lineNum">     162</span>                 :<span class="tlaGNC">    18037026 :     handleWithFSM(MEDIUM_STATE_CHANGED);</span></span>
+<span id="L163"><span class="lineNum">     163</span>                 :<span class="tlaGNC">    18037026 : }</span></span>
+<span id="L164"><span class="lineNum">     164</span>                 :             : </span>
+<span id="L165"><span class="lineNum">     165</span>                 :             : void Contention::handleMessage(cMessage *msg)</span>
+<span id="L166"><span class="lineNum">     166</span>                 :<span class="tlaGNC">     1919759 : {</span></span>
+<span id="L167"><span class="lineNum">     167</span>         [<span class="tlaGBC" title="Branch 0 was taken 959993 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 959766 times"> + </span>]:<span class="tlaGNC">     1919759 :     if (msg == startTxEvent) {</span></span>
+<span id="L168"><span class="lineNum">     168</span>                 :<span class="tlaGNC">      959993 :         emit(backoffStoppedSignal, SimTime::ZERO);</span></span>
+<span id="L169"><span class="lineNum">     169</span>                 :<span class="tlaGNC">      959993 :         handleWithFSM(CHANNEL_ACCESS_GRANTED);</span></span>
+<span id="L170"><span class="lineNum">     170</span>                 :<span class="tlaGNC">      959993 :     }</span></span>
+<span id="L171"><span class="lineNum">     171</span>         [<span class="tlaGBC" title="Branch 0 was taken 959766 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">      959766 :     else if (msg == channelGrantedEvent) {</span></span>
+<span id="L172"><span class="lineNum">     172</span>                 :<span class="tlaGNC">      959766 :         EV_INFO &lt;&lt; &quot;Channel granted: startTime = &quot; &lt;&lt; startTime &lt;&lt; std::endl;</span></span>
+<span id="L173"><span class="lineNum">     173</span>                 :<span class="tlaGNC">      959766 :         emit(channelAccessGrantedSignal, this);</span></span>
+<span id="L174"><span class="lineNum">     174</span>                 :<span class="tlaGNC">      959766 :         auto grantedCallback = callback;</span></span>
+<span id="L175"><span class="lineNum">     175</span>                 :             :         // A refused first submission can request new contention inside this callback.</span>
+<span id="L176"><span class="lineNum">     176</span>                 :<span class="tlaGNC">      959766 :         callback = nullptr;</span></span>
+<span id="L177"><span class="lineNum">     177</span>                 :<span class="tlaGNC">      959766 :         grantedCallback-&gt;channelAccessGranted();</span></span>
+<span id="L178"><span class="lineNum">     178</span>                 :<span class="tlaGNC">      959766 :     }</span></span>
+<span id="L179"><span class="lineNum">     179</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     else</span></span>
+<span id="L180"><span class="lineNum">     180</span>                 :<span class="tlaUNC">           0 :         throw cRuntimeError(&quot;Unknown msg&quot;);</span></span>
+<span id="L181"><span class="lineNum">     181</span>                 :<span class="tlaGNC tlaBgGNC">     1919759 : }</span></span>
+<span id="L182"><span class="lineNum">     182</span>                 :             : </span>
+<span id="L183"><span class="lineNum">     183</span>                 :             : void Contention::corruptedFrameReceived()</span>
+<span id="L184"><span class="lineNum">     184</span>                 :<span class="tlaGNC">      552256 : {</span></span>
+<span id="L185"><span class="lineNum">     185</span>                 :<span class="tlaGNC">      552256 :     Enter_Method(&quot;corruptedFrameReceived&quot;);</span></span>
+<span id="L186"><span class="lineNum">     186</span>                 :<span class="tlaGNC">      552256 :     handleWithFSM(CORRUPTED_FRAME_RECEIVED);</span></span>
+<span id="L187"><span class="lineNum">     187</span>                 :<span class="tlaGNC">      552256 : }</span></span>
+<span id="L188"><span class="lineNum">     188</span>                 :             : </span>
+<span id="L189"><span class="lineNum">     189</span>                 :             : void Contention::scheduleTransmissionRequestFor(simtime_t txStartTime)</span>
+<span id="L190"><span class="lineNum">     190</span>                 :<span class="tlaGNC">     2009495 : {</span></span>
+<span id="L191"><span class="lineNum">     191</span>                 :<span class="tlaGNC">     2009495 :     scheduleAt(txStartTime, startTxEvent);</span></span>
+<span id="L192"><span class="lineNum">     192</span>                 :<span class="tlaGNC">     2009495 :     callback-&gt;expectedChannelAccess(txStartTime);</span></span>
+<span id="L193"><span class="lineNum">     193</span>                 :<span class="tlaGNC">     2009495 :     emit(backoffStartedSignal, txStartTime);</span></span>
+<span id="L194"><span class="lineNum">     194</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2009495 times"> + </span>]:<span class="tlaGNC">     2009495 :     if (hasGUI())</span></span>
+<span id="L195"><span class="lineNum">     195</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         updateDisplayString(txStartTime);</span></span>
+<span id="L196"><span class="lineNum">     196</span>                 :<span class="tlaGNC tlaBgGNC">     2009495 : }</span></span>
+<span id="L197"><span class="lineNum">     197</span>                 :             : </span>
+<span id="L198"><span class="lineNum">     198</span>                 :             : void Contention::cancelTransmissionRequest()</span>
+<span id="L199"><span class="lineNum">     199</span>                 :<span class="tlaGNC">     1049425 : {</span></span>
+<span id="L200"><span class="lineNum">     200</span>                 :<span class="tlaGNC">     1049425 :     cancelEvent(startTxEvent);</span></span>
+<span id="L201"><span class="lineNum">     201</span>                 :<span class="tlaGNC">     1049425 :     callback-&gt;expectedChannelAccess(-1);</span></span>
+<span id="L202"><span class="lineNum">     202</span>                 :<span class="tlaGNC">     1049425 :     emit(backoffStoppedSignal, SimTime::ZERO);</span></span>
+<span id="L203"><span class="lineNum">     203</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1049425 times"> + </span>]:<span class="tlaGNC">     1049425 :     if (hasGUI())</span></span>
+<span id="L204"><span class="lineNum">     204</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         updateDisplayString(-1);</span></span>
+<span id="L205"><span class="lineNum">     205</span>                 :<span class="tlaGNC tlaBgGNC">     1049425 : }</span></span>
+<span id="L206"><span class="lineNum">     206</span>                 :             : </span>
+<span id="L207"><span class="lineNum">     207</span>                 :             : void Contention::scheduleTransmissionRequest()</span>
+<span id="L208"><span class="lineNum">     208</span>                 :<span class="tlaGNC">     2009495 : {</span></span>
+<span id="L209"><span class="lineNum">     209</span>                 :<span class="tlaGNC">     2009495 :     ASSERT(mediumFree);</span></span>
+<span id="L210"><span class="lineNum">     210</span>                 :<span class="tlaGNC">     2009495 :     simtime_t now = simTime();</span></span>
+<span id="L211"><span class="lineNum">     211</span>                 :<span class="tlaGNC">     2009495 :     bool useEifs = endEifsTime &gt; now + ifs;</span></span>
+<span id="L212"><span class="lineNum">     212</span>         [<span class="tlaGBC" title="Branch 0 was taken 15539 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1993956 times"> + </span>]:<span class="tlaGNC">     2009495 :     simtime_t waitInterval = (useEifs ? eifs : ifs) + backoffSlots * slotTime;</span></span>
+<span id="L213"><span class="lineNum">     213</span>                 :<span class="tlaGNC">     2009495 :     EV_INFO &lt;&lt; &quot;Scheduling contention end: backoffslots = &quot; &lt;&lt; backoffSlots &lt;&lt; &quot;, slotTime = &quot; &lt;&lt; slotTime;</span></span>
+<span id="L214"><span class="lineNum">     214</span> [<span class="tlaGBC" title="Branch 0 was taken 2009495 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 843679 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1165816 times"> + </span>]:<span class="tlaGNC">     2009495 :     if (backoffOptimization &amp;&amp; fsm.getState() == IDLE) {</span></span>
+<span id="L215"><span class="lineNum">     215</span>                 :             :         // we can pretend the frame has arrived into the queue a little bit earlier, and may be able to start transmitting immediately</span>
+<span id="L216"><span class="lineNum">     216</span>                 :<span class="tlaGNC">      843679 :         simtime_t elapsedFreeChannelTime = now - lastChannelBusyTime;</span></span>
+<span id="L217"><span class="lineNum">     217</span>                 :<span class="tlaGNC">      843679 :         simtime_t elapsedIdleTime = now - lastIdleStartTime;</span></span>
+<span id="L218"><span class="lineNum">     218</span>                 :<span class="tlaGNC">      843679 :         EV_INFO &lt;&lt; &quot;, lastBusyTime = &quot; &lt;&lt; lastChannelBusyTime &lt;&lt; &quot;, lastIdle = &quot; &lt;&lt; lastIdleStartTime;</span></span>
+<span id="L219"><span class="lineNum">     219</span>                 :<span class="tlaGNC">      843679 :         backoffOptimizationDelta = std::min(waitInterval, std::min(elapsedFreeChannelTime, elapsedIdleTime));</span></span>
+<span id="L220"><span class="lineNum">     220</span>         [<span class="tlaGBC" title="Branch 0 was taken 309161 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 534518 times"> + </span>]:<span class="tlaGNC">      843679 :         if (backoffOptimizationDelta &gt; SIMTIME_ZERO)</span></span>
+<span id="L221"><span class="lineNum">     221</span>                 :<span class="tlaGNC">      309161 :             waitInterval -= backoffOptimizationDelta;</span></span>
+<span id="L222"><span class="lineNum">     222</span>                 :<span class="tlaGNC">      843679 :     }</span></span>
+<span id="L223"><span class="lineNum">     223</span>                 :<span class="tlaGNC">     2009495 :     scheduledTransmissionTime = now + waitInterval;</span></span>
+<span id="L224"><span class="lineNum">     224</span>                 :<span class="tlaGNC">     2009495 :     EV_INFO &lt;&lt; &quot;, waitInterval = &quot; &lt;&lt; waitInterval &lt;&lt; &quot;.\n&quot;;</span></span>
+<span id="L225"><span class="lineNum">     225</span>                 :<span class="tlaGNC">     2009495 :     scheduleTransmissionRequestFor(scheduledTransmissionTime);</span></span>
+<span id="L226"><span class="lineNum">     226</span>                 :<span class="tlaGNC">     2009495 : }</span></span>
+<span id="L227"><span class="lineNum">     227</span>                 :             : </span>
+<span id="L228"><span class="lineNum">     228</span>                 :             : void Contention::switchToEifs()</span>
+<span id="L229"><span class="lineNum">     229</span>                 :<span class="tlaGNC">        5800 : {</span></span>
+<span id="L230"><span class="lineNum">     230</span>                 :<span class="tlaGNC">        5800 :     EV_DEBUG &lt;&lt; &quot;Switching to EIFS from DISF.\n&quot;;</span></span>
+<span id="L231"><span class="lineNum">     231</span>                 :<span class="tlaGNC">        5800 :     endEifsTime = simTime() + eifs;</span></span>
+<span id="L232"><span class="lineNum">     232</span>                 :<span class="tlaGNC">        5800 :     cancelTransmissionRequest();</span></span>
+<span id="L233"><span class="lineNum">     233</span>                 :<span class="tlaGNC">        5800 :     scheduleTransmissionRequest();</span></span>
+<span id="L234"><span class="lineNum">     234</span>                 :<span class="tlaGNC">        5800 : }</span></span>
+<span id="L235"><span class="lineNum">     235</span>                 :             : </span>
+<span id="L236"><span class="lineNum">     236</span>                 :             : void Contention::computeRemainingBackoffSlots()</span>
+<span id="L237"><span class="lineNum">     237</span>                 :<span class="tlaGNC">     1043625 : {</span></span>
+<span id="L238"><span class="lineNum">     238</span>                 :<span class="tlaGNC">     1043625 :     simtime_t remainingTime = scheduledTransmissionTime - simTime();</span></span>
+<span id="L239"><span class="lineNum">     239</span>                 :<span class="tlaGNC">     1043625 :     int remainingSlots = (remainingTime.raw() + slotTime.raw() - 1) / slotTime.raw();</span></span>
+<span id="L240"><span class="lineNum">     240</span>         [<span class="tlaGBC" title="Branch 0 was taken 328572 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 715053 times"> + </span>]:<span class="tlaGNC">     1043625 :     if (remainingSlots &lt; backoffSlots) // don't count IFS</span></span>
+<span id="L241"><span class="lineNum">     241</span>                 :<span class="tlaGNC">      328572 :         backoffSlots = remainingSlots;</span></span>
+<span id="L242"><span class="lineNum">     242</span>                 :<span class="tlaGNC">     1043625 : }</span></span>
+<span id="L243"><span class="lineNum">     243</span>                 :             : </span>
+<span id="L244"><span class="lineNum">     244</span>                 :             : // TODO we should call it when internal collision occurs after backoff optimization</span>
+<span id="L245"><span class="lineNum">     245</span>                 :             : void Contention::revokeBackoffOptimization()</span>
+<span id="L246"><span class="lineNum">     246</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L247"><span class="lineNum">     247</span>                 :<span class="tlaUNC">           0 :     EV_DEBUG &lt;&lt; &quot;Revoking backoff optimization: backoffOptimizationDelta = &quot; &lt;&lt; backoffOptimizationDelta &lt;&lt; std::endl;</span></span>
+<span id="L248"><span class="lineNum">     248</span>                 :<span class="tlaUNC">           0 :     scheduledTransmissionTime += backoffOptimizationDelta;</span></span>
+<span id="L249"><span class="lineNum">     249</span>                 :<span class="tlaUNC">           0 :     backoffOptimizationDelta = SIMTIME_ZERO;</span></span>
+<span id="L250"><span class="lineNum">     250</span>                 :<span class="tlaUNC">           0 :     cancelTransmissionRequest();</span></span>
+<span id="L251"><span class="lineNum">     251</span>                 :<span class="tlaUNC">           0 :     computeRemainingBackoffSlots();</span></span>
+<span id="L252"><span class="lineNum">     252</span>                 :<span class="tlaUNC">           0 :     scheduleTransmissionRequest();</span></span>
+<span id="L253"><span class="lineNum">     253</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L254"><span class="lineNum">     254</span>                 :             : </span>
+<span id="L255"><span class="lineNum">     255</span>                 :             : const char *Contention::getEventName(EventType event)</span>
+<span id="L256"><span class="lineNum">     256</span>                 :<span class="tlaGNC tlaBgGNC">     1527699 : {</span></span>
+<span id="L257"><span class="lineNum">     257</span>                 :<span class="tlaGNC">     1527699 : #define CASE(x)   case x: return #x;</span></span>
+<span id="L258"><span class="lineNum">     258</span>                 :<span class="tlaGNC">     1527699 :     switch (event) {</span></span>
+<span id="L259"><span class="lineNum">     259</span>         [<span class="tlaGBC" title="Branch 0 was taken 35258 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1492441 times"> + </span>]:<span class="tlaGNC">       35258 :         CASE(START);</span></span>
+<span id="L260"><span class="lineNum">     260</span>         [<span class="tlaGBC" title="Branch 0 was taken 1455200 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 72499 times"> + </span>]:<span class="tlaGNC">     1455200 :         CASE(MEDIUM_STATE_CHANGED);</span></span>
+<span id="L261"><span class="lineNum">     261</span>         [<span class="tlaGBC" title="Branch 0 was taken 2016 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1525683 times"> + </span>]:<span class="tlaGNC">        2016 :         CASE(CORRUPTED_FRAME_RECEIVED);</span></span>
+<span id="L262"><span class="lineNum">     262</span>         [<span class="tlaGBC" title="Branch 0 was taken 35225 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1492474 times"> + </span>]:<span class="tlaGNC">       35225 :         CASE(CHANNEL_ACCESS_GRANTED);</span></span>
+<span id="L263"><span class="lineNum">     263</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1527699 times"> + </span>]:<span class="tlaUNC tlaBgUNC">           0 :         default: ASSERT(false); return &quot;?&quot;;</span></span>
+<span id="L264"><span class="lineNum">     264</span>                 :<span class="tlaGNC tlaBgGNC">     1527699 :     }</span></span>
+<span id="L265"><span class="lineNum">     265</span>                 :<span class="tlaGNC">     1527699 : #undef CASE</span></span>
+<span id="L266"><span class="lineNum">     266</span>                 :<span class="tlaGNC">     1527699 : }</span></span>
+<span id="L267"><span class="lineNum">     267</span>                 :             : </span>
+<span id="L268"><span class="lineNum">     268</span>                 :             : void Contention::updateDisplayString(simtime_t expectedChannelAccess) const</span>
+<span id="L269"><span class="lineNum">     269</span>                 :<span class="tlaGNC">        6682 : {</span></span>
+<span id="L270"><span class="lineNum">     270</span>                 :<span class="tlaGNC">        6682 : }</span></span>
+<span id="L271"><span class="lineNum">     271</span>                 :             : </span>
+<span id="L272"><span class="lineNum">     272</span>                 :             : } // namespace ieee80211</span>
+<span id="L273"><span class="lineNum">     273</span>                 :             : } // namespace inet</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

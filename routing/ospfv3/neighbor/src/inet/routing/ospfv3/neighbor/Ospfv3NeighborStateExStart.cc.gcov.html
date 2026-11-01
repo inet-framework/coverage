@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - routing/ospfv3/neighbor/src/inet/routing/ospfv3/neighbor/Ospfv3NeighborStateExStart.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../index.html">top level</a> - <a href="index.html">routing/ospfv3/neighbor/src/inet/routing/ospfv3/neighbor</a> - Ospfv3NeighborStateExStart.cc<span style="font-size: 80%;"> (source / <a href="Ospfv3NeighborStateExStart.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">38.1&nbsp;%</td>
+            <td class="headerCovTableEntry">42</td>
+            <td class="headerCovTableEntry">16</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryLo">45.0&nbsp;%</td>
+            <td class="headerCovTableEntry">20</td>
+            <td class="headerCovTableEntry">9</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : /*</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             :  * NEGOTIATION_DONE - new state EXCHANGE</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             :  * ADJACENCY_OK? - of yes, stay, if not, it should be destroyed and the new state should be 2WAY</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             :  * KILL_NBR - new state DOWN</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             :  * LL_DOWN - new state DOWN</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             :  * INACTIVITY_TIMER - new state DOWN</span>
+<span id="L7"><span class="lineNum">       7</span>                 :             :  * 1WAY_RECEIVED - new state INIT</span>
+<span id="L8"><span class="lineNum">       8</span>                 :             :  * 2WAY_RECEIVED - no change</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             :  */</span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &quot;inet/routing/ospfv3/neighbor/Ospfv3NeighborStateExStart.h&quot;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : </span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &quot;inet/routing/ospfv3/neighbor/Ospfv3Neighbor.h&quot;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : #include &quot;inet/routing/ospfv3/neighbor/Ospfv3NeighborState2Way.h&quot;</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : #include &quot;inet/routing/ospfv3/neighbor/Ospfv3NeighborStateDown.h&quot;</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : #include &quot;inet/routing/ospfv3/neighbor/Ospfv3NeighborStateExchange.h&quot;</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : #include &quot;inet/routing/ospfv3/neighbor/Ospfv3NeighborStateInit.h&quot;</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : </span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : namespace inet {</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : namespace ospfv3 {</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : </span>
+<span id="L21"><span class="lineNum">      21</span>                 :             : void Ospfv3NeighborStateExStart::processEvent(Ospfv3Neighbor *neighbor, Ospfv3Neighbor::Ospfv3NeighborEventType event)</span>
+<span id="L22"><span class="lineNum">      22</span>                 :<span class="tlaGNC tlaBgGNC">         336 : {</span></span>
+<span id="L23"><span class="lineNum">      23</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 336 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 336 times"> + </span>]:<span class="tlaGNC">         336 :     if ((event == Ospfv3Neighbor::KILL_NEIGHBOR) || (event == Ospfv3Neighbor::LINK_DOWN)) {</span></span>
+<span id="L24"><span class="lineNum">      24</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         neighbor-&gt;reset();</span></span>
+<span id="L25"><span class="lineNum">      25</span>                 :<span class="tlaUNC">           0 :         neighbor-&gt;getInterface()-&gt;getArea()-&gt;getInstance()-&gt;getProcess()-&gt;clearTimer(neighbor-&gt;getInactivityTimer());</span></span>
+<span id="L26"><span class="lineNum">      26</span>                 :<span class="tlaUNC">           0 :         changeState(neighbor, new Ospfv3NeighborStateDown, this);</span></span>
+<span id="L27"><span class="lineNum">      27</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L28"><span class="lineNum">      28</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 336 times"> + </span>]:<span class="tlaGNC tlaBgGNC">         336 :     else if (event == Ospfv3Neighbor::INACTIVITY_TIMER) {</span></span>
+<span id="L29"><span class="lineNum">      29</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         neighbor-&gt;reset();</span></span>
+<span id="L30"><span class="lineNum">      30</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         if (neighbor-&gt;getInterface()-&gt;getType() == Ospfv3Interface::NBMA_TYPE)</span></span>
+<span id="L31"><span class="lineNum">      31</span>                 :<span class="tlaUNC">           0 :             neighbor-&gt;getInterface()-&gt;getArea()-&gt;getInstance()-&gt;getProcess()-&gt;setTimer(neighbor-&gt;getPollTimer(), neighbor-&gt;getInterface()-&gt;getPollInterval());</span></span>
+<span id="L32"><span class="lineNum">      32</span>                 :             : </span>
+<span id="L33"><span class="lineNum">      33</span>                 :<span class="tlaUNC">           0 :         changeState(neighbor, new Ospfv3NeighborStateDown, this);</span></span>
+<span id="L34"><span class="lineNum">      34</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L35"><span class="lineNum">      35</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 336 times"> + </span>]:<span class="tlaGNC tlaBgGNC">         336 :     else if (event == Ospfv3Neighbor::ONEWAY_RECEIVED) {</span></span>
+<span id="L36"><span class="lineNum">      36</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         neighbor-&gt;reset();</span></span>
+<span id="L37"><span class="lineNum">      37</span>                 :<span class="tlaUNC">           0 :         changeState(neighbor, new Ospfv3NeighborStateInit, this);</span></span>
+<span id="L38"><span class="lineNum">      38</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L39"><span class="lineNum">      39</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 336 times"> + </span>]:<span class="tlaGNC tlaBgGNC">         336 :     else if (event == Ospfv3Neighbor::HELLO_RECEIVED) {</span></span>
+<span id="L40"><span class="lineNum">      40</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         neighbor-&gt;getInterface()-&gt;getArea()-&gt;getInstance()-&gt;getProcess()-&gt;clearTimer(neighbor-&gt;getInactivityTimer());</span></span>
+<span id="L41"><span class="lineNum">      41</span>                 :<span class="tlaUNC">           0 :         neighbor-&gt;getInterface()-&gt;getArea()-&gt;getInstance()-&gt;getProcess()-&gt;setTimer(neighbor-&gt;getInactivityTimer(), neighbor-&gt;getInterface()-&gt;getDeadInterval());</span></span>
+<span id="L42"><span class="lineNum">      42</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L43"><span class="lineNum">      43</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 336 times"> + </span>]:<span class="tlaGNC tlaBgGNC">         336 :     else if (event == Ospfv3Neighbor::IS_ADJACENCY_OK) {</span></span>
+<span id="L44"><span class="lineNum">      44</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         EV_DEBUG &lt;&lt; &quot;Ospfv3Neighbor::IS_ADJACENCY_OK caught in ExStartState for neighbor &quot; &lt;&lt; neighbor-&gt;getNeighborID() &lt;&lt; &quot;\n&quot;;</span></span>
+<span id="L45"><span class="lineNum">      45</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         if (!neighbor-&gt;needAdjacency()) {</span></span>
+<span id="L46"><span class="lineNum">      46</span>                 :<span class="tlaUNC">           0 :             EV_DEBUG &lt;&lt; &quot;The adjacency is no longer needed for neighbor &quot; &lt;&lt; neighbor-&gt;getNeighborID() &lt;&lt; &quot;, dropping to 2-Way\n&quot;;</span></span>
+<span id="L47"><span class="lineNum">      47</span>                 :<span class="tlaUNC">           0 :             neighbor-&gt;reset();</span></span>
+<span id="L48"><span class="lineNum">      48</span>                 :<span class="tlaUNC">           0 :             changeState(neighbor, new Ospfv3NeighborState2Way, this);</span></span>
+<span id="L49"><span class="lineNum">      49</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L50"><span class="lineNum">      50</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L51"><span class="lineNum">      51</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 336 times"> + </span>]:<span class="tlaGNC tlaBgGNC">         336 :     else if (event == Ospfv3Neighbor::DD_RETRANSMISSION_TIMER) {</span></span>
+<span id="L52"><span class="lineNum">      52</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         EV_DEBUG &lt;&lt; &quot;Ospfv3Neighbor::DD_RETRANSMISSION_TIMER caught in ExStartState\n&quot;;</span></span>
+<span id="L53"><span class="lineNum">      53</span>                 :<span class="tlaUNC">           0 :         neighbor-&gt;retransmitDatabaseDescriptionPacket();</span></span>
+<span id="L54"><span class="lineNum">      54</span>                 :<span class="tlaUNC">           0 :         neighbor-&gt;getInterface()-&gt;getArea()-&gt;getInstance()-&gt;getProcess()-&gt;setTimer(neighbor-&gt;getDDRetransmissionTimer(), neighbor-&gt;getInterface()-&gt;getRetransmissionInterval());</span></span>
+<span id="L55"><span class="lineNum">      55</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L56"><span class="lineNum">      56</span>         [<span class="tlaGBC" title="Branch 0 was taken 224 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 112 times"> + </span>]:<span class="tlaGNC tlaBgGNC">         336 :     else if (event == Ospfv3Neighbor::NEGOTIATION_DONE) {</span></span>
+<span id="L57"><span class="lineNum">      57</span>                 :<span class="tlaGNC">         224 :         EV_DEBUG &lt;&lt; &quot;Ospfv3Neighbor::NEGOTIATION_DONE caught in ExStartState\n&quot;;</span></span>
+<span id="L58"><span class="lineNum">      58</span>                 :<span class="tlaGNC">         224 :         neighbor-&gt;createDatabaseSummary();</span></span>
+<span id="L59"><span class="lineNum">      59</span>                 :<span class="tlaGNC">         224 :         EV_DEBUG &lt;&lt; &quot;SummaryListCount &quot; &lt;&lt; neighbor-&gt;getDatabaseSummaryListCount() &lt;&lt; endl;</span></span>
+<span id="L60"><span class="lineNum">      60</span>                 :<span class="tlaGNC">         224 :         neighbor-&gt;sendDDPacket();</span></span>
+<span id="L61"><span class="lineNum">      61</span>                 :<span class="tlaGNC">         224 :         neighbor-&gt;getInterface()-&gt;getArea()-&gt;getInstance()-&gt;getProcess()-&gt;clearTimer(neighbor-&gt;getDDRetransmissionTimer());</span></span>
+<span id="L62"><span class="lineNum">      62</span>                 :<span class="tlaGNC">         224 :         changeState(neighbor, new Ospfv3NeighborStateExchange, this);</span></span>
+<span id="L63"><span class="lineNum">      63</span>                 :<span class="tlaGNC">         224 :     }</span></span>
+<span id="L64"><span class="lineNum">      64</span>                 :<span class="tlaGNC">         336 : }</span></span>
+<span id="L65"><span class="lineNum">      65</span>                 :             : </span>
+<span id="L66"><span class="lineNum">      66</span>                 :             : } // namespace ospfv3</span>
+<span id="L67"><span class="lineNum">      67</span>                 :             : } // namespace inet</span>
+<span id="L68"><span class="lineNum">      68</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

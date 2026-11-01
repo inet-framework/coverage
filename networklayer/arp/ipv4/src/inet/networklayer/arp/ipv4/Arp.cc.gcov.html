@@ -1,0 +1,650 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - networklayer/arp/ipv4/src/inet/networklayer/arp/ipv4/Arp.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../index.html">top level</a> - <a href="index.html">networklayer/arp/ipv4/src/inet/networklayer/arp/ipv4</a> - Arp.cc<span style="font-size: 80%;"> (source / <a href="Arp.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryMed">84.0&nbsp;%</td>
+            <td class="headerCovTableEntry">362</td>
+            <td class="headerCovTableEntry">304</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryMed">86.4&nbsp;%</td>
+            <td class="headerCovTableEntry">22</td>
+            <td class="headerCovTableEntry">19</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryMed">77.4&nbsp;%</td>
+            <td class="headerCovTableEntry">84</td>
+            <td class="headerCovTableEntry">65</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2004 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : // Copyright (C) 2008 Alfonso Ariza Quintana (global arp)</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // Copyright (C) 2014 OpenSim Ltd.</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : //</span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : </span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : #include &quot;inet/networklayer/arp/ipv4/Arp.h&quot;</span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : </span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &quot;inet/common/IProtocolRegistrationListener.h&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &quot;inet/common/ProtocolTag_m.h&quot;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : #include &quot;inet/common/lifecycle/NodeStatus.h&quot;</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : #include &quot;inet/common/packet/Packet.h&quot;</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : #include &quot;inet/common/packet/dissector/ProtocolDissector.h&quot;</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : #include &quot;inet/common/packet/dissector/ProtocolDissectorRegistry.h&quot;</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : #include &quot;inet/linklayer/common/InterfaceTag_m.h&quot;</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : #include &quot;inet/linklayer/common/MacAddressTag_m.h&quot;</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : #include &quot;inet/networklayer/arp/ipv4/ArpPacket_m.h&quot;</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : #include &quot;inet/networklayer/contract/IInterfaceTable.h&quot;</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             : #include &quot;inet/networklayer/ipv4/IIpv4RoutingTable.h&quot;</span>
+<span id="L22"><span class="lineNum">      22</span>                 :             : #include &quot;inet/networklayer/ipv4/Ipv4Header_m.h&quot;</span>
+<span id="L23"><span class="lineNum">      23</span>                 :             : #include &quot;inet/networklayer/ipv4/Ipv4InterfaceData.h&quot;</span>
+<span id="L24"><span class="lineNum">      24</span>                 :             : </span>
+<span id="L25"><span class="lineNum">      25</span>                 :             : namespace inet {</span>
+<span id="L26"><span class="lineNum">      26</span>                 :             : </span>
+<span id="L27"><span class="lineNum">      27</span>                 :             : simsignal_t Arp::arpRequestSentSignal = registerSignal(&quot;arpRequestSent&quot;);</span>
+<span id="L28"><span class="lineNum">      28</span>                 :             : simsignal_t Arp::arpReplySentSignal = registerSignal(&quot;arpReplySent&quot;);</span>
+<span id="L29"><span class="lineNum">      29</span>                 :             : </span>
+<span id="L30"><span class="lineNum">      30</span>                 :             : static std::ostream&amp; operator&lt;&lt;(std::ostream&amp; out, const Arp::ArpCacheEntry&amp; e)</span>
+<span id="L31"><span class="lineNum">      31</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L32"><span class="lineNum">      32</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (e.pending)</span></span>
+<span id="L33"><span class="lineNum">      33</span>                 :<span class="tlaUNC">           0 :         out &lt;&lt; &quot;pending (&quot; &lt;&lt; e.numRetries &lt;&lt; &quot; retries)&quot;;</span></span>
+<span id="L34"><span class="lineNum">      34</span>                 :<span class="tlaUNC">           0 :     else</span></span>
+<span id="L35"><span class="lineNum">      35</span>                 :<span class="tlaUNC">           0 :         out &lt;&lt; &quot;MAC:&quot; &lt;&lt; e.macAddress &lt;&lt; &quot;  age:&quot; &lt;&lt; floor(simTime() - e.lastUpdate) &lt;&lt; &quot;s&quot;;</span></span>
+<span id="L36"><span class="lineNum">      36</span>                 :<span class="tlaUNC">           0 :     return out;</span></span>
+<span id="L37"><span class="lineNum">      37</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L38"><span class="lineNum">      38</span>                 :             : </span>
+<span id="L39"><span class="lineNum">      39</span>                 :             : Define_Module(Arp);</span>
+<span id="L40"><span class="lineNum">      40</span>                 :             : </span>
+<span id="L41"><span class="lineNum">      41</span>                 :             : Arp::Arp()</span>
+<span id="L42"><span class="lineNum">      42</span>                 :<span class="tlaGNC tlaBgGNC">        9262 : {</span></span>
+<span id="L43"><span class="lineNum">      43</span>                 :<span class="tlaGNC">        9262 : }</span></span>
+<span id="L44"><span class="lineNum">      44</span>                 :             : </span>
+<span id="L45"><span class="lineNum">      45</span>                 :             : void Arp::initialize(int stage)</span>
+<span id="L46"><span class="lineNum">      46</span>                 :<span class="tlaGNC">      221511 : {</span></span>
+<span id="L47"><span class="lineNum">      47</span>                 :<span class="tlaGNC">      221511 :     OperationalBase::initialize(stage);</span></span>
+<span id="L48"><span class="lineNum">      48</span>                 :             : </span>
+<span id="L49"><span class="lineNum">      49</span>         [<span class="tlaGBC" title="Branch 0 was taken 9262 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 212249 times"> + </span>]:<span class="tlaGNC">      221511 :     if (stage == INITSTAGE_LOCAL) {</span></span>
+<span id="L50"><span class="lineNum">      50</span>                 :<span class="tlaGNC">        9262 :         retryTimeout = par(&quot;retryTimeout&quot;);</span></span>
+<span id="L51"><span class="lineNum">      51</span>                 :<span class="tlaGNC">        9262 :         retryCount = par(&quot;retryCount&quot;);</span></span>
+<span id="L52"><span class="lineNum">      52</span>                 :<span class="tlaGNC">        9262 :         cacheTimeout = par(&quot;cacheTimeout&quot;);</span></span>
+<span id="L53"><span class="lineNum">      53</span>                 :<span class="tlaGNC">        9262 :         proxyArpInterfaces = par(&quot;proxyArpInterfaces&quot;).stdstringValue();</span></span>
+<span id="L54"><span class="lineNum">      54</span>                 :             : </span>
+<span id="L55"><span class="lineNum">      55</span>                 :<span class="tlaGNC">        9262 :         proxyArpInterfacesMatcher.setPattern(proxyArpInterfaces.c_str(), false, true, false);</span></span>
+<span id="L56"><span class="lineNum">      56</span>                 :             : </span>
+<span id="L57"><span class="lineNum">      57</span>                 :             :         // init statistics</span>
+<span id="L58"><span class="lineNum">      58</span>                 :<span class="tlaGNC">        9262 :         numRequestsSent = numRepliesSent = 0;</span></span>
+<span id="L59"><span class="lineNum">      59</span>                 :<span class="tlaGNC">        9262 :         numResolutions = numFailedResolutions = 0;</span></span>
+<span id="L60"><span class="lineNum">      60</span>                 :<span class="tlaGNC">        9262 :         WATCH(numRequestsSent);</span></span>
+<span id="L61"><span class="lineNum">      61</span>                 :<span class="tlaGNC">        9262 :         WATCH(numRepliesSent);</span></span>
+<span id="L62"><span class="lineNum">      62</span>                 :<span class="tlaGNC">        9262 :         WATCH(numResolutions);</span></span>
+<span id="L63"><span class="lineNum">      63</span>                 :<span class="tlaGNC">        9262 :         WATCH(numFailedResolutions);</span></span>
+<span id="L64"><span class="lineNum">      64</span>                 :<span class="tlaGNC">        9262 :         WATCH(arpCache);</span></span>
+<span id="L65"><span class="lineNum">      65</span>                 :<span class="tlaGNC">        9262 :         WATCH_EXPR(&quot;arpCacheSize&quot;, arpCache.size());</span></span>
+<span id="L66"><span class="lineNum">      66</span>                 :<span class="tlaGNC">        9262 :     }</span></span>
+<span id="L67"><span class="lineNum">      67</span>         [<span class="tlaGBC" title="Branch 0 was taken 9226 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 203023 times"> + </span>]:<span class="tlaGNC">      212249 :     else if (stage == INITSTAGE_NETWORK_LAYER) {</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :<span class="tlaGNC">        9226 :         ift.reference(this, &quot;interfaceTableModule&quot;, true);</span></span>
+<span id="L69"><span class="lineNum">      69</span>                 :<span class="tlaGNC">        9226 :         rt.reference(this, &quot;routingTableModule&quot;, true);</span></span>
+<span id="L70"><span class="lineNum">      70</span>                 :<span class="tlaGNC">        9226 :         registerService(Protocol::arp, gate(&quot;netwIn&quot;), gate(&quot;netwOut&quot;));</span></span>
+<span id="L71"><span class="lineNum">      71</span>                 :<span class="tlaGNC">        9226 :         registerProtocol(Protocol::arp, gate(&quot;ifOut&quot;), gate(&quot;ifIn&quot;));</span></span>
+<span id="L72"><span class="lineNum">      72</span>                 :<span class="tlaGNC">        9226 :     }</span></span>
+<span id="L73"><span class="lineNum">      73</span>                 :<span class="tlaGNC">      221511 : }</span></span>
+<span id="L74"><span class="lineNum">      74</span>                 :             : </span>
+<span id="L75"><span class="lineNum">      75</span>                 :             : void Arp::finish()</span>
+<span id="L76"><span class="lineNum">      76</span>                 :<span class="tlaGNC">        9222 : {</span></span>
+<span id="L77"><span class="lineNum">      77</span>                 :<span class="tlaGNC">        9222 : }</span></span>
+<span id="L78"><span class="lineNum">      78</span>                 :             : </span>
+<span id="L79"><span class="lineNum">      79</span>                 :             : Arp::~Arp()</span>
+<span id="L80"><span class="lineNum">      80</span>                 :<span class="tlaGNC">        9262 : {</span></span>
+<span id="L81"><span class="lineNum">      81</span>         [<span class="tlaGBC" title="Branch 0 was taken 10696 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 9262 times"> + </span>]:<span class="tlaGNC">        9262 :     for (auto&amp; elem : arpCache)</span></span>
+<span id="L82"><span class="lineNum">      82</span>                 :<span class="tlaGNC">       10696 :         delete elem.second;</span></span>
+<span id="L83"><span class="lineNum">      83</span>                 :<span class="tlaGNC">        9262 : }</span></span>
+<span id="L84"><span class="lineNum">      84</span>                 :             : </span>
+<span id="L85"><span class="lineNum">      85</span>                 :             : void Arp::handleMessageWhenUp(cMessage *msg)</span>
+<span id="L86"><span class="lineNum">      86</span>                 :<span class="tlaGNC">      257435 : {</span></span>
+<span id="L87"><span class="lineNum">      87</span>         [<span class="tlaGBC" title="Branch 0 was taken 14365 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 243070 times"> + </span>]:<span class="tlaGNC">      257435 :     if (msg-&gt;isSelfMessage()) {</span></span>
+<span id="L88"><span class="lineNum">      88</span>                 :<span class="tlaGNC">       14365 :         requestTimedOut(msg);</span></span>
+<span id="L89"><span class="lineNum">      89</span>                 :<span class="tlaGNC">       14365 :     }</span></span>
+<span id="L90"><span class="lineNum">      90</span>                 :<span class="tlaGNC">      243070 :     else {</span></span>
+<span id="L91"><span class="lineNum">      91</span>                 :<span class="tlaGNC">      243070 :         Packet *packet = check_and_cast&lt;Packet *&gt;(msg);</span></span>
+<span id="L92"><span class="lineNum">      92</span>                 :<span class="tlaGNC">      243070 :         processArpPacket(packet);</span></span>
+<span id="L93"><span class="lineNum">      93</span>                 :<span class="tlaGNC">      243070 :     }</span></span>
+<span id="L94"><span class="lineNum">      94</span>                 :<span class="tlaGNC">      257435 : }</span></span>
+<span id="L95"><span class="lineNum">      95</span>                 :             : </span>
+<span id="L96"><span class="lineNum">      96</span>                 :             : void Arp::handleStartOperation(LifecycleOperation *operation)</span>
+<span id="L97"><span class="lineNum">      97</span>                 :<span class="tlaGNC">        9341 : {</span></span>
+<span id="L98"><span class="lineNum">      98</span>                 :<span class="tlaGNC">        9341 :     ASSERT(arpCache.empty());</span></span>
+<span id="L99"><span class="lineNum">      99</span>                 :<span class="tlaGNC">        9341 : }</span></span>
+<span id="L100"><span class="lineNum">     100</span>                 :             : </span>
+<span id="L101"><span class="lineNum">     101</span>                 :             : void Arp::handleStopOperation(LifecycleOperation *operation)</span>
+<span id="L102"><span class="lineNum">     102</span>                 :<span class="tlaGNC">         144 : {</span></span>
+<span id="L103"><span class="lineNum">     103</span>                 :<span class="tlaGNC">         144 :     flush();</span></span>
+<span id="L104"><span class="lineNum">     104</span>                 :<span class="tlaGNC">         144 : }</span></span>
+<span id="L105"><span class="lineNum">     105</span>                 :             : </span>
+<span id="L106"><span class="lineNum">     106</span>                 :             : void Arp::handleCrashOperation(LifecycleOperation *operation)</span>
+<span id="L107"><span class="lineNum">     107</span>                 :<span class="tlaGNC">          49 : {</span></span>
+<span id="L108"><span class="lineNum">     108</span>                 :<span class="tlaGNC">          49 :     flush();</span></span>
+<span id="L109"><span class="lineNum">     109</span>                 :<span class="tlaGNC">          49 : }</span></span>
+<span id="L110"><span class="lineNum">     110</span>                 :             : </span>
+<span id="L111"><span class="lineNum">     111</span>                 :             : void Arp::flush()</span>
+<span id="L112"><span class="lineNum">     112</span>                 :<span class="tlaGNC">         193 : {</span></span>
+<span id="L113"><span class="lineNum">     113</span>         [<span class="tlaGBC" title="Branch 0 was taken 205 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 193 times"> + </span>]:<span class="tlaGNC">         398 :     while (!arpCache.empty()) {</span></span>
+<span id="L114"><span class="lineNum">     114</span>                 :<span class="tlaGNC">         205 :         auto i = arpCache.begin();</span></span>
+<span id="L115"><span class="lineNum">     115</span>                 :<span class="tlaGNC">         205 :         ArpCacheEntry *entry = i-&gt;second;</span></span>
+<span id="L116"><span class="lineNum">     116</span>                 :<span class="tlaGNC">         205 :         cancelAndDelete(entry-&gt;timer);</span></span>
+<span id="L117"><span class="lineNum">     117</span>                 :<span class="tlaGNC">         205 :         entry-&gt;timer = nullptr;</span></span>
+<span id="L118"><span class="lineNum">     118</span>                 :<span class="tlaGNC">         205 :         delete entry;</span></span>
+<span id="L119"><span class="lineNum">     119</span>                 :<span class="tlaGNC">         205 :         arpCache.erase(i);</span></span>
+<span id="L120"><span class="lineNum">     120</span>                 :<span class="tlaGNC">         205 :     }</span></span>
+<span id="L121"><span class="lineNum">     121</span>                 :<span class="tlaGNC">         193 : }</span></span>
+<span id="L122"><span class="lineNum">     122</span>                 :             : </span>
+<span id="L123"><span class="lineNum">     123</span>                 :             : void Arp::initiateArpResolution(Ipv4Address nextHopAddr, ArpCacheEntry *entry)</span>
+<span id="L124"><span class="lineNum">     124</span>                 :<span class="tlaGNC">      104229 : {</span></span>
+<span id="L125"><span class="lineNum">     125</span>                 :<span class="tlaGNC">      104229 :     entry-&gt;pending = true;</span></span>
+<span id="L126"><span class="lineNum">     126</span>                 :<span class="tlaGNC">      104229 :     entry-&gt;numRetries = 0;</span></span>
+<span id="L127"><span class="lineNum">     127</span>                 :<span class="tlaGNC">      104229 :     entry-&gt;lastUpdate = SIMTIME_ZERO;</span></span>
+<span id="L128"><span class="lineNum">     128</span>                 :<span class="tlaGNC">      104229 :     entry-&gt;macAddress = MacAddress::UNSPECIFIED_ADDRESS;</span></span>
+<span id="L129"><span class="lineNum">     129</span>                 :<span class="tlaGNC">      104229 :     entry-&gt;ipv4Address = nextHopAddr;</span></span>
+<span id="L130"><span class="lineNum">     130</span>                 :<span class="tlaGNC">      104229 :     sendArpRequest(entry-&gt;ie, nextHopAddr);</span></span>
+<span id="L131"><span class="lineNum">     131</span>                 :             : </span>
+<span id="L132"><span class="lineNum">     132</span>                 :             :     // start timer</span>
+<span id="L133"><span class="lineNum">     133</span>                 :<span class="tlaGNC">      104229 :     ASSERT(entry-&gt;timer == nullptr);</span></span>
+<span id="L134"><span class="lineNum">     134</span>                 :<span class="tlaGNC">      104229 :     entry-&gt;timer = new cMessage(&quot;ARP timeout&quot;);</span></span>
+<span id="L135"><span class="lineNum">     135</span>                 :<span class="tlaGNC">      104229 :     entry-&gt;timer-&gt;setContextPointer(entry);</span></span>
+<span id="L136"><span class="lineNum">     136</span>                 :<span class="tlaGNC">      104229 :     scheduleAfter(retryTimeout, entry-&gt;timer);</span></span>
+<span id="L137"><span class="lineNum">     137</span>                 :             : </span>
+<span id="L138"><span class="lineNum">     138</span>                 :<span class="tlaGNC">      104229 :     numResolutions++;</span></span>
+<span id="L139"><span class="lineNum">     139</span>                 :<span class="tlaGNC">      104229 :     Notification signal(nextHopAddr, MacAddress::UNSPECIFIED_ADDRESS, entry-&gt;ie);</span></span>
+<span id="L140"><span class="lineNum">     140</span>                 :<span class="tlaGNC">      104229 :     emit(arpResolutionInitiatedSignal, &amp;signal);</span></span>
+<span id="L141"><span class="lineNum">     141</span>                 :<span class="tlaGNC">      104229 : }</span></span>
+<span id="L142"><span class="lineNum">     142</span>                 :             : </span>
+<span id="L143"><span class="lineNum">     143</span>                 :             : void Arp::sendArpRequest(const NetworkInterface *ie, Ipv4Address ipAddress)</span>
+<span id="L144"><span class="lineNum">     144</span>                 :<span class="tlaGNC">      113629 : {</span></span>
+<span id="L145"><span class="lineNum">     145</span>                 :             :     // find our own IPv4 address and MAC address on the given interface</span>
+<span id="L146"><span class="lineNum">     146</span>                 :<span class="tlaGNC">      113629 :     MacAddress myMACAddress = ie-&gt;getMacAddress();</span></span>
+<span id="L147"><span class="lineNum">     147</span>                 :<span class="tlaGNC">      113629 :     Ipv4Address myIPAddress = ie-&gt;getProtocolData&lt;Ipv4InterfaceData&gt;()-&gt;getIPAddress();</span></span>
+<span id="L148"><span class="lineNum">     148</span>                 :             : </span>
+<span id="L149"><span class="lineNum">     149</span>                 :             :     // both must be set</span>
+<span id="L150"><span class="lineNum">     150</span>                 :<span class="tlaGNC">      113629 :     ASSERT(!myMACAddress.isUnspecified());</span></span>
+<span id="L151"><span class="lineNum">     151</span>                 :<span class="tlaGNC">      113629 :     ASSERT(!myIPAddress.isUnspecified());</span></span>
+<span id="L152"><span class="lineNum">     152</span>                 :             : </span>
+<span id="L153"><span class="lineNum">     153</span>                 :             :     // fill out everything in ARP Request packet except dest MAC address</span>
+<span id="L154"><span class="lineNum">     154</span>                 :<span class="tlaGNC">      113629 :     Packet *packet = new Packet(&quot;arpREQ&quot;);</span></span>
+<span id="L155"><span class="lineNum">     155</span>                 :<span class="tlaGNC">      113629 :     const auto&amp; arp = makeShared&lt;ArpPacket&gt;();</span></span>
+<span id="L156"><span class="lineNum">     156</span>                 :<span class="tlaGNC">      113629 :     arp-&gt;setOpcode(ARP_REQUEST);</span></span>
+<span id="L157"><span class="lineNum">     157</span>                 :<span class="tlaGNC">      113629 :     arp-&gt;setSrcMacAddress(myMACAddress);</span></span>
+<span id="L158"><span class="lineNum">     158</span>                 :<span class="tlaGNC">      113629 :     arp-&gt;setSrcIpAddress(myIPAddress);</span></span>
+<span id="L159"><span class="lineNum">     159</span>                 :<span class="tlaGNC">      113629 :     arp-&gt;setDestIpAddress(ipAddress);</span></span>
+<span id="L160"><span class="lineNum">     160</span>                 :<span class="tlaGNC">      113629 :     packet-&gt;insertAtFront(arp);</span></span>
+<span id="L161"><span class="lineNum">     161</span>                 :             : </span>
+<span id="L162"><span class="lineNum">     162</span>                 :<span class="tlaGNC">      113629 :     auto macAddrReq = packet-&gt;addTag&lt;MacAddressReq&gt;();</span></span>
+<span id="L163"><span class="lineNum">     163</span>                 :<span class="tlaGNC">      113629 :     macAddrReq-&gt;setSrcAddress(myMACAddress);</span></span>
+<span id="L164"><span class="lineNum">     164</span>                 :<span class="tlaGNC">      113629 :     macAddrReq-&gt;setDestAddress(MacAddress::BROADCAST_ADDRESS);</span></span>
+<span id="L165"><span class="lineNum">     165</span>                 :<span class="tlaGNC">      113629 :     packet-&gt;addTag&lt;InterfaceReq&gt;()-&gt;setInterfaceId(ie-&gt;getInterfaceId());</span></span>
+<span id="L166"><span class="lineNum">     166</span>         [<span class="tlaGBC" title="Branch 0 was taken 108479 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5150 times"> + </span>]:<span class="tlaGNC">      113629 :     if (ie-&gt;getProtocol() != nullptr)</span></span>
+<span id="L167"><span class="lineNum">     167</span>                 :<span class="tlaGNC">      108479 :         packet-&gt;addTag&lt;DispatchProtocolReq&gt;()-&gt;setProtocol(ie-&gt;getProtocol());</span></span>
+<span id="L168"><span class="lineNum">     168</span>                 :<span class="tlaGNC">        5150 :     else</span></span>
+<span id="L169"><span class="lineNum">     169</span>                 :<span class="tlaGNC">        5150 :         packet-&gt;removeTagIfPresent&lt;DispatchProtocolReq&gt;();</span></span>
+<span id="L170"><span class="lineNum">     170</span>                 :<span class="tlaGNC">      113629 :     packet-&gt;addTag&lt;PacketProtocolTag&gt;()-&gt;setProtocol(&amp;Protocol::arp);</span></span>
+<span id="L171"><span class="lineNum">     171</span>                 :             : </span>
+<span id="L172"><span class="lineNum">     172</span>                 :             :     // send out</span>
+<span id="L173"><span class="lineNum">     173</span>                 :<span class="tlaGNC">      113629 :     EV_INFO &lt;&lt; &quot;Sending &quot; &lt;&lt; packet &lt;&lt; &quot; to network protocol.\n&quot;;</span></span>
+<span id="L174"><span class="lineNum">     174</span>                 :<span class="tlaGNC">      113629 :     emit(arpRequestSentSignal, packet);</span></span>
+<span id="L175"><span class="lineNum">     175</span>                 :<span class="tlaGNC">      113629 :     send(packet, &quot;ifOut&quot;);</span></span>
+<span id="L176"><span class="lineNum">     176</span>                 :<span class="tlaGNC">      113629 :     numRequestsSent++;</span></span>
+<span id="L177"><span class="lineNum">     177</span>                 :<span class="tlaGNC">      113629 : }</span></span>
+<span id="L178"><span class="lineNum">     178</span>                 :             : </span>
+<span id="L179"><span class="lineNum">     179</span>                 :             : void Arp::requestTimedOut(cMessage *selfmsg)</span>
+<span id="L180"><span class="lineNum">     180</span>                 :<span class="tlaGNC">       14365 : {</span></span>
+<span id="L181"><span class="lineNum">     181</span>                 :<span class="tlaGNC">       14365 :     ArpCacheEntry *entry = (ArpCacheEntry *)selfmsg-&gt;getContextPointer();</span></span>
+<span id="L182"><span class="lineNum">     182</span>                 :<span class="tlaGNC">       14365 :     entry-&gt;numRetries++;</span></span>
+<span id="L183"><span class="lineNum">     183</span>         [<span class="tlaGBC" title="Branch 0 was taken 9400 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4965 times"> + </span>]:<span class="tlaGNC">       14365 :     if (entry-&gt;numRetries &lt; retryCount) {</span></span>
+<span id="L184"><span class="lineNum">     184</span>                 :             :         // retry</span>
+<span id="L185"><span class="lineNum">     185</span>                 :<span class="tlaGNC">        9400 :         Ipv4Address nextHopAddr = entry-&gt;ipv4Address;</span></span>
+<span id="L186"><span class="lineNum">     186</span>                 :<span class="tlaGNC">        9400 :         EV_INFO &lt;&lt; &quot;ARP request for &quot; &lt;&lt; nextHopAddr &lt;&lt; &quot; timed out, resending\n&quot;;</span></span>
+<span id="L187"><span class="lineNum">     187</span>                 :<span class="tlaGNC">        9400 :         sendArpRequest(entry-&gt;ie, nextHopAddr);</span></span>
+<span id="L188"><span class="lineNum">     188</span>                 :<span class="tlaGNC">        9400 :         scheduleAfter(retryTimeout, selfmsg);</span></span>
+<span id="L189"><span class="lineNum">     189</span>                 :<span class="tlaGNC">        9400 :         return;</span></span>
+<span id="L190"><span class="lineNum">     190</span>                 :<span class="tlaGNC">        9400 :     }</span></span>
+<span id="L191"><span class="lineNum">     191</span>                 :             : </span>
+<span id="L192"><span class="lineNum">     192</span>                 :<span class="tlaGNC">        4965 :     delete selfmsg;</span></span>
+<span id="L193"><span class="lineNum">     193</span>                 :             : </span>
+<span id="L194"><span class="lineNum">     194</span>                 :             :     // max retry count reached: ARP failure.</span>
+<span id="L195"><span class="lineNum">     195</span>                 :             :     // throw out entry from cache</span>
+<span id="L196"><span class="lineNum">     196</span>                 :<span class="tlaGNC">        4965 :     EV &lt;&lt; &quot;ARP timeout, max retry count &quot; &lt;&lt; retryCount &lt;&lt; &quot; for &quot; &lt;&lt; entry-&gt;ipv4Address &lt;&lt; &quot; reached.\n&quot;;</span></span>
+<span id="L197"><span class="lineNum">     197</span>                 :<span class="tlaGNC">        4965 :     Notification signal(entry-&gt;ipv4Address, MacAddress::UNSPECIFIED_ADDRESS, entry-&gt;ie);</span></span>
+<span id="L198"><span class="lineNum">     198</span>                 :<span class="tlaGNC">        4965 :     emit(arpResolutionFailedSignal, &amp;signal);</span></span>
+<span id="L199"><span class="lineNum">     199</span>                 :<span class="tlaGNC">        4965 :     arpCache.erase(entry-&gt;ipv4Address);</span></span>
+<span id="L200"><span class="lineNum">     200</span>                 :<span class="tlaGNC">        4965 :     delete entry;</span></span>
+<span id="L201"><span class="lineNum">     201</span>                 :<span class="tlaGNC">        4965 :     numFailedResolutions++;</span></span>
+<span id="L202"><span class="lineNum">     202</span>                 :<span class="tlaGNC">        4965 : }</span></span>
+<span id="L203"><span class="lineNum">     203</span>                 :             : </span>
+<span id="L204"><span class="lineNum">     204</span>                 :             : bool Arp::addressRecognized(Ipv4Address destAddr, NetworkInterface *ie)</span>
+<span id="L205"><span class="lineNum">     205</span>                 :<span class="tlaGNC">      243067 : {</span></span>
+<span id="L206"><span class="lineNum">     206</span>         [<span class="tlaGBC" title="Branch 0 was taken 182349 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 60718 times"> + </span>]:<span class="tlaGNC">      243067 :     if (rt-&gt;isLocalAddress(destAddr))</span></span>
+<span id="L207"><span class="lineNum">     207</span>                 :<span class="tlaGNC">      182349 :         return true;</span></span>
+<span id="L208"><span class="lineNum">     208</span>                 :<span class="tlaGNC">       60718 :     else {</span></span>
+<span id="L209"><span class="lineNum">     209</span>                 :             :         // if proxy ARP is enables in interface ie</span>
+<span id="L210"><span class="lineNum">     210</span>         [<span class="tlaGBC" title="Branch 0 was taken 28933 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 31785 times"> + </span>]:<span class="tlaGNC">       60718 :         if (proxyArpInterfacesMatcher.matches(ie-&gt;getInterfaceName())) {</span></span>
+<span id="L211"><span class="lineNum">     211</span>                 :             :             // if we can route this packet, and the output port is</span>
+<span id="L212"><span class="lineNum">     212</span>                 :             :             // different from this one, then say yes</span>
+<span id="L213"><span class="lineNum">     213</span>                 :<span class="tlaGNC">       28933 :             NetworkInterface *rtie = rt-&gt;getInterfaceForDestAddr(destAddr);</span></span>
+<span id="L214"><span class="lineNum">     214</span> [<span class="tlaGBC" title="Branch 0 was taken 19586 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 9347 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 16643 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2943 times"> + </span>]:<span class="tlaGNC">       28933 :             return rtie != nullptr &amp;&amp; rtie != ie;</span></span>
+<span id="L215"><span class="lineNum">     215</span>                 :<span class="tlaGNC">       28933 :         }</span></span>
+<span id="L216"><span class="lineNum">     216</span>                 :<span class="tlaGNC">       31785 :         else</span></span>
+<span id="L217"><span class="lineNum">     217</span>                 :<span class="tlaGNC">       31785 :             return false;</span></span>
+<span id="L218"><span class="lineNum">     218</span>                 :<span class="tlaGNC">       60718 :     }</span></span>
+<span id="L219"><span class="lineNum">     219</span>                 :<span class="tlaGNC">      243067 : }</span></span>
+<span id="L220"><span class="lineNum">     220</span>                 :             : </span>
+<span id="L221"><span class="lineNum">     221</span>                 :             : void Arp::dumpArpPacket(const ArpPacket *arp)</span>
+<span id="L222"><span class="lineNum">     222</span>                 :<span class="tlaGNC">      243068 : {</span></span>
+<span id="L223"><span class="lineNum">     223</span> [<span class="tlaGBC" title="Branch 0 was taken 129 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 99 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 98 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:<span class="tlaGNC">      243068 :     EV_DETAIL &lt;&lt; (arp-&gt;getOpcode() == ARP_REQUEST ? &quot;ARP_REQ&quot; : arp-&gt;getOpcode() == ARP_REPLY ? &quot;ARP_REPLY&quot; : &quot;unknown type&quot;)</span></span>
+<span id="L224"><span class="lineNum">     224</span>                 :<span class="tlaGNC">         228 :               &lt;&lt; &quot;  src=&quot; &lt;&lt; arp-&gt;getSrcIpAddress() &lt;&lt; &quot; / &quot; &lt;&lt; arp-&gt;getSrcMacAddress()</span></span>
+<span id="L225"><span class="lineNum">     225</span>                 :<span class="tlaGNC">         228 :               &lt;&lt; &quot;  dest=&quot; &lt;&lt; arp-&gt;getDestIpAddress() &lt;&lt; &quot; / &quot; &lt;&lt; arp-&gt;getDestMacAddress() &lt;&lt; &quot;\n&quot;;</span></span>
+<span id="L226"><span class="lineNum">     226</span>                 :<span class="tlaGNC">      243068 : }</span></span>
+<span id="L227"><span class="lineNum">     227</span>                 :             : </span>
+<span id="L228"><span class="lineNum">     228</span>                 :             : void Arp::processArpPacket(Packet *packet)</span>
+<span id="L229"><span class="lineNum">     229</span>                 :<span class="tlaGNC">      243070 : {</span></span>
+<span id="L230"><span class="lineNum">     230</span>                 :<span class="tlaGNC">      243070 :     EV_INFO &lt;&lt; &quot;Received &quot; &lt;&lt; packet &lt;&lt; &quot; from network protocol.\n&quot;;</span></span>
+<span id="L231"><span class="lineNum">     231</span>                 :             :     // The serializer marks a packet incorrect when its hardware space is not Ethernet or</span>
+<span id="L232"><span class="lineNum">     232</span>                 :             :     // its protocol space is not IPv4, which are the first two questions the reception</span>
+<span id="L233"><span class="lineNum">     233</span>                 :             :     // algorithm of RFC 826 asks. Peeking with the default flags turned that mark into an</span>
+<span id="L234"><span class="lineNum">     234</span>                 :             :     // error and stopped the run, so nothing ever read it. Peek permissively and then do</span>
+<span id="L235"><span class="lineNum">     235</span>                 :             :     // what the algorithm says for either answer: end of processing.</span>
+<span id="L236"><span class="lineNum">     236</span>                 :<span class="tlaGNC">      243070 :     const auto&amp; arp = packet-&gt;peekAtFront&lt;ArpPacket&gt;(b(-1), Chunk::PF_ALLOW_INCORRECT);</span></span>
+<span id="L237"><span class="lineNum">     237</span>         [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 243068 times"> + </span>]:<span class="tlaGNC">      243070 :     if (!arp-&gt;isCorrect()) {</span></span>
+<span id="L238"><span class="lineNum">     238</span>                 :<span class="tlaGNC">           2 :         EV_WARN &lt;&lt; &quot;ARP packet with an unsupported hardware or protocol space, dropping\n&quot;;</span></span>
+<span id="L239"><span class="lineNum">     239</span>                 :<span class="tlaGNC">           2 :         PacketDropDetails details;</span></span>
+<span id="L240"><span class="lineNum">     240</span>                 :<span class="tlaGNC">           2 :         details.setReason(INCORRECTLY_RECEIVED);</span></span>
+<span id="L241"><span class="lineNum">     241</span>                 :<span class="tlaGNC">           2 :         emit(packetDroppedSignal, packet, &amp;details);</span></span>
+<span id="L242"><span class="lineNum">     242</span>                 :<span class="tlaGNC">           2 :         delete packet;</span></span>
+<span id="L243"><span class="lineNum">     243</span>                 :<span class="tlaGNC">           2 :         return;</span></span>
+<span id="L244"><span class="lineNum">     244</span>                 :<span class="tlaGNC">           2 :     }</span></span>
+<span id="L245"><span class="lineNum">     245</span>                 :<span class="tlaGNC">      243068 :     dumpArpPacket(arp.get());</span></span>
+<span id="L246"><span class="lineNum">     246</span>                 :             : </span>
+<span id="L247"><span class="lineNum">     247</span>                 :             :     // RFC 5227 section 2.1.1: &quot;if the host receives an ARP Reply where the 'sender IP</span>
+<span id="L248"><span class="lineNum">     248</span>                 :             :     // address' is the address being probed for, the host MUST treat this address as being in</span>
+<span id="L249"><span class="lineNum">     249</span>                 :             :     // use by some other host&quot;. The reply answers a probe whose sender protocol address was</span>
+<span id="L250"><span class="lineNum">     250</span>                 :             :     // all zero, so it is addressed to 0.0.0.0 and addressRecognized below cannot see it.</span>
+<span id="L251"><span class="lineNum">     251</span>         [<span class="tlaGBC" title="Branch 0 was taken 99470 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 143598 times"> + </span>]:<span class="tlaGNC">      243068 :     if (arp-&gt;getOpcode() == ARP_REPLY) {</span></span>
+<span id="L252"><span class="lineNum">     252</span>                 :<span class="tlaGNC">       99470 :         auto probed = probedAddresses.find(arp-&gt;getSrcIpAddress());</span></span>
+<span id="L253"><span class="lineNum">     253</span>         [<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaGBC" title="Branch 1 was taken 99469 times"> + </span>]:<span class="tlaGNC">       99470 :         if (probed != probedAddresses.end()) {</span></span>
+<span id="L254"><span class="lineNum">     254</span>                 :<span class="tlaGNC">           1 :             EV_INFO &lt;&lt; &quot;Address conflict: &quot; &lt;&lt; arp-&gt;getSrcIpAddress() &lt;&lt; &quot; is in use by &quot;</span></span>
+<span id="L255"><span class="lineNum">     255</span>                 :<span class="tlaGNC">           1 :                     &lt;&lt; arp-&gt;getSrcMacAddress() &lt;&lt; &quot;.&quot; &lt;&lt; endl;</span></span>
+<span id="L256"><span class="lineNum">     256</span>                 :<span class="tlaGNC">           1 :             Notification signal(arp-&gt;getSrcIpAddress(), arp-&gt;getSrcMacAddress(),</span></span>
+<span id="L257"><span class="lineNum">     257</span>                 :<span class="tlaGNC">           1 :                     ift-&gt;getInterfaceById(probed-&gt;second));</span></span>
+<span id="L258"><span class="lineNum">     258</span>                 :<span class="tlaGNC">           1 :             emit(arpAddressConflictDetectedSignal, &amp;signal);</span></span>
+<span id="L259"><span class="lineNum">     259</span>                 :<span class="tlaGNC">           1 :             probedAddresses.erase(probed);</span></span>
+<span id="L260"><span class="lineNum">     260</span>                 :<span class="tlaGNC">           1 :             delete packet;</span></span>
+<span id="L261"><span class="lineNum">     261</span>                 :<span class="tlaGNC">           1 :             return;</span></span>
+<span id="L262"><span class="lineNum">     262</span>                 :<span class="tlaGNC">           1 :         }</span></span>
+<span id="L263"><span class="lineNum">     263</span>                 :<span class="tlaGNC">       99470 :     }</span></span>
+<span id="L264"><span class="lineNum">     264</span>                 :             : </span>
+<span id="L265"><span class="lineNum">     265</span>                 :             :     // extract input port</span>
+<span id="L266"><span class="lineNum">     266</span>                 :<span class="tlaGNC">      243067 :     NetworkInterface *ie = ift-&gt;getInterfaceById(packet-&gt;getTag&lt;InterfaceInd&gt;()-&gt;getInterfaceId());</span></span>
+<span id="L267"><span class="lineNum">     267</span>                 :             : </span>
+<span id="L268"><span class="lineNum">     268</span>                 :             :     //</span>
+<span id="L269"><span class="lineNum">     269</span>                 :             :     // Recipe a'la RFC 826:</span>
+<span id="L270"><span class="lineNum">     270</span>                 :             :     //</span>
+<span id="L271"><span class="lineNum">     271</span>                 :             :     // ?Do I have the hardware type in ar$hrd?</span>
+<span id="L272"><span class="lineNum">     272</span>                 :             :     // Yes: (almost definitely)</span>
+<span id="L273"><span class="lineNum">     273</span>                 :             :     //   [optionally check the hardware length ar$hln]</span>
+<span id="L274"><span class="lineNum">     274</span>                 :             :     //   ?Do I speak the protocol in ar$pro?</span>
+<span id="L275"><span class="lineNum">     275</span>                 :             :     //   Yes:</span>
+<span id="L276"><span class="lineNum">     276</span>                 :             :     //     [optionally check the protocol length ar$pln]</span>
+<span id="L277"><span class="lineNum">     277</span>                 :             :     //     Merge_flag := false</span>
+<span id="L278"><span class="lineNum">     278</span>                 :             :     //     If the pair &lt;protocol type, sender protocol address&gt; is</span>
+<span id="L279"><span class="lineNum">     279</span>                 :             :     //         already in my translation table, update the sender</span>
+<span id="L280"><span class="lineNum">     280</span>                 :             :     //         hardware address field of the entry with the new</span>
+<span id="L281"><span class="lineNum">     281</span>                 :             :     //         information in the packet and set Merge_flag to true.</span>
+<span id="L282"><span class="lineNum">     282</span>                 :             :     //     ?Am I the target protocol address?</span>
+<span id="L283"><span class="lineNum">     283</span>                 :             :     //     Yes:</span>
+<span id="L284"><span class="lineNum">     284</span>                 :             :     //       If Merge_flag is false, add the triplet &lt;protocol type,</span>
+<span id="L285"><span class="lineNum">     285</span>                 :             :     //           sender protocol address, sender hardware address&gt; to</span>
+<span id="L286"><span class="lineNum">     286</span>                 :             :     //           the translation table.</span>
+<span id="L287"><span class="lineNum">     287</span>                 :             :     //       ?Is the opcode ares_op$REQUEST?  (NOW look at the opcode!!)</span>
+<span id="L288"><span class="lineNum">     288</span>                 :             :     //       Yes:</span>
+<span id="L289"><span class="lineNum">     289</span>                 :             :     //         Swap hardware and protocol fields, putting the local</span>
+<span id="L290"><span class="lineNum">     290</span>                 :             :     //             hardware and protocol addresses in the sender fields.</span>
+<span id="L291"><span class="lineNum">     291</span>                 :             :     //         Set the ar$op field to ares_op$REPLY</span>
+<span id="L292"><span class="lineNum">     292</span>                 :             :     //         Send the packet to the (new) target hardware address on</span>
+<span id="L293"><span class="lineNum">     293</span>                 :             :     //             the same hardware on which the request was received.</span>
+<span id="L294"><span class="lineNum">     294</span>                 :             :     //</span>
+<span id="L295"><span class="lineNum">     295</span>                 :             : </span>
+<span id="L296"><span class="lineNum">     296</span>                 :<span class="tlaGNC">      243067 :     MacAddress srcMacAddress = arp-&gt;getSrcMacAddress();</span></span>
+<span id="L297"><span class="lineNum">     297</span>                 :<span class="tlaGNC">      243067 :     Ipv4Address srcIpAddress = arp-&gt;getSrcIpAddress();</span></span>
+<span id="L298"><span class="lineNum">     298</span>                 :             : </span>
+<span id="L299"><span class="lineNum">     299</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 243067 times"> + </span>]:<span class="tlaGNC">      243067 :     if (srcMacAddress.isUnspecified())</span></span>
+<span id="L300"><span class="lineNum">     300</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         throw cRuntimeError(&quot;wrong ARP packet: source MAC address is empty&quot;);</span></span>
+<span id="L301"><span class="lineNum">     301</span>                 :             :     // RFC 5227 section 2.1.1 makes an all-zero sender protocol address lawful: the packet is</span>
+<span id="L302"><span class="lineNum">     302</span>                 :             :     // an ARP Probe, which asks whether anybody holds the target address and claims nothing</span>
+<span id="L303"><span class="lineNum">     303</span>                 :             :     // for itself. Throwing let any neighbour stop the run with one. A probe carries no</span>
+<span id="L304"><span class="lineNum">     304</span>                 :             :     // sender address to record, so the table steps below are skipped for it, and the target</span>
+<span id="L305"><span class="lineNum">     305</span>                 :             :     // question still gets its answer.</span>
+<span id="L306"><span class="lineNum">     306</span>                 :<span class="tlaGNC tlaBgGNC">      243067 :     bool isProbe = srcIpAddress.isUnspecified();</span></span>
+<span id="L307"><span class="lineNum">     307</span>                 :             : </span>
+<span id="L308"><span class="lineNum">     308</span>                 :<span class="tlaGNC">      243067 :     bool mergeFlag = false;</span></span>
+<span id="L309"><span class="lineNum">     309</span>                 :<span class="tlaGNC">      243067 :     auto it = arpCache.end();</span></span>
+<span id="L310"><span class="lineNum">     310</span>         [<span class="tlaGBC" title="Branch 0 was taken 242830 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 237 times"> + </span>]:<span class="tlaGNC">      243067 :     if (!isProbe) {</span></span>
+<span id="L311"><span class="lineNum">     311</span>                 :             :         // &quot;If ... sender protocol address is already in my translation table&quot;</span>
+<span id="L312"><span class="lineNum">     312</span>                 :<span class="tlaGNC">      242830 :         it = arpCache.find(srcIpAddress);</span></span>
+<span id="L313"><span class="lineNum">     313</span>         [<span class="tlaGBC" title="Branch 0 was taken 200588 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 42242 times"> + </span>]:<span class="tlaGNC">      242830 :         if (it != arpCache.end()) {</span></span>
+<span id="L314"><span class="lineNum">     314</span>                 :             :             // &quot;update the sender hardware address field&quot;</span>
+<span id="L315"><span class="lineNum">     315</span>                 :<span class="tlaGNC">      200588 :             ArpCacheEntry *entry = it-&gt;second;</span></span>
+<span id="L316"><span class="lineNum">     316</span>                 :<span class="tlaGNC">      200588 :             updateArpCache(entry, srcMacAddress);</span></span>
+<span id="L317"><span class="lineNum">     317</span>                 :<span class="tlaGNC">      200588 :             mergeFlag = true;</span></span>
+<span id="L318"><span class="lineNum">     318</span>                 :<span class="tlaGNC">      200588 :         }</span></span>
+<span id="L319"><span class="lineNum">     319</span>                 :<span class="tlaGNC">      242830 :     }</span></span>
+<span id="L320"><span class="lineNum">     320</span>                 :             : </span>
+<span id="L321"><span class="lineNum">     321</span>                 :             :     // &quot;?Am I the target protocol address?&quot;</span>
+<span id="L322"><span class="lineNum">     322</span>                 :             :     // if Proxy ARP is enabled, we also have to reply if we're a router to the dest IPv4 address</span>
+<span id="L323"><span class="lineNum">     323</span>         [<span class="tlaGBC" title="Branch 0 was taken 198992 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 44075 times"> + </span>]:<span class="tlaGNC">      243067 :     if (addressRecognized(arp-&gt;getDestIpAddress(), ie)) {</span></span>
+<span id="L324"><span class="lineNum">     324</span>                 :             :         // &quot;If Merge_flag is false, add the triplet protocol type, sender</span>
+<span id="L325"><span class="lineNum">     325</span>                 :             :         // protocol address, sender hardware address to the translation table&quot;</span>
+<span id="L326"><span class="lineNum">     326</span> [<span class="tlaGBC" title="Branch 0 was taken 5233 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 193759 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 5232 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:<span class="tlaGNC">      198992 :         if (!mergeFlag &amp;&amp; !isProbe) {</span></span>
+<span id="L327"><span class="lineNum">     327</span>                 :<span class="tlaGNC">        5232 :             ArpCacheEntry *entry;</span></span>
+<span id="L328"><span class="lineNum">     328</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 5232 times"> + </span>]:<span class="tlaGNC">        5232 :             if (it != arpCache.end()) {</span></span>
+<span id="L329"><span class="lineNum">     329</span>                 :<span class="tlaUNC tlaBgUNC">           0 :                 entry = it-&gt;second;</span></span>
+<span id="L330"><span class="lineNum">     330</span>                 :<span class="tlaUNC">           0 :             }</span></span>
+<span id="L331"><span class="lineNum">     331</span>                 :<span class="tlaGNC tlaBgGNC">        5232 :             else {</span></span>
+<span id="L332"><span class="lineNum">     332</span>                 :<span class="tlaGNC">        5232 :                 entry = new ArpCacheEntry();</span></span>
+<span id="L333"><span class="lineNum">     333</span>                 :<span class="tlaGNC">        5232 :                 arpCache.insert(arpCache.begin(), std::make_pair(srcIpAddress, entry));</span></span>
+<span id="L334"><span class="lineNum">     334</span>                 :<span class="tlaGNC">        5232 :                 entry-&gt;ipv4Address = srcIpAddress;</span></span>
+<span id="L335"><span class="lineNum">     335</span>                 :<span class="tlaGNC">        5232 :                 entry-&gt;ie = ie;</span></span>
+<span id="L336"><span class="lineNum">     336</span>                 :             : </span>
+<span id="L337"><span class="lineNum">     337</span>                 :<span class="tlaGNC">        5232 :                 entry-&gt;pending = false;</span></span>
+<span id="L338"><span class="lineNum">     338</span>                 :<span class="tlaGNC">        5232 :                 entry-&gt;timer = nullptr;</span></span>
+<span id="L339"><span class="lineNum">     339</span>                 :<span class="tlaGNC">        5232 :                 entry-&gt;numRetries = 0;</span></span>
+<span id="L340"><span class="lineNum">     340</span>                 :<span class="tlaGNC">        5232 :             }</span></span>
+<span id="L341"><span class="lineNum">     341</span>                 :<span class="tlaGNC">        5232 :             updateArpCache(entry, srcMacAddress);</span></span>
+<span id="L342"><span class="lineNum">     342</span>                 :<span class="tlaGNC">        5232 :         }</span></span>
+<span id="L343"><span class="lineNum">     343</span>                 :             : </span>
+<span id="L344"><span class="lineNum">     344</span>                 :             :         // &quot;?Is the opcode ares_op$REQUEST?  (NOW look at the opcode!!)&quot;</span>
+<span id="L345"><span class="lineNum">     345</span>                 :<span class="tlaGNC">      198992 :         switch (arp-&gt;getOpcode()) {</span></span>
+<span id="L346"><span class="lineNum">     346</span>         [<span class="tlaGBC" title="Branch 0 was taken 99522 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 99470 times"> + </span>]:<span class="tlaGNC">       99522 :             case ARP_REQUEST: {</span></span>
+<span id="L347"><span class="lineNum">     347</span>                 :<span class="tlaGNC">       99522 :                 EV_DETAIL &lt;&lt; &quot;Packet was ARP REQUEST, sending REPLY\n&quot;;</span></span>
+<span id="L348"><span class="lineNum">     348</span>                 :<span class="tlaGNC">       99522 :                 MacAddress myMACAddress = resolveMacAddressForArpReply(ie, arp.get());</span></span>
+<span id="L349"><span class="lineNum">     349</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 99522 times"> + </span>]:<span class="tlaGNC">       99522 :                 if (myMACAddress.isUnspecified()) {</span></span>
+<span id="L350"><span class="lineNum">     350</span>                 :<span class="tlaUNC tlaBgUNC">           0 :                     delete packet;</span></span>
+<span id="L351"><span class="lineNum">     351</span>                 :<span class="tlaUNC">           0 :                     return;</span></span>
+<span id="L352"><span class="lineNum">     352</span>                 :<span class="tlaUNC">           0 :                 }</span></span>
+<span id="L353"><span class="lineNum">     353</span>                 :             : </span>
+<span id="L354"><span class="lineNum">     354</span>                 :<span class="tlaGNC tlaBgGNC">       99522 :                 Ipv4Address myIPAddress = ie-&gt;getProtocolData&lt;Ipv4InterfaceData&gt;()-&gt;getIPAddress();</span></span>
+<span id="L355"><span class="lineNum">     355</span>                 :             : </span>
+<span id="L356"><span class="lineNum">     356</span>                 :             :                 // &quot;Swap hardware and protocol fields&quot;, etc.</span>
+<span id="L357"><span class="lineNum">     357</span>                 :<span class="tlaGNC">       99522 :                 const auto&amp; arpReply = makeShared&lt;ArpPacket&gt;();</span></span>
+<span id="L358"><span class="lineNum">     358</span>                 :<span class="tlaGNC">       99522 :                 Ipv4Address origDestAddress = arp-&gt;getDestIpAddress();</span></span>
+<span id="L359"><span class="lineNum">     359</span>                 :<span class="tlaGNC">       99522 :                 arpReply-&gt;setDestIpAddress(srcIpAddress);</span></span>
+<span id="L360"><span class="lineNum">     360</span>                 :<span class="tlaGNC">       99522 :                 arpReply-&gt;setDestMacAddress(srcMacAddress);</span></span>
+<span id="L361"><span class="lineNum">     361</span>                 :<span class="tlaGNC">       99522 :                 arpReply-&gt;setSrcIpAddress(origDestAddress);</span></span>
+<span id="L362"><span class="lineNum">     362</span>                 :<span class="tlaGNC">       99522 :                 arpReply-&gt;setSrcMacAddress(myMACAddress);</span></span>
+<span id="L363"><span class="lineNum">     363</span>                 :<span class="tlaGNC">       99522 :                 arpReply-&gt;setOpcode(ARP_REPLY);</span></span>
+<span id="L364"><span class="lineNum">     364</span>                 :<span class="tlaGNC">       99522 :                 Packet *outPk = new Packet(&quot;arpREPLY&quot;);</span></span>
+<span id="L365"><span class="lineNum">     365</span>                 :<span class="tlaGNC">       99522 :                 outPk-&gt;insertAtFront(arpReply);</span></span>
+<span id="L366"><span class="lineNum">     366</span>                 :<span class="tlaGNC">       99522 :                 auto macAddressReq = outPk-&gt;addTag&lt;MacAddressReq&gt;();</span></span>
+<span id="L367"><span class="lineNum">     367</span>                 :<span class="tlaGNC">       99522 :                 macAddressReq-&gt;setSrcAddress(myMACAddress);</span></span>
+<span id="L368"><span class="lineNum">     368</span>                 :<span class="tlaGNC">       99522 :                 macAddressReq-&gt;setDestAddress(srcMacAddress);</span></span>
+<span id="L369"><span class="lineNum">     369</span>                 :<span class="tlaGNC">       99522 :                 outPk-&gt;addTag&lt;InterfaceReq&gt;()-&gt;setInterfaceId(ie-&gt;getInterfaceId());</span></span>
+<span id="L370"><span class="lineNum">     370</span>         [<span class="tlaGBC" title="Branch 0 was taken 98360 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1162 times"> + </span>]:<span class="tlaGNC">       99522 :                 if (ie-&gt;getProtocol() != nullptr)</span></span>
+<span id="L371"><span class="lineNum">     371</span>                 :<span class="tlaGNC">       98360 :                     outPk-&gt;addTag&lt;DispatchProtocolReq&gt;()-&gt;setProtocol(ie-&gt;getProtocol());</span></span>
+<span id="L372"><span class="lineNum">     372</span>                 :<span class="tlaGNC">        1162 :                 else</span></span>
+<span id="L373"><span class="lineNum">     373</span>                 :<span class="tlaGNC">        1162 :                     outPk-&gt;removeTagIfPresent&lt;DispatchProtocolReq&gt;();</span></span>
+<span id="L374"><span class="lineNum">     374</span>                 :<span class="tlaGNC">       99522 :                 outPk-&gt;addTag&lt;PacketProtocolTag&gt;()-&gt;setProtocol(&amp;Protocol::arp);</span></span>
+<span id="L375"><span class="lineNum">     375</span>                 :             : </span>
+<span id="L376"><span class="lineNum">     376</span>                 :             :                 // send out</span>
+<span id="L377"><span class="lineNum">     377</span>                 :<span class="tlaGNC">       99522 :                 EV_INFO &lt;&lt; &quot;Sending &quot; &lt;&lt; outPk &lt;&lt; &quot; to network protocol.\n&quot;;</span></span>
+<span id="L378"><span class="lineNum">     378</span>                 :<span class="tlaGNC">       99522 :                 emit(arpReplySentSignal, outPk);</span></span>
+<span id="L379"><span class="lineNum">     379</span>                 :<span class="tlaGNC">       99522 :                 send(outPk, &quot;ifOut&quot;);</span></span>
+<span id="L380"><span class="lineNum">     380</span>                 :<span class="tlaGNC">       99522 :                 numRepliesSent++;</span></span>
+<span id="L381"><span class="lineNum">     381</span>                 :<span class="tlaGNC">       99522 :                 break;</span></span>
+<span id="L382"><span class="lineNum">     382</span>                 :<span class="tlaGNC">       99522 :             }</span></span>
+<span id="L383"><span class="lineNum">     383</span>                 :             : </span>
+<span id="L384"><span class="lineNum">     384</span>         [<span class="tlaGBC" title="Branch 0 was taken 99469 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 99523 times"> + </span>]:<span class="tlaGNC">       99469 :             case ARP_REPLY: {</span></span>
+<span id="L385"><span class="lineNum">     385</span>                 :<span class="tlaGNC">       99469 :                 EV_DETAIL &lt;&lt; &quot;Discarding packet\n&quot;;</span></span>
+<span id="L386"><span class="lineNum">     386</span>                 :<span class="tlaGNC">       99469 :                 break;</span></span>
+<span id="L387"><span class="lineNum">     387</span>                 :<span class="tlaGNC">       99522 :             }</span></span>
+<span id="L388"><span class="lineNum">     388</span>                 :             : </span>
+<span id="L389"><span class="lineNum">     389</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 198992 times"> + </span>]:<span class="tlaUNC tlaBgUNC">           0 :             case ARP_RARP_REQUEST:</span></span>
+<span id="L390"><span class="lineNum">     390</span>                 :<span class="tlaUNC">           0 :                 throw cRuntimeError(&quot;RARP request received: RARP is not supported&quot;);</span></span>
+<span id="L391"><span class="lineNum">     391</span>                 :             : </span>
+<span id="L392"><span class="lineNum">     392</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 198992 times"> + </span>]:<span class="tlaUNC">           0 :             case ARP_RARP_REPLY:</span></span>
+<span id="L393"><span class="lineNum">     393</span>                 :<span class="tlaUNC">           0 :                 throw cRuntimeError(&quot;RARP reply received: RARP is not supported&quot;);</span></span>
+<span id="L394"><span class="lineNum">     394</span>                 :             : </span>
+<span id="L395"><span class="lineNum">     395</span>         [<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaGBC" title="Branch 1 was taken 198991 times"> + </span>]:<span class="tlaGNC tlaBgGNC">           1 :             default:</span></span>
+<span id="L396"><span class="lineNum">     396</span>                 :             :                 // RFC 5494 section 3 makes 24 and 25 legal values a neighbour may put on a</span>
+<span id="L397"><span class="lineNum">     397</span>                 :             :                 // link, and RFC 826 ends processing for an operation the host does not</span>
+<span id="L398"><span class="lineNum">     398</span>                 :             :                 // implement. Throwing let any neighbour stop the run. The table step above</span>
+<span id="L399"><span class="lineNum">     399</span>                 :             :                 // has already run, which is what RFC 826 asks for.</span>
+<span id="L400"><span class="lineNum">     400</span>                 :<span class="tlaGNC">           1 :                 EV_WARN &lt;&lt; &quot;Unsupported opcode &quot; &lt;&lt; arp-&gt;getOpcode() &lt;&lt; &quot; in received ARP packet, dropping\n&quot;;</span></span>
+<span id="L401"><span class="lineNum">     401</span>                 :<span class="tlaGNC">           1 :                 break;</span></span>
+<span id="L402"><span class="lineNum">     402</span>                 :<span class="tlaGNC">      198992 :         }</span></span>
+<span id="L403"><span class="lineNum">     403</span>                 :<span class="tlaGNC">      198992 :     }</span></span>
+<span id="L404"><span class="lineNum">     404</span>                 :<span class="tlaGNC">       44075 :     else {</span></span>
+<span id="L405"><span class="lineNum">     405</span>                 :             :         // address not recognized</span>
+<span id="L406"><span class="lineNum">     406</span>                 :<span class="tlaGNC">       44075 :         EV_INFO &lt;&lt; &quot;IPv4 address &quot; &lt;&lt; arp-&gt;getDestIpAddress() &lt;&lt; &quot; not recognized, dropping ARP packet\n&quot;;</span></span>
+<span id="L407"><span class="lineNum">     407</span>                 :<span class="tlaGNC">       44075 :     }</span></span>
+<span id="L408"><span class="lineNum">     408</span>                 :<span class="tlaGNC">      243067 :     delete packet;</span></span>
+<span id="L409"><span class="lineNum">     409</span>                 :<span class="tlaGNC">      243067 : }</span></span>
+<span id="L410"><span class="lineNum">     410</span>                 :             : </span>
+<span id="L411"><span class="lineNum">     411</span>                 :             : MacAddress Arp::resolveMacAddressForArpReply(const NetworkInterface *ie, const ArpPacket *arp)</span>
+<span id="L412"><span class="lineNum">     412</span>                 :<span class="tlaGNC">       99522 : {</span></span>
+<span id="L413"><span class="lineNum">     413</span>                 :<span class="tlaGNC">       99522 :     return ie-&gt;getMacAddress();</span></span>
+<span id="L414"><span class="lineNum">     414</span>                 :<span class="tlaGNC">       99522 : }</span></span>
+<span id="L415"><span class="lineNum">     415</span>                 :             : </span>
+<span id="L416"><span class="lineNum">     416</span>                 :             : void Arp::updateArpCache(ArpCacheEntry *entry, const MacAddress&amp; macAddress)</span>
+<span id="L417"><span class="lineNum">     417</span>                 :<span class="tlaGNC">      205820 : {</span></span>
+<span id="L418"><span class="lineNum">     418</span>                 :<span class="tlaGNC">      205820 :     EV_DETAIL &lt;&lt; &quot;Updating ARP cache entry: &quot; &lt;&lt; entry-&gt;ipv4Address &lt;&lt; &quot; &lt;--&gt; &quot; &lt;&lt; macAddress &lt;&lt; &quot;\n&quot;;</span></span>
+<span id="L419"><span class="lineNum">     419</span>                 :             : </span>
+<span id="L420"><span class="lineNum">     420</span>                 :             :     // update entry</span>
+<span id="L421"><span class="lineNum">     421</span>         [<span class="tlaGBC" title="Branch 0 was taken 99125 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 106695 times"> + </span>]:<span class="tlaGNC">      205820 :     if (entry-&gt;pending) {</span></span>
+<span id="L422"><span class="lineNum">     422</span>                 :<span class="tlaGNC">       99125 :         entry-&gt;pending = false;</span></span>
+<span id="L423"><span class="lineNum">     423</span>                 :<span class="tlaGNC">       99125 :         cancelAndDelete(entry-&gt;timer);</span></span>
+<span id="L424"><span class="lineNum">     424</span>                 :<span class="tlaGNC">       99125 :         entry-&gt;timer = nullptr;</span></span>
+<span id="L425"><span class="lineNum">     425</span>                 :<span class="tlaGNC">       99125 :         entry-&gt;numRetries = 0;</span></span>
+<span id="L426"><span class="lineNum">     426</span>                 :<span class="tlaGNC">       99125 :     }</span></span>
+<span id="L427"><span class="lineNum">     427</span>                 :<span class="tlaGNC">      205820 :     entry-&gt;macAddress = macAddress;</span></span>
+<span id="L428"><span class="lineNum">     428</span>                 :<span class="tlaGNC">      205820 :     entry-&gt;lastUpdate = simTime();</span></span>
+<span id="L429"><span class="lineNum">     429</span>                 :<span class="tlaGNC">      205820 :     Notification signal(entry-&gt;ipv4Address, macAddress, entry-&gt;ie);</span></span>
+<span id="L430"><span class="lineNum">     430</span>                 :<span class="tlaGNC">      205820 :     emit(arpResolutionCompletedSignal, &amp;signal);</span></span>
+<span id="L431"><span class="lineNum">     431</span>                 :<span class="tlaGNC">      205820 : }</span></span>
+<span id="L432"><span class="lineNum">     432</span>                 :             : </span>
+<span id="L433"><span class="lineNum">     433</span>                 :             : MacAddress Arp::resolveL3Address(const L3Address&amp; address, const NetworkInterface *ie)</span>
+<span id="L434"><span class="lineNum">     434</span>                 :<span class="tlaGNC">     2646389 : {</span></span>
+<span id="L435"><span class="lineNum">     435</span>                 :<span class="tlaGNC">     2646389 :     Enter_Method(&quot;resolveMACAddress(%s,%s)&quot;, address.str().c_str(), ie-&gt;getInterfaceName());</span></span>
+<span id="L436"><span class="lineNum">     436</span>                 :             : </span>
+<span id="L437"><span class="lineNum">     437</span>                 :<span class="tlaGNC">     2646389 :     Ipv4Address addr = address.toIpv4();</span></span>
+<span id="L438"><span class="lineNum">     438</span>                 :<span class="tlaGNC">     2646389 :     auto it = arpCache.find(addr);</span></span>
+<span id="L439"><span class="lineNum">     439</span>         [<span class="tlaGBC" title="Branch 0 was taken 10634 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2635755 times"> + </span>]:<span class="tlaGNC">     2646389 :     if (it == arpCache.end()) {</span></span>
+<span id="L440"><span class="lineNum">     440</span>                 :             :         // no cache entry: launch ARP request</span>
+<span id="L441"><span class="lineNum">     441</span>                 :<span class="tlaGNC">       10634 :         ArpCacheEntry *entry = new ArpCacheEntry();</span></span>
+<span id="L442"><span class="lineNum">     442</span>                 :<span class="tlaGNC">       10634 :         entry-&gt;owner = this;</span></span>
+<span id="L443"><span class="lineNum">     443</span>                 :<span class="tlaGNC">       10634 :         arpCache.insert(arpCache.begin(), std::make_pair(addr, entry));</span></span>
+<span id="L444"><span class="lineNum">     444</span>                 :<span class="tlaGNC">       10634 :         entry-&gt;ipv4Address = addr;</span></span>
+<span id="L445"><span class="lineNum">     445</span>                 :<span class="tlaGNC">       10634 :         entry-&gt;ie = ie;</span></span>
+<span id="L446"><span class="lineNum">     446</span>                 :             : </span>
+<span id="L447"><span class="lineNum">     447</span>                 :<span class="tlaGNC">       10634 :         EV &lt;&lt; &quot;Starting ARP resolution for &quot; &lt;&lt; addr &lt;&lt; &quot;\n&quot;;</span></span>
+<span id="L448"><span class="lineNum">     448</span>                 :<span class="tlaGNC">       10634 :         initiateArpResolution(addr, entry);</span></span>
+<span id="L449"><span class="lineNum">     449</span>                 :<span class="tlaGNC">       10634 :         return MacAddress::UNSPECIFIED_ADDRESS;</span></span>
+<span id="L450"><span class="lineNum">     450</span>                 :<span class="tlaGNC">       10634 :     }</span></span>
+<span id="L451"><span class="lineNum">     451</span>         [<span class="tlaGBC" title="Branch 0 was taken 25902 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2609853 times"> + </span>]:<span class="tlaGNC">     2635755 :     else if (it-&gt;second-&gt;pending) {</span></span>
+<span id="L452"><span class="lineNum">     452</span>                 :             :         // an ARP request is already pending for this address</span>
+<span id="L453"><span class="lineNum">     453</span>                 :<span class="tlaGNC">       25902 :         EV &lt;&lt; &quot;ARP resolution for &quot; &lt;&lt; addr &lt;&lt; &quot; is already pending\n&quot;;</span></span>
+<span id="L454"><span class="lineNum">     454</span>                 :<span class="tlaGNC">       25902 :         return MacAddress::UNSPECIFIED_ADDRESS;</span></span>
+<span id="L455"><span class="lineNum">     455</span>                 :<span class="tlaGNC">       25902 :     }</span></span>
+<span id="L456"><span class="lineNum">     456</span>         [<span class="tlaGBC" title="Branch 0 was taken 2516258 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 93595 times"> + </span>]:<span class="tlaGNC">     2609853 :     else if (it-&gt;second-&gt;lastUpdate + cacheTimeout &gt;= simTime()) {</span></span>
+<span id="L457"><span class="lineNum">     457</span>                 :<span class="tlaGNC">     2516258 :         return it-&gt;second-&gt;macAddress;</span></span>
+<span id="L458"><span class="lineNum">     458</span>                 :<span class="tlaGNC">     2516258 :     }</span></span>
+<span id="L459"><span class="lineNum">     459</span>                 :<span class="tlaGNC">       93595 :     else {</span></span>
+<span id="L460"><span class="lineNum">     460</span>                 :<span class="tlaGNC">       93595 :         EV &lt;&lt; &quot;ARP cache entry for &quot; &lt;&lt; addr &lt;&lt; &quot; expired, starting new ARP resolution\n&quot;;</span></span>
+<span id="L461"><span class="lineNum">     461</span>                 :<span class="tlaGNC">       93595 :         ArpCacheEntry *entry = it-&gt;second;</span></span>
+<span id="L462"><span class="lineNum">     462</span>                 :<span class="tlaGNC">       93595 :         entry-&gt;ie = ie; // routing table may have changed</span></span>
+<span id="L463"><span class="lineNum">     463</span>                 :<span class="tlaGNC">       93595 :         initiateArpResolution(addr, entry);</span></span>
+<span id="L464"><span class="lineNum">     464</span>                 :<span class="tlaGNC">       93595 :     }</span></span>
+<span id="L465"><span class="lineNum">     465</span>                 :<span class="tlaGNC">       93595 :     return MacAddress::UNSPECIFIED_ADDRESS;</span></span>
+<span id="L466"><span class="lineNum">     466</span>                 :<span class="tlaGNC">     2646389 : }</span></span>
+<span id="L467"><span class="lineNum">     467</span>                 :             : </span>
+<span id="L468"><span class="lineNum">     468</span>                 :             : L3Address Arp::getL3AddressFor(const MacAddress&amp; macAddr) const</span>
+<span id="L469"><span class="lineNum">     469</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L470"><span class="lineNum">     470</span>                 :<span class="tlaUNC">           0 :     Enter_Method(&quot;getL3AddressFor&quot;);</span></span>
+<span id="L471"><span class="lineNum">     471</span>                 :             : </span>
+<span id="L472"><span class="lineNum">     472</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (macAddr.isUnspecified())</span></span>
+<span id="L473"><span class="lineNum">     473</span>                 :<span class="tlaUNC">           0 :         return Ipv4Address::UNSPECIFIED_ADDRESS;</span></span>
+<span id="L474"><span class="lineNum">     474</span>                 :             : </span>
+<span id="L475"><span class="lineNum">     475</span>                 :<span class="tlaUNC">           0 :     simtime_t now = simTime();</span></span>
+<span id="L476"><span class="lineNum">     476</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     for (const auto&amp; elem : arpCache)</span></span>
+<span id="L477"><span class="lineNum">     477</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         if (elem.second-&gt;macAddress == macAddr &amp;&amp; elem.second-&gt;lastUpdate + cacheTimeout &gt;= now)</span></span>
+<span class="lineNum">        </span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L478"><span class="lineNum">     478</span>                 :<span class="tlaUNC">           0 :             return elem.first;</span></span>
+<span id="L479"><span class="lineNum">     479</span>                 :             : </span>
+<span id="L480"><span class="lineNum">     480</span>                 :<span class="tlaUNC">           0 :     return Ipv4Address::UNSPECIFIED_ADDRESS;</span></span>
+<span id="L481"><span class="lineNum">     481</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L482"><span class="lineNum">     482</span>                 :             : </span>
+<span id="L483"><span class="lineNum">     483</span>                 :             : // Also known as ARP Announcement</span>
+<span id="L484"><span class="lineNum">     484</span>                 :             : void Arp::sendArpGratuitous(const NetworkInterface *ie, MacAddress srcAddr, Ipv4Address ipAddr, ArpOpcode opCode)</span>
+<span id="L485"><span class="lineNum">     485</span>                 :<span class="tlaUNC">           0 : {</span></span>
+<span id="L486"><span class="lineNum">     486</span>                 :<span class="tlaUNC">           0 :     Enter_Method(&quot;sendArpGratuitous&quot;);</span></span>
+<span id="L487"><span class="lineNum">     487</span>                 :             : </span>
+<span id="L488"><span class="lineNum">     488</span>                 :             :     // both must be set</span>
+<span id="L489"><span class="lineNum">     489</span>                 :<span class="tlaUNC">           0 :     ASSERT(!srcAddr.isUnspecified());</span></span>
+<span id="L490"><span class="lineNum">     490</span>                 :<span class="tlaUNC">           0 :     ASSERT(!ipAddr.isUnspecified());</span></span>
+<span id="L491"><span class="lineNum">     491</span>                 :             : </span>
+<span id="L492"><span class="lineNum">     492</span>                 :             :     // fill out everything in ARP Request packet except dest MAC address</span>
+<span id="L493"><span class="lineNum">     493</span>                 :<span class="tlaUNC">           0 :     Packet *packet = new Packet(&quot;arpGrt&quot;);</span></span>
+<span id="L494"><span class="lineNum">     494</span>                 :<span class="tlaUNC">           0 :     const auto&amp; arp = makeShared&lt;ArpPacket&gt;();</span></span>
+<span id="L495"><span class="lineNum">     495</span>                 :<span class="tlaUNC">           0 :     arp-&gt;setOpcode(opCode);</span></span>
+<span id="L496"><span class="lineNum">     496</span>                 :<span class="tlaUNC">           0 :     arp-&gt;setSrcMacAddress(srcAddr);</span></span>
+<span id="L497"><span class="lineNum">     497</span>                 :<span class="tlaUNC">           0 :     arp-&gt;setSrcIpAddress(ipAddr);</span></span>
+<span id="L498"><span class="lineNum">     498</span>                 :<span class="tlaUNC">           0 :     arp-&gt;setDestIpAddress(ipAddr);</span></span>
+<span id="L499"><span class="lineNum">     499</span>                 :<span class="tlaUNC">           0 :     arp-&gt;setDestMacAddress(MacAddress::BROADCAST_ADDRESS);</span></span>
+<span id="L500"><span class="lineNum">     500</span>                 :<span class="tlaUNC">           0 :     packet-&gt;insertAtFront(arp);</span></span>
+<span id="L501"><span class="lineNum">     501</span>                 :             : </span>
+<span id="L502"><span class="lineNum">     502</span>                 :<span class="tlaUNC">           0 :     auto macAddressReq = packet-&gt;addTag&lt;MacAddressReq&gt;();</span></span>
+<span id="L503"><span class="lineNum">     503</span>                 :<span class="tlaUNC">           0 :     macAddressReq-&gt;setSrcAddress(srcAddr);</span></span>
+<span id="L504"><span class="lineNum">     504</span>                 :<span class="tlaUNC">           0 :     macAddressReq-&gt;setDestAddress(MacAddress::BROADCAST_ADDRESS);</span></span>
+<span id="L505"><span class="lineNum">     505</span>                 :<span class="tlaUNC">           0 :     packet-&gt;addTag&lt;InterfaceReq&gt;()-&gt;setInterfaceId(ie-&gt;getInterfaceId());</span></span>
+<span id="L506"><span class="lineNum">     506</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (ie-&gt;getProtocol() != nullptr)</span></span>
+<span id="L507"><span class="lineNum">     507</span>                 :<span class="tlaUNC">           0 :         packet-&gt;addTag&lt;DispatchProtocolReq&gt;()-&gt;setProtocol(ie-&gt;getProtocol());</span></span>
+<span id="L508"><span class="lineNum">     508</span>                 :<span class="tlaUNC">           0 :     else</span></span>
+<span id="L509"><span class="lineNum">     509</span>                 :<span class="tlaUNC">           0 :         packet-&gt;removeTagIfPresent&lt;DispatchProtocolReq&gt;();</span></span>
+<span id="L510"><span class="lineNum">     510</span>                 :<span class="tlaUNC">           0 :     packet-&gt;addTag&lt;PacketProtocolTag&gt;()-&gt;setProtocol(&amp;Protocol::arp);</span></span>
+<span id="L511"><span class="lineNum">     511</span>                 :             : </span>
+<span id="L512"><span class="lineNum">     512</span>                 :<span class="tlaUNC">           0 :     ArpCacheEntry *entry = new ArpCacheEntry();</span></span>
+<span id="L513"><span class="lineNum">     513</span>                 :<span class="tlaUNC">           0 :     arpCache.insert(arpCache.begin(), std::make_pair(ipAddr, entry));</span></span>
+<span id="L514"><span class="lineNum">     514</span>                 :<span class="tlaUNC">           0 :     entry-&gt;ipv4Address = ipAddr;</span></span>
+<span id="L515"><span class="lineNum">     515</span>                 :<span class="tlaUNC">           0 :     entry-&gt;ie = ie;</span></span>
+<span id="L516"><span class="lineNum">     516</span>                 :             : </span>
+<span id="L517"><span class="lineNum">     517</span>                 :<span class="tlaUNC">           0 :     entry-&gt;pending = false;</span></span>
+<span id="L518"><span class="lineNum">     518</span>                 :<span class="tlaUNC">           0 :     entry-&gt;timer = nullptr;</span></span>
+<span id="L519"><span class="lineNum">     519</span>                 :<span class="tlaUNC">           0 :     entry-&gt;numRetries = 0;</span></span>
+<span id="L520"><span class="lineNum">     520</span>                 :             : </span>
+<span id="L521"><span class="lineNum">     521</span>                 :<span class="tlaUNC">           0 :     entry-&gt;lastUpdate = simTime();</span></span>
+<span id="L522"><span class="lineNum">     522</span>                 :             :     // updateARPCache(entry, srcAddr); //FIXME</span>
+<span id="L523"><span class="lineNum">     523</span>                 :             : </span>
+<span id="L524"><span class="lineNum">     524</span>                 :             :     // send out</span>
+<span id="L525"><span class="lineNum">     525</span>                 :<span class="tlaUNC">           0 :     send(packet, &quot;ifOut&quot;);</span></span>
+<span id="L526"><span class="lineNum">     526</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L527"><span class="lineNum">     527</span>                 :             : </span>
+<span id="L528"><span class="lineNum">     528</span>                 :             : // A client should send out 'ARP Probe' to probe the newly received IPv4 address.</span>
+<span id="L529"><span class="lineNum">     529</span>                 :             : // Refer to RFC 5227, IPv4 Address Conflict Detection</span>
+<span id="L530"><span class="lineNum">     530</span>                 :             : void Arp::sendArpProbe(const NetworkInterface *ie, MacAddress srcAddr, Ipv4Address probedAddr)</span>
+<span id="L531"><span class="lineNum">     531</span>                 :<span class="tlaGNC tlaBgGNC">          53 : {</span></span>
+<span id="L532"><span class="lineNum">     532</span>                 :<span class="tlaGNC">          53 :     Enter_Method(&quot;sendArpProbe&quot;);</span></span>
+<span id="L533"><span class="lineNum">     533</span>                 :             : </span>
+<span id="L534"><span class="lineNum">     534</span>                 :             :     // both must be set</span>
+<span id="L535"><span class="lineNum">     535</span>                 :<span class="tlaGNC">          53 :     ASSERT(!srcAddr.isUnspecified());</span></span>
+<span id="L536"><span class="lineNum">     536</span>                 :<span class="tlaGNC">          53 :     ASSERT(!probedAddr.isUnspecified());</span></span>
+<span id="L537"><span class="lineNum">     537</span>                 :             : </span>
+<span id="L538"><span class="lineNum">     538</span>                 :<span class="tlaGNC">          53 :     probedAddresses[probedAddr] = ie-&gt;getInterfaceId();</span></span>
+<span id="L539"><span class="lineNum">     539</span>                 :             : </span>
+<span id="L540"><span class="lineNum">     540</span>                 :<span class="tlaGNC">          53 :     Packet *packet = new Packet(&quot;arpProbe&quot;);</span></span>
+<span id="L541"><span class="lineNum">     541</span>                 :<span class="tlaGNC">          53 :     const auto&amp; arp = makeShared&lt;ArpPacket&gt;();</span></span>
+<span id="L542"><span class="lineNum">     542</span>                 :<span class="tlaGNC">          53 :     arp-&gt;setOpcode(ARP_REQUEST);</span></span>
+<span id="L543"><span class="lineNum">     543</span>                 :<span class="tlaGNC">          53 :     arp-&gt;setSrcMacAddress(srcAddr);</span></span>
+<span id="L544"><span class="lineNum">     544</span>                 :<span class="tlaGNC">          53 :     arp-&gt;setSrcIpAddress(Ipv4Address::UNSPECIFIED_ADDRESS);</span></span>
+<span id="L545"><span class="lineNum">     545</span>                 :<span class="tlaGNC">          53 :     arp-&gt;setDestIpAddress(probedAddr);</span></span>
+<span id="L546"><span class="lineNum">     546</span>                 :<span class="tlaGNC">          53 :     arp-&gt;setDestMacAddress(MacAddress::UNSPECIFIED_ADDRESS);</span></span>
+<span id="L547"><span class="lineNum">     547</span>                 :<span class="tlaGNC">          53 :     packet-&gt;insertAtFront(arp);</span></span>
+<span id="L548"><span class="lineNum">     548</span>                 :             : </span>
+<span id="L549"><span class="lineNum">     549</span>                 :<span class="tlaGNC">          53 :     auto macAddressReq = packet-&gt;addTag&lt;MacAddressReq&gt;();</span></span>
+<span id="L550"><span class="lineNum">     550</span>                 :<span class="tlaGNC">          53 :     macAddressReq-&gt;setSrcAddress(srcAddr);</span></span>
+<span id="L551"><span class="lineNum">     551</span>                 :<span class="tlaGNC">          53 :     macAddressReq-&gt;setDestAddress(MacAddress::BROADCAST_ADDRESS);</span></span>
+<span id="L552"><span class="lineNum">     552</span>                 :<span class="tlaGNC">          53 :     packet-&gt;addTag&lt;InterfaceReq&gt;()-&gt;setInterfaceId(ie-&gt;getInterfaceId());</span></span>
+<span id="L553"><span class="lineNum">     553</span>         [<span class="tlaGBC" title="Branch 0 was taken 30 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 23 times"> + </span>]:<span class="tlaGNC">          53 :     if (ie-&gt;getProtocol() != nullptr)</span></span>
+<span id="L554"><span class="lineNum">     554</span>                 :<span class="tlaGNC">          30 :         packet-&gt;addTag&lt;DispatchProtocolReq&gt;()-&gt;setProtocol(ie-&gt;getProtocol());</span></span>
+<span id="L555"><span class="lineNum">     555</span>                 :<span class="tlaGNC">          23 :     else</span></span>
+<span id="L556"><span class="lineNum">     556</span>                 :<span class="tlaGNC">          23 :         packet-&gt;removeTagIfPresent&lt;DispatchProtocolReq&gt;();</span></span>
+<span id="L557"><span class="lineNum">     557</span>                 :<span class="tlaGNC">          53 :     packet-&gt;addTag&lt;PacketProtocolTag&gt;()-&gt;setProtocol(&amp;Protocol::arp);</span></span>
+<span id="L558"><span class="lineNum">     558</span>                 :             : </span>
+<span id="L559"><span class="lineNum">     559</span>                 :             :     // send out</span>
+<span id="L560"><span class="lineNum">     560</span>                 :<span class="tlaGNC">          53 :     send(packet, &quot;ifOut&quot;);</span></span>
+<span id="L561"><span class="lineNum">     561</span>                 :<span class="tlaGNC">          53 : }</span></span>
+<span id="L562"><span class="lineNum">     562</span>                 :             : </span>
+<span id="L563"><span class="lineNum">     563</span>                 :             : } // namespace inet</span>
+<span id="L564"><span class="lineNum">     564</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

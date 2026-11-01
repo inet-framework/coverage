@@ -1,0 +1,556 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - visualizer/canvas/scene/src/inet/visualizer/canvas/scene/GeoSkyViewCanvasVisualizer.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../index.html">top level</a> - <a href="index.html">visualizer/canvas/scene/src/inet/visualizer/canvas/scene</a> - GeoSkyViewCanvasVisualizer.cc<span style="font-size: 80%;"> (source / <a href="GeoSkyViewCanvasVisualizer.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">1.6&nbsp;%</td>
+            <td class="headerCovTableEntry">371</td>
+            <td class="headerCovTableEntry">6</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryLo">10.5&nbsp;%</td>
+            <td class="headerCovTableEntry">19</td>
+            <td class="headerCovTableEntry">2</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryLo">1.4&nbsp;%</td>
+            <td class="headerCovTableEntry">144</td>
+            <td class="headerCovTableEntry">2</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2026 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #include &quot;inet/visualizer/canvas/scene/GeoSkyViewCanvasVisualizer.h&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : </span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &lt;algorithm&gt;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &lt;cmath&gt;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &lt;cstdio&gt;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : #include &lt;cstdlib&gt;</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : #include &lt;vector&gt;</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : </span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : #include &quot;inet/common/ModuleAccess.h&quot;</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : #include &quot;inet/common/geometry/common/Wgs84.h&quot;</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : </span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : namespace inet {</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : </span>
+<span id="L21"><span class="lineNum">      21</span>                 :             : namespace visualizer {</span>
+<span id="L22"><span class="lineNum">      22</span>                 :             : </span>
+<span id="L23"><span class="lineNum">      23</span>                 :             : Define_Module(GeoSkyViewCanvasVisualizer);</span>
+<span id="L24"><span class="lineNum">      24</span>                 :             : </span>
+<span id="L25"><span class="lineNum">      25</span>                 :             : GeoSkyViewCanvasVisualizer::ObserverPlot::~ObserverPlot()</span>
+<span id="L26"><span class="lineNum">      26</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L27"><span class="lineNum">      27</span>                 :<span class="tlaUNC">           0 :     delete groupFigure; // deletes all child figures (plot decorations and target dots/labels/trails)</span></span>
+<span id="L28"><span class="lineNum">      28</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     for (auto it : targetMarks)</span></span>
+<span id="L29"><span class="lineNum">      29</span>                 :<span class="tlaUNC">           0 :         delete it.second; // a TargetMark owns no figures (the group does)</span></span>
+<span id="L30"><span class="lineNum">      30</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L31"><span class="lineNum">      31</span>                 :             : </span>
+<span id="L32"><span class="lineNum">      32</span>                 :             : void GeoSkyViewCanvasVisualizer::initialize(int stage)</span>
+<span id="L33"><span class="lineNum">      33</span>                 :<span class="tlaGNC tlaBgGNC">          24 : {</span></span>
+<span id="L34"><span class="lineNum">      34</span>                 :<span class="tlaGNC">          24 :     VisualizerBase::initialize(stage);</span></span>
+<span id="L35"><span class="lineNum">      35</span>         [<span class="tlaGBC" title="Branch 0 was taken 24 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">          24 :     if (!hasGUI()) return;</span></span>
+<span id="L36"><span class="lineNum">      36</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC tlaBgUNC">           0 :     if (stage == INITSTAGE_LOCAL) {</span></span>
+<span id="L37"><span class="lineNum">      37</span>                 :<span class="tlaUNC">           0 :         displaySkyView = par(&quot;displaySkyView&quot;);</span></span>
+<span id="L38"><span class="lineNum">      38</span>                 :<span class="tlaUNC">           0 :         animationSpeed = par(&quot;animationSpeed&quot;);</span></span>
+<span id="L39"><span class="lineNum">      39</span>                 :<span class="tlaUNC">           0 :         zIndex = par(&quot;zIndex&quot;);</span></span>
+<span id="L40"><span class="lineNum">      40</span>                 :<span class="tlaUNC">           0 :         coordinateSystem = findModuleFromPar&lt;IGeographicCoordinateSystem&gt;(par(&quot;coordinateSystemModule&quot;), this);</span></span>
+<span id="L41"><span class="lineNum">      41</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         if (coordinateSystem == nullptr)</span></span>
+<span id="L42"><span class="lineNum">      42</span>                 :<span class="tlaUNC">           0 :             throw cRuntimeError(&quot;Geographic coordinate system module not found on path '%s' defined by par 'coordinateSystemModule'&quot;, par(&quot;coordinateSystemModule&quot;).stringValue());</span></span>
+<span id="L43"><span class="lineNum">      43</span>                 :<span class="tlaUNC">           0 :         observerFilter.setPattern(par(&quot;observerFilter&quot;));</span></span>
+<span id="L44"><span class="lineNum">      44</span>                 :<span class="tlaUNC">           0 :         targetFilter.setPattern(par(&quot;targetFilter&quot;));</span></span>
+<span id="L45"><span class="lineNum">      45</span>                 :<span class="tlaUNC">           0 :         plotRadius = par(&quot;plotRadius&quot;);</span></span>
+<span id="L46"><span class="lineNum">      46</span>                 :<span class="tlaUNC">           0 :         plotOffsetX = par(&quot;plotOffsetX&quot;);</span></span>
+<span id="L47"><span class="lineNum">      47</span>                 :<span class="tlaUNC">           0 :         plotOffsetY = par(&quot;plotOffsetY&quot;);</span></span>
+<span id="L48"><span class="lineNum">      48</span>                 :<span class="tlaUNC">           0 :         elevationMask = par(&quot;elevationMask&quot;);</span></span>
+<span id="L49"><span class="lineNum">      49</span>                 :<span class="tlaUNC">           0 :         backgroundColor = cFigure::parseColor(par(&quot;backgroundColor&quot;));</span></span>
+<span id="L50"><span class="lineNum">      50</span>                 :<span class="tlaUNC">           0 :         backgroundOpacity = par(&quot;backgroundOpacity&quot;);</span></span>
+<span id="L51"><span class="lineNum">      51</span>                 :<span class="tlaUNC">           0 :         ringColor = cFigure::parseColor(par(&quot;ringColor&quot;));</span></span>
+<span id="L52"><span class="lineNum">      52</span>                 :<span class="tlaUNC">           0 :         ringLineWidth = par(&quot;ringLineWidth&quot;);</span></span>
+<span id="L53"><span class="lineNum">      53</span>                 :<span class="tlaUNC">           0 :         maskColor = cFigure::parseColor(par(&quot;maskColor&quot;));</span></span>
+<span id="L54"><span class="lineNum">      54</span>                 :<span class="tlaUNC">           0 :         maskOpacity = par(&quot;maskOpacity&quot;);</span></span>
+<span id="L55"><span class="lineNum">      55</span>                 :<span class="tlaUNC">           0 :         cardinalColor = cFigure::parseColor(par(&quot;cardinalColor&quot;));</span></span>
+<span id="L56"><span class="lineNum">      56</span>                 :<span class="tlaUNC">           0 :         labelColor = cFigure::parseColor(par(&quot;labelColor&quot;));</span></span>
+<span id="L57"><span class="lineNum">      57</span>                 :<span class="tlaUNC">           0 :         targetColorSet.parseColors(par(&quot;targetColor&quot;));</span></span>
+<span id="L58"><span class="lineNum">      58</span>                 :<span class="tlaUNC">           0 :         targetRadius = par(&quot;targetRadius&quot;);</span></span>
+<span id="L59"><span class="lineNum">      59</span>                 :<span class="tlaUNC">           0 :         lowElevationOpacity = par(&quot;lowElevationOpacity&quot;);</span></span>
+<span id="L60"><span class="lineNum">      60</span>                 :<span class="tlaUNC">           0 :         displayLabels = par(&quot;displayLabels&quot;);</span></span>
+<span id="L61"><span class="lineNum">      61</span>                 :<span class="tlaUNC">           0 :         displayTrails = par(&quot;displayTrails&quot;);</span></span>
+<span id="L62"><span class="lineNum">      62</span>                 :<span class="tlaUNC">           0 :         trailLength = par(&quot;trailLength&quot;);</span></span>
+<span id="L63"><span class="lineNum">      63</span>                 :<span class="tlaUNC">           0 :         trailLineStyle = cFigure::parseLineStyle(par(&quot;trailLineStyle&quot;));</span></span>
+<span id="L64"><span class="lineNum">      64</span>                 :<span class="tlaUNC">           0 :         trailLineWidth = par(&quot;trailLineWidth&quot;);</span></span>
+<span id="L65"><span class="lineNum">      65</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         if (displaySkyView)</span></span>
+<span id="L66"><span class="lineNum">      66</span>                 :<span class="tlaUNC">           0 :             subscribe();</span></span>
+<span id="L67"><span class="lineNum">      67</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L69"><span class="lineNum">      69</span>                 :             : </span>
+<span id="L70"><span class="lineNum">      70</span>                 :             : void GeoSkyViewCanvasVisualizer::handleParameterChange(const char *name)</span>
+<span id="L71"><span class="lineNum">      71</span>                 :<span class="tlaUNC">           0 : {</span></span>
+<span id="L72"><span class="lineNum">      72</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (!hasGUI()) return;</span></span>
+<span id="L73"><span class="lineNum">      73</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (name != nullptr &amp;&amp; !strcmp(name, &quot;observerFilter&quot;))</span></span>
+<span id="L74"><span class="lineNum">      74</span>                 :<span class="tlaUNC">           0 :         observerFilter.setPattern(par(&quot;observerFilter&quot;));</span></span>
+<span id="L75"><span class="lineNum">      75</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     else if (name != nullptr &amp;&amp; !strcmp(name, &quot;targetFilter&quot;))</span></span>
+<span id="L76"><span class="lineNum">      76</span>                 :<span class="tlaUNC">           0 :         targetFilter.setPattern(par(&quot;targetFilter&quot;));</span></span>
+<span id="L77"><span class="lineNum">      77</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L78"><span class="lineNum">      78</span>                 :             : </span>
+<span id="L79"><span class="lineNum">      79</span>                 :             : void GeoSkyViewCanvasVisualizer::preDelete(cComponent *root)</span>
+<span id="L80"><span class="lineNum">      80</span>                 :<span class="tlaGNC tlaBgGNC">           1 : {</span></span>
+<span id="L81"><span class="lineNum">      81</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:<span class="tlaGNC">           1 :     if (displaySkyView) {</span></span>
+<span id="L82"><span class="lineNum">      82</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         unsubscribe();</span></span>
+<span id="L83"><span class="lineNum">      83</span>                 :<span class="tlaUNC">           0 :         std::vector&lt;int&gt; ids;</span></span>
+<span id="L84"><span class="lineNum">      84</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         for (auto it : observerPlots)</span></span>
+<span id="L85"><span class="lineNum">      85</span>                 :<span class="tlaUNC">           0 :             ids.push_back(it.first);</span></span>
+<span id="L86"><span class="lineNum">      86</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         for (int id : ids)</span></span>
+<span id="L87"><span class="lineNum">      87</span>                 :<span class="tlaUNC">           0 :             removeObserver(id);</span></span>
+<span id="L88"><span class="lineNum">      88</span>                 :<span class="tlaUNC">           0 :         targets.clear();</span></span>
+<span id="L89"><span class="lineNum">      89</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L90"><span class="lineNum">      90</span>                 :<span class="tlaGNC tlaBgGNC">           1 : }</span></span>
+<span id="L91"><span class="lineNum">      91</span>                 :             : </span>
+<span id="L92"><span class="lineNum">      92</span>                 :             : void GeoSkyViewCanvasVisualizer::subscribe()</span>
+<span id="L93"><span class="lineNum">      93</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L94"><span class="lineNum">      94</span>                 :<span class="tlaUNC">           0 :     visualizationSubjectModule-&gt;subscribe(IMobility::mobilityStateChangedSignal, this);</span></span>
+<span id="L95"><span class="lineNum">      95</span>                 :<span class="tlaUNC">           0 :     visualizationSubjectModule-&gt;subscribe(PRE_MODEL_CHANGE, this);</span></span>
+<span id="L96"><span class="lineNum">      96</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L97"><span class="lineNum">      97</span>                 :             : </span>
+<span id="L98"><span class="lineNum">      98</span>                 :             : void GeoSkyViewCanvasVisualizer::unsubscribe()</span>
+<span id="L99"><span class="lineNum">      99</span>                 :<span class="tlaUNC">           0 : {</span></span>
+<span id="L100"><span class="lineNum">     100</span>                 :             :     // NOTE: lookup the module again because it may have been deleted first</span>
+<span id="L101"><span class="lineNum">     101</span>                 :<span class="tlaUNC">           0 :     auto visualizationSubjectModule = findModuleFromPar&lt;cModule&gt;(par(&quot;visualizationSubjectModule&quot;), this);</span></span>
+<span id="L102"><span class="lineNum">     102</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (visualizationSubjectModule != nullptr) {</span></span>
+<span id="L103"><span class="lineNum">     103</span>                 :<span class="tlaUNC">           0 :         visualizationSubjectModule-&gt;unsubscribe(IMobility::mobilityStateChangedSignal, this);</span></span>
+<span id="L104"><span class="lineNum">     104</span>                 :<span class="tlaUNC">           0 :         visualizationSubjectModule-&gt;unsubscribe(PRE_MODEL_CHANGE, this);</span></span>
+<span id="L105"><span class="lineNum">     105</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L106"><span class="lineNum">     106</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L107"><span class="lineNum">     107</span>                 :             : </span>
+<span id="L108"><span class="lineNum">     108</span>                 :             : void GeoSkyViewCanvasVisualizer::receiveSignal(cComponent *source, simsignal_t signal, cObject *object, cObject *details)</span>
+<span id="L109"><span class="lineNum">     109</span>                 :<span class="tlaUNC">           0 : {</span></span>
+<span id="L110"><span class="lineNum">     110</span>                 :<span class="tlaUNC">           0 :     Enter_Method(&quot;%s&quot;, cComponent::getSignalName(signal));</span></span>
+<span id="L111"><span class="lineNum">     111</span>                 :             : </span>
+<span id="L112"><span class="lineNum">     112</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (signal == IMobility::mobilityStateChangedSignal) {</span></span>
+<span id="L113"><span class="lineNum">     113</span>                 :<span class="tlaUNC">           0 :         auto module = check_and_cast&lt;cModule *&gt;(source);</span></span>
+<span id="L114"><span class="lineNum">     114</span>                 :<span class="tlaUNC">           0 :         auto mobility = dynamic_cast&lt;IMobility *&gt;(source);</span></span>
+<span id="L115"><span class="lineNum">     115</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         if (mobility == nullptr)</span></span>
+<span id="L116"><span class="lineNum">     116</span>                 :<span class="tlaUNC">           0 :             return;</span></span>
+<span id="L117"><span class="lineNum">     117</span>                 :<span class="tlaUNC">           0 :         int id = module-&gt;getId();</span></span>
+<span id="L118"><span class="lineNum">     118</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         if (observerFilter.matches(module) &amp;&amp; observerPlots.find(id) == observerPlots.end())</span></span>
+<span class="lineNum">        </span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L119"><span class="lineNum">     119</span>                 :<span class="tlaUNC">           0 :             addObserver(mobility);</span></span>
+<span id="L120"><span class="lineNum">     120</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         if (targetFilter.matches(module) &amp;&amp; targets.find(id) == targets.end())</span></span>
+<span class="lineNum">        </span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L121"><span class="lineNum">     121</span>                 :<span class="tlaUNC">           0 :             addTarget(mobility);</span></span>
+<span id="L122"><span class="lineNum">     122</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L123"><span class="lineNum">     123</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     else if (signal == PRE_MODEL_CHANGE) {</span></span>
+<span id="L124"><span class="lineNum">     124</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         if (dynamic_cast&lt;cPreModuleDeleteNotification *&gt;(object)) {</span></span>
+<span id="L125"><span class="lineNum">     125</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             if (dynamic_cast&lt;IMobility *&gt;(source) != nullptr) {</span></span>
+<span id="L126"><span class="lineNum">     126</span>                 :<span class="tlaUNC">           0 :                 int id = check_and_cast&lt;cModule *&gt;(source)-&gt;getId();</span></span>
+<span id="L127"><span class="lineNum">     127</span>                 :<span class="tlaUNC">           0 :                 removeTarget(id);</span></span>
+<span id="L128"><span class="lineNum">     128</span>                 :<span class="tlaUNC">           0 :                 removeObserver(id);</span></span>
+<span id="L129"><span class="lineNum">     129</span>                 :<span class="tlaUNC">           0 :             }</span></span>
+<span id="L130"><span class="lineNum">     130</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L131"><span class="lineNum">     131</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L132"><span class="lineNum">     132</span>                 :<span class="tlaUNC">           0 :     else</span></span>
+<span id="L133"><span class="lineNum">     133</span>                 :<span class="tlaUNC">           0 :         throw cRuntimeError(&quot;Unknown signal&quot;);</span></span>
+<span id="L134"><span class="lineNum">     134</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L135"><span class="lineNum">     135</span>                 :             : </span>
+<span id="L136"><span class="lineNum">     136</span>                 :             : GeoSkyViewCanvasVisualizer::ObserverPlot *GeoSkyViewCanvasVisualizer::addObserver(IMobility *observer)</span>
+<span id="L137"><span class="lineNum">     137</span>                 :<span class="tlaUNC">           0 : {</span></span>
+<span id="L138"><span class="lineNum">     138</span>                 :<span class="tlaUNC">           0 :     int id = check_and_cast&lt;cModule *&gt;(observer)-&gt;getId();</span></span>
+<span id="L139"><span class="lineNum">     139</span>                 :<span class="tlaUNC">           0 :     auto plot = new ObserverPlot(observer);</span></span>
+<span id="L140"><span class="lineNum">     140</span>                 :<span class="tlaUNC">           0 :     auto group = new cGroupFigure(&quot;skyView&quot;);</span></span>
+<span id="L141"><span class="lineNum">     141</span>                 :<span class="tlaUNC">           0 :     group-&gt;setTags((std::string(&quot;sky_view &quot;) + tags).c_str());</span></span>
+<span id="L142"><span class="lineNum">     142</span>                 :<span class="tlaUNC">           0 :     group-&gt;setZIndex(zIndex);</span></span>
+<span id="L143"><span class="lineNum">     143</span>                 :<span class="tlaUNC">           0 :     plot-&gt;groupFigure = group;</span></span>
+<span id="L144"><span class="lineNum">     144</span>                 :<span class="tlaUNC">           0 :     buildPlotDecorations(plot);</span></span>
+<span id="L145"><span class="lineNum">     145</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     for (auto it : targets)</span></span>
+<span id="L146"><span class="lineNum">     146</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         if (it.first != id)</span></span>
+<span id="L147"><span class="lineNum">     147</span>                 :<span class="tlaUNC">           0 :             plot-&gt;targetMarks[it.first] = createTargetMark(plot, it.second);</span></span>
+<span id="L148"><span class="lineNum">     148</span>                 :<span class="tlaUNC">           0 :     observerPlots[id] = plot;</span></span>
+<span id="L149"><span class="lineNum">     149</span>                 :<span class="tlaUNC">           0 :     visualizationTargetModule-&gt;getCanvas()-&gt;addFigure(group);</span></span>
+<span id="L150"><span class="lineNum">     150</span>                 :<span class="tlaUNC">           0 :     return plot;</span></span>
+<span id="L151"><span class="lineNum">     151</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L152"><span class="lineNum">     152</span>                 :             : </span>
+<span id="L153"><span class="lineNum">     153</span>                 :             : void GeoSkyViewCanvasVisualizer::addTarget(IMobility *target)</span>
+<span id="L154"><span class="lineNum">     154</span>                 :<span class="tlaUNC">           0 : {</span></span>
+<span id="L155"><span class="lineNum">     155</span>                 :<span class="tlaUNC">           0 :     int id = check_and_cast&lt;cModule *&gt;(target)-&gt;getId();</span></span>
+<span id="L156"><span class="lineNum">     156</span>                 :<span class="tlaUNC">           0 :     targets[id] = target;</span></span>
+<span id="L157"><span class="lineNum">     157</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     for (auto it : observerPlots)</span></span>
+<span id="L158"><span class="lineNum">     158</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         if (it.first != id &amp;&amp; it.second-&gt;targetMarks.find(id) == it.second-&gt;targetMarks.end())</span></span>
+<span class="lineNum">        </span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L159"><span class="lineNum">     159</span>                 :<span class="tlaUNC">           0 :             it.second-&gt;targetMarks[id] = createTargetMark(it.second, target);</span></span>
+<span id="L160"><span class="lineNum">     160</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L161"><span class="lineNum">     161</span>                 :             : </span>
+<span id="L162"><span class="lineNum">     162</span>                 :             : void GeoSkyViewCanvasVisualizer::removeObserver(int id)</span>
+<span id="L163"><span class="lineNum">     163</span>                 :<span class="tlaUNC">           0 : {</span></span>
+<span id="L164"><span class="lineNum">     164</span>                 :<span class="tlaUNC">           0 :     auto it = observerPlots.find(id);</span></span>
+<span id="L165"><span class="lineNum">     165</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (it == observerPlots.end())</span></span>
+<span id="L166"><span class="lineNum">     166</span>                 :<span class="tlaUNC">           0 :         return;</span></span>
+<span id="L167"><span class="lineNum">     167</span>                 :<span class="tlaUNC">           0 :     visualizationTargetModule-&gt;getCanvas()-&gt;removeFigure(it-&gt;second-&gt;groupFigure);</span></span>
+<span id="L168"><span class="lineNum">     168</span>                 :<span class="tlaUNC">           0 :     delete it-&gt;second; // deletes the group (and all its child figures) and the marks</span></span>
+<span id="L169"><span class="lineNum">     169</span>                 :<span class="tlaUNC">           0 :     observerPlots.erase(it);</span></span>
+<span id="L170"><span class="lineNum">     170</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L171"><span class="lineNum">     171</span>                 :             : </span>
+<span id="L172"><span class="lineNum">     172</span>                 :             : void GeoSkyViewCanvasVisualizer::removeTarget(int id)</span>
+<span id="L173"><span class="lineNum">     173</span>                 :<span class="tlaUNC">           0 : {</span></span>
+<span id="L174"><span class="lineNum">     174</span>                 :<span class="tlaUNC">           0 :     auto it = targets.find(id);</span></span>
+<span id="L175"><span class="lineNum">     175</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (it == targets.end())</span></span>
+<span id="L176"><span class="lineNum">     176</span>                 :<span class="tlaUNC">           0 :         return;</span></span>
+<span id="L177"><span class="lineNum">     177</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     for (auto pit : observerPlots) {</span></span>
+<span id="L178"><span class="lineNum">     178</span>                 :<span class="tlaUNC">           0 :         auto plot = pit.second;</span></span>
+<span id="L179"><span class="lineNum">     179</span>                 :<span class="tlaUNC">           0 :         auto mit = plot-&gt;targetMarks.find(id);</span></span>
+<span id="L180"><span class="lineNum">     180</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         if (mit != plot-&gt;targetMarks.end()) {</span></span>
+<span id="L181"><span class="lineNum">     181</span>                 :<span class="tlaUNC">           0 :             removeTargetMark(plot, mit-&gt;second);</span></span>
+<span id="L182"><span class="lineNum">     182</span>                 :<span class="tlaUNC">           0 :             plot-&gt;targetMarks.erase(mit);</span></span>
+<span id="L183"><span class="lineNum">     183</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L184"><span class="lineNum">     184</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L185"><span class="lineNum">     185</span>                 :<span class="tlaUNC">           0 :     targets.erase(it);</span></span>
+<span id="L186"><span class="lineNum">     186</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L187"><span class="lineNum">     187</span>                 :             : </span>
+<span id="L188"><span class="lineNum">     188</span>                 :             : GeoSkyViewCanvasVisualizer::TargetMark *GeoSkyViewCanvasVisualizer::createTargetMark(ObserverPlot *plot, IMobility *target)</span>
+<span id="L189"><span class="lineNum">     189</span>                 :<span class="tlaUNC">           0 : {</span></span>
+<span id="L190"><span class="lineNum">     190</span>                 :<span class="tlaUNC">           0 :     auto module = check_and_cast&lt;cModule *&gt;(target);</span></span>
+<span id="L191"><span class="lineNum">     191</span>                 :<span class="tlaUNC">           0 :     cFigure::Color color = targetColorSet.getColor(module-&gt;getId());</span></span>
+<span id="L192"><span class="lineNum">     192</span>                 :<span class="tlaUNC">           0 :     auto mark = new TargetMark(target);</span></span>
+<span id="L193"><span class="lineNum">     193</span>                 :             : </span>
+<span id="L194"><span class="lineNum">     194</span>                 :<span class="tlaUNC">           0 :     auto dot = new cOvalFigure(&quot;target&quot;);</span></span>
+<span id="L195"><span class="lineNum">     195</span>                 :<span class="tlaUNC">           0 :     dot-&gt;setTags((std::string(&quot;sky_target &quot;) + tags).c_str());</span></span>
+<span id="L196"><span class="lineNum">     196</span>                 :<span class="tlaUNC">           0 :     dot-&gt;setFilled(true);</span></span>
+<span id="L197"><span class="lineNum">     197</span>                 :<span class="tlaUNC">           0 :     dot-&gt;setLineColor(color);</span></span>
+<span id="L198"><span class="lineNum">     198</span>                 :<span class="tlaUNC">           0 :     dot-&gt;setFillColor(color);</span></span>
+<span id="L199"><span class="lineNum">     199</span>                 :<span class="tlaUNC">           0 :     dot-&gt;setVisible(false);</span></span>
+<span id="L200"><span class="lineNum">     200</span>                 :<span class="tlaUNC">           0 :     plot-&gt;groupFigure-&gt;addFigure(dot);</span></span>
+<span id="L201"><span class="lineNum">     201</span>                 :<span class="tlaUNC">           0 :     mark-&gt;dotFigure = dot;</span></span>
+<span id="L202"><span class="lineNum">     202</span>                 :             : </span>
+<span id="L203"><span class="lineNum">     203</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (displayLabels) {</span></span>
+<span id="L204"><span class="lineNum">     204</span>                 :<span class="tlaUNC">           0 :         auto label = new cLabelFigure(&quot;targetLabel&quot;);</span></span>
+<span id="L205"><span class="lineNum">     205</span>                 :<span class="tlaUNC">           0 :         label-&gt;setTags((std::string(&quot;sky_target_label &quot;) + tags).c_str());</span></span>
+<span id="L206"><span class="lineNum">     206</span>                 :<span class="tlaUNC">           0 :         label-&gt;setText(getTargetLabel(target).c_str());</span></span>
+<span id="L207"><span class="lineNum">     207</span>                 :<span class="tlaUNC">           0 :         label-&gt;setColor(color);</span></span>
+<span id="L208"><span class="lineNum">     208</span>                 :<span class="tlaUNC">           0 :         label-&gt;setHalo(true);</span></span>
+<span id="L209"><span class="lineNum">     209</span>                 :<span class="tlaUNC">           0 :         label-&gt;setAnchor(cFigure::ANCHOR_W);</span></span>
+<span id="L210"><span class="lineNum">     210</span>                 :<span class="tlaUNC">           0 :         label-&gt;setVisible(false);</span></span>
+<span id="L211"><span class="lineNum">     211</span>                 :<span class="tlaUNC">           0 :         plot-&gt;groupFigure-&gt;addFigure(label);</span></span>
+<span id="L212"><span class="lineNum">     212</span>                 :<span class="tlaUNC">           0 :         mark-&gt;labelFigure = label;</span></span>
+<span id="L213"><span class="lineNum">     213</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L214"><span class="lineNum">     214</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (displayTrails) {</span></span>
+<span id="L215"><span class="lineNum">     215</span>                 :<span class="tlaUNC">           0 :         auto trail = new TrailFigure(trailLength, true, &quot;skyTrail&quot;);</span></span>
+<span id="L216"><span class="lineNum">     216</span>                 :<span class="tlaUNC">           0 :         trail-&gt;setTags((std::string(&quot;sky_trail recent_history &quot;) + tags).c_str());</span></span>
+<span id="L217"><span class="lineNum">     217</span>                 :<span class="tlaUNC">           0 :         plot-&gt;groupFigure-&gt;addFigure(trail);</span></span>
+<span id="L218"><span class="lineNum">     218</span>                 :<span class="tlaUNC">           0 :         mark-&gt;trailFigure = trail;</span></span>
+<span id="L219"><span class="lineNum">     219</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L220"><span class="lineNum">     220</span>                 :<span class="tlaUNC">           0 :     return mark;</span></span>
+<span id="L221"><span class="lineNum">     221</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L222"><span class="lineNum">     222</span>                 :             : </span>
+<span id="L223"><span class="lineNum">     223</span>                 :             : void GeoSkyViewCanvasVisualizer::removeTargetMark(ObserverPlot *plot, TargetMark *mark)</span>
+<span id="L224"><span class="lineNum">     224</span>                 :<span class="tlaUNC">           0 : {</span></span>
+<span id="L225"><span class="lineNum">     225</span>                 :<span class="tlaUNC">           0 :     auto group = plot-&gt;groupFigure;</span></span>
+<span id="L226"><span class="lineNum">     226</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (mark-&gt;dotFigure != nullptr) { group-&gt;removeFigure(mark-&gt;dotFigure); delete mark-&gt;dotFigure; }</span></span>
+<span id="L227"><span class="lineNum">     227</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (mark-&gt;labelFigure != nullptr) { group-&gt;removeFigure(mark-&gt;labelFigure); delete mark-&gt;labelFigure; }</span></span>
+<span id="L228"><span class="lineNum">     228</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (mark-&gt;trailFigure != nullptr) { group-&gt;removeFigure(mark-&gt;trailFigure); delete mark-&gt;trailFigure; }</span></span>
+<span id="L229"><span class="lineNum">     229</span>                 :<span class="tlaUNC">           0 :     delete mark;</span></span>
+<span id="L230"><span class="lineNum">     230</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L231"><span class="lineNum">     231</span>                 :             : </span>
+<span id="L232"><span class="lineNum">     232</span>                 :             : void GeoSkyViewCanvasVisualizer::buildPlotDecorations(ObserverPlot *plot)</span>
+<span id="L233"><span class="lineNum">     233</span>                 :<span class="tlaUNC">           0 : {</span></span>
+<span id="L234"><span class="lineNum">     234</span>                 :<span class="tlaUNC">           0 :     auto group = plot-&gt;groupFigure;</span></span>
+<span id="L235"><span class="lineNum">     235</span>                 :<span class="tlaUNC">           0 :     double R = plotRadius;</span></span>
+<span id="L236"><span class="lineNum">     236</span>                 :             : </span>
+<span id="L237"><span class="lineNum">     237</span>                 :<span class="tlaUNC">           0 :     auto addLabel = [&amp;](const char *text, cFigure::Point position, cFigure::Anchor anchor, const cFigure::Color&amp; color, int pointSize) {</span></span>
+<span id="L238"><span class="lineNum">     238</span>                 :<span class="tlaUNC">           0 :         auto label = new cLabelFigure();</span></span>
+<span id="L239"><span class="lineNum">     239</span>                 :<span class="tlaUNC">           0 :         label-&gt;setText(text);</span></span>
+<span id="L240"><span class="lineNum">     240</span>                 :<span class="tlaUNC">           0 :         label-&gt;setColor(color);</span></span>
+<span id="L241"><span class="lineNum">     241</span>                 :<span class="tlaUNC">           0 :         label-&gt;setHalo(true);</span></span>
+<span id="L242"><span class="lineNum">     242</span>                 :<span class="tlaUNC">           0 :         label-&gt;setAnchor(anchor);</span></span>
+<span id="L243"><span class="lineNum">     243</span>                 :<span class="tlaUNC">           0 :         label-&gt;setPosition(position);</span></span>
+<span id="L244"><span class="lineNum">     244</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         if (pointSize &gt; 0)</span></span>
+<span id="L245"><span class="lineNum">     245</span>                 :<span class="tlaUNC">           0 :             label-&gt;setFont(cFigure::Font(&quot;&quot;, pointSize));</span></span>
+<span id="L246"><span class="lineNum">     246</span>                 :<span class="tlaUNC">           0 :         group-&gt;addFigure(label);</span></span>
+<span id="L247"><span class="lineNum">     247</span>                 :<span class="tlaUNC">           0 :     };</span></span>
+<span id="L248"><span class="lineNum">     248</span>                 :             : </span>
+<span id="L249"><span class="lineNum">     249</span>                 :             :     // sky disc background</span>
+<span id="L250"><span class="lineNum">     250</span>                 :<span class="tlaUNC">           0 :     auto disc = new cOvalFigure(&quot;sky&quot;);</span></span>
+<span id="L251"><span class="lineNum">     251</span>                 :<span class="tlaUNC">           0 :     disc-&gt;setBounds(cFigure::Rectangle(-R, -R, 2 * R, 2 * R));</span></span>
+<span id="L252"><span class="lineNum">     252</span>                 :<span class="tlaUNC">           0 :     disc-&gt;setFilled(true);</span></span>
+<span id="L253"><span class="lineNum">     253</span>                 :<span class="tlaUNC">           0 :     disc-&gt;setFillColor(backgroundColor);</span></span>
+<span id="L254"><span class="lineNum">     254</span>                 :<span class="tlaUNC">           0 :     disc-&gt;setFillOpacity(backgroundOpacity);</span></span>
+<span id="L255"><span class="lineNum">     255</span>                 :<span class="tlaUNC">           0 :     disc-&gt;setLineColor(ringColor);</span></span>
+<span id="L256"><span class="lineNum">     256</span>                 :<span class="tlaUNC">           0 :     disc-&gt;setLineWidth(ringLineWidth);</span></span>
+<span id="L257"><span class="lineNum">     257</span>                 :<span class="tlaUNC">           0 :     group-&gt;addFigure(disc);</span></span>
+<span id="L258"><span class="lineNum">     258</span>                 :             : </span>
+<span id="L259"><span class="lineNum">     259</span>                 :             :     // translucent mask over the band between elevationMask and the horizon</span>
+<span id="L260"><span class="lineNum">     260</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (elevationMask &gt; 0) {</span></span>
+<span id="L261"><span class="lineNum">     261</span>                 :<span class="tlaUNC">           0 :         double rMin = R * (90 - elevationMask) / 90;</span></span>
+<span id="L262"><span class="lineNum">     262</span>                 :<span class="tlaUNC">           0 :         auto mask = new cRingFigure(&quot;mask&quot;);</span></span>
+<span id="L263"><span class="lineNum">     263</span>                 :<span class="tlaUNC">           0 :         mask-&gt;setBounds(cFigure::Rectangle(-R, -R, 2 * R, 2 * R));</span></span>
+<span id="L264"><span class="lineNum">     264</span>                 :<span class="tlaUNC">           0 :         mask-&gt;setInnerRadius(rMin);</span></span>
+<span id="L265"><span class="lineNum">     265</span>                 :<span class="tlaUNC">           0 :         mask-&gt;setFilled(true);</span></span>
+<span id="L266"><span class="lineNum">     266</span>                 :<span class="tlaUNC">           0 :         mask-&gt;setFillColor(maskColor);</span></span>
+<span id="L267"><span class="lineNum">     267</span>                 :<span class="tlaUNC">           0 :         mask-&gt;setFillOpacity(maskOpacity);</span></span>
+<span id="L268"><span class="lineNum">     268</span>                 :<span class="tlaUNC">           0 :         mask-&gt;setLineOpacity(0);</span></span>
+<span id="L269"><span class="lineNum">     269</span>                 :<span class="tlaUNC">           0 :         group-&gt;addFigure(mask);</span></span>
+<span id="L270"><span class="lineNum">     270</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L271"><span class="lineNum">     271</span>                 :             : </span>
+<span id="L272"><span class="lineNum">     272</span>                 :             :     // elevation rings at 30 and 60 degrees (0 is the disc rim, 90 is the center)</span>
+<span id="L273"><span class="lineNum">     273</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     for (double el : { 30.0, 60.0 }) {</span></span>
+<span id="L274"><span class="lineNum">     274</span>                 :<span class="tlaUNC">           0 :         double r = R * (90 - el) / 90;</span></span>
+<span id="L275"><span class="lineNum">     275</span>                 :<span class="tlaUNC">           0 :         auto ring = new cOvalFigure(&quot;ring&quot;);</span></span>
+<span id="L276"><span class="lineNum">     276</span>                 :<span class="tlaUNC">           0 :         ring-&gt;setBounds(cFigure::Rectangle(-r, -r, 2 * r, 2 * r));</span></span>
+<span id="L277"><span class="lineNum">     277</span>                 :<span class="tlaUNC">           0 :         ring-&gt;setLineColor(ringColor);</span></span>
+<span id="L278"><span class="lineNum">     278</span>                 :<span class="tlaUNC">           0 :         ring-&gt;setLineWidth(ringLineWidth);</span></span>
+<span id="L279"><span class="lineNum">     279</span>                 :<span class="tlaUNC">           0 :         group-&gt;addFigure(ring);</span></span>
+<span id="L280"><span class="lineNum">     280</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L281"><span class="lineNum">     281</span>                 :             :     // dashed ring at the minimum elevation</span>
+<span id="L282"><span class="lineNum">     282</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (elevationMask &gt; 0 &amp;&amp; elevationMask &lt; 90) {</span></span>
+<span id="L283"><span class="lineNum">     283</span>                 :<span class="tlaUNC">           0 :         double r = R * (90 - elevationMask) / 90;</span></span>
+<span id="L284"><span class="lineNum">     284</span>                 :<span class="tlaUNC">           0 :         auto ring = new cOvalFigure(&quot;minElevationRing&quot;);</span></span>
+<span id="L285"><span class="lineNum">     285</span>                 :<span class="tlaUNC">           0 :         ring-&gt;setBounds(cFigure::Rectangle(-r, -r, 2 * r, 2 * r));</span></span>
+<span id="L286"><span class="lineNum">     286</span>                 :<span class="tlaUNC">           0 :         ring-&gt;setLineColor(ringColor);</span></span>
+<span id="L287"><span class="lineNum">     287</span>                 :<span class="tlaUNC">           0 :         ring-&gt;setLineStyle(cFigure::LINE_DASHED);</span></span>
+<span id="L288"><span class="lineNum">     288</span>                 :<span class="tlaUNC">           0 :         ring-&gt;setLineWidth(ringLineWidth);</span></span>
+<span id="L289"><span class="lineNum">     289</span>                 :<span class="tlaUNC">           0 :         group-&gt;addFigure(ring);</span></span>
+<span id="L290"><span class="lineNum">     290</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L291"><span class="lineNum">     291</span>                 :             : </span>
+<span id="L292"><span class="lineNum">     292</span>                 :             :     // cardinal cross lines (N-S and W-E)</span>
+<span id="L293"><span class="lineNum">     293</span>                 :<span class="tlaUNC">           0 :     auto northSouth = new cLineFigure(&quot;northSouth&quot;);</span></span>
+<span id="L294"><span class="lineNum">     294</span>                 :<span class="tlaUNC">           0 :     northSouth-&gt;setStart(cFigure::Point(0, -R));</span></span>
+<span id="L295"><span class="lineNum">     295</span>                 :<span class="tlaUNC">           0 :     northSouth-&gt;setEnd(cFigure::Point(0, R));</span></span>
+<span id="L296"><span class="lineNum">     296</span>                 :<span class="tlaUNC">           0 :     northSouth-&gt;setLineColor(cardinalColor);</span></span>
+<span id="L297"><span class="lineNum">     297</span>                 :<span class="tlaUNC">           0 :     northSouth-&gt;setLineWidth(ringLineWidth);</span></span>
+<span id="L298"><span class="lineNum">     298</span>                 :<span class="tlaUNC">           0 :     group-&gt;addFigure(northSouth);</span></span>
+<span id="L299"><span class="lineNum">     299</span>                 :<span class="tlaUNC">           0 :     auto westEast = new cLineFigure(&quot;westEast&quot;);</span></span>
+<span id="L300"><span class="lineNum">     300</span>                 :<span class="tlaUNC">           0 :     westEast-&gt;setStart(cFigure::Point(-R, 0));</span></span>
+<span id="L301"><span class="lineNum">     301</span>                 :<span class="tlaUNC">           0 :     westEast-&gt;setEnd(cFigure::Point(R, 0));</span></span>
+<span id="L302"><span class="lineNum">     302</span>                 :<span class="tlaUNC">           0 :     westEast-&gt;setLineColor(cardinalColor);</span></span>
+<span id="L303"><span class="lineNum">     303</span>                 :<span class="tlaUNC">           0 :     westEast-&gt;setLineWidth(ringLineWidth);</span></span>
+<span id="L304"><span class="lineNum">     304</span>                 :<span class="tlaUNC">           0 :     group-&gt;addFigure(westEast);</span></span>
+<span id="L305"><span class="lineNum">     305</span>                 :             : </span>
+<span id="L306"><span class="lineNum">     306</span>                 :             :     // cardinal labels (North up, East right)</span>
+<span id="L307"><span class="lineNum">     307</span>                 :<span class="tlaUNC">           0 :     addLabel(&quot;N&quot;, cFigure::Point(0, -R - 1), cFigure::ANCHOR_S, cardinalColor, 0);</span></span>
+<span id="L308"><span class="lineNum">     308</span>                 :<span class="tlaUNC">           0 :     addLabel(&quot;S&quot;, cFigure::Point(0, R + 1), cFigure::ANCHOR_N, cardinalColor, 0);</span></span>
+<span id="L309"><span class="lineNum">     309</span>                 :<span class="tlaUNC">           0 :     addLabel(&quot;E&quot;, cFigure::Point(R + 1, 0), cFigure::ANCHOR_W, cardinalColor, 0);</span></span>
+<span id="L310"><span class="lineNum">     310</span>                 :<span class="tlaUNC">           0 :     addLabel(&quot;W&quot;, cFigure::Point(-R - 1, 0), cFigure::ANCHOR_E, cardinalColor, 0);</span></span>
+<span id="L311"><span class="lineNum">     311</span>                 :             : </span>
+<span id="L312"><span class="lineNum">     312</span>                 :             :     // elevation labels sitting just above their ring along the North spoke, in a small</span>
+<span id="L313"><span class="lineNum">     313</span>                 :             :     // (half-size) font; the 0 deg ring is the disc rim and is not labeled. No title is</span>
+<span id="L314"><span class="lineNum">     314</span>                 :             :     // drawn: the observer module icon is right next to the plot and already shows its name.</span>
+<span id="L315"><span class="lineNum">     315</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     for (double el : { 30.0, 60.0 }) {</span></span>
+<span id="L316"><span class="lineNum">     316</span>                 :<span class="tlaUNC">           0 :         double r = R * (90 - el) / 90;</span></span>
+<span id="L317"><span class="lineNum">     317</span>                 :<span class="tlaUNC">           0 :         char buf[8];</span></span>
+<span id="L318"><span class="lineNum">     318</span>                 :<span class="tlaUNC">           0 :         snprintf(buf, sizeof(buf), &quot;%g°&quot;, el);</span></span>
+<span id="L319"><span class="lineNum">     319</span>                 :<span class="tlaUNC">           0 :         addLabel(buf, cFigure::Point(2, -r - 1), cFigure::ANCHOR_SW, labelColor, 6);</span></span>
+<span id="L320"><span class="lineNum">     320</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L321"><span class="lineNum">     321</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L322"><span class="lineNum">     322</span>                 :             : </span>
+<span id="L323"><span class="lineNum">     323</span>                 :             : cFigure::Rectangle GeoSkyViewCanvasVisualizer::getViewportBounds() const</span>
+<span id="L324"><span class="lineNum">     324</span>                 :<span class="tlaUNC">           0 : {</span></span>
+<span id="L325"><span class="lineNum">     325</span>                 :             :     // the target module's background bounds (bgb) define its drawing area / viewport; the geo map</span>
+<span id="L326"><span class="lineNum">     326</span>                 :             :     // visualizer sets these to the map size, and compound modules may set them in their display string</span>
+<span id="L327"><span class="lineNum">     327</span>                 :<span class="tlaUNC">           0 :     auto&amp; displayString = visualizationTargetModule-&gt;getDisplayString();</span></span>
+<span id="L328"><span class="lineNum">     328</span>                 :<span class="tlaUNC">           0 :     double width = atof(displayString.getTagArg(&quot;bgb&quot;, 0));</span></span>
+<span id="L329"><span class="lineNum">     329</span>                 :<span class="tlaUNC">           0 :     double height = atof(displayString.getTagArg(&quot;bgb&quot;, 1));</span></span>
+<span id="L330"><span class="lineNum">     330</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (width &gt; 0 &amp;&amp; height &gt; 0)</span></span>
+<span id="L331"><span class="lineNum">     331</span>                 :<span class="tlaUNC">           0 :         return cFigure::Rectangle(0, 0, width, height);</span></span>
+<span id="L332"><span class="lineNum">     332</span>                 :             :     // fall back to the bounding box of the target module's submodule icons</span>
+<span id="L333"><span class="lineNum">     333</span>                 :<span class="tlaUNC">           0 :     cFigure::Rectangle bounds(0, 0, 0, 0);</span></span>
+<span id="L334"><span class="lineNum">     334</span>                 :<span class="tlaUNC">           0 :     bool first = true;</span></span>
+<span id="L335"><span class="lineNum">     335</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     for (cModule::SubmoduleIterator it(visualizationTargetModule); !it.end(); it++) {</span></span>
+<span id="L336"><span class="lineNum">     336</span>                 :<span class="tlaUNC">           0 :         auto b = getEnvir()-&gt;getSubmoduleBounds(*it);</span></span>
+<span id="L337"><span class="lineNum">     337</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         if (b.width == 0 &amp;&amp; b.height == 0)</span></span>
+<span id="L338"><span class="lineNum">     338</span>                 :<span class="tlaUNC">           0 :             continue;</span></span>
+<span id="L339"><span class="lineNum">     339</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         if (first) { bounds = b; first = false; }</span></span>
+<span id="L340"><span class="lineNum">     340</span>                 :<span class="tlaUNC">           0 :         else {</span></span>
+<span id="L341"><span class="lineNum">     341</span>                 :<span class="tlaUNC">           0 :             double x1 = std::min(bounds.x, b.x), y1 = std::min(bounds.y, b.y);</span></span>
+<span id="L342"><span class="lineNum">     342</span>                 :<span class="tlaUNC">           0 :             double x2 = std::max(bounds.x + bounds.width, b.x + b.width);</span></span>
+<span id="L343"><span class="lineNum">     343</span>                 :<span class="tlaUNC">           0 :             double y2 = std::max(bounds.y + bounds.height, b.y + b.height);</span></span>
+<span id="L344"><span class="lineNum">     344</span>                 :<span class="tlaUNC">           0 :             bounds = cFigure::Rectangle(x1, y1, x2 - x1, y2 - y1);</span></span>
+<span id="L345"><span class="lineNum">     345</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L346"><span class="lineNum">     346</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L347"><span class="lineNum">     347</span>                 :<span class="tlaUNC">           0 :     return bounds;</span></span>
+<span id="L348"><span class="lineNum">     348</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L349"><span class="lineNum">     349</span>                 :             : </span>
+<span id="L350"><span class="lineNum">     350</span>                 :             : cFigure::Point GeoSkyViewCanvasVisualizer::elevationAzimuthToCanvas(double elevationDeg, double azimuthDeg) const</span>
+<span id="L351"><span class="lineNum">     351</span>                 :<span class="tlaUNC">           0 : {</span></span>
+<span id="L352"><span class="lineNum">     352</span>                 :<span class="tlaUNC">           0 :     double r = plotRadius * (90 - elevationDeg) / 90;</span></span>
+<span id="L353"><span class="lineNum">     353</span>                 :<span class="tlaUNC">           0 :     double a = azimuthDeg * M_PI / 180;</span></span>
+<span id="L354"><span class="lineNum">     354</span>                 :             :     // North up, East right, azimuth clockwise from North</span>
+<span id="L355"><span class="lineNum">     355</span>                 :<span class="tlaUNC">           0 :     return cFigure::Point(r * std::sin(a), -r * std::cos(a));</span></span>
+<span id="L356"><span class="lineNum">     356</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L357"><span class="lineNum">     357</span>                 :             : </span>
+<span id="L358"><span class="lineNum">     358</span>                 :             : std::string GeoSkyViewCanvasVisualizer::getTargetLabel(const IMobility *target) const</span>
+<span id="L359"><span class="lineNum">     359</span>                 :<span class="tlaUNC">           0 : {</span></span>
+<span id="L360"><span class="lineNum">     360</span>                 :<span class="tlaUNC">           0 :     auto module = const_cast&lt;cModule *&gt;(check_and_cast&lt;const cModule *&gt;(target));</span></span>
+<span id="L361"><span class="lineNum">     361</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (module-&gt;hasPar(&quot;satelliteName&quot;)) {</span></span>
+<span id="L362"><span class="lineNum">     362</span>                 :<span class="tlaUNC">           0 :         const char *name = module-&gt;par(&quot;satelliteName&quot;).stringValue();</span></span>
+<span id="L363"><span class="lineNum">     363</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         if (*name)</span></span>
+<span id="L364"><span class="lineNum">     364</span>                 :<span class="tlaUNC">           0 :             return name;</span></span>
+<span id="L365"><span class="lineNum">     365</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L366"><span class="lineNum">     366</span>                 :<span class="tlaUNC">           0 :     auto node = module-&gt;getParentModule();</span></span>
+<span id="L367"><span class="lineNum">     367</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     return node != nullptr ? node-&gt;getFullName() : module-&gt;getFullName();</span></span>
+<span id="L368"><span class="lineNum">     368</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L369"><span class="lineNum">     369</span>                 :             : </span>
+<span id="L370"><span class="lineNum">     370</span>                 :             : void GeoSkyViewCanvasVisualizer::refreshDisplay() const</span>
+<span id="L371"><span class="lineNum">     371</span>                 :<span class="tlaUNC">           0 : {</span></span>
+<span id="L372"><span class="lineNum">     372</span>                 :             :     // when either offset is infinite, the plots are detached from the observer icons and tiled in a</span>
+<span id="L373"><span class="lineNum">     373</span>                 :             :     // grid below the target module's viewport; otherwise each plot is anchored to its observer icon</span>
+<span id="L374"><span class="lineNum">     374</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     bool gridMode = std::isinf(plotOffsetX) || std::isinf(plotOffsetY);</span></span>
+<span id="L375"><span class="lineNum">     375</span>                 :<span class="tlaUNC">           0 :     double cell = 2 * plotRadius + plotRadius / 2; // plot diameter plus a gap</span></span>
+<span id="L376"><span class="lineNum">     376</span>                 :<span class="tlaUNC">           0 :     double gridX0 = 0, gridY0 = 0;</span></span>
+<span id="L377"><span class="lineNum">     377</span>                 :<span class="tlaUNC">           0 :     int columns = 1;</span></span>
+<span id="L378"><span class="lineNum">     378</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (gridMode) {</span></span>
+<span id="L379"><span class="lineNum">     379</span>                 :<span class="tlaUNC">           0 :         cFigure::Rectangle viewport = getViewportBounds();</span></span>
+<span id="L380"><span class="lineNum">     380</span>                 :<span class="tlaUNC">           0 :         gridX0 = viewport.x;</span></span>
+<span id="L381"><span class="lineNum">     381</span>                 :<span class="tlaUNC">           0 :         gridY0 = viewport.y + viewport.height + plotRadius / 2; // just below the viewport</span></span>
+<span id="L382"><span class="lineNum">     382</span>                 :<span class="tlaUNC">           0 :         columns = std::max(1, (int)std::floor(viewport.width / cell));</span></span>
+<span id="L383"><span class="lineNum">     383</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L384"><span class="lineNum">     384</span>                 :             : </span>
+<span id="L385"><span class="lineNum">     385</span>                 :<span class="tlaUNC">           0 :     int index = 0;</span></span>
+<span id="L386"><span class="lineNum">     386</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     for (auto pit : observerPlots) {</span></span>
+<span id="L387"><span class="lineNum">     387</span>                 :<span class="tlaUNC">           0 :         auto plot = pit.second;</span></span>
+<span id="L388"><span class="lineNum">     388</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         if (gridMode) {</span></span>
+<span id="L389"><span class="lineNum">     389</span>                 :             :             // place the plots left-to-right then top-to-bottom in a grid; the group origin is the</span>
+<span id="L390"><span class="lineNum">     390</span>                 :             :             // disc center, so seat the cell's top-left at the grid cell by offsetting by plotRadius</span>
+<span id="L391"><span class="lineNum">     391</span>                 :<span class="tlaUNC">           0 :             int col = index % columns;</span></span>
+<span id="L392"><span class="lineNum">     392</span>                 :<span class="tlaUNC">           0 :             int row = index / columns;</span></span>
+<span id="L393"><span class="lineNum">     393</span>                 :<span class="tlaUNC">           0 :             plot-&gt;groupFigure-&gt;setTransform(cFigure::Transform().translate(gridX0 + col * cell + plotRadius, gridY0 + row * cell + plotRadius));</span></span>
+<span id="L394"><span class="lineNum">     394</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L395"><span class="lineNum">     395</span>                 :<span class="tlaUNC">           0 :         else {</span></span>
+<span id="L396"><span class="lineNum">     396</span>                 :<span class="tlaUNC">           0 :             auto observerModule = check_and_cast&lt;const cModule *&gt;(plot-&gt;observer);</span></span>
+<span id="L397"><span class="lineNum">     397</span>                 :<span class="tlaUNC">           0 :             auto observerNode = observerModule-&gt;getParentModule();</span></span>
+<span id="L398"><span class="lineNum">     398</span>                 :             :             // anchor the plot to the observer's icon position (not its Earth-scale ECEF position) so</span>
+<span id="L399"><span class="lineNum">     399</span>                 :             :             // that the observer icon sits at the plot's upper-left corner: the group origin is the</span>
+<span id="L400"><span class="lineNum">     400</span>                 :             :             // disc center, so offset it by the plot radius to bring the bounding box corner onto the icon</span>
+<span id="L401"><span class="lineNum">     401</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             auto bounds = getEnvir()-&gt;getSubmoduleBounds(observerNode != nullptr ? observerNode : observerModule);</span></span>
+<span id="L402"><span class="lineNum">     402</span>                 :<span class="tlaUNC">           0 :             auto anchor = bounds.getCenter();</span></span>
+<span id="L403"><span class="lineNum">     403</span>                 :<span class="tlaUNC">           0 :             plot-&gt;groupFigure-&gt;setTransform(cFigure::Transform().translate(anchor.x + plotRadius + plotOffsetX, anchor.y + plotRadius + plotOffsetY));</span></span>
+<span id="L404"><span class="lineNum">     404</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L405"><span class="lineNum">     405</span>                 :<span class="tlaUNC">           0 :         index++;</span></span>
+<span id="L406"><span class="lineNum">     406</span>                 :             : </span>
+<span id="L407"><span class="lineNum">     407</span>                 :<span class="tlaUNC">           0 :         GeoCoord observerGeo = coordinateSystem-&gt;computeGeographicCoordinate(plot-&gt;observer-&gt;getCurrentPosition());</span></span>
+<span id="L408"><span class="lineNum">     408</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         for (auto mit : plot-&gt;targetMarks) {</span></span>
+<span id="L409"><span class="lineNum">     409</span>                 :<span class="tlaUNC">           0 :             auto mark = mit.second;</span></span>
+<span id="L410"><span class="lineNum">     410</span>                 :<span class="tlaUNC">           0 :             GeoCoord targetGeo = coordinateSystem-&gt;computeGeographicCoordinate(mark-&gt;target-&gt;getCurrentPosition());</span></span>
+<span id="L411"><span class="lineNum">     411</span>                 :<span class="tlaUNC">           0 :             auto lookAngles = wgs84::computeLookAngles(observerGeo, wgs84::geodeticToEcef(targetGeo));</span></span>
+<span id="L412"><span class="lineNum">     412</span>                 :<span class="tlaUNC">           0 :             double elevation = lookAngles.elevation.get&lt;deg&gt;();</span></span>
+<span id="L413"><span class="lineNum">     413</span>                 :<span class="tlaUNC">           0 :             double azimuth = lookAngles.azimuth.get&lt;deg&gt;();</span></span>
+<span id="L414"><span class="lineNum">     414</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             if (elevation &lt; 0) {</span></span>
+<span id="L415"><span class="lineNum">     415</span>                 :             :                 // below the horizon: hide the target and remove its sky trail immediately</span>
+<span id="L416"><span class="lineNum">     416</span>                 :<span class="tlaUNC">           0 :                 mark-&gt;dotFigure-&gt;setVisible(false);</span></span>
+<span id="L417"><span class="lineNum">     417</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                 if (mark-&gt;labelFigure != nullptr)</span></span>
+<span id="L418"><span class="lineNum">     418</span>                 :<span class="tlaUNC">           0 :                     mark-&gt;labelFigure-&gt;setVisible(false);</span></span>
+<span id="L419"><span class="lineNum">     419</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                 if (mark-&gt;trailFigure != nullptr)</span></span>
+<span id="L420"><span class="lineNum">     420</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                     while (mark-&gt;trailFigure-&gt;getNumFigures() &gt; 0)</span></span>
+<span id="L421"><span class="lineNum">     421</span>                 :<span class="tlaUNC">           0 :                         delete mark-&gt;trailFigure-&gt;removeFigure(0);</span></span>
+<span id="L422"><span class="lineNum">     422</span>                 :<span class="tlaUNC">           0 :                 mark-&gt;hadPoint = false;</span></span>
+<span id="L423"><span class="lineNum">     423</span>                 :<span class="tlaUNC">           0 :                 continue;</span></span>
+<span id="L424"><span class="lineNum">     424</span>                 :<span class="tlaUNC">           0 :             }</span></span>
+<span id="L425"><span class="lineNum">     425</span>                 :<span class="tlaUNC">           0 :             cFigure::Point point = elevationAzimuthToCanvas(elevation, azimuth);</span></span>
+<span id="L426"><span class="lineNum">     426</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             double opacity = (elevation &lt; elevationMask) ? lowElevationOpacity : 1.0;</span></span>
+<span id="L427"><span class="lineNum">     427</span>                 :<span class="tlaUNC">           0 :             mark-&gt;dotFigure-&gt;setBounds(cFigure::Rectangle(point.x - targetRadius, point.y - targetRadius, 2 * targetRadius, 2 * targetRadius));</span></span>
+<span id="L428"><span class="lineNum">     428</span>                 :<span class="tlaUNC">           0 :             mark-&gt;dotFigure-&gt;setVisible(true);</span></span>
+<span id="L429"><span class="lineNum">     429</span>                 :<span class="tlaUNC">           0 :             mark-&gt;dotFigure-&gt;setFillOpacity(opacity);</span></span>
+<span id="L430"><span class="lineNum">     430</span>                 :<span class="tlaUNC">           0 :             mark-&gt;dotFigure-&gt;setLineOpacity(opacity);</span></span>
+<span id="L431"><span class="lineNum">     431</span>                 :<span class="tlaUNC">           0 :             char tooltip[96];</span></span>
+<span id="L432"><span class="lineNum">     432</span>                 :<span class="tlaUNC">           0 :             snprintf(tooltip, sizeof(tooltip), &quot;az %.1f° el %.1f° range %.0fkm&quot;, azimuth, elevation, lookAngles.range.get&lt;m&gt;() / 1000);</span></span>
+<span id="L433"><span class="lineNum">     433</span>                 :<span class="tlaUNC">           0 :             mark-&gt;dotFigure-&gt;setTooltip(tooltip);</span></span>
+<span id="L434"><span class="lineNum">     434</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             if (mark-&gt;labelFigure != nullptr) {</span></span>
+<span id="L435"><span class="lineNum">     435</span>                 :<span class="tlaUNC">           0 :                 mark-&gt;labelFigure-&gt;setVisible(true);</span></span>
+<span id="L436"><span class="lineNum">     436</span>                 :<span class="tlaUNC">           0 :                 mark-&gt;labelFigure-&gt;setOpacity(opacity);</span></span>
+<span id="L437"><span class="lineNum">     437</span>                 :<span class="tlaUNC">           0 :                 mark-&gt;labelFigure-&gt;setPosition(cFigure::Point(point.x + targetRadius + 2, point.y));</span></span>
+<span id="L438"><span class="lineNum">     438</span>                 :<span class="tlaUNC">           0 :             }</span></span>
+<span id="L439"><span class="lineNum">     439</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             if (mark-&gt;trailFigure != nullptr) {</span></span>
+<span id="L440"><span class="lineNum">     440</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                 if (!mark-&gt;hadPoint) {</span></span>
+<span id="L441"><span class="lineNum">     441</span>                 :<span class="tlaUNC">           0 :                     mark-&gt;lastPoint = point;</span></span>
+<span id="L442"><span class="lineNum">     442</span>                 :<span class="tlaUNC">           0 :                     mark-&gt;hadPoint = true;</span></span>
+<span id="L443"><span class="lineNum">     443</span>                 :<span class="tlaUNC">           0 :                 }</span></span>
+<span id="L444"><span class="lineNum">     444</span>                 :<span class="tlaUNC">           0 :                 else {</span></span>
+<span id="L445"><span class="lineNum">     445</span>                 :<span class="tlaUNC">           0 :                     double dx = point.x - mark-&gt;lastPoint.x;</span></span>
+<span id="L446"><span class="lineNum">     446</span>                 :<span class="tlaUNC">           0 :                     double dy = point.y - mark-&gt;lastPoint.y;</span></span>
+<span id="L447"><span class="lineNum">     447</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                     if (dx * dx + dy * dy &gt; 1) {</span></span>
+<span id="L448"><span class="lineNum">     448</span>                 :<span class="tlaUNC">           0 :                         auto segment = new cLineFigure(&quot;skyTrailSegment&quot;);</span></span>
+<span id="L449"><span class="lineNum">     449</span>                 :<span class="tlaUNC">           0 :                         segment-&gt;setTags((std::string(&quot;sky_trail recent_history &quot;) + tags).c_str());</span></span>
+<span id="L450"><span class="lineNum">     450</span>                 :<span class="tlaUNC">           0 :                         segment-&gt;setStart(mark-&gt;lastPoint);</span></span>
+<span id="L451"><span class="lineNum">     451</span>                 :<span class="tlaUNC">           0 :                         segment-&gt;setEnd(point);</span></span>
+<span id="L452"><span class="lineNum">     452</span>                 :<span class="tlaUNC">           0 :                         auto module = const_cast&lt;cModule *&gt;(check_and_cast&lt;const cModule *&gt;(mark-&gt;target));</span></span>
+<span id="L453"><span class="lineNum">     453</span>                 :<span class="tlaUNC">           0 :                         segment-&gt;setLineColor(targetColorSet.getColor(module-&gt;getId()));</span></span>
+<span id="L454"><span class="lineNum">     454</span>                 :<span class="tlaUNC">           0 :                         segment-&gt;setLineStyle(trailLineStyle);</span></span>
+<span id="L455"><span class="lineNum">     455</span>                 :<span class="tlaUNC">           0 :                         segment-&gt;setLineWidth(trailLineWidth);</span></span>
+<span id="L456"><span class="lineNum">     456</span>                 :<span class="tlaUNC">           0 :                         mark-&gt;trailFigure-&gt;addFigure(segment);</span></span>
+<span id="L457"><span class="lineNum">     457</span>                 :<span class="tlaUNC">           0 :                         mark-&gt;lastPoint = point;</span></span>
+<span id="L458"><span class="lineNum">     458</span>                 :<span class="tlaUNC">           0 :                     }</span></span>
+<span id="L459"><span class="lineNum">     459</span>                 :<span class="tlaUNC">           0 :                 }</span></span>
+<span id="L460"><span class="lineNum">     460</span>                 :<span class="tlaUNC">           0 :             }</span></span>
+<span id="L461"><span class="lineNum">     461</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L462"><span class="lineNum">     462</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L463"><span class="lineNum">     463</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     visualizationTargetModule-&gt;getCanvas()-&gt;setAnimationSpeed(observerPlots.empty() ? 0 : animationSpeed, this);</span></span>
+<span id="L464"><span class="lineNum">     464</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L465"><span class="lineNum">     465</span>                 :             : </span>
+<span id="L466"><span class="lineNum">     466</span>                 :             : } // namespace visualizer</span>
+<span id="L467"><span class="lineNum">     467</span>                 :             : </span>
+<span id="L468"><span class="lineNum">     468</span>                 :             : } // namespace inet</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

@@ -1,0 +1,646 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - physicallayer/wireless/common/radio/bitlevel/src/inet/physicallayer/wireless/common/radio/bitlevel/ConvolutionalCoder.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../../../../../index.html">top level</a> - <a href="index.html">physicallayer/wireless/common/radio/bitlevel/src/inet/physicallayer/wireless/common/radio/bitlevel</a> - ConvolutionalCoder.cc<span style="font-size: 80%;"> (source / <a href="ConvolutionalCoder.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryMed">89.1&nbsp;%</td>
+            <td class="headerCovTableEntry">477</td>
+            <td class="headerCovTableEntry">425</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryMed">87.9&nbsp;%</td>
+            <td class="headerCovTableEntry">33</td>
+            <td class="headerCovTableEntry">29</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryMed">80.5&nbsp;%</td>
+            <td class="headerCovTableEntry">190</td>
+            <td class="headerCovTableEntry">153</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2014 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #include &quot;inet/physicallayer/wireless/common/radio/bitlevel/ConvolutionalCoder.h&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : </span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &quot;inet/common/BitVector.h&quot;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &quot;inet/common/ShortBitVector.h&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : </span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : namespace inet {</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : namespace physicallayer {</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : </span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : std::ostream&amp; ConvolutionalCoder::printToStream(std::ostream&amp; stream, int level, int evFlags) const</span>
+<span id="L17"><span class="lineNum">      17</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L18"><span class="lineNum">      18</span>                 :<span class="tlaUNC">           0 :     stream &lt;&lt; &quot;ConvolutionalCoder&quot;;</span></span>
+<span id="L19"><span class="lineNum">      19</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (level &lt;= PRINT_LEVEL_TRACE)</span></span>
+<span id="L20"><span class="lineNum">      20</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         stream &lt;&lt; EV_FIELD(convolutionalCode, printFieldToString(convolutionalCode, level + 1, evFlags));</span></span>
+<span id="L21"><span class="lineNum">      21</span>                 :<span class="tlaUNC">           0 :     return stream;</span></span>
+<span id="L22"><span class="lineNum">      22</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L23"><span class="lineNum">      23</span>                 :             : </span>
+<span id="L24"><span class="lineNum">      24</span>                 :             : BitVector ConvolutionalCoder::getPuncturedIndices(unsigned int length) const</span>
+<span id="L25"><span class="lineNum">      25</span>                 :<span class="tlaGNC tlaBgGNC">       11660 : {</span></span>
+<span id="L26"><span class="lineNum">      26</span>                 :<span class="tlaGNC">       11660 :     BitVector isPunctured;</span></span>
+<span id="L27"><span class="lineNum">      27</span>                 :<span class="tlaGNC">       11660 :     isPunctured.appendBit(false, length);</span></span>
+<span id="L28"><span class="lineNum">      28</span>                 :<span class="tlaGNC">       11660 :     int puncturingMatrixSize = puncturingMatrix.at(0).getSize();</span></span>
+<span id="L29"><span class="lineNum">      29</span>         [<span class="tlaGBC" title="Branch 0 was taken 23320 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 11660 times"> + </span>]:<span class="tlaGNC">       34980 :     for (unsigned int i = 0; i &lt; codeRateParamaterN; i++) {</span></span>
+<span id="L30"><span class="lineNum">      30</span>                 :<span class="tlaGNC">       23320 :         int idx = 0;</span></span>
+<span id="L31"><span class="lineNum">      31</span>         [<span class="tlaGBC" title="Branch 0 was taken 408189488 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 23320 times"> + </span>]:<span class="tlaGNC">   408212808 :         for (unsigned int j = 0; codeRateParamaterN * j + i &lt; length; j++) {</span></span>
+<span id="L32"><span class="lineNum">      32</span>                 :<span class="tlaGNC">   408189488 :             int place = idx % puncturingMatrixSize;</span></span>
+<span id="L33"><span class="lineNum">      33</span>                 :<span class="tlaGNC">   408189488 :             bool stolen = !puncturingMatrix.at(i).getBit(place);</span></span>
+<span id="L34"><span class="lineNum">      34</span>                 :<span class="tlaGNC">   408189488 :             isPunctured.setBit(codeRateParamaterN * j + i, stolen);</span></span>
+<span id="L35"><span class="lineNum">      35</span>                 :<span class="tlaGNC">   408189488 :             idx++;</span></span>
+<span id="L36"><span class="lineNum">      36</span>                 :<span class="tlaGNC">   408189488 :         }</span></span>
+<span id="L37"><span class="lineNum">      37</span>                 :<span class="tlaGNC">       23320 :     }</span></span>
+<span id="L38"><span class="lineNum">      38</span>                 :<span class="tlaGNC">       11660 :     return isPunctured;</span></span>
+<span id="L39"><span class="lineNum">      39</span>                 :<span class="tlaGNC">       11660 : }</span></span>
+<span id="L40"><span class="lineNum">      40</span>                 :             : </span>
+<span id="L41"><span class="lineNum">      41</span>                 :             : BitVector ConvolutionalCoder::puncturing(const BitVector&amp; informationBits) const</span>
+<span id="L42"><span class="lineNum">      42</span>                 :<span class="tlaGNC">        5830 : {</span></span>
+<span id="L43"><span class="lineNum">      43</span>                 :<span class="tlaGNC">        5830 :     BitVector puncturedInformationBits;</span></span>
+<span id="L44"><span class="lineNum">      44</span>                 :<span class="tlaGNC">        5830 :     BitVector isPunctured = getPuncturedIndices(informationBits.getSize());</span></span>
+<span id="L45"><span class="lineNum">      45</span>         [<span class="tlaGBC" title="Branch 0 was taken 24106360 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5830 times"> + </span>]:<span class="tlaGNC">    24112190 :     for (unsigned int i = 0; i &lt; informationBits.getSize(); i++)</span></span>
+<span id="L46"><span class="lineNum">      46</span>         [<span class="tlaGBC" title="Branch 0 was taken 23806032 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 300328 times"> + </span>]:<span class="tlaGNC">    24106360 :         if (!isPunctured.getBit(i))</span></span>
+<span id="L47"><span class="lineNum">      47</span>                 :<span class="tlaGNC">    23806032 :             puncturedInformationBits.appendBit(informationBits.getBit(i));</span></span>
+<span id="L48"><span class="lineNum">      48</span>                 :<span class="tlaGNC">        5830 :     return puncturedInformationBits;</span></span>
+<span id="L49"><span class="lineNum">      49</span>                 :<span class="tlaGNC">        5830 : }</span></span>
+<span id="L50"><span class="lineNum">      50</span>                 :             : </span>
+<span id="L51"><span class="lineNum">      51</span>                 :             : BitVector ConvolutionalCoder::depuncturing(const BitVector&amp; decodedBits, BitVector&amp; isPunctured) const</span>
+<span id="L52"><span class="lineNum">      52</span>                 :<span class="tlaGNC">        5830 : {</span></span>
+<span id="L53"><span class="lineNum">      53</span>                 :<span class="tlaGNC">        5830 :     ASSERT(decodedBits.getSize() % codeRatePuncturingN == 0);</span></span>
+<span id="L54"><span class="lineNum">      54</span>                 :<span class="tlaGNC">        5830 :     int encodedLength = (decodedBits.getSize() / codeRatePuncturingN) * codeRatePuncturingK;</span></span>
+<span id="L55"><span class="lineNum">      55</span>                 :<span class="tlaGNC">        5830 :     int depuncturedLength = (encodedLength / codeRateParamaterK) * codeRateParamaterN;</span></span>
+<span id="L56"><span class="lineNum">      56</span>                 :<span class="tlaGNC">        5830 :     isPunctured = getPuncturedIndices(depuncturedLength);</span></span>
+<span id="L57"><span class="lineNum">      57</span>                 :<span class="tlaGNC">        5830 :     BitVector depuncturedDecodedBits;</span></span>
+<span id="L58"><span class="lineNum">      58</span>                 :<span class="tlaGNC">        5830 :     int idx = 0;</span></span>
+<span id="L59"><span class="lineNum">      59</span>         [<span class="tlaGBC" title="Branch 0 was taken 384083128 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5830 times"> + </span>]:<span class="tlaGNC">   384088958 :     for (int i = 0; i &lt; depuncturedLength; i++) {</span></span>
+<span id="L60"><span class="lineNum">      60</span>         [<span class="tlaGBC" title="Branch 0 was taken 297304 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 383785824 times"> + </span>]:<span class="tlaGNC">   384083128 :         if (isPunctured.getBit(i))</span></span>
+<span id="L61"><span class="lineNum">      61</span>                 :<span class="tlaGNC">      297304 :             depuncturedDecodedBits.appendBit(false);</span></span>
+<span id="L62"><span class="lineNum">      62</span>                 :<span class="tlaGNC">   383785824 :         else {</span></span>
+<span id="L63"><span class="lineNum">      63</span>                 :<span class="tlaGNC">   383785824 :             depuncturedDecodedBits.appendBit(decodedBits.getBit(idx));</span></span>
+<span id="L64"><span class="lineNum">      64</span>                 :<span class="tlaGNC">   383785824 :             idx++;</span></span>
+<span id="L65"><span class="lineNum">      65</span>                 :<span class="tlaGNC">   383785824 :         }</span></span>
+<span id="L66"><span class="lineNum">      66</span>                 :<span class="tlaGNC">   384083128 :     }</span></span>
+<span id="L67"><span class="lineNum">      67</span>                 :<span class="tlaGNC">        5830 :     return depuncturedDecodedBits;</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :<span class="tlaGNC">        5830 : }</span></span>
+<span id="L69"><span class="lineNum">      69</span>                 :             : </span>
+<span id="L70"><span class="lineNum">      70</span>                 :             : ShortBitVector ConvolutionalCoder::inputSymbolToOutputSymbol(const ShortBitVector&amp; state, const ShortBitVector&amp; inputSymbol) const</span>
+<span id="L71"><span class="lineNum">      71</span>                 :<span class="tlaGNC">     1236612 : {</span></span>
+<span id="L72"><span class="lineNum">      72</span>                 :<span class="tlaGNC">     1236612 :     ShortBitVector outputSymbol;</span></span>
+<span id="L73"><span class="lineNum">      73</span>                 :<span class="tlaGNC">     1236612 :     outputSymbol.appendBit(false, codeRateParamaterN);</span></span>
+<span id="L74"><span class="lineNum">      74</span>                 :<span class="tlaGNC">     1236612 :     int shift = 0;</span></span>
+<span id="L75"><span class="lineNum">      75</span>         [<span class="tlaGBC" title="Branch 0 was taken 1236612 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1236612 times"> + </span>]:<span class="tlaGNC">     2473224 :     for (int i = inputSymbol.getSize() - 1; i &gt;= 0; i--) {</span></span>
+<span id="L76"><span class="lineNum">      76</span>                 :<span class="tlaGNC">     1236612 :         ShortBitVector shiftRegisters;</span></span>
+<span id="L77"><span class="lineNum">      77</span>                 :<span class="tlaGNC">     1236612 :         shiftRegisters.appendBit(inputSymbol.getBit(i));</span></span>
+<span id="L78"><span class="lineNum">      78</span>         [<span class="tlaGBC" title="Branch 0 was taken 7419652 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1236612 times"> + </span>]:<span class="tlaGNC">     8656264 :         for (int k = shift; k &lt; shift + memorySizes[i]; k++)</span></span>
+<span id="L79"><span class="lineNum">      79</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 7419652 times"> + </span>]:<span class="tlaGNC">     7419652 :             shiftRegisters.appendBit((unsigned int)k &gt;= state.getSize() ? false : state.getBit(k));</span></span>
+<span id="L80"><span class="lineNum">      80</span>                 :<span class="tlaGNC">     1236612 :         const std::vector&lt;ShortBitVector&gt;&amp; row = transferFunctionMatrix.at(i);</span></span>
+<span id="L81"><span class="lineNum">      81</span>         [<span class="tlaGBC" title="Branch 0 was taken 2473224 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1236612 times"> + </span>]:<span class="tlaGNC">     3709836 :         for (unsigned int j = 0; j &lt; row.size(); j++) {</span></span>
+<span id="L82"><span class="lineNum">      82</span>                 :<span class="tlaGNC">     2473224 :             const ShortBitVector&amp; generatorPolynomial = row.at(j);</span></span>
+<span id="L83"><span class="lineNum">      83</span>                 :<span class="tlaGNC">     2473224 :             outputSymbol.setBit(j, eXOR(outputSymbol.getBit(j), modulo2Adder(shiftRegisters, generatorPolynomial)));</span></span>
+<span id="L84"><span class="lineNum">      84</span>                 :<span class="tlaGNC">     2473224 :         }</span></span>
+<span id="L85"><span class="lineNum">      85</span>                 :<span class="tlaGNC">     1236612 :         shift += memorySizes[i];</span></span>
+<span id="L86"><span class="lineNum">      86</span>                 :<span class="tlaGNC">     1236612 :     }</span></span>
+<span id="L87"><span class="lineNum">      87</span>                 :<span class="tlaGNC">     1236612 :     return outputSymbol;</span></span>
+<span id="L88"><span class="lineNum">      88</span>                 :<span class="tlaGNC">     1236612 : }</span></span>
+<span id="L89"><span class="lineNum">      89</span>                 :             : </span>
+<span id="L90"><span class="lineNum">      90</span>                 :             : bool ConvolutionalCoder::modulo2Adder(const ShortBitVector&amp; shiftRegisters, const ShortBitVector&amp; generatorPolynomial) const</span>
+<span id="L91"><span class="lineNum">      91</span>                 :<span class="tlaGNC">     2473224 : {</span></span>
+<span id="L92"><span class="lineNum">      92</span>                 :<span class="tlaGNC">     2473224 :     bool sum = false;</span></span>
+<span id="L93"><span class="lineNum">      93</span>         [<span class="tlaGBC" title="Branch 0 was taken 17312528 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2473224 times"> + </span>]:<span class="tlaGNC">    19785752 :     for (unsigned int i = 0; i &lt; generatorPolynomial.getSize(); i++) {</span></span>
+<span id="L94"><span class="lineNum">      94</span>         [<span class="tlaGBC" title="Branch 0 was taken 12366092 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4946436 times"> + </span>]:<span class="tlaGNC">    17312528 :         if (generatorPolynomial.getBit(i))</span></span>
+<span id="L95"><span class="lineNum">      95</span>                 :<span class="tlaGNC">    12366092 :             sum = eXOR(sum, shiftRegisters.getBit(i));</span></span>
+<span id="L96"><span class="lineNum">      96</span>                 :<span class="tlaGNC">    17312528 :     }</span></span>
+<span id="L97"><span class="lineNum">      97</span>                 :<span class="tlaGNC">     2473224 :     return sum;</span></span>
+<span id="L98"><span class="lineNum">      98</span>                 :<span class="tlaGNC">     2473224 : }</span></span>
+<span id="L99"><span class="lineNum">      99</span>                 :             : </span>
+<span id="L100"><span class="lineNum">     100</span>                 :             : void ConvolutionalCoder::computeOutputAndInputSymbols()</span>
+<span id="L101"><span class="lineNum">     101</span>                 :<span class="tlaGNC">        9662 : {</span></span>
+<span id="L102"><span class="lineNum">     102</span>         [<span class="tlaGBC" title="Branch 0 was taken 19324 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 9662 times"> + </span>]:<span class="tlaGNC">       28986 :     for (int i = 0; i != numberOfInputSymbols; i++) {</span></span>
+<span id="L103"><span class="lineNum">     103</span>                 :<span class="tlaGNC">       19324 :         ShortBitVector inputSymbol(i, codeRateParamaterK);</span></span>
+<span id="L104"><span class="lineNum">     104</span>                 :<span class="tlaGNC">       19324 :         decimalToInputSymbol[inputSymbol.reverseToDecimal()] = inputSymbol;</span></span>
+<span id="L105"><span class="lineNum">     105</span>                 :<span class="tlaGNC">       19324 :     }</span></span>
+<span id="L106"><span class="lineNum">     106</span>         [<span class="tlaGBC" title="Branch 0 was taken 618306 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 9662 times"> + </span>]:<span class="tlaGNC">      627968 :     for (int decState = 0; decState != numberOfStates; decState++) {</span></span>
+<span id="L107"><span class="lineNum">     107</span>                 :<span class="tlaGNC">      618306 :         ShortBitVector state(decState, memorySizeSum);</span></span>
+<span id="L108"><span class="lineNum">     108</span>         [<span class="tlaGBC" title="Branch 0 was taken 1236612 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 618306 times"> + </span>]:<span class="tlaGNC">     1854918 :         for (int decInputSymbol = 0; decInputSymbol != numberOfInputSymbols; decInputSymbol++) {</span></span>
+<span id="L109"><span class="lineNum">     109</span>                 :<span class="tlaGNC">     1236612 :             const ShortBitVector&amp; inputSymbol = decimalToInputSymbol[decInputSymbol];</span></span>
+<span id="L110"><span class="lineNum">     110</span>                 :<span class="tlaGNC">     1236612 :             ShortBitVector outputSymbol = inputSymbolToOutputSymbol(state, inputSymbol);</span></span>
+<span id="L111"><span class="lineNum">     111</span>                 :<span class="tlaGNC">     1236612 :             int decOutputSymbol = outputSymbol.reverseToDecimal();</span></span>
+<span id="L112"><span class="lineNum">     112</span>                 :<span class="tlaGNC">     1236612 :             int reverseDec = state.reverseToDecimal();</span></span>
+<span id="L113"><span class="lineNum">     113</span>                 :<span class="tlaGNC">     1236612 :             outputSymbols[reverseDec][decInputSymbol] = outputSymbol;</span></span>
+<span id="L114"><span class="lineNum">     114</span>                 :<span class="tlaGNC">     1236612 :             inputSymbols[reverseDec][decOutputSymbol] = decInputSymbol;</span></span>
+<span id="L115"><span class="lineNum">     115</span>                 :<span class="tlaGNC">     1236612 :         }</span></span>
+<span id="L116"><span class="lineNum">     116</span>                 :<span class="tlaGNC">      618306 :     }</span></span>
+<span id="L117"><span class="lineNum">     117</span>                 :<span class="tlaGNC">        9662 : }</span></span>
+<span id="L118"><span class="lineNum">     118</span>                 :             : </span>
+<span id="L119"><span class="lineNum">     119</span>                 :             : void ConvolutionalCoder::memoryAllocations()</span>
+<span id="L120"><span class="lineNum">     120</span>                 :<span class="tlaGNC">        9662 : {</span></span>
+<span id="L121"><span class="lineNum">     121</span>                 :<span class="tlaGNC">        9662 :     decimalToOutputSymbol = new ShortBitVector[numberOfOutputSymbols];</span></span>
+<span id="L122"><span class="lineNum">     122</span>                 :<span class="tlaGNC">        9662 :     outputSymbols = new ShortBitVector *[numberOfStates];</span></span>
+<span id="L123"><span class="lineNum">     123</span>                 :<span class="tlaGNC">        9662 :     decimalToInputSymbol = new ShortBitVector[numberOfInputSymbols];</span></span>
+<span id="L124"><span class="lineNum">     124</span>                 :<span class="tlaGNC">        9662 :     stateTransitions = new int *[numberOfStates];</span></span>
+<span id="L125"><span class="lineNum">     125</span>                 :<span class="tlaGNC">        9662 :     inputSymbols = new int *[numberOfStates];</span></span>
+<span id="L126"><span class="lineNum">     126</span>                 :<span class="tlaGNC">        9662 :     hammingDistanceLookupTable = new unsigned char **[numberOfOutputSymbols];</span></span>
+<span id="L127"><span class="lineNum">     127</span>         [<span class="tlaGBC" title="Branch 0 was taken 38648 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 9662 times"> + </span>]:<span class="tlaGNC">       48310 :     for (int i = 0; i &lt; numberOfOutputSymbols; i++) {</span></span>
+<span id="L128"><span class="lineNum">     128</span>                 :<span class="tlaGNC">       38648 :         hammingDistanceLookupTable[i] = new unsigned char *[numberOfOutputSymbols];</span></span>
+<span id="L129"><span class="lineNum">     129</span>         [<span class="tlaGBC" title="Branch 0 was taken 154592 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 38648 times"> + </span>]:<span class="tlaGNC">      193240 :         for (int j = 0; j &lt; numberOfOutputSymbols; j++)</span></span>
+<span id="L130"><span class="lineNum">     130</span>                 :<span class="tlaGNC">      154592 :             hammingDistanceLookupTable[i][j] = new unsigned char[numberOfOutputSymbols];</span></span>
+<span id="L131"><span class="lineNum">     131</span>                 :<span class="tlaGNC">       38648 :     }</span></span>
+<span id="L132"><span class="lineNum">     132</span>         [<span class="tlaGBC" title="Branch 0 was taken 618306 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 9662 times"> + </span>]:<span class="tlaGNC">      627968 :     for (int i = 0; i &lt; numberOfStates; i++) {</span></span>
+<span id="L133"><span class="lineNum">     133</span>                 :<span class="tlaGNC">      618306 :         stateTransitions[i] = new int[numberOfInputSymbols];</span></span>
+<span id="L134"><span class="lineNum">     134</span>                 :<span class="tlaGNC">      618306 :         inputSymbols[i] = new int[numberOfOutputSymbols];</span></span>
+<span id="L135"><span class="lineNum">     135</span>                 :<span class="tlaGNC">      618306 :         outputSymbols[i] = new ShortBitVector[numberOfInputSymbols];</span></span>
+<span id="L136"><span class="lineNum">     136</span>         [<span class="tlaGBC" title="Branch 0 was taken 1236612 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 618306 times"> + </span>]:<span class="tlaGNC">     1854918 :         for (int j = 0; j &lt; numberOfInputSymbols; j++) {</span></span>
+<span id="L137"><span class="lineNum">     137</span>                 :<span class="tlaGNC">     1236612 :             stateTransitions[i][j] = -1;</span></span>
+<span id="L138"><span class="lineNum">     138</span>                 :<span class="tlaGNC">     1236612 :             outputSymbols[i][j] = ShortBitVector();</span></span>
+<span id="L139"><span class="lineNum">     139</span>                 :<span class="tlaGNC">     1236612 :         }</span></span>
+<span id="L140"><span class="lineNum">     140</span>         [<span class="tlaGBC" title="Branch 0 was taken 2473224 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 618306 times"> + </span>]:<span class="tlaGNC">     3091530 :         for (int j = 0; j &lt; numberOfOutputSymbols; j++)</span></span>
+<span id="L141"><span class="lineNum">     141</span>                 :<span class="tlaGNC">     2473224 :             inputSymbols[i][j] = -1;</span></span>
+<span id="L142"><span class="lineNum">     142</span>                 :<span class="tlaGNC">      618306 :     }</span></span>
+<span id="L143"><span class="lineNum">     143</span>                 :<span class="tlaGNC">        9662 : }</span></span>
+<span id="L144"><span class="lineNum">     144</span>                 :             : </span>
+<span id="L145"><span class="lineNum">     145</span>                 :             : void ConvolutionalCoder::computeMemorySizes()</span>
+<span id="L146"><span class="lineNum">     146</span>                 :<span class="tlaGNC">        9662 : {</span></span>
+<span id="L147"><span class="lineNum">     147</span>         [<span class="tlaGBC" title="Branch 0 was taken 9662 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 9662 times"> + </span>]:<span class="tlaGNC">        9662 :     for (auto&amp; elem : constraintLengths)</span></span>
+<span id="L148"><span class="lineNum">     148</span>                 :<span class="tlaGNC">        9662 :         memorySizes.push_back(elem - 1);</span></span>
+<span id="L149"><span class="lineNum">     149</span>                 :<span class="tlaGNC">        9662 : }</span></span>
+<span id="L150"><span class="lineNum">     150</span>                 :             : </span>
+<span id="L151"><span class="lineNum">     151</span>                 :             : void ConvolutionalCoder::computeNumberOfStates()</span>
+<span id="L152"><span class="lineNum">     152</span>                 :<span class="tlaGNC">        9662 : {</span></span>
+<span id="L153"><span class="lineNum">     153</span>                 :<span class="tlaGNC">        9662 :     numberOfStates = (int)pow(2, memorySizeSum);</span></span>
+<span id="L154"><span class="lineNum">     154</span>                 :<span class="tlaGNC">        9662 : }</span></span>
+<span id="L155"><span class="lineNum">     155</span>                 :             : </span>
+<span id="L156"><span class="lineNum">     156</span>                 :             : void ConvolutionalCoder::computeNumberOfInputAndOutputSymbols()</span>
+<span id="L157"><span class="lineNum">     157</span>                 :<span class="tlaGNC">        9662 : {</span></span>
+<span id="L158"><span class="lineNum">     158</span>                 :<span class="tlaGNC">        9662 :     numberOfInputSymbols = (int)pow(2, codeRateParamaterK);</span></span>
+<span id="L159"><span class="lineNum">     159</span>                 :<span class="tlaGNC">        9662 :     numberOfOutputSymbols = (int)pow(2, codeRateParamaterN);</span></span>
+<span id="L160"><span class="lineNum">     160</span>                 :<span class="tlaGNC">        9662 : }</span></span>
+<span id="L161"><span class="lineNum">     161</span>                 :             : </span>
+<span id="L162"><span class="lineNum">     162</span>                 :             : void ConvolutionalCoder::computeMemorySizeSum()</span>
+<span id="L163"><span class="lineNum">     163</span>                 :<span class="tlaGNC">        9662 : {</span></span>
+<span id="L164"><span class="lineNum">     164</span>                 :<span class="tlaGNC">        9662 :     memorySizeSum = 0;</span></span>
+<span id="L165"><span class="lineNum">     165</span>         [<span class="tlaGBC" title="Branch 0 was taken 9662 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 9662 times"> + </span>]:<span class="tlaGNC">        9662 :     for (auto&amp; elem : memorySizes)</span></span>
+<span id="L166"><span class="lineNum">     166</span>                 :<span class="tlaGNC">        9662 :         memorySizeSum += elem;</span></span>
+<span id="L167"><span class="lineNum">     167</span>                 :<span class="tlaGNC">        9662 : }</span></span>
+<span id="L168"><span class="lineNum">     168</span>                 :             : </span>
+<span id="L169"><span class="lineNum">     169</span>                 :             : void ConvolutionalCoder::computeHammingDistanceLookupTable()</span>
+<span id="L170"><span class="lineNum">     170</span>                 :<span class="tlaGNC">        9662 : {</span></span>
+<span id="L171"><span class="lineNum">     171</span>         [<span class="tlaGBC" title="Branch 0 was taken 38648 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 9662 times"> + </span>]:<span class="tlaGNC">       48310 :     for (int i = 0; i &lt; numberOfOutputSymbols; i++) {</span></span>
+<span id="L172"><span class="lineNum">     172</span>         [<span class="tlaGBC" title="Branch 0 was taken 154592 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 38648 times"> + </span>]:<span class="tlaGNC">      193240 :         for (int j = 0; j &lt; numberOfOutputSymbols; j++) {</span></span>
+<span id="L173"><span class="lineNum">     173</span>         [<span class="tlaGBC" title="Branch 0 was taken 618368 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 154592 times"> + </span>]:<span class="tlaGNC">      772960 :             for (int k = 0; k &lt; numberOfOutputSymbols; k++) {</span></span>
+<span id="L174"><span class="lineNum">     174</span>                 :<span class="tlaGNC">      618368 :                 unsigned int hammingDistance = i ^ j;</span></span>
+<span id="L175"><span class="lineNum">     175</span>                 :<span class="tlaGNC">      618368 :                 hammingDistance = hammingDistance &amp; k;</span></span>
+<span id="L176"><span class="lineNum">     176</span>                 :<span class="tlaGNC">      618368 :                 hammingDistance = hammingDistance - ((hammingDistance &gt;&gt; 1) &amp; 0x55555555);</span></span>
+<span id="L177"><span class="lineNum">     177</span>                 :<span class="tlaGNC">      618368 :                 hammingDistance = (hammingDistance &amp; 0x33333333) + ((hammingDistance &gt;&gt; 2) &amp; 0x33333333);</span></span>
+<span id="L178"><span class="lineNum">     178</span>                 :<span class="tlaGNC">      618368 :                 hammingDistanceLookupTable[i][j][k] = (((hammingDistance + (hammingDistance &gt;&gt; 4)) &amp; 0x0F0F0F0F) * 0x01010101) &gt;&gt; 24;</span></span>
+<span id="L179"><span class="lineNum">     179</span>                 :<span class="tlaGNC">      618368 :             }</span></span>
+<span id="L180"><span class="lineNum">     180</span>                 :<span class="tlaGNC">      154592 :         }</span></span>
+<span id="L181"><span class="lineNum">     181</span>                 :<span class="tlaGNC">       38648 :     }</span></span>
+<span id="L182"><span class="lineNum">     182</span>                 :<span class="tlaGNC">        9662 : }</span></span>
+<span id="L183"><span class="lineNum">     183</span>                 :             : </span>
+<span id="L184"><span class="lineNum">     184</span>                 :             : void ConvolutionalCoder::initParameters()</span>
+<span id="L185"><span class="lineNum">     185</span>                 :<span class="tlaGNC">        9662 : {</span></span>
+<span id="L186"><span class="lineNum">     186</span>                 :<span class="tlaGNC">        9662 :     computeMemorySizes();</span></span>
+<span id="L187"><span class="lineNum">     187</span>                 :<span class="tlaGNC">        9662 :     computeMemorySizeSum();</span></span>
+<span id="L188"><span class="lineNum">     188</span>                 :<span class="tlaGNC">        9662 :     computeNumberOfStates();</span></span>
+<span id="L189"><span class="lineNum">     189</span>                 :<span class="tlaGNC">        9662 :     computeNumberOfInputAndOutputSymbols();</span></span>
+<span id="L190"><span class="lineNum">     190</span>                 :<span class="tlaGNC">        9662 :     memoryAllocations();</span></span>
+<span id="L191"><span class="lineNum">     191</span>                 :<span class="tlaGNC">        9662 :     computeOutputAndInputSymbols();</span></span>
+<span id="L192"><span class="lineNum">     192</span>                 :<span class="tlaGNC">        9662 :     computeStateTransitions();</span></span>
+<span id="L193"><span class="lineNum">     193</span>                 :<span class="tlaGNC">        9662 :     computeDecimalToOutputSymbolVector();</span></span>
+<span id="L194"><span class="lineNum">     194</span>                 :<span class="tlaGNC">        9662 :     computeHammingDistanceLookupTable();</span></span>
+<span id="L195"><span class="lineNum">     195</span>                 :<span class="tlaGNC">        9662 : }</span></span>
+<span id="L196"><span class="lineNum">     196</span>                 :             : </span>
+<span id="L197"><span class="lineNum">     197</span>                 :             : BitVector ConvolutionalCoder::encode(const BitVector&amp; informationBits) const</span>
+<span id="L198"><span class="lineNum">     198</span>                 :<span class="tlaGNC">        5830 : {</span></span>
+<span id="L199"><span class="lineNum">     199</span>                 :<span class="tlaGNC">        5830 :     EV_DEBUG &lt;&lt; &quot;Encoding the following bits: &quot; &lt;&lt; informationBits &lt;&lt; endl;</span></span>
+<span id="L200"><span class="lineNum">     200</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 5830 times"> + </span>]:<span class="tlaGNC">        5830 :     if (informationBits.getSize() % codeRateParamaterK)</span></span>
+<span id="L201"><span class="lineNum">     201</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         throw cRuntimeError(&quot;Length of informationBits must be a multiple of codeRateParamaterK = %d&quot;, codeRateParamaterK);</span></span>
+<span id="L202"><span class="lineNum">     202</span>                 :<span class="tlaGNC tlaBgGNC">        5830 :     BitVector encodedInformationBits;</span></span>
+<span id="L203"><span class="lineNum">     203</span>                 :<span class="tlaGNC">        5830 :     int state = 0;</span></span>
+<span id="L204"><span class="lineNum">     204</span>         [<span class="tlaGBC" title="Branch 0 was taken 12053180 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5830 times"> + </span>]:<span class="tlaGNC">    12059010 :     for (unsigned int i = 0; i &lt; informationBits.getSize(); i += codeRateParamaterK) {</span></span>
+<span id="L205"><span class="lineNum">     205</span>                 :<span class="tlaGNC">    12053180 :         ShortBitVector inputSymbol;</span></span>
+<span id="L206"><span class="lineNum">     206</span>         [<span class="tlaGBC" title="Branch 0 was taken 12053180 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 12053180 times"> + </span>]:<span class="tlaGNC">    24106360 :         for (unsigned int j = i; j &lt; i + codeRateParamaterK; j++)</span></span>
+<span id="L207"><span class="lineNum">     207</span>                 :<span class="tlaGNC">    12053180 :             inputSymbol.appendBit(informationBits.getBit(j));</span></span>
+<span id="L208"><span class="lineNum">     208</span>                 :<span class="tlaGNC">    12053180 :         int inputSymbolDec = inputSymbol.reverseToDecimal();</span></span>
+<span id="L209"><span class="lineNum">     209</span>                 :<span class="tlaGNC">    12053180 :         const ShortBitVector&amp; encodedSymbol = outputSymbols[state][inputSymbolDec];</span></span>
+<span id="L210"><span class="lineNum">     210</span>                 :<span class="tlaGNC">    12053180 :         state = stateTransitions[state][inputSymbolDec];</span></span>
+<span id="L211"><span class="lineNum">     211</span>         [<span class="tlaGBC" title="Branch 0 was taken 24106360 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 12053180 times"> + </span>]:<span class="tlaGNC">    36159540 :         for (unsigned int j = 0; j &lt; encodedSymbol.getSize(); j++)</span></span>
+<span id="L212"><span class="lineNum">     212</span>                 :<span class="tlaGNC">    24106360 :             encodedInformationBits.appendBit(encodedSymbol.getBit(j));</span></span>
+<span id="L213"><span class="lineNum">     213</span>                 :<span class="tlaGNC">    12053180 :     }</span></span>
+<span id="L214"><span class="lineNum">     214</span>                 :<span class="tlaGNC">        5830 :     BitVector puncturedEncodedInformationBits = puncturing(encodedInformationBits);</span></span>
+<span id="L215"><span class="lineNum">     215</span>                 :<span class="tlaGNC">        5830 :     EV_DEBUG &lt;&lt; &quot;The encoded bits are: &quot; &lt;&lt; puncturedEncodedInformationBits &lt;&lt; endl;</span></span>
+<span id="L216"><span class="lineNum">     216</span>                 :<span class="tlaGNC">        5830 :     return puncturedEncodedInformationBits;</span></span>
+<span id="L217"><span class="lineNum">     217</span>                 :<span class="tlaGNC">        5830 : }</span></span>
+<span id="L218"><span class="lineNum">     218</span>                 :             : </span>
+<span id="L219"><span class="lineNum">     219</span>                 :             : void ConvolutionalCoder::printOutputs() const</span>
+<span id="L220"><span class="lineNum">     220</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L221"><span class="lineNum">     221</span>                 :<span class="tlaUNC">           0 :     std::cout &lt;&lt; &quot;Outputs&quot; &lt;&lt; endl;</span></span>
+<span id="L222"><span class="lineNum">     222</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     for (int i = 0; i != numberOfStates; i++) {</span></span>
+<span id="L223"><span class="lineNum">     223</span>                 :<span class="tlaUNC">           0 :         std::cout &lt;&lt; outputSymbols[i][0].reverseToDecimal();</span></span>
+<span id="L224"><span class="lineNum">     224</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         for (int j = 1; j != numberOfInputSymbols; j++)</span></span>
+<span id="L225"><span class="lineNum">     225</span>                 :<span class="tlaUNC">           0 :             std::cout &lt;&lt; &quot; &quot; &lt;&lt; outputSymbols[i][j].reverseToDecimal();</span></span>
+<span id="L226"><span class="lineNum">     226</span>                 :<span class="tlaUNC">           0 :         std::cout &lt;&lt; endl;</span></span>
+<span id="L227"><span class="lineNum">     227</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L228"><span class="lineNum">     228</span>                 :<span class="tlaUNC">           0 :     std::cout &lt;&lt; &quot;End Outputs&quot; &lt;&lt; endl;</span></span>
+<span id="L229"><span class="lineNum">     229</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L230"><span class="lineNum">     230</span>                 :             : </span>
+<span id="L231"><span class="lineNum">     231</span>                 :             : void ConvolutionalCoder::printStateTransitions() const</span>
+<span id="L232"><span class="lineNum">     232</span>                 :<span class="tlaUNC">           0 : {</span></span>
+<span id="L233"><span class="lineNum">     233</span>                 :<span class="tlaUNC">           0 :     std::cout &lt;&lt; &quot;State transitions&quot; &lt;&lt; endl;</span></span>
+<span id="L234"><span class="lineNum">     234</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     for (int i = 0; i != numberOfStates; i++) {</span></span>
+<span id="L235"><span class="lineNum">     235</span>                 :<span class="tlaUNC">           0 :         std::cout &lt;&lt; stateTransitions[i][0];</span></span>
+<span id="L236"><span class="lineNum">     236</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         for (int j = 1; j != numberOfInputSymbols; j++)</span></span>
+<span id="L237"><span class="lineNum">     237</span>                 :<span class="tlaUNC">           0 :             std::cout &lt;&lt; &quot; &quot; &lt;&lt; stateTransitions[i][j];</span></span>
+<span id="L238"><span class="lineNum">     238</span>                 :<span class="tlaUNC">           0 :         std::cout &lt;&lt; endl;</span></span>
+<span id="L239"><span class="lineNum">     239</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L240"><span class="lineNum">     240</span>                 :<span class="tlaUNC">           0 :     std::cout &lt;&lt; &quot;End State transitions&quot; &lt;&lt; endl;</span></span>
+<span id="L241"><span class="lineNum">     241</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L242"><span class="lineNum">     242</span>                 :             : </span>
+<span id="L243"><span class="lineNum">     243</span>                 :             : void ConvolutionalCoder::computeStateTransitions()</span>
+<span id="L244"><span class="lineNum">     244</span>                 :<span class="tlaGNC tlaBgGNC">        9662 : {</span></span>
+<span id="L245"><span class="lineNum">     245</span>         [<span class="tlaGBC" title="Branch 0 was taken 618306 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 9662 times"> + </span>]:<span class="tlaGNC">      627968 :     for (int decState = 0; decState != numberOfStates; decState++) {</span></span>
+<span id="L246"><span class="lineNum">     246</span>                 :<span class="tlaGNC">      618306 :         ShortBitVector state(decState, memorySizeSum);</span></span>
+<span id="L247"><span class="lineNum">     247</span>                 :<span class="tlaGNC">      618306 :         ShortBitVector shiftedState = state;</span></span>
+<span id="L248"><span class="lineNum">     248</span>                 :<span class="tlaGNC">      618306 :         shiftedState.leftShift(1);</span></span>
+<span id="L249"><span class="lineNum">     249</span>         [<span class="tlaGBC" title="Branch 0 was taken 1236612 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 618306 times"> + </span>]:<span class="tlaGNC">     1854918 :         for (int is = 0; is != numberOfInputSymbols; is++) {</span></span>
+<span id="L250"><span class="lineNum">     250</span>                 :<span class="tlaGNC">     1236612 :             ShortBitVector nextState = shiftedState;</span></span>
+<span id="L251"><span class="lineNum">     251</span>                 :<span class="tlaGNC">     1236612 :             ShortBitVector inputSymbol(is, codeRateParamaterK);</span></span>
+<span id="L252"><span class="lineNum">     252</span>                 :<span class="tlaGNC">     1236612 :             int shift = 0;</span></span>
+<span id="L253"><span class="lineNum">     253</span>         [<span class="tlaGBC" title="Branch 0 was taken 1236612 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1236612 times"> + </span>]:<span class="tlaGNC">     2473224 :             for (int m = inputSymbol.getSize() - 1; m &gt;= 0; m--) {</span></span>
+<span id="L254"><span class="lineNum">     254</span>                 :<span class="tlaGNC">     1236612 :                 nextState.setBit(shift, inputSymbol.getBit(m));</span></span>
+<span id="L255"><span class="lineNum">     255</span>                 :<span class="tlaGNC">     1236612 :                 shift += memorySizes.at(m);</span></span>
+<span id="L256"><span class="lineNum">     256</span>                 :<span class="tlaGNC">     1236612 :             }</span></span>
+<span id="L257"><span class="lineNum">     257</span>                 :<span class="tlaGNC">     1236612 :             stateTransitions[state.reverseToDecimal()][inputSymbol.reverseToDecimal()] = nextState.reverseToDecimal();</span></span>
+<span id="L258"><span class="lineNum">     258</span>                 :<span class="tlaGNC">     1236612 :         }</span></span>
+<span id="L259"><span class="lineNum">     259</span>                 :<span class="tlaGNC">      618306 :     }</span></span>
+<span id="L260"><span class="lineNum">     260</span>                 :<span class="tlaGNC">        9662 : }</span></span>
+<span id="L261"><span class="lineNum">     261</span>                 :             : </span>
+<span id="L262"><span class="lineNum">     262</span>                 :             : ShortBitVector ConvolutionalCoder::giveNextOutputSymbol(const BitVector&amp; encodedBits, int decodedLength, const BitVector&amp; isPunctured, ShortBitVector&amp; countsOnHammingDistance) const</span>
+<span id="L263"><span class="lineNum">     263</span>                 :<span class="tlaGNC">   192047394 : {</span></span>
+<span id="L264"><span class="lineNum">     264</span>         [<span class="tlaGBC" title="Branch 0 was taken 5830 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 192041564 times"> + </span>]:<span class="tlaGNC">   192047394 :     if (isCompletelyDecoded(encodedBits.getSize(), decodedLength))</span></span>
+<span id="L265"><span class="lineNum">     265</span>                 :<span class="tlaGNC">        5830 :         return ShortBitVector();</span></span>
+<span id="L266"><span class="lineNum">     266</span>                 :<span class="tlaGNC">   192041564 :     int pos = decodedLength / codeRateParamaterK;</span></span>
+<span id="L267"><span class="lineNum">     267</span>                 :<span class="tlaGNC">   192041564 :     ShortBitVector nextSymbol;</span></span>
+<span id="L268"><span class="lineNum">     268</span>                 :<span class="tlaGNC">   192041564 :     int idx = 0;</span></span>
+<span id="L269"><span class="lineNum">     269</span>         [<span class="tlaGBC" title="Branch 0 was taken 384083128 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 192041564 times"> + </span>]:<span class="tlaGNC">   576124692 :     for (unsigned int i = pos * codeRateParamaterN; i &lt; (pos + 1) * codeRateParamaterN; i++) {</span></span>
+<span id="L270"><span class="lineNum">     270</span>         [<span class="tlaGBC" title="Branch 0 was taken 297304 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 383785824 times"> + </span>]:<span class="tlaGNC">   384083128 :         if (isPunctured.getBit(i))</span></span>
+<span id="L271"><span class="lineNum">     271</span>                 :<span class="tlaGNC">      297304 :             countsOnHammingDistance.setBit(idx, false);</span></span>
+<span id="L272"><span class="lineNum">     272</span>                 :<span class="tlaGNC">   384083128 :         nextSymbol.appendBit(encodedBits.getBit(i));</span></span>
+<span id="L273"><span class="lineNum">     273</span>                 :<span class="tlaGNC">   384083128 :         idx++;</span></span>
+<span id="L274"><span class="lineNum">     274</span>                 :<span class="tlaGNC">   384083128 :     }</span></span>
+<span id="L275"><span class="lineNum">     275</span>                 :<span class="tlaGNC">   192041564 :     return nextSymbol;</span></span>
+<span id="L276"><span class="lineNum">     276</span>                 :<span class="tlaGNC">   192047394 : }</span></span>
+<span id="L277"><span class="lineNum">     277</span>                 :             : </span>
+<span id="L278"><span class="lineNum">     278</span>                 :             : bool ConvolutionalCoder::isCompletelyDecoded(unsigned int encodedLength, unsigned int decodedLength) const</span>
+<span id="L279"><span class="lineNum">     279</span>                 :<span class="tlaGNC">   192047394 : {</span></span>
+<span id="L280"><span class="lineNum">     280</span>                 :<span class="tlaGNC">   192047394 :     ASSERT(decodedLength % codeRateParamaterK == 0);</span></span>
+<span id="L281"><span class="lineNum">     281</span>                 :<span class="tlaGNC">   192047394 :     unsigned int pos = decodedLength / codeRateParamaterK;</span></span>
+<span id="L282"><span class="lineNum">     282</span>                 :<span class="tlaGNC">   192047394 :     return (pos + 1) * codeRateParamaterN &gt; encodedLength;</span></span>
+<span id="L283"><span class="lineNum">     283</span>                 :<span class="tlaGNC">   192047394 : }</span></span>
+<span id="L284"><span class="lineNum">     284</span>                 :             : </span>
+<span id="L285"><span class="lineNum">     285</span>                 :             : void ConvolutionalCoder::parseMatrix(const char *strMatrix, std::vector&lt;std::vector&lt;int&gt;&gt;&amp; matrix) const</span>
+<span id="L286"><span class="lineNum">     286</span>                 :<span class="tlaGNC">       19324 : {</span></span>
+<span id="L287"><span class="lineNum">     287</span>                 :<span class="tlaGNC">       19324 :     cStringTokenizer tokenizer(strMatrix, &quot;;&quot;);</span></span>
+<span id="L288"><span class="lineNum">     288</span>         [<span class="tlaGBC" title="Branch 0 was taken 28986 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 19324 times"> + </span>]:<span class="tlaGNC">       48310 :     while (tokenizer.hasMoreTokens()) {</span></span>
+<span id="L289"><span class="lineNum">     289</span>                 :<span class="tlaGNC">       28986 :         std::vector&lt;int&gt; row;</span></span>
+<span id="L290"><span class="lineNum">     290</span>                 :<span class="tlaGNC">       28986 :         parseVector(tokenizer.nextToken(), row);</span></span>
+<span id="L291"><span class="lineNum">     291</span>                 :<span class="tlaGNC">       28986 :         matrix.push_back(row);</span></span>
+<span id="L292"><span class="lineNum">     292</span>                 :<span class="tlaGNC">       28986 :     }</span></span>
+<span id="L293"><span class="lineNum">     293</span>                 :<span class="tlaGNC">       19324 : }</span></span>
+<span id="L294"><span class="lineNum">     294</span>                 :             : </span>
+<span id="L295"><span class="lineNum">     295</span>                 :             : void ConvolutionalCoder::parseVector(const char *strVector, std::vector&lt;int&gt;&amp; vector) const</span>
+<span id="L296"><span class="lineNum">     296</span>                 :<span class="tlaGNC">       38648 : {</span></span>
+<span id="L297"><span class="lineNum">     297</span>                 :<span class="tlaGNC">       38648 :     cStringTokenizer tokenizer(strVector);</span></span>
+<span id="L298"><span class="lineNum">     298</span>         [<span class="tlaGBC" title="Branch 0 was taken 49994 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 38648 times"> + </span>]:<span class="tlaGNC">       88642 :     while (tokenizer.hasMoreTokens())</span></span>
+<span id="L299"><span class="lineNum">     299</span>                 :<span class="tlaGNC">       49994 :         vector.push_back(atoi(tokenizer.nextToken()));</span></span>
+<span id="L300"><span class="lineNum">     300</span>                 :<span class="tlaGNC">       38648 : }</span></span>
+<span id="L301"><span class="lineNum">     301</span>                 :             : </span>
+<span id="L302"><span class="lineNum">     302</span>                 :             : void ConvolutionalCoder::convertToShortBitVectorMatrix(std::vector&lt;std::vector&lt;int&gt;&gt;&amp; matrix, std::vector&lt;ShortBitVector&gt;&amp; boolMatrix) const</span>
+<span id="L303"><span class="lineNum">     303</span>                 :<span class="tlaGNC">        9662 : {</span></span>
+<span id="L304"><span class="lineNum">     304</span>         [<span class="tlaGBC" title="Branch 0 was taken 19324 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 9662 times"> + </span>]:<span class="tlaGNC">       19324 :     for (auto&amp; elem : matrix) {</span></span>
+<span id="L305"><span class="lineNum">     305</span>                 :<span class="tlaGNC">       19324 :         std::vector&lt;int&gt; matrixRow = elem;</span></span>
+<span id="L306"><span class="lineNum">     306</span>                 :<span class="tlaGNC">       19324 :         ShortBitVector row;</span></span>
+<span id="L307"><span class="lineNum">     307</span>         [<span class="tlaGBC" title="Branch 0 was taken 21008 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 19324 times"> + </span>]:<span class="tlaGNC">       21008 :         for (auto&amp; matrixRow_j : matrixRow) {</span></span>
+<span id="L308"><span class="lineNum">     308</span>         [<span class="tlaGBC" title="Branch 0 was taken 20166 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 842 times"> + </span>]:<span class="tlaGNC">       21008 :             if (matrixRow_j == 1)</span></span>
+<span id="L309"><span class="lineNum">     309</span>                 :<span class="tlaGNC">       20166 :                 row.appendBit(true);</span></span>
+<span id="L310"><span class="lineNum">     310</span>         [<span class="tlaGBC" title="Branch 0 was taken 842 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">         842 :             else if (matrixRow_j == 0)</span></span>
+<span id="L311"><span class="lineNum">     311</span>                 :<span class="tlaGNC">         842 :                 row.appendBit(false);</span></span>
+<span id="L312"><span class="lineNum">     312</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             else</span></span>
+<span id="L313"><span class="lineNum">     313</span>                 :<span class="tlaUNC">           0 :                 throw cRuntimeError(&quot;A bool matrix only contains 0-1 values&quot;);</span></span>
+<span id="L314"><span class="lineNum">     314</span>                 :<span class="tlaGNC tlaBgGNC">       21008 :         }</span></span>
+<span id="L315"><span class="lineNum">     315</span>                 :<span class="tlaGNC">       19324 :         boolMatrix.push_back(row);</span></span>
+<span id="L316"><span class="lineNum">     316</span>                 :<span class="tlaGNC">       19324 :     }</span></span>
+<span id="L317"><span class="lineNum">     317</span>                 :<span class="tlaGNC">        9662 : }</span></span>
+<span id="L318"><span class="lineNum">     318</span>                 :             : </span>
+<span id="L319"><span class="lineNum">     319</span>                 :             : ShortBitVector ConvolutionalCoder::octalToBinary(int octalNum, int fixedSize) const</span>
+<span id="L320"><span class="lineNum">     320</span>                 :<span class="tlaGNC">       19324 : {</span></span>
+<span id="L321"><span class="lineNum">     321</span>                 :<span class="tlaGNC">       19324 :     unsigned int powerOfEight = 1;</span></span>
+<span id="L322"><span class="lineNum">     322</span>                 :<span class="tlaGNC">       19324 :     unsigned int decimal = 0;</span></span>
+<span id="L323"><span class="lineNum">     323</span>         [<span class="tlaGBC" title="Branch 0 was taken 57968 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 19324 times"> + </span>]:<span class="tlaGNC">       77292 :     while (octalNum &gt; 0) {</span></span>
+<span id="L324"><span class="lineNum">     324</span>                 :<span class="tlaGNC">       57968 :         unsigned int octalDigit = octalNum % 10;</span></span>
+<span id="L325"><span class="lineNum">     325</span>                 :<span class="tlaGNC">       57968 :         octalNum /= 10;</span></span>
+<span id="L326"><span class="lineNum">     326</span>                 :<span class="tlaGNC">       57968 :         decimal += octalDigit * powerOfEight;</span></span>
+<span id="L327"><span class="lineNum">     327</span>                 :<span class="tlaGNC">       57968 :         powerOfEight *= 8;</span></span>
+<span id="L328"><span class="lineNum">     328</span>                 :<span class="tlaGNC">       57968 :     }</span></span>
+<span id="L329"><span class="lineNum">     329</span>                 :<span class="tlaGNC">       19324 :     return ShortBitVector(decimal, fixedSize);</span></span>
+<span id="L330"><span class="lineNum">     330</span>                 :<span class="tlaGNC">       19324 : }</span></span>
+<span id="L331"><span class="lineNum">     331</span>                 :             : </span>
+<span id="L332"><span class="lineNum">     332</span>                 :             : void ConvolutionalCoder::setTransferFunctionMatrix(std::vector&lt;std::vector&lt;int&gt;&gt;&amp; transferFMatrix)</span>
+<span id="L333"><span class="lineNum">     333</span>                 :<span class="tlaGNC">        9662 : {</span></span>
+<span id="L334"><span class="lineNum">     334</span>         [<span class="tlaGBC" title="Branch 0 was taken 9662 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 9662 times"> + </span>]:<span class="tlaGNC">       19324 :     for (unsigned int i = 0; i &lt; transferFMatrix.size(); i++) {</span></span>
+<span id="L335"><span class="lineNum">     335</span>                 :<span class="tlaGNC">        9662 :         const std::vector&lt;int&gt;&amp; row = transferFMatrix.at(i);</span></span>
+<span id="L336"><span class="lineNum">     336</span>                 :<span class="tlaGNC">        9662 :         std::vector&lt;ShortBitVector&gt; bitRow;</span></span>
+<span id="L337"><span class="lineNum">     337</span>         [<span class="tlaGBC" title="Branch 0 was taken 19324 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 9662 times"> + </span>]:<span class="tlaGNC">       19324 :         for (auto&amp; elem : row) {</span></span>
+<span id="L338"><span class="lineNum">     338</span>                 :<span class="tlaGNC">       19324 :             ShortBitVector bin = octalToBinary(elem, constraintLengths.at(i));</span></span>
+<span id="L339"><span class="lineNum">     339</span>                 :<span class="tlaGNC">       19324 :             ShortBitVector reverseBin;</span></span>
+<span id="L340"><span class="lineNum">     340</span>         [<span class="tlaGBC" title="Branch 0 was taken 135258 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 19324 times"> + </span>]:<span class="tlaGNC">      154582 :             for (int k = bin.getSize() - 1; k &gt;= 0; k--)</span></span>
+<span id="L341"><span class="lineNum">     341</span>                 :<span class="tlaGNC">      135258 :                 reverseBin.appendBit(bin.getBit(k));</span></span>
+<span id="L342"><span class="lineNum">     342</span>                 :<span class="tlaGNC">       19324 :             bitRow.push_back(reverseBin);</span></span>
+<span id="L343"><span class="lineNum">     343</span>                 :<span class="tlaGNC">       19324 :         }</span></span>
+<span id="L344"><span class="lineNum">     344</span>                 :<span class="tlaGNC">        9662 :         transferFunctionMatrix.push_back(bitRow);</span></span>
+<span id="L345"><span class="lineNum">     345</span>                 :<span class="tlaGNC">        9662 :     }</span></span>
+<span id="L346"><span class="lineNum">     346</span>                 :<span class="tlaGNC">        9662 : }</span></span>
+<span id="L347"><span class="lineNum">     347</span>                 :             : </span>
+<span id="L348"><span class="lineNum">     348</span>                 :             : void ConvolutionalCoder::printTransferFunctionMatrix() const</span>
+<span id="L349"><span class="lineNum">     349</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L350"><span class="lineNum">     350</span>                 :<span class="tlaUNC">           0 :     std::cout &lt;&lt; &quot;Transfer function matrix&quot; &lt;&lt; endl;</span></span>
+<span id="L351"><span class="lineNum">     351</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     for (auto&amp; elem : transferFunctionMatrix) {</span></span>
+<span id="L352"><span class="lineNum">     352</span>                 :<span class="tlaUNC">           0 :         std::cout &lt;&lt; elem.at(0);</span></span>
+<span id="L353"><span class="lineNum">     353</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         for (unsigned int j = 1; j &lt; elem.size(); j++)</span></span>
+<span id="L354"><span class="lineNum">     354</span>                 :<span class="tlaUNC">           0 :             std::cout &lt;&lt; &quot;,&quot; &lt;&lt; elem.at(j);</span></span>
+<span id="L355"><span class="lineNum">     355</span>                 :<span class="tlaUNC">           0 :         std::cout &lt;&lt; endl;</span></span>
+<span id="L356"><span class="lineNum">     356</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L357"><span class="lineNum">     357</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L358"><span class="lineNum">     358</span>                 :             : </span>
+<span id="L359"><span class="lineNum">     359</span>                 :             : void ConvolutionalCoder::computeDecimalToOutputSymbolVector()</span>
+<span id="L360"><span class="lineNum">     360</span>                 :<span class="tlaGNC tlaBgGNC">        9662 : {</span></span>
+<span id="L361"><span class="lineNum">     361</span>         [<span class="tlaGBC" title="Branch 0 was taken 38648 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 9662 times"> + </span>]:<span class="tlaGNC">       48310 :     for (int i = 0; i != numberOfOutputSymbols; i++) {</span></span>
+<span id="L362"><span class="lineNum">     362</span>                 :<span class="tlaGNC">       38648 :         ShortBitVector outputSymbol(i, codeRateParamaterN);</span></span>
+<span id="L363"><span class="lineNum">     363</span>                 :<span class="tlaGNC">       38648 :         decimalToOutputSymbol[outputSymbol.reverseToDecimal()] = outputSymbol;</span></span>
+<span id="L364"><span class="lineNum">     364</span>                 :<span class="tlaGNC">       38648 :     }</span></span>
+<span id="L365"><span class="lineNum">     365</span>                 :<span class="tlaGNC">        9662 : }</span></span>
+<span id="L366"><span class="lineNum">     366</span>                 :             : </span>
+<span id="L367"><span class="lineNum">     367</span>                 :             : void ConvolutionalCoder::updateTrellisGraph(TrellisGraphNode **trellisGraph, unsigned int time, const ShortBitVector&amp; outputSymbol, const ShortBitVector&amp; excludedFromHammingDistance) const</span>
+<span id="L368"><span class="lineNum">     368</span>                 :<span class="tlaGNC">   192041564 : {</span></span>
+<span id="L369"><span class="lineNum">     369</span>                 :<span class="tlaGNC">   192041564 :     int tieBreakingCounter = 0;</span></span>
+<span id="L370"><span class="lineNum">     370</span>         [<span class="tlaGBC" title="Branch 0 was taken 510660096 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 192041564 times"> + </span>]:<span class="tlaGNC">   702701660 :     for (int prevState = 0; prevState != numberOfStates; prevState++) {</span></span>
+<span id="L371"><span class="lineNum">     371</span>                 :<span class="tlaGNC">   510660096 :         const TrellisGraphNode&amp; node = trellisGraph[prevState][time];</span></span>
+<span id="L372"><span class="lineNum">     372</span> [<span class="tlaGBC" title="Branch 0 was taken 2037044334 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 508794746 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 2035178984 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1865350 times"> + </span>]:<span class="tlaGNC">  2545839080 :         for (int j = 0; j != numberOfOutputSymbols &amp;&amp; node.state != -1; j++) {</span></span>
+<span id="L373"><span class="lineNum">     373</span>                 :<span class="tlaGNC">  2035178984 :             int feasibleDecodedSymbol = inputSymbols[prevState][j];</span></span>
+<span id="L374"><span class="lineNum">     374</span>         [<span class="tlaGBC" title="Branch 0 was taken 1017589492 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1017589492 times"> + </span>]:<span class="tlaGNC">  2035178984 :             if (feasibleDecodedSymbol != -1) {</span></span>
+<span id="L375"><span class="lineNum">     375</span>                 :<span class="tlaGNC">  1017589492 :                 const ShortBitVector&amp; otherOutputSymbol = decimalToOutputSymbol[j];</span></span>
+<span id="L376"><span class="lineNum">     376</span>                 :<span class="tlaGNC">  1017589492 :                 int hammingDistance = computeHammingDistance(outputSymbol, excludedFromHammingDistance, otherOutputSymbol);</span></span>
+<span id="L377"><span class="lineNum">     377</span>                 :<span class="tlaGNC">  1017589492 :                 int newState = stateTransitions[prevState][feasibleDecodedSymbol];</span></span>
+<span id="L378"><span class="lineNum">     378</span>                 :<span class="tlaGNC">  1017589492 :                 int cumulativeHammingDistance = hammingDistance;</span></span>
+<span id="L379"><span class="lineNum">     379</span>         [<span class="tlaGBC" title="Branch 0 was taken 1017577832 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 11660 times"> + </span>]:<span class="tlaGNC">  1017589492 :                 if (node.comulativeHammingDistance != INT32_MAX)</span></span>
+<span id="L380"><span class="lineNum">     380</span>                 :<span class="tlaGNC">  1017577832 :                     cumulativeHammingDistance += node.comulativeHammingDistance;</span></span>
+<span id="L381"><span class="lineNum">     381</span>                 :<span class="tlaGNC">  1017589492 :                 TrellisGraphNode&amp; best = trellisGraph[newState][time + 1];</span></span>
+<span id="L382"><span class="lineNum">     382</span>                 :<span class="tlaGNC">  1017589492 :                 bool replace = false;</span></span>
+<span id="L383"><span class="lineNum">     383</span>         [<span class="tlaGBC" title="Branch 0 was taken 57834327 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 959755165 times"> + </span>]:<span class="tlaGNC">  1017589492 :                 if (cumulativeHammingDistance == best.comulativeHammingDistance) {</span></span>
+<span id="L384"><span class="lineNum">     384</span>                 :<span class="tlaGNC">    57834327 :                     tieBreakingCounter++;</span></span>
+<span id="L385"><span class="lineNum">     385</span>         [<span class="tlaGBC" title="Branch 0 was taken 50657151 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 7177176 times"> + </span>]:<span class="tlaGNC">    57834327 :                     if (RNGCONTEXT dblrand() &lt; 1.0 / tieBreakingCounter)</span></span>
+<span id="L386"><span class="lineNum">     386</span>                 :<span class="tlaGNC">    50657151 :                         replace = true;</span></span>
+<span id="L387"><span class="lineNum">     387</span>                 :<span class="tlaGNC">    57834327 :                 }</span></span>
+<span id="L388"><span class="lineNum">     388</span>         [<span class="tlaGBC" title="Branch 0 was taken 734290130 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 225465035 times"> + </span>]:<span class="tlaGNC">   959755165 :                 else if (cumulativeHammingDistance &lt; best.comulativeHammingDistance) {</span></span>
+<span id="L389"><span class="lineNum">     389</span>                 :<span class="tlaGNC">   734290130 :                     tieBreakingCounter = 0;</span></span>
+<span id="L390"><span class="lineNum">     390</span>                 :<span class="tlaGNC">   734290130 :                     replace = true;</span></span>
+<span id="L391"><span class="lineNum">     391</span>                 :<span class="tlaGNC">   734290130 :                 }</span></span>
+<span id="L392"><span class="lineNum">     392</span>         [<span class="tlaGBC" title="Branch 0 was taken 784947281 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 232642211 times"> + </span>]:<span class="tlaGNC">  1017589492 :                 if (replace) {</span></span>
+<span id="L393"><span class="lineNum">     393</span>                 :<span class="tlaGNC">   784947281 :                     best.state = newState;</span></span>
+<span id="L394"><span class="lineNum">     394</span>                 :<span class="tlaGNC">   784947281 :                     best.prevState = prevState;</span></span>
+<span id="L395"><span class="lineNum">     395</span>                 :<span class="tlaGNC">   784947281 :                     best.depth = node.depth + 1;</span></span>
+<span id="L396"><span class="lineNum">     396</span>                 :<span class="tlaGNC">   784947281 :                     best.comulativeHammingDistance = cumulativeHammingDistance;</span></span>
+<span id="L397"><span class="lineNum">     397</span>         [<span class="tlaGBC" title="Branch 0 was taken 524288387 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 260658894 times"> + </span>]:<span class="tlaGNC">   784947281 :                     if (hammingDistance &gt; 0)</span></span>
+<span id="L398"><span class="lineNum">     398</span>                 :<span class="tlaGNC">   524288387 :                         best.numberOfErrors = node.numberOfErrors + 1;</span></span>
+<span id="L399"><span class="lineNum">     399</span>                 :<span class="tlaGNC">   260658894 :                     else</span></span>
+<span id="L400"><span class="lineNum">     400</span>                 :<span class="tlaGNC">   260658894 :                         best.numberOfErrors = node.numberOfErrors;</span></span>
+<span id="L401"><span class="lineNum">     401</span>                 :<span class="tlaGNC">   784947281 :                     best.symbol = feasibleDecodedSymbol;</span></span>
+<span id="L402"><span class="lineNum">     402</span>                 :<span class="tlaGNC">   784947281 :                 }</span></span>
+<span id="L403"><span class="lineNum">     403</span>                 :<span class="tlaGNC">  1017589492 :             }</span></span>
+<span id="L404"><span class="lineNum">     404</span>                 :<span class="tlaGNC">  2035178984 :         }</span></span>
+<span id="L405"><span class="lineNum">     405</span>                 :<span class="tlaGNC">   510660096 :     }</span></span>
+<span id="L406"><span class="lineNum">     406</span>                 :<span class="tlaGNC">   192041564 : }</span></span>
+<span id="L407"><span class="lineNum">     407</span>                 :             : </span>
+<span id="L408"><span class="lineNum">     408</span>                 :             : std::pair&lt;BitVector, bool&gt; ConvolutionalCoder::traversePath(const TrellisGraphNode&amp; bestNode, TrellisGraphNode **trellisGraph, bool isTruncatedMode) const</span>
+<span id="L409"><span class="lineNum">     409</span>                 :<span class="tlaGNC">        5830 : {</span></span>
+<span id="L410"><span class="lineNum">     410</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 5830 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaGNC">        5830 :     if (!isTruncatedMode &amp;&amp; bestNode.symbol == -1)</span></span>
+<span id="L411"><span class="lineNum">     411</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         return std::pair&lt;BitVector, bool&gt;(BitVector(), false);</span></span>
+<span id="L412"><span class="lineNum">     412</span>                 :<span class="tlaGNC tlaBgGNC">        5830 :     TrellisGraphNode path = bestNode;</span></span>
+<span id="L413"><span class="lineNum">     413</span>                 :<span class="tlaGNC">        5830 :     BitVector reverseDecodedBits;</span></span>
+<span id="L414"><span class="lineNum">     414</span>                 :<span class="tlaGNC">        5830 :     int depth = bestNode.depth;</span></span>
+<span id="L415"><span class="lineNum">     415</span>         [<span class="tlaGBC" title="Branch 0 was taken 192041564 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5830 times"> + </span>]:<span class="tlaGNC">   192047394 :     while (depth--) {</span></span>
+<span id="L416"><span class="lineNum">     416</span>                 :<span class="tlaGNC">   192041564 :         const ShortBitVector&amp; inputSymbol = decimalToInputSymbol[path.symbol];</span></span>
+<span id="L417"><span class="lineNum">     417</span>         [<span class="tlaGBC" title="Branch 0 was taken 192041564 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 192041564 times"> + </span>]:<span class="tlaGNC">   384083128 :         for (int i = inputSymbol.getSize() - 1; i &gt;= 0; i--)</span></span>
+<span id="L418"><span class="lineNum">     418</span>                 :<span class="tlaGNC">   192041564 :             reverseDecodedBits.appendBit(inputSymbol.getBit(i));</span></span>
+<span id="L419"><span class="lineNum">     419</span>                 :<span class="tlaGNC">   192041564 :         path = trellisGraph[path.prevState][depth];</span></span>
+<span id="L420"><span class="lineNum">     420</span>                 :<span class="tlaGNC">   192041564 :     }</span></span>
+<span id="L421"><span class="lineNum">     421</span>                 :<span class="tlaGNC">        5830 :     BitVector decodedBits;</span></span>
+<span id="L422"><span class="lineNum">     422</span>         [<span class="tlaGBC" title="Branch 0 was taken 192041564 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5830 times"> + </span>]:<span class="tlaGNC">   192047394 :     for (int i = reverseDecodedBits.getSize() - 1; i &gt;= 0; i--)</span></span>
+<span id="L423"><span class="lineNum">     423</span>                 :<span class="tlaGNC">   192041564 :         decodedBits.appendBit(reverseDecodedBits.getBit(i));</span></span>
+<span id="L424"><span class="lineNum">     424</span>                 :<span class="tlaGNC">        5830 :     return std::pair&lt;BitVector, bool&gt;(decodedBits, true);</span></span>
+<span id="L425"><span class="lineNum">     425</span>                 :<span class="tlaGNC">        5830 : }</span></span>
+<span id="L426"><span class="lineNum">     426</span>                 :             : </span>
+<span id="L427"><span class="lineNum">     427</span>                 :             : std::pair&lt;BitVector, bool&gt; ConvolutionalCoder::decode(const BitVector&amp; encodedBits) const</span>
+<span id="L428"><span class="lineNum">     428</span>                 :<span class="tlaGNC">        5830 : {</span></span>
+<span id="L429"><span class="lineNum">     429</span>                 :<span class="tlaGNC">        5830 :     BitVector isPunctured;</span></span>
+<span id="L430"><span class="lineNum">     430</span>                 :<span class="tlaGNC">        5830 :     BitVector depuncturedEncodedBits = depuncturing(encodedBits, isPunctured);</span></span>
+<span id="L431"><span class="lineNum">     431</span>                 :<span class="tlaGNC">        5830 :     unsigned int encodedBitsSize = depuncturedEncodedBits.getSize();</span></span>
+<span id="L432"><span class="lineNum">     432</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 5830 times"> + </span>]:<span class="tlaGNC">        5830 :     if (encodedBitsSize % codeRateParamaterN != 0)</span></span>
+<span id="L433"><span class="lineNum">     433</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         throw cRuntimeError(&quot;Length of encodedBits must be a multiple of codeRateParamaterN = %d&quot;, codeRateParamaterN);</span></span>
+<span id="L434"><span class="lineNum">     434</span>                 :<span class="tlaGNC tlaBgGNC">        5830 :     bool isTruncatedMode = false;</span></span>
+<span id="L435"><span class="lineNum">     435</span>         [<span class="tlaGBC" title="Branch 0 was taken 5830 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        5830 :     if (!strcmp(mode, &quot;truncated&quot;))</span></span>
+<span id="L436"><span class="lineNum">     436</span>                 :<span class="tlaGNC">        5830 :         isTruncatedMode = true;</span></span>
+<span id="L437"><span class="lineNum">     437</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC tlaBgUNC">           0 :     else if (!strcmp(mode, &quot;terminated&quot;))</span></span>
+<span id="L438"><span class="lineNum">     438</span>                 :<span class="tlaUNC">           0 :         isTruncatedMode = false;</span></span>
+<span id="L439"><span class="lineNum">     439</span>                 :<span class="tlaUNC">           0 :     else</span></span>
+<span id="L440"><span class="lineNum">     440</span>                 :<span class="tlaUNC">           0 :         throw cRuntimeError(&quot;Unknown decodingMode = %s decodingMode&quot;, mode);</span></span>
+<span id="L441"><span class="lineNum">     441</span>                 :<span class="tlaGNC tlaBgGNC">        5830 :     TrellisGraphNode **trellisGraph;</span></span>
+<span id="L442"><span class="lineNum">     442</span>                 :<span class="tlaGNC">        5830 :     trellisGraph = new TrellisGraphNode *[numberOfStates];</span></span>
+<span id="L443"><span class="lineNum">     443</span>         [<span class="tlaGBC" title="Branch 0 was taken 371942 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5830 times"> + </span>]:<span class="tlaGNC">      377772 :     for (int i = 0; i != numberOfStates; i++) {</span></span>
+<span id="L444"><span class="lineNum">     444</span>                 :<span class="tlaGNC">      371942 :         int length = depuncturedEncodedBits.getSize() / codeRateParamaterN + 1;</span></span>
+<span id="L445"><span class="lineNum">     445</span>                 :<span class="tlaGNC">      371942 :         trellisGraph[i] = new TrellisGraphNode[length];</span></span>
+<span id="L446"><span class="lineNum">     446</span>         [<span class="tlaGBC" title="Branch 0 was taken 511032038 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 371942 times"> + </span>]:<span class="tlaGNC">   511403980 :         for (int j = 0; j &lt; length; j++)</span></span>
+<span id="L447"><span class="lineNum">     447</span>                 :<span class="tlaGNC">   511032038 :             trellisGraph[i][j] = TrellisGraphNode(-1, -1, -1, INT32_MAX, 0, 0);</span></span>
+<span id="L448"><span class="lineNum">     448</span>                 :<span class="tlaGNC">      371942 :     }</span></span>
+<span id="L449"><span class="lineNum">     449</span>                 :<span class="tlaGNC">        5830 :     trellisGraph[0][0].state = 0;</span></span>
+<span id="L450"><span class="lineNum">     450</span>                 :<span class="tlaGNC">        5830 :     EV_DEBUG &lt;&lt; &quot;Decoding the following bits: &quot; &lt;&lt; depuncturedEncodedBits &lt;&lt; endl;</span></span>
+<span id="L451"><span class="lineNum">     451</span>                 :<span class="tlaGNC">        5830 :     ShortBitVector countsOnHammingDistance;</span></span>
+<span id="L452"><span class="lineNum">     452</span>                 :<span class="tlaGNC">        5830 :     countsOnHammingDistance.appendBit(true, codeRateParamaterN);</span></span>
+<span id="L453"><span class="lineNum">     453</span>                 :<span class="tlaGNC">        5830 :     ShortBitVector nextOutputSymbol = giveNextOutputSymbol(depuncturedEncodedBits, 0, isPunctured, countsOnHammingDistance);</span></span>
+<span id="L454"><span class="lineNum">     454</span>                 :<span class="tlaGNC">        5830 :     unsigned int time = 0;</span></span>
+<span id="L455"><span class="lineNum">     455</span>         [<span class="tlaGBC" title="Branch 0 was taken 192041564 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5830 times"> + </span>]:<span class="tlaGNC">   192047394 :     while (!nextOutputSymbol.isEmpty()) {</span></span>
+<span id="L456"><span class="lineNum">     456</span>                 :<span class="tlaGNC">   192041564 :         updateTrellisGraph(trellisGraph, time, nextOutputSymbol, countsOnHammingDistance);</span></span>
+<span id="L457"><span class="lineNum">     457</span>                 :<span class="tlaGNC">   192041564 :         time++;</span></span>
+<span id="L458"><span class="lineNum">     458</span>                 :<span class="tlaGNC">   192041564 :         countsOnHammingDistance = ShortBitVector();</span></span>
+<span id="L459"><span class="lineNum">     459</span>                 :<span class="tlaGNC">   192041564 :         countsOnHammingDistance.appendBit(true, codeRateParamaterN);</span></span>
+<span id="L460"><span class="lineNum">     460</span>                 :<span class="tlaGNC">   192041564 :         nextOutputSymbol = giveNextOutputSymbol(depuncturedEncodedBits, time * codeRateParamaterK, isPunctured, countsOnHammingDistance);</span></span>
+<span id="L461"><span class="lineNum">     461</span>                 :<span class="tlaGNC">   192041564 :     }</span></span>
+<span id="L462"><span class="lineNum">     462</span>                 :<span class="tlaGNC">        5830 :     TrellisGraphNode bestNode;</span></span>
+<span id="L463"><span class="lineNum">     463</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 5830 times"> + </span>]:<span class="tlaGNC">        5830 :     if (!isTruncatedMode)</span></span>
+<span id="L464"><span class="lineNum">     464</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         bestNode = trellisGraph[0][time];</span></span>
+<span id="L465"><span class="lineNum">     465</span>                 :<span class="tlaGNC tlaBgGNC">        5830 :     else {</span></span>
+<span id="L466"><span class="lineNum">     466</span>                 :<span class="tlaGNC">        5830 :         bestNode = trellisGraph[0][time];</span></span>
+<span id="L467"><span class="lineNum">     467</span>         [<span class="tlaGBC" title="Branch 0 was taken 366112 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5830 times"> + </span>]:<span class="tlaGNC">      371942 :         for (int i = 1; i != numberOfStates; i++) {</span></span>
+<span id="L468"><span class="lineNum">     468</span>                 :<span class="tlaGNC">      366112 :             TrellisGraphNode currentNode = trellisGraph[i][time];</span></span>
+<span id="L469"><span class="lineNum">     469</span> [<span class="tlaGBC" title="Branch 0 was taken 366112 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 8327 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 357785 times"> + </span>]:<span class="tlaGNC">      366112 :             if (currentNode.symbol != -1 &amp;&amp; currentNode.comulativeHammingDistance &lt; bestNode.comulativeHammingDistance)</span></span>
+<span id="L470"><span class="lineNum">     470</span>                 :<span class="tlaGNC">        8327 :                 bestNode = currentNode;</span></span>
+<span id="L471"><span class="lineNum">     471</span>                 :<span class="tlaGNC">      366112 :         }</span></span>
+<span id="L472"><span class="lineNum">     472</span>                 :<span class="tlaGNC">        5830 :     }</span></span>
+<span id="L473"><span class="lineNum">     473</span>                 :<span class="tlaGNC">        5830 :     std::pair&lt;BitVector, bool&gt; result = traversePath(bestNode, trellisGraph, isTruncatedMode);</span></span>
+<span id="L474"><span class="lineNum">     474</span>         [<span class="tlaGBC" title="Branch 0 was taken 5830 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        5830 :     if (result.second) {</span></span>
+<span id="L475"><span class="lineNum">     475</span>                 :<span class="tlaGNC">        5830 :         EV_DEBUG &lt;&lt; &quot;Recovered message: &quot; &lt;&lt; result.first &lt;&lt; endl;</span></span>
+<span id="L476"><span class="lineNum">     476</span>                 :<span class="tlaGNC">        5830 :         EV_DEBUG &lt;&lt; &quot;Number of errors: &quot; &lt;&lt; bestNode.numberOfErrors</span></span>
+<span id="L477"><span class="lineNum">     477</span>                 :<span class="tlaGNC">         203 :                  &lt;&lt; &quot; Cumulative error (Hamming distance): &quot; &lt;&lt; bestNode.comulativeHammingDistance</span></span>
+<span id="L478"><span class="lineNum">     478</span>                 :<span class="tlaGNC">         203 :                  &lt;&lt; &quot; End state: &quot; &lt;&lt; bestNode.state &lt;&lt; endl;</span></span>
+<span id="L479"><span class="lineNum">     479</span>                 :<span class="tlaGNC">        5830 :     }</span></span>
+<span id="L480"><span class="lineNum">     480</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     else</span></span>
+<span id="L481"><span class="lineNum">     481</span>                 :<span class="tlaUNC">           0 :         EV_DEBUG &lt;&lt; &quot;None of the paths in the trellis graph lead to the all-zeros state&quot; &lt;&lt; endl;</span></span>
+<span id="L482"><span class="lineNum">     482</span>         [<span class="tlaGBC" title="Branch 0 was taken 371942 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5830 times"> + </span>]:<span class="tlaGNC tlaBgGNC">      377772 :     for (int i = 0; i &lt; numberOfStates; i++)</span></span>
+<span id="L483"><span class="lineNum">     483</span>                 :<span class="tlaGNC">      371942 :         delete[] trellisGraph[i];</span></span>
+<span id="L484"><span class="lineNum">     484</span>                 :<span class="tlaGNC">        5830 :     delete[] trellisGraph;</span></span>
+<span id="L485"><span class="lineNum">     485</span>                 :<span class="tlaGNC">        5830 :     return result;</span></span>
+<span id="L486"><span class="lineNum">     486</span>                 :<span class="tlaGNC">        5830 : }</span></span>
+<span id="L487"><span class="lineNum">     487</span>                 :             : </span>
+<span id="L488"><span class="lineNum">     488</span>                 :<span class="tlaGNC">        9662 : ConvolutionalCoder::ConvolutionalCoder(const ConvolutionalCode *convolutionalCode) : convolutionalCode(convolutionalCode)</span></span>
+<span id="L489"><span class="lineNum">     489</span>                 :<span class="tlaGNC">        9662 : {</span></span>
+<span id="L490"><span class="lineNum">     490</span>                 :<span class="tlaGNC">        9662 :     const char *strTransferFunctionMatrix = convolutionalCode-&gt;getTransferFunctionMatrix();</span></span>
+<span id="L491"><span class="lineNum">     491</span>                 :<span class="tlaGNC">        9662 :     const char *strPuncturingMatrix = convolutionalCode-&gt;getPuncturingMatrix();</span></span>
+<span id="L492"><span class="lineNum">     492</span>                 :<span class="tlaGNC">        9662 :     const char *strConstraintLengthVector = convolutionalCode-&gt;getConstraintLengthVector();</span></span>
+<span id="L493"><span class="lineNum">     493</span>                 :<span class="tlaGNC">        9662 :     mode = convolutionalCode-&gt;getMode();</span></span>
+<span id="L494"><span class="lineNum">     494</span> [<span class="tlaGBC" title="Branch 0 was taken 9662 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 9662 times"> + </span>]:<span class="tlaGNC">        9662 :     if (strcmp(mode, &quot;terminated&quot;) &amp;&amp; strcmp(mode, &quot;truncated&quot;))</span></span>
+<span id="L495"><span class="lineNum">     495</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         throw cRuntimeError(&quot;Unknown (= %s ) coding mode&quot;, mode);</span></span>
+<span id="L496"><span class="lineNum">     496</span>                 :<span class="tlaGNC tlaBgGNC">        9662 :     codeRatePuncturingK = convolutionalCode-&gt;getCodeRatePuncturingK();</span></span>
+<span id="L497"><span class="lineNum">     497</span>                 :<span class="tlaGNC">        9662 :     codeRatePuncturingN = convolutionalCode-&gt;getCodeRatePuncturingN();</span></span>
+<span id="L498"><span class="lineNum">     498</span>                 :<span class="tlaGNC">        9662 :     parseVector(strConstraintLengthVector, constraintLengths);</span></span>
+<span id="L499"><span class="lineNum">     499</span>                 :<span class="tlaGNC">        9662 :     std::vector&lt;std::vector&lt;int&gt;&gt; pMatrix;</span></span>
+<span id="L500"><span class="lineNum">     500</span>                 :<span class="tlaGNC">        9662 :     parseMatrix(strPuncturingMatrix, pMatrix);</span></span>
+<span id="L501"><span class="lineNum">     501</span>                 :<span class="tlaGNC">        9662 :     convertToShortBitVectorMatrix(pMatrix, puncturingMatrix);</span></span>
+<span id="L502"><span class="lineNum">     502</span>                 :<span class="tlaGNC">        9662 :     std::vector&lt;std::vector&lt;int&gt;&gt; transferFMatrix;</span></span>
+<span id="L503"><span class="lineNum">     503</span>                 :<span class="tlaGNC">        9662 :     parseMatrix(strTransferFunctionMatrix, transferFMatrix);</span></span>
+<span id="L504"><span class="lineNum">     504</span>                 :<span class="tlaGNC">        9662 :     codeRateParamaterK = transferFMatrix.size();</span></span>
+<span id="L505"><span class="lineNum">     505</span>                 :<span class="tlaGNC">        9662 :     codeRateParamaterN = transferFMatrix.at(0).size();</span></span>
+<span id="L506"><span class="lineNum">     506</span>         [<span class="tlaGBC" title="Branch 0 was taken 9662 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 9662 times"> + </span>]:<span class="tlaGNC">       19324 :     for (unsigned int i = 0; i &lt; transferFMatrix.size(); i++) {</span></span>
+<span id="L507"><span class="lineNum">     507</span>         [<span class="tlaGBC" title="Branch 0 was taken 19324 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 9662 times"> + </span>]:<span class="tlaGNC">       28986 :         for (unsigned int j = 0; j &lt; transferFMatrix.at(i).size(); j++) {</span></span>
+<span id="L508"><span class="lineNum">     508</span>                 :<span class="tlaGNC">       19324 :             int decPolynom = octalToDec(transferFMatrix.at(i).at(j));</span></span>
+<span id="L509"><span class="lineNum">     509</span>                 :<span class="tlaGNC">       19324 :             int constraintLength = constraintLengths[i];</span></span>
+<span id="L510"><span class="lineNum">     510</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 19324 times"> + </span>]:<span class="tlaGNC">       19324 :             if (decPolynom &gt;= pow(2, constraintLength))</span></span>
+<span id="L511"><span class="lineNum">     511</span>                 :<span class="tlaUNC tlaBgUNC">           0 :                 throw cRuntimeError(&quot;Code size is greater then constraint length&quot;);</span></span>
+<span id="L512"><span class="lineNum">     512</span>                 :<span class="tlaGNC tlaBgGNC">       19324 :         }</span></span>
+<span id="L513"><span class="lineNum">     513</span>                 :<span class="tlaGNC">        9662 :     }</span></span>
+<span id="L514"><span class="lineNum">     514</span>                 :             :     // TODO check whether it is less than..</span>
+<span id="L515"><span class="lineNum">     515</span>         [<span class="tlaGBC" title="Branch 0 was taken 9662 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 9662 times"> + </span>]:<span class="tlaGNC">       19324 :     for (unsigned int i = 0; i &lt; codeRateParamaterK; i++)</span></span>
+<span id="L516"><span class="lineNum">     516</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 9662 times"> + </span>]:<span class="tlaGNC">        9662 :         if (transferFMatrix.at(i).size() != codeRateParamaterN)</span></span>
+<span id="L517"><span class="lineNum">     517</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             throw cRuntimeError(&quot;Transfer function matrix must be a k-by-n matrix of octal numbers&quot;);</span></span>
+<span id="L518"><span class="lineNum">     518</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 9662 times"> + </span>]:<span class="tlaGNC tlaBgGNC">        9662 :     if (transferFMatrix.size() != constraintLengths.size())</span></span>
+<span id="L519"><span class="lineNum">     519</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         throw cRuntimeError(&quot;Constraint length vector must be a 1-by-k vector of integers&quot;);</span></span>
+<span id="L520"><span class="lineNum">     520</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 9662 times"> + </span>]:<span class="tlaGNC tlaBgGNC">        9662 :     if (puncturingMatrix.size() != codeRateParamaterN)</span></span>
+<span id="L521"><span class="lineNum">     521</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         throw cRuntimeError(&quot;Puncturing matrix must be a n-by-arbitrary bool matrix&quot;);</span></span>
+<span id="L522"><span class="lineNum">     522</span>                 :<span class="tlaGNC tlaBgGNC">        9662 :     setTransferFunctionMatrix(transferFMatrix);</span></span>
+<span id="L523"><span class="lineNum">     523</span>                 :<span class="tlaGNC">        9662 :     initParameters();</span></span>
+<span id="L524"><span class="lineNum">     524</span>                 :<span class="tlaGNC">        9662 : }</span></span>
+<span id="L525"><span class="lineNum">     525</span>                 :             : </span>
+<span id="L526"><span class="lineNum">     526</span>                 :             : int ConvolutionalCoder::octalToDec(int octalNum) const</span>
+<span id="L527"><span class="lineNum">     527</span>                 :<span class="tlaGNC">       19324 : {</span></span>
+<span id="L528"><span class="lineNum">     528</span>                 :<span class="tlaGNC">       19324 :     int powersOfEight = 1;</span></span>
+<span id="L529"><span class="lineNum">     529</span>                 :<span class="tlaGNC">       19324 :     int decVal = 0;</span></span>
+<span id="L530"><span class="lineNum">     530</span>         [<span class="tlaGBC" title="Branch 0 was taken 57968 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 19324 times"> + </span>]:<span class="tlaGNC">       77292 :     while (octalNum != 0) {</span></span>
+<span id="L531"><span class="lineNum">     531</span>                 :<span class="tlaGNC">       57968 :         int octDigit = octalNum % 10;</span></span>
+<span id="L532"><span class="lineNum">     532</span>                 :<span class="tlaGNC">       57968 :         decVal += octDigit * powersOfEight;</span></span>
+<span id="L533"><span class="lineNum">     533</span>                 :<span class="tlaGNC">       57968 :         octalNum /= 10;</span></span>
+<span id="L534"><span class="lineNum">     534</span>                 :<span class="tlaGNC">       57968 :         powersOfEight *= 8;</span></span>
+<span id="L535"><span class="lineNum">     535</span>                 :<span class="tlaGNC">       57968 :     }</span></span>
+<span id="L536"><span class="lineNum">     536</span>                 :<span class="tlaGNC">       19324 :     return decVal;</span></span>
+<span id="L537"><span class="lineNum">     537</span>                 :<span class="tlaGNC">       19324 : }</span></span>
+<span id="L538"><span class="lineNum">     538</span>                 :             : </span>
+<span id="L539"><span class="lineNum">     539</span>                 :             : ConvolutionalCoder::~ConvolutionalCoder()</span>
+<span id="L540"><span class="lineNum">     540</span>                 :<span class="tlaGNC">        9662 : {</span></span>
+<span id="L541"><span class="lineNum">     541</span>         [<span class="tlaGBC" title="Branch 0 was taken 38648 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 9662 times"> + </span>]:<span class="tlaGNC">       48310 :     for (int i = 0; i &lt; numberOfOutputSymbols; i++) {</span></span>
+<span id="L542"><span class="lineNum">     542</span>         [<span class="tlaGBC" title="Branch 0 was taken 154592 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 38648 times"> + </span>]:<span class="tlaGNC">      193240 :         for (int j = 0; j &lt; numberOfOutputSymbols; j++)</span></span>
+<span id="L543"><span class="lineNum">     543</span>                 :<span class="tlaGNC">      154592 :             delete[] hammingDistanceLookupTable[i][j];</span></span>
+<span id="L544"><span class="lineNum">     544</span>                 :<span class="tlaGNC">       38648 :         delete[] hammingDistanceLookupTable[i];</span></span>
+<span id="L545"><span class="lineNum">     545</span>                 :<span class="tlaGNC">       38648 :     }</span></span>
+<span id="L546"><span class="lineNum">     546</span>                 :<span class="tlaGNC">        9662 :     delete[] hammingDistanceLookupTable;</span></span>
+<span id="L547"><span class="lineNum">     547</span>         [<span class="tlaGBC" title="Branch 0 was taken 618306 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 9662 times"> + </span>]:<span class="tlaGNC">      627968 :     for (int i = 0; i &lt; numberOfStates; i++) {</span></span>
+<span id="L548"><span class="lineNum">     548</span>                 :<span class="tlaGNC">      618306 :         delete[] stateTransitions[i];</span></span>
+<span id="L549"><span class="lineNum">     549</span>                 :<span class="tlaGNC">      618306 :         delete[] outputSymbols[i];</span></span>
+<span id="L550"><span class="lineNum">     550</span>                 :<span class="tlaGNC">      618306 :         delete[] inputSymbols[i];</span></span>
+<span id="L551"><span class="lineNum">     551</span>                 :<span class="tlaGNC">      618306 :     }</span></span>
+<span id="L552"><span class="lineNum">     552</span>                 :<span class="tlaGNC">        9662 :     delete[] stateTransitions;</span></span>
+<span id="L553"><span class="lineNum">     553</span>                 :<span class="tlaGNC">        9662 :     delete[] outputSymbols;</span></span>
+<span id="L554"><span class="lineNum">     554</span>                 :<span class="tlaGNC">        9662 :     delete[] inputSymbols;</span></span>
+<span id="L555"><span class="lineNum">     555</span>                 :<span class="tlaGNC">        9662 :     delete[] decimalToOutputSymbol;</span></span>
+<span id="L556"><span class="lineNum">     556</span>                 :<span class="tlaGNC">        9662 :     delete[] decimalToInputSymbol;</span></span>
+<span id="L557"><span class="lineNum">     557</span>                 :<span class="tlaGNC">        9662 : }</span></span>
+<span id="L558"><span class="lineNum">     558</span>                 :             : </span>
+<span id="L559"><span class="lineNum">     559</span>                 :             : } /* namespace physicallayer */</span>
+<span id="L560"><span class="lineNum">     560</span>                 :             : } /* namespace inet */</span>
+<span id="L561"><span class="lineNum">     561</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

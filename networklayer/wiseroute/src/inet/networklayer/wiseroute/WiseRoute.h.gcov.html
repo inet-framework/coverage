@@ -1,0 +1,291 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - networklayer/wiseroute/src/inet/networklayer/wiseroute/WiseRoute.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">networklayer/wiseroute/src/inet/networklayer/wiseroute</a> - WiseRoute.h<span style="font-size: 80%;"> (source / <a href="WiseRoute.h.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">66.7&nbsp;%</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntry">4</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryLo">66.7&nbsp;%</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntry">4</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : //</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : /***************************************************************************</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             :  * file:        WiseRoute.h</span>
+<span id="L7"><span class="lineNum">       7</span>                 :             :  *</span>
+<span id="L8"><span class="lineNum">       8</span>                 :             :  * author:      Damien Piguet, Jerome Rousselot</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             :  *</span>
+<span id="L10"><span class="lineNum">      10</span>                 :             :  * copyright:   (C) 2007-2009 CSEM SA, Neuchatel, Switzerland.</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             :  *</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             :  * description: Implementation of the routing protocol of WiseStack.</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             :  *</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             :  *</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             :  * Funding: This work was partially financed by the European Commission under the</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             :  * Framework 6 IST Project &quot;Wirelessly Accessible Sensor Populations&quot;</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             :  * (WASP) under contract IST-034963.</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             :  ***************************************************************************</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             :  * ported to Mixim 2.0.1 by Theodoros Kapourniotis</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             :  * last modification: 06/02/11</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             :  **************************************************************************/</span>
+<span id="L22"><span class="lineNum">      22</span>                 :             : </span>
+<span id="L23"><span class="lineNum">      23</span>                 :             : #ifndef __INET_WISEROUTE_H</span>
+<span id="L24"><span class="lineNum">      24</span>                 :             : #define __INET_WISEROUTE_H</span>
+<span id="L25"><span class="lineNum">      25</span>                 :             : </span>
+<span id="L26"><span class="lineNum">      26</span>                 :             : #include &quot;inet/common/packet/Packet.h&quot;</span>
+<span id="L27"><span class="lineNum">      27</span>                 :             : #include &quot;inet/networklayer/base/NetworkProtocolBase.h&quot;</span>
+<span id="L28"><span class="lineNum">      28</span>                 :             : #include &quot;inet/networklayer/common/L3Address.h&quot;</span>
+<span id="L29"><span class="lineNum">      29</span>                 :             : #include &quot;inet/networklayer/contract/IArp.h&quot;</span>
+<span id="L30"><span class="lineNum">      30</span>                 :             : #include &quot;inet/networklayer/contract/INetworkProtocol.h&quot;</span>
+<span id="L31"><span class="lineNum">      31</span>                 :             : #include &quot;inet/networklayer/wiseroute/WiseRouteHeader_m.h&quot;</span>
+<span id="L32"><span class="lineNum">      32</span>                 :             : </span>
+<span id="L33"><span class="lineNum">      33</span>                 :             : namespace inet {</span>
+<span id="L34"><span class="lineNum">      34</span>                 :             : </span>
+<span id="L35"><span class="lineNum">      35</span>                 :             : /**</span>
+<span id="L36"><span class="lineNum">      36</span>                 :             :  * @brief Wiseroute is a simple loop-free routing algorithm that</span>
+<span id="L37"><span class="lineNum">      37</span>                 :             :  * builds a routing tree from a central network point. It is especially</span>
+<span id="L38"><span class="lineNum">      38</span>                 :             :  * useful for wireless sensor networks and convergecast traffic,</span>
+<span id="L39"><span class="lineNum">      39</span>                 :             :  * hence its name (Wireless Sensors Routing).</span>
+<span id="L40"><span class="lineNum">      40</span>                 :             :  * The sink (the device at the center of the network) broadcasts</span>
+<span id="L41"><span class="lineNum">      41</span>                 :             :  * a route building message. Each network node that receives it</span>
+<span id="L42"><span class="lineNum">      42</span>                 :             :  * selects the sink as parent in the routing tree, and rebroadcasts</span>
+<span id="L43"><span class="lineNum">      43</span>                 :             :  * the route building message. This procedure maximizes the probability</span>
+<span id="L44"><span class="lineNum">      44</span>                 :             :  * that all network nodes can join the network, and avoids loops.</span>
+<span id="L45"><span class="lineNum">      45</span>                 :             :  *</span>
+<span id="L46"><span class="lineNum">      46</span>                 :             :  * @ingroup netwLayer</span>
+<span id="L47"><span class="lineNum">      47</span>                 :             :  * @author Jerome Rousselot</span>
+<span id="L48"><span class="lineNum">      48</span>                 :             :  **/</span>
+<span id="L49"><span class="lineNum">      49</span>                 :             : class INET_API WiseRoute : public NetworkProtocolBase, public INetworkProtocol</span>
+<span id="L50"><span class="lineNum">      50</span>                 :             : {</span>
+<span id="L51"><span class="lineNum">      51</span>                 :             :   private:</span>
+<span id="L52"><span class="lineNum">      52</span>                 :             :     /** @brief Copy constructor is not allowed.</span>
+<span id="L53"><span class="lineNum">      53</span>                 :             :      */</span>
+<span id="L54"><span class="lineNum">      54</span>                 :             :     WiseRoute(const WiseRoute&amp;);</span>
+<span id="L55"><span class="lineNum">      55</span>                 :             :     /** @brief Assignment operator is not allowed.</span>
+<span id="L56"><span class="lineNum">      56</span>                 :             :      */</span>
+<span id="L57"><span class="lineNum">      57</span>                 :             :     WiseRoute&amp; operator=(const WiseRoute&amp;);</span>
+<span id="L58"><span class="lineNum">      58</span>                 :             : </span>
+<span id="L59"><span class="lineNum">      59</span>                 :             :   public:</span>
+<span id="L60"><span class="lineNum">      60</span>                 :<span class="tlaGNC tlaBgGNC">          99 :     WiseRoute() {}</span></span>
+<span id="L61"><span class="lineNum">      61</span>                 :             :     /** @brief Initialization of the module and some variables*/</span>
+<span id="L62"><span class="lineNum">      62</span>                 :<span class="tlaGNC">        2376 :     virtual int numInitStages() const override { return NUM_INIT_STAGES; }</span></span>
+<span id="L63"><span class="lineNum">      63</span>                 :             : </span>
+<span id="L64"><span class="lineNum">      64</span>                 :             :     virtual void initialize(int) override;</span>
+<span id="L65"><span class="lineNum">      65</span>                 :             : </span>
+<span id="L66"><span class="lineNum">      66</span>                 :             :     virtual void finish() override;</span>
+<span id="L67"><span class="lineNum">      67</span>                 :             : </span>
+<span id="L68"><span class="lineNum">      68</span>                 :             :     virtual ~WiseRoute();</span>
+<span id="L69"><span class="lineNum">      69</span>                 :             : </span>
+<span id="L70"><span class="lineNum">      70</span>                 :<span class="tlaGNC">         592 :     const Protocol&amp; getProtocol() const override { return Protocol::wiseRoute; }</span></span>
+<span id="L71"><span class="lineNum">      71</span>                 :             : </span>
+<span id="L72"><span class="lineNum">      72</span>                 :             :     // OperationalBase:</span>
+<span id="L73"><span class="lineNum">      73</span>                 :<span class="tlaGNC">          99 :     virtual void handleStartOperation(LifecycleOperation *operation) override {} // TODO implementation</span></span>
+<span id="L74"><span class="lineNum">      74</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     virtual void handleStopOperation(LifecycleOperation *operation) override {} // TODO implementation</span></span>
+<span id="L75"><span class="lineNum">      75</span>                 :<span class="tlaUNC">           0 :     virtual void handleCrashOperation(LifecycleOperation *operation) override {} // TODO implementation</span></span>
+<span id="L76"><span class="lineNum">      76</span>                 :             : </span>
+<span id="L77"><span class="lineNum">      77</span>                 :             :   protected:</span>
+<span id="L78"><span class="lineNum">      78</span>                 :             :     enum messageKinds {</span>
+<span id="L79"><span class="lineNum">      79</span>                 :             :         SEND_ROUTE_FLOOD_TIMER = 101</span>
+<span id="L80"><span class="lineNum">      80</span>                 :             :     };</span>
+<span id="L81"><span class="lineNum">      81</span>                 :             : </span>
+<span id="L82"><span class="lineNum">      82</span>                 :             :     typedef enum floodTypes {</span>
+<span id="L83"><span class="lineNum">      83</span>                 :             :         NOTAFLOOD,</span>
+<span id="L84"><span class="lineNum">      84</span>                 :             :         FORWARD,</span>
+<span id="L85"><span class="lineNum">      85</span>                 :             :         FORME,</span>
+<span id="L86"><span class="lineNum">      86</span>                 :             :         DUPLICATE</span>
+<span id="L87"><span class="lineNum">      87</span>                 :             :     } floodTypes;</span>
+<span id="L88"><span class="lineNum">      88</span>                 :             : </span>
+<span id="L89"><span class="lineNum">      89</span>                 :             :     struct tRouteTableEntry</span>
+<span id="L90"><span class="lineNum">      90</span>                 :             :     {</span>
+<span id="L91"><span class="lineNum">      91</span>                 :             :         L3Address nextHop;</span>
+<span id="L92"><span class="lineNum">      92</span>                 :             :         double rssi;</span>
+<span id="L93"><span class="lineNum">      93</span>                 :             :     };</span>
+<span id="L94"><span class="lineNum">      94</span>                 :             : </span>
+<span id="L95"><span class="lineNum">      95</span>                 :             :     typedef std::map&lt;L3Address, tRouteTableEntry&gt; tRouteTable;</span>
+<span id="L96"><span class="lineNum">      96</span>                 :             :     typedef std::multimap&lt;tRouteTable::key_type, unsigned long&gt; tFloodTable;</span>
+<span id="L97"><span class="lineNum">      97</span>                 :             : </span>
+<span id="L98"><span class="lineNum">      98</span>                 :             :     tRouteTable routeTable;</span>
+<span id="L99"><span class="lineNum">      99</span>                 :             :     tFloodTable floodTable;</span>
+<span id="L100"><span class="lineNum">     100</span>                 :             : </span>
+<span id="L101"><span class="lineNum">     101</span>                 :             :     ModuleRefByPar&lt;IArp&gt; arp;</span>
+<span id="L102"><span class="lineNum">     102</span>                 :             : </span>
+<span id="L103"><span class="lineNum">     103</span>                 :             :     /**</span>
+<span id="L104"><span class="lineNum">     104</span>                 :             :      * @brief Length of the NetwPkt header</span>
+<span id="L105"><span class="lineNum">     105</span>                 :             :      * Read from omnetpp.ini</span>
+<span id="L106"><span class="lineNum">     106</span>                 :             :      **/</span>
+<span id="L107"><span class="lineNum">     107</span>                 :             :     int headerLength = 0;</span>
+<span id="L108"><span class="lineNum">     108</span>                 :             : </span>
+<span id="L109"><span class="lineNum">     109</span>                 :             :     L3Address myNetwAddr;</span>
+<span id="L110"><span class="lineNum">     110</span>                 :             :     L3Address sinkAddress;</span>
+<span id="L111"><span class="lineNum">     111</span>                 :             : </span>
+<span id="L112"><span class="lineNum">     112</span>                 :             :     /** @brief Minimal received RSSI necessary for adding source to routing table. */</span>
+<span id="L113"><span class="lineNum">     113</span>                 :             :     double rssiThreshold = 0.0;</span>
+<span id="L114"><span class="lineNum">     114</span>                 :             : </span>
+<span id="L115"><span class="lineNum">     115</span>                 :             :     /** @brief Interval [seconds] between two route floods. A route flood is a simple flood from</span>
+<span id="L116"><span class="lineNum">     116</span>                 :             :      *         which other nodes can extract routing (next hop) information.</span>
+<span id="L117"><span class="lineNum">     117</span>                 :             :      */</span>
+<span id="L118"><span class="lineNum">     118</span>                 :             :     double routeFloodsInterval = 0.0;</span>
+<span id="L119"><span class="lineNum">     119</span>                 :             : </span>
+<span id="L120"><span class="lineNum">     120</span>                 :             :     /** @brief Flood sequence number */</span>
+<span id="L121"><span class="lineNum">     121</span>                 :             :     unsigned long floodSeqNumber = 0;</span>
+<span id="L122"><span class="lineNum">     122</span>                 :             : </span>
+<span id="L123"><span class="lineNum">     123</span>                 :             :     cMessage *routeFloodTimer = nullptr;</span>
+<span id="L124"><span class="lineNum">     124</span>                 :             : </span>
+<span id="L125"><span class="lineNum">     125</span>                 :             :     long nbDataPacketsForwarded = 0;</span>
+<span id="L126"><span class="lineNum">     126</span>                 :             :     long nbDataPacketsReceived = 0;</span>
+<span id="L127"><span class="lineNum">     127</span>                 :             :     long nbDataPacketsSent = 0;</span>
+<span id="L128"><span class="lineNum">     128</span>                 :             :     long nbDuplicatedFloodsReceived = 0;</span>
+<span id="L129"><span class="lineNum">     129</span>                 :             :     long nbFloodsSent = 0;</span>
+<span id="L130"><span class="lineNum">     130</span>                 :             :     long nbPureUnicastSent = 0;</span>
+<span id="L131"><span class="lineNum">     131</span>                 :             :     long nbRouteFloodsSent = 0;</span>
+<span id="L132"><span class="lineNum">     132</span>                 :             :     long nbRouteFloodsReceived = 0;</span>
+<span id="L133"><span class="lineNum">     133</span>                 :             :     long nbUnicastFloodForwarded = 0;</span>
+<span id="L134"><span class="lineNum">     134</span>                 :             :     long nbPureUnicastForwarded = 0;</span>
+<span id="L135"><span class="lineNum">     135</span>                 :             :     long nbGetRouteFailures = 0;</span>
+<span id="L136"><span class="lineNum">     136</span>                 :             :     long nbRoutesRecorded = 0;</span>
+<span id="L137"><span class="lineNum">     137</span>                 :             :     long nbHops = 0;</span>
+<span id="L138"><span class="lineNum">     138</span>                 :             : </span>
+<span id="L139"><span class="lineNum">     139</span>                 :             :     cOutVector receivedRSSI;</span>
+<span id="L140"><span class="lineNum">     140</span>                 :             :     cOutVector routeRSSI;</span>
+<span id="L141"><span class="lineNum">     141</span>                 :             :     cOutVector allReceivedRSSI;</span>
+<span id="L142"><span class="lineNum">     142</span>                 :             :     cOutVector allReceivedBER;</span>
+<span id="L143"><span class="lineNum">     143</span>                 :             :     cOutVector routeBER;</span>
+<span id="L144"><span class="lineNum">     144</span>                 :             :     cOutVector receivedBER;</span>
+<span id="L145"><span class="lineNum">     145</span>                 :             :     cOutVector nextHopSelectionForSink;</span>
+<span id="L146"><span class="lineNum">     146</span>                 :             : </span>
+<span id="L147"><span class="lineNum">     147</span>                 :             :     bool trace = false;</span>
+<span id="L148"><span class="lineNum">     148</span>                 :             : </span>
+<span id="L149"><span class="lineNum">     149</span>                 :             :     /**</span>
+<span id="L150"><span class="lineNum">     150</span>                 :             :      * @name Handle Messages</span>
+<span id="L151"><span class="lineNum">     151</span>                 :             :      * @brief Functions to redefine by the programmer</span>
+<span id="L152"><span class="lineNum">     152</span>                 :             :      *</span>
+<span id="L153"><span class="lineNum">     153</span>                 :             :      * These are the functions provided to add own functionality to your</span>
+<span id="L154"><span class="lineNum">     154</span>                 :             :      * modules. These functions are called whenever a self message or a</span>
+<span id="L155"><span class="lineNum">     155</span>                 :             :      * data message from the upper or lower layer arrives respectively.</span>
+<span id="L156"><span class="lineNum">     156</span>                 :             :      *</span>
+<span id="L157"><span class="lineNum">     157</span>                 :             :      **/</span>
+<span id="L158"><span class="lineNum">     158</span>                 :             :     /*@{*/</span>
+<span id="L159"><span class="lineNum">     159</span>                 :             : </span>
+<span id="L160"><span class="lineNum">     160</span>                 :             :     /** @brief Handle messages from upper layer */</span>
+<span id="L161"><span class="lineNum">     161</span>                 :             :     virtual void handleUpperPacket(Packet *packet) override;</span>
+<span id="L162"><span class="lineNum">     162</span>                 :             : </span>
+<span id="L163"><span class="lineNum">     163</span>                 :             :     /** @brief Handle messages from lower layer */</span>
+<span id="L164"><span class="lineNum">     164</span>                 :             :     virtual void handleLowerPacket(Packet *packet) override;</span>
+<span id="L165"><span class="lineNum">     165</span>                 :             : </span>
+<span id="L166"><span class="lineNum">     166</span>                 :             :     /** @brief Handle self messages */</span>
+<span id="L167"><span class="lineNum">     167</span>                 :             :     virtual void handleSelfMessage(cMessage *msg) override;</span>
+<span id="L168"><span class="lineNum">     168</span>                 :             : </span>
+<span id="L169"><span class="lineNum">     169</span>                 :             :     /** @brief Update routing table.</span>
+<span id="L170"><span class="lineNum">     170</span>                 :             :      *</span>
+<span id="L171"><span class="lineNum">     171</span>                 :             :      * The tuple provided in argument gives the next hop address to the origin.</span>
+<span id="L172"><span class="lineNum">     172</span>                 :             :      * The table is updated only if the RSSI value is above the threshold.</span>
+<span id="L173"><span class="lineNum">     173</span>                 :             :      */</span>
+<span id="L174"><span class="lineNum">     174</span>                 :             :     virtual void updateRouteTable(const tRouteTable::key_type&amp; origin, const L3Address&amp; lastHop, double rssi, double ber);</span>
+<span id="L175"><span class="lineNum">     175</span>                 :             : </span>
+<span id="L176"><span class="lineNum">     176</span>                 :             :     /** @brief Decapsulate a message and delete original msg */</span>
+<span id="L177"><span class="lineNum">     177</span>                 :             :     void decapsulate(Packet *packet);</span>
+<span id="L178"><span class="lineNum">     178</span>                 :             : </span>
+<span id="L179"><span class="lineNum">     179</span>                 :             :     /** @brief update flood table. returns detected flood type (general or unicast flood to forward,</span>
+<span id="L180"><span class="lineNum">     180</span>                 :             :      *         duplicate flood to delete, unicast flood to me</span>
+<span id="L181"><span class="lineNum">     181</span>                 :             :      */</span>
+<span id="L182"><span class="lineNum">     182</span>                 :             :     floodTypes updateFloodTable(bool isFlood, const tFloodTable::key_type&amp; srcAddr, const tFloodTable::key_type&amp; destAddr, unsigned long seqNum);</span>
+<span id="L183"><span class="lineNum">     183</span>                 :             : </span>
+<span id="L184"><span class="lineNum">     184</span>                 :             :     /** @brief find a route to destination address. */</span>
+<span id="L185"><span class="lineNum">     185</span>                 :             :     tFloodTable::key_type getRoute(const tFloodTable::key_type&amp; destAddr, bool iAmOrigin = false) const;</span>
+<span id="L186"><span class="lineNum">     186</span>                 :             : </span>
+<span id="L187"><span class="lineNum">     187</span>                 :             :     /**</span>
+<span id="L188"><span class="lineNum">     188</span>                 :             :      * @brief Attaches a &quot;control info&quot; (NetwToMac) structure (object) to the message pMsg.</span>
+<span id="L189"><span class="lineNum">     189</span>                 :             :      *</span>
+<span id="L190"><span class="lineNum">     190</span>                 :             :      * This is most useful when passing packets between protocol layers</span>
+<span id="L191"><span class="lineNum">     191</span>                 :             :      * of a protocol stack, the control info will contain the destination MAC address.</span>
+<span id="L192"><span class="lineNum">     192</span>                 :             :      *</span>
+<span id="L193"><span class="lineNum">     193</span>                 :             :      * The &quot;control info&quot; object will be deleted when the message is deleted.</span>
+<span id="L194"><span class="lineNum">     194</span>                 :             :      * Only one &quot;control info&quot; structure can be attached (the second</span>
+<span id="L195"><span class="lineNum">     195</span>                 :             :      * setL3ToL2ControlInfo() call throws an error).</span>
+<span id="L196"><span class="lineNum">     196</span>                 :             :      *</span>
+<span id="L197"><span class="lineNum">     197</span>                 :             :      * @param pMsg      The message where the &quot;control info&quot; shall be attached.</span>
+<span id="L198"><span class="lineNum">     198</span>                 :             :      * @param pDestAddr The MAC address of the message receiver.</span>
+<span id="L199"><span class="lineNum">     199</span>                 :             :      */</span>
+<span id="L200"><span class="lineNum">     200</span>                 :             :     virtual void setDownControlInfo(Packet *const pMsg, const MacAddress&amp; pDestAddr);</span>
+<span id="L201"><span class="lineNum">     201</span>                 :             : };</span>
+<span id="L202"><span class="lineNum">     202</span>                 :             : </span>
+<span id="L203"><span class="lineNum">     203</span>                 :             : } // namespace inet</span>
+<span id="L204"><span class="lineNum">     204</span>                 :             : </span>
+<span id="L205"><span class="lineNum">     205</span>                 :             : #endif</span>
+<span id="L206"><span class="lineNum">     206</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

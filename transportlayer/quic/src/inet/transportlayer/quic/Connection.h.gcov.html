@@ -1,0 +1,350 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - transportlayer/quic/src/inet/transportlayer/quic/Connection.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">transportlayer/quic/src/inet/transportlayer/quic</a> - Connection.h<span style="font-size: 80%;"> (source / <a href="Connection.h.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">94.1&nbsp;%</td>
+            <td class="headerCovTableEntry">51</td>
+            <td class="headerCovTableEntry">48</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">94.1&nbsp;%</td>
+            <td class="headerCovTableEntry">17</td>
+            <td class="headerCovTableEntry">16</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2019-2024 Timo Völker, Ekaterina Volodina</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : // Copyright (C) 2025 OpenSim Ltd.</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : //</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : //</span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #ifndef INET_APPLICATIONS_QUIC_CONNECTION_H_</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : #define INET_APPLICATIONS_QUIC_CONNECTION_H_</span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : </span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &quot;inet/transportlayer/contract/udp/UdpSocket.h&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &quot;Quic.h&quot;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : #include &quot;UdpSocket.h&quot;</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : #include &quot;AppSocket.h&quot;</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : #include &quot;connectionstate/ConnectionState.h&quot;</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : #include &quot;inet/common/packet/ChunkQueue.h&quot;</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : #include &quot;PacketBuilder.h&quot;</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : #include &quot;ReceivedPacketsAccountant.h&quot;</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : #include &quot;ReliabilityManager.h&quot;</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : #include &quot;Timer.h&quot;</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             : #include &quot;congestioncontrol/ICongestionController.h&quot;</span>
+<span id="L22"><span class="lineNum">      22</span>                 :             : #include &quot;flowcontroller/FlowController.h&quot;</span>
+<span id="L23"><span class="lineNum">      23</span>                 :             : #include &quot;flowcontroller/FlowControlResponder.h&quot;</span>
+<span id="L24"><span class="lineNum">      24</span>                 :             : #include &quot;Statistics.h&quot;</span>
+<span id="L25"><span class="lineNum">      25</span>                 :             : #include &quot;dplpmtud/Dplpmtud.h&quot;</span>
+<span id="L26"><span class="lineNum">      26</span>                 :             : #include &quot;Path.h&quot;</span>
+<span id="L27"><span class="lineNum">      27</span>                 :             : #include &quot;stream/Stream.h&quot;</span>
+<span id="L28"><span class="lineNum">      28</span>                 :             : #include &quot;packet/ConnectionId.h&quot;</span>
+<span id="L29"><span class="lineNum">      29</span>                 :             : #include &quot;TransportParameters.h&quot;</span>
+<span id="L30"><span class="lineNum">      30</span>                 :             : </span>
+<span id="L31"><span class="lineNum">      31</span>                 :             : namespace inet {</span>
+<span id="L32"><span class="lineNum">      32</span>                 :             : namespace quic {</span>
+<span id="L33"><span class="lineNum">      33</span>                 :             : </span>
+<span id="L34"><span class="lineNum">      34</span>                 :             : // Forward declarations:</span>
+<span id="L35"><span class="lineNum">      35</span>                 :             : class Quic;</span>
+<span id="L36"><span class="lineNum">      36</span>                 :             : class UdpSocket;</span>
+<span id="L37"><span class="lineNum">      37</span>                 :             : class ConnectionState;</span>
+<span id="L38"><span class="lineNum">      38</span>                 :             : class Timer;</span>
+<span id="L39"><span class="lineNum">      39</span>                 :             : class ReliabilityManager;</span>
+<span id="L40"><span class="lineNum">      40</span>                 :             : class ReceivedPacketsAccountant;</span>
+<span id="L41"><span class="lineNum">      41</span>                 :             : class PacketBuilder;</span>
+<span id="L42"><span class="lineNum">      42</span>                 :             : class IScheduler;</span>
+<span id="L43"><span class="lineNum">      43</span>                 :             : class Stream;</span>
+<span id="L44"><span class="lineNum">      44</span>                 :             : class ConnectionFlowControlResponder;</span>
+<span id="L45"><span class="lineNum">      45</span>                 :             : class ICongestionController;</span>
+<span id="L46"><span class="lineNum">      46</span>                 :             : class Path;</span>
+<span id="L47"><span class="lineNum">      47</span>                 :             : </span>
+<span id="L48"><span class="lineNum">      48</span>                 :             : enum TimerType</span>
+<span id="L49"><span class="lineNum">      49</span>                 :             : {</span>
+<span id="L50"><span class="lineNum">      50</span>                 :             :     LOSS_DETECTION_TIMER,</span>
+<span id="L51"><span class="lineNum">      51</span>                 :             :     ACK_DELAY_TIMER,</span>
+<span id="L52"><span class="lineNum">      52</span>                 :             :     DPLPMTUD_RAISE_TIMER,</span>
+<span id="L53"><span class="lineNum">      53</span>                 :             :     CONNECTION_CLOSE_TIMER</span>
+<span id="L54"><span class="lineNum">      54</span>                 :             :     //QUIC_T_TIMEOUT_IDLE,</span>
+<span id="L55"><span class="lineNum">      55</span>                 :             :     //QUIC_T_SEND</span>
+<span id="L56"><span class="lineNum">      56</span>                 :             : };</span>
+<span id="L57"><span class="lineNum">      57</span>                 :             : </span>
+<span id="L58"><span class="lineNum">      58</span>                 :             : class Connection</span>
+<span id="L59"><span class="lineNum">      59</span>                 :             : {</span>
+<span id="L60"><span class="lineNum">      60</span>                 :             :   public:</span>
+<span id="L61"><span class="lineNum">      61</span>                 :             :     Connection(Quic *quicSimpleMod, UdpSocket *udpSocket, AppSocket *appSocket, L3Address remoteAddr, uint16_t remotePort, uint64_t srcConnectionId);</span>
+<span id="L62"><span class="lineNum">      62</span>                 :             :     virtual ~Connection();</span>
+<span id="L63"><span class="lineNum">      63</span>                 :             :     virtual void processAppCommand(cMessage *msg);</span>
+<span id="L64"><span class="lineNum">      64</span>                 :             :     virtual void processPackets(Packet *pkt);</span>
+<span id="L65"><span class="lineNum">      65</span>                 :             :     virtual void processTimeout(cMessage *msg);</span>
+<span id="L66"><span class="lineNum">      66</span>                 :             :     void sendPackets();</span>
+<span id="L67"><span class="lineNum">      67</span>                 :             : </span>
+<span id="L68"><span class="lineNum">      68</span>                 :             :     /**</span>
+<span id="L69"><span class="lineNum">      69</span>                 :             :      * Enqueues data in the corresponding stream queue and triggers packet sending.</span>
+<span id="L70"><span class="lineNum">      70</span>                 :             :      * Called upon a send command from app.</span>
+<span id="L71"><span class="lineNum">      71</span>                 :             :      *</span>
+<span id="L72"><span class="lineNum">      72</span>                 :             :      * @param streamId Id of the stream.</span>
+<span id="L73"><span class="lineNum">      73</span>                 :             :      * @param data Data to enqueue.</span>
+<span id="L74"><span class="lineNum">      74</span>                 :             :      */</span>
+<span id="L75"><span class="lineNum">      75</span>                 :             :     void newStreamData(uint64_t streamId, Ptr&lt;const Chunk&gt; data);</span>
+<span id="L76"><span class="lineNum">      76</span>                 :             : </span>
+<span id="L77"><span class="lineNum">      77</span>                 :             :     void processReceivedData(uint64_t streamId, uint64_t offset, Ptr&lt;const Chunk&gt; data);</span>
+<span id="L78"><span class="lineNum">      78</span>                 :             :     void accountReceivedPacket(uint64_t packetNumber, bool ackEliciting, PacketNumberSpace space, bool isIBitSet);</span>
+<span id="L79"><span class="lineNum">      79</span>                 :             :     void onMaxDataFrameReceived(uint64_t maxData);</span>
+<span id="L80"><span class="lineNum">      80</span>                 :             :     void onMaxStreamDataFrameReceived(uint64_t streamId, uint64_t maxStreamData);</span>
+<span id="L81"><span class="lineNum">      81</span>                 :             :     void onStreamDataBlockedFrameReceived(uint64_t streamId, uint64_t streamDataLimit);</span>
+<span id="L82"><span class="lineNum">      82</span>                 :             :     void onDataBlockedFrameReceived(uint64_t dataLimit);</span>
+<span id="L83"><span class="lineNum">      83</span>                 :             :     void onMaxDataFrameLost();</span>
+<span id="L84"><span class="lineNum">      84</span>                 :             : </span>
+<span id="L85"><span class="lineNum">      85</span>                 :             :     /**</span>
+<span id="L86"><span class="lineNum">      86</span>                 :             :      * Creates a timer with the given type and name.</span>
+<span id="L87"><span class="lineNum">      87</span>                 :             :      *</span>
+<span id="L88"><span class="lineNum">      88</span>                 :             :      * @param kind Kind of the timer message.</span>
+<span id="L89"><span class="lineNum">      89</span>                 :             :      * @param name Name of the timer message.</span>
+<span id="L90"><span class="lineNum">      90</span>                 :             :      * @return Pointer to the created Timer object.</span>
+<span id="L91"><span class="lineNum">      91</span>                 :             :      */</span>
+<span id="L92"><span class="lineNum">      92</span>                 :             :     Timer *createTimer(TimerType kind, std::string name);</span>
+<span id="L93"><span class="lineNum">      93</span>                 :             : </span>
+<span id="L94"><span class="lineNum">      94</span>                 :             :     Timer *createTimer(cMessage *msg);</span>
+<span id="L95"><span class="lineNum">      95</span>                 :             : </span>
+<span id="L96"><span class="lineNum">      96</span>                 :             :     /**</span>
+<span id="L97"><span class="lineNum">      97</span>                 :             :      * Creates a probe packet (aka tail loss probe) by using</span>
+<span id="L98"><span class="lineNum">      98</span>                 :             :      * (1) new data,</span>
+<span id="L99"><span class="lineNum">      99</span>                 :             :      * (2) retransmit sent but outstanding data, or</span>
+<span id="L100"><span class="lineNum">     100</span>                 :             :      * (3) a ping frame.</span>
+<span id="L101"><span class="lineNum">     101</span>                 :             :      * After that, it sends the probe packet.</span>
+<span id="L102"><span class="lineNum">     102</span>                 :             :      * This method is used by ReliabilityManager when its lossDetectionTimer fires.</span>
+<span id="L103"><span class="lineNum">     103</span>                 :             :      *</span>
+<span id="L104"><span class="lineNum">     104</span>                 :             :      * @param ptoCount The number of subsequent probe timeouts.</span>
+<span id="L105"><span class="lineNum">     105</span>                 :             :      */</span>
+<span id="L106"><span class="lineNum">     106</span>                 :             :     void sendProbePacket(uint ptoCount);</span>
+<span id="L107"><span class="lineNum">     107</span>                 :             : </span>
+<span id="L108"><span class="lineNum">     108</span>                 :             :     void sendClientInitialPacket(uint32_t token = 0);</span>
+<span id="L109"><span class="lineNum">     109</span>                 :             :     void sendServerInitialPacket();</span>
+<span id="L110"><span class="lineNum">     110</span>                 :             :     void sendHandshakePacket(bool includeTransportParamters);</span>
+<span id="L111"><span class="lineNum">     111</span>                 :             :     void sendDataToApp(uint64_t streamId, B expectedDataSize);</span>
+<span id="L112"><span class="lineNum">     112</span>                 :             :     void handleAckFrame(const Ptr&lt;const AckFrameHeader&gt;&amp; frameHeader, PacketNumberSpace pnSpace);</span>
+<span id="L113"><span class="lineNum">     113</span>                 :             :     void processIcmpPtb(Packet *droppedPkt, int ptbMtu);</span>
+<span id="L114"><span class="lineNum">     114</span>                 :             :     void reportPtb(uint64_t droppedPacketNumber, int ptbMtu);</span>
+<span id="L115"><span class="lineNum">     115</span>                 :             :     void setHandshakeConfirmed(bool value);</span>
+<span id="L116"><span class="lineNum">     116</span>                 :             :     bool isHandshakeConfirmed();</span>
+<span id="L117"><span class="lineNum">     117</span>                 :             :     void addDstConnectionId(uint64_t id, uint8_t length);</span>
+<span id="L118"><span class="lineNum">     118</span>                 :             :     void clearDstConnectionIds();</span>
+<span id="L119"><span class="lineNum">     119</span>                 :             :     void sendAck(PacketNumberSpace pnSpace);</span>
+<span id="L120"><span class="lineNum">     120</span>                 :             :     void established();</span>
+<span id="L121"><span class="lineNum">     121</span>                 :             :     void sendHandshakeDone();</span>
+<span id="L122"><span class="lineNum">     122</span>                 :             :     void enqueueZeroRttTokenFrame();</span>
+<span id="L123"><span class="lineNum">     123</span>                 :             :     void buildClientTokenAndSendToApp(uint32_t token);</span>
+<span id="L124"><span class="lineNum">     124</span>                 :             :     void close(bool sendAck, bool appInitiated);</span>
+<span id="L125"><span class="lineNum">     125</span>                 :             :     void sendConnectionClose(bool sendAck, bool appInitiated, int errorCode);</span>
+<span id="L126"><span class="lineNum">     126</span>                 :             :     bool belongsPacketTo(Packet *pkt, uint64_t dstConnectionId);</span>
+<span id="L127"><span class="lineNum">     127</span>                 :             :     uint32_t processClientTokenExtractToken(const char *clientToken);</span>
+<span id="L128"><span class="lineNum">     128</span>                 :             :     void addConnectionForInitialConnectionId(uint64_t initialConnectionId);</span>
+<span id="L129"><span class="lineNum">     129</span>                 :             :     void removeConnectionForInitialConnectionId();</span>
+<span id="L130"><span class="lineNum">     130</span>                 :             :     void initializeRemoteTransportParameters(uint64_t maxData, uint64_t maxStreamData);</span>
+<span id="L131"><span class="lineNum">     131</span>                 :             :     void initializeRemoteTransportParameters(Ptr&lt;const TransportParametersExtension&gt; transportParametersExt);</span>
+<span id="L132"><span class="lineNum">     132</span>                 :             : </span>
+<span id="L133"><span class="lineNum">     133</span>                 :             : </span>
+<span id="L134"><span class="lineNum">     134</span>                 :<span class="tlaGNC tlaBgGNC">        1467 :     ReliabilityManager *getReliabilityManager() {</span></span>
+<span id="L135"><span class="lineNum">     135</span>                 :<span class="tlaGNC">        1467 :         return this-&gt;reliabilityManager;</span></span>
+<span id="L136"><span class="lineNum">     136</span>                 :<span class="tlaGNC">        1467 :     }</span></span>
+<span id="L137"><span class="lineNum">     137</span>                 :<span class="tlaGNC">        1036 :     ReceivedPacketsAccountant *getReceivedPacketsAccountant(PacketNumberSpace space) {</span></span>
+<span id="L138"><span class="lineNum">     138</span>                 :<span class="tlaGNC">        1036 :         return receivedPacketsAccountants[space];</span></span>
+<span id="L139"><span class="lineNum">     139</span>                 :<span class="tlaGNC">        1036 :     }</span></span>
+<span id="L140"><span class="lineNum">     140</span>                 :             : </span>
+<span id="L141"><span class="lineNum">     141</span>                 :<span class="tlaGNC">         130 :     TransportParameters *getLocalTransportParameters() {</span></span>
+<span id="L142"><span class="lineNum">     142</span>                 :<span class="tlaGNC">         130 :         return localTransportParameters;</span></span>
+<span id="L143"><span class="lineNum">     143</span>                 :<span class="tlaGNC">         130 :     }</span></span>
+<span id="L144"><span class="lineNum">     144</span>                 :             : </span>
+<span id="L145"><span class="lineNum">     145</span>                 :<span class="tlaGNC">         130 :     TransportParameters *getRemoteTransportParameters() {</span></span>
+<span id="L146"><span class="lineNum">     146</span>                 :<span class="tlaGNC">         130 :         return remoteTransportParameters;</span></span>
+<span id="L147"><span class="lineNum">     147</span>                 :<span class="tlaGNC">         130 :     }</span></span>
+<span id="L148"><span class="lineNum">     148</span>                 :             : </span>
+<span id="L149"><span class="lineNum">     149</span>                 :<span class="tlaGNC">      965853 :     ConnectionFlowController *getConnectionFlowController() {</span></span>
+<span id="L150"><span class="lineNum">     150</span>                 :<span class="tlaGNC">      965853 :         return connectionFlowController;</span></span>
+<span id="L151"><span class="lineNum">     151</span>                 :<span class="tlaGNC">      965853 :     }</span></span>
+<span id="L152"><span class="lineNum">     152</span>                 :             : </span>
+<span id="L153"><span class="lineNum">     153</span>                 :<span class="tlaGNC">      397209 :     ConnectionFlowControlResponder *getConnectionFlowControlResponder() {</span></span>
+<span id="L154"><span class="lineNum">     154</span>                 :<span class="tlaGNC">      397209 :         return connectionFlowControlResponder;</span></span>
+<span id="L155"><span class="lineNum">     155</span>                 :<span class="tlaGNC">      397209 :     }</span></span>
+<span id="L156"><span class="lineNum">     156</span>                 :             : </span>
+<span id="L157"><span class="lineNum">     157</span>                 :<span class="tlaGNC">        3748 :     std::vector&lt;QuicFrame *&gt; *getControlQueue() {</span></span>
+<span id="L158"><span class="lineNum">     158</span>                 :<span class="tlaGNC">        3748 :         return &amp;controlQueue;</span></span>
+<span id="L159"><span class="lineNum">     159</span>                 :<span class="tlaGNC">        3748 :     }</span></span>
+<span id="L160"><span class="lineNum">     160</span>                 :             : </span>
+<span id="L161"><span class="lineNum">     161</span>                 :<span class="tlaGNC">        2918 :     Quic *getModule() {</span></span>
+<span id="L162"><span class="lineNum">     162</span>                 :<span class="tlaGNC">        2918 :         return quicSimpleMod;</span></span>
+<span id="L163"><span class="lineNum">     163</span>                 :<span class="tlaGNC">        2918 :     }</span></span>
+<span id="L164"><span class="lineNum">     164</span>                 :             : </span>
+<span id="L165"><span class="lineNum">     165</span>                 :<span class="tlaGNC">         130 :     uint64_t getMaxStreamDataFrameThreshold(){</span></span>
+<span id="L166"><span class="lineNum">     166</span>                 :<span class="tlaGNC">         130 :         return maxStreamDataFrameThreshold;</span></span>
+<span id="L167"><span class="lineNum">     167</span>                 :<span class="tlaGNC">         130 :     }</span></span>
+<span id="L168"><span class="lineNum">     168</span>                 :             : </span>
+<span id="L169"><span class="lineNum">     169</span>                 :<span class="tlaGNC">      208898 :     bool getRoundConsumedDataValue(){</span></span>
+<span id="L170"><span class="lineNum">     170</span>                 :<span class="tlaGNC">      208898 :         return roundConsumedDataValue;</span></span>
+<span id="L171"><span class="lineNum">     171</span>                 :<span class="tlaGNC">      208898 :     }</span></span>
+<span id="L172"><span class="lineNum">     172</span>                 :             : </span>
+<span id="L173"><span class="lineNum">     173</span>                 :<span class="tlaGNC">      875947 :     Path *getPath() {</span></span>
+<span id="L174"><span class="lineNum">     174</span>                 :<span class="tlaGNC">      875947 :         return path;</span></span>
+<span id="L175"><span class="lineNum">     175</span>                 :<span class="tlaGNC">      875947 :     }</span></span>
+<span id="L176"><span class="lineNum">     176</span>                 :             : </span>
+<span id="L177"><span class="lineNum">     177</span>                 :<span class="tlaGNC">          12 :     void onDplpmtudLeftBase() {</span></span>
+<span id="L178"><span class="lineNum">     178</span>                 :<span class="tlaGNC">          12 :         dplpmutdInIntialBase = false;</span></span>
+<span id="L179"><span class="lineNum">     179</span>                 :<span class="tlaGNC">          12 :     }</span></span>
+<span id="L180"><span class="lineNum">     180</span>                 :             : </span>
+<span id="L181"><span class="lineNum">     181</span>                 :<span class="tlaGNC">         244 :     std::vector&lt;ConnectionId*&gt; getSrcConnectionIds(){</span></span>
+<span id="L182"><span class="lineNum">     182</span>                 :<span class="tlaGNC">         244 :         return srcConnectionIds;</span></span>
+<span id="L183"><span class="lineNum">     183</span>                 :<span class="tlaGNC">         244 :     }</span></span>
+<span id="L184"><span class="lineNum">     184</span>                 :             : </span>
+<span id="L185"><span class="lineNum">     185</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     std::vector&lt;ConnectionId*&gt; getDstConnectionIds() {</span></span>
+<span id="L186"><span class="lineNum">     186</span>                 :<span class="tlaUNC">           0 :         return dstConnectionIds;</span></span>
+<span id="L187"><span class="lineNum">     187</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L188"><span class="lineNum">     188</span>                 :             : </span>
+<span id="L189"><span class="lineNum">     189</span>                 :<span class="tlaGNC tlaBgGNC">         175 :     AppSocket *getAppSocket() {</span></span>
+<span id="L190"><span class="lineNum">     190</span>                 :<span class="tlaGNC">         175 :         return appSocket;</span></span>
+<span id="L191"><span class="lineNum">     191</span>                 :<span class="tlaGNC">         175 :     }</span></span>
+<span id="L192"><span class="lineNum">     192</span>                 :             : </span>
+<span id="L193"><span class="lineNum">     193</span>                 :<span class="tlaGNC">          67 :     void setAppSocket(AppSocket *appSocket) {</span></span>
+<span id="L194"><span class="lineNum">     194</span>                 :<span class="tlaGNC">          67 :         this-&gt;appSocket = appSocket;</span></span>
+<span id="L195"><span class="lineNum">     195</span>                 :<span class="tlaGNC">          67 :     }</span></span>
+<span id="L196"><span class="lineNum">     196</span>                 :             : </span>
+<span id="L197"><span class="lineNum">     197</span>                 :<span class="tlaGNC">          13 :     UdpSocket *getUdpSocket() {</span></span>
+<span id="L198"><span class="lineNum">     198</span>                 :<span class="tlaGNC">          13 :         return udpSocket;</span></span>
+<span id="L199"><span class="lineNum">     199</span>                 :<span class="tlaGNC">          13 :     }</span></span>
+<span id="L200"><span class="lineNum">     200</span>                 :             : </span>
+<span id="L201"><span class="lineNum">     201</span>                 :             : </span>
+<span id="L202"><span class="lineNum">     202</span>                 :             :   private:</span>
+<span id="L203"><span class="lineNum">     203</span>                 :             :     Quic *quicSimpleMod;</span>
+<span id="L204"><span class="lineNum">     204</span>                 :             :     AppSocket *appSocket;</span>
+<span id="L205"><span class="lineNum">     205</span>                 :             :     UdpSocket *udpSocket;</span>
+<span id="L206"><span class="lineNum">     206</span>                 :             : </span>
+<span id="L207"><span class="lineNum">     207</span>                 :             :     std::vector&lt;ConnectionId*&gt; srcConnectionIds;</span>
+<span id="L208"><span class="lineNum">     208</span>                 :             :     std::vector&lt;ConnectionId*&gt; dstConnectionIds;</span>
+<span id="L209"><span class="lineNum">     209</span>                 :             :     ConnectionState *connectionState;</span>
+<span id="L210"><span class="lineNum">     210</span>                 :             : </span>
+<span id="L211"><span class="lineNum">     211</span>                 :             :     std::vector&lt;QuicFrame *&gt; controlQueue;</span>
+<span id="L212"><span class="lineNum">     212</span>                 :             :     PacketBuilder *packetBuilder;</span>
+<span id="L213"><span class="lineNum">     213</span>                 :             :     IScheduler *scheduler;</span>
+<span id="L214"><span class="lineNum">     214</span>                 :             :     std::map&lt;uint64_t, Stream *&gt; streamMap;</span>
+<span id="L215"><span class="lineNum">     215</span>                 :             :     TransportParameters *localTransportParameters = nullptr;</span>
+<span id="L216"><span class="lineNum">     216</span>                 :             :     TransportParameters *remoteTransportParameters = nullptr;</span>
+<span id="L217"><span class="lineNum">     217</span>                 :             :     ConnectionFlowController *connectionFlowController = nullptr;</span>
+<span id="L218"><span class="lineNum">     218</span>                 :             :     ConnectionFlowControlResponder *connectionFlowControlResponder = nullptr;</span>
+<span id="L219"><span class="lineNum">     219</span>                 :             : </span>
+<span id="L220"><span class="lineNum">     220</span>                 :             :     ReceivedPacketsAccountant *receivedPacketsAccountants[3];</span>
+<span id="L221"><span class="lineNum">     221</span>                 :             :     ReliabilityManager *reliabilityManager;</span>
+<span id="L222"><span class="lineNum">     222</span>                 :             : </span>
+<span id="L223"><span class="lineNum">     223</span>                 :             :     ICongestionController *congestionController;</span>
+<span id="L224"><span class="lineNum">     224</span>                 :             : </span>
+<span id="L225"><span class="lineNum">     225</span>                 :             :     bool closed = false;</span>
+<span id="L226"><span class="lineNum">     226</span>                 :             : </span>
+<span id="L227"><span class="lineNum">     227</span>                 :             :     bool acceptDataFromApp;</span>
+<span id="L228"><span class="lineNum">     228</span>                 :             :     int sendQueueLimit;</span>
+<span id="L229"><span class="lineNum">     229</span>                 :             :     double sendQueueLowWaterRatio;</span>
+<span id="L230"><span class="lineNum">     230</span>                 :             :     double maxDataFrameThreshold;</span>
+<span id="L231"><span class="lineNum">     231</span>                 :             :     double maxStreamDataFrameThreshold;</span>
+<span id="L232"><span class="lineNum">     232</span>                 :             :     bool roundConsumedDataValue;</span>
+<span id="L233"><span class="lineNum">     233</span>                 :             :     bool sendMaxDataFramesImmediately;</span>
+<span id="L234"><span class="lineNum">     234</span>                 :             :     int useCwndForParallelProbes;</span>
+<span id="L235"><span class="lineNum">     235</span>                 :             :     bool sendDataDuringInitalDplpmtudBase;</span>
+<span id="L236"><span class="lineNum">     236</span>                 :             :     //bool reduceTlpSizeOnlyIfPmtuInvalidPossible;</span>
+<span id="L237"><span class="lineNum">     237</span>                 :             : </span>
+<span id="L238"><span class="lineNum">     238</span>                 :             :     bool dplpmutdInIntialBase;</span>
+<span id="L239"><span class="lineNum">     239</span>                 :             : </span>
+<span id="L240"><span class="lineNum">     240</span>                 :             :     bool handshakeConfirmed = false;</span>
+<span id="L241"><span class="lineNum">     241</span>                 :             : </span>
+<span id="L242"><span class="lineNum">     242</span>                 :             :     Statistics *stats;</span>
+<span id="L243"><span class="lineNum">     243</span>                 :             : </span>
+<span id="L244"><span class="lineNum">     244</span>                 :             :     Path *path;</span>
+<span id="L245"><span class="lineNum">     245</span>                 :             : </span>
+<span id="L246"><span class="lineNum">     246</span>                 :             :     int lastMaxQuicPacketSize;</span>
+<span id="L247"><span class="lineNum">     247</span>                 :             :     simsignal_t usedMaxQuicPacketSizeStat;</span>
+<span id="L248"><span class="lineNum">     248</span>                 :             :     simsignal_t packetNumberReceivedStat;</span>
+<span id="L249"><span class="lineNum">     249</span>                 :             :     simsignal_t packetNumberSentStat;</span>
+<span id="L250"><span class="lineNum">     250</span>                 :             :     Timer *closeTimer = nullptr;</span>
+<span id="L251"><span class="lineNum">     251</span>                 :             : </span>
+<span id="L252"><span class="lineNum">     252</span>                 :             :     bool initialConnectionIdSet = false;</span>
+<span id="L253"><span class="lineNum">     253</span>                 :             :     uint64_t initialConnectionId = 0;</span>
+<span id="L254"><span class="lineNum">     254</span>                 :             : </span>
+<span id="L255"><span class="lineNum">     255</span>                 :             :     bool remoteTransportParametersInitialized = false;</span>
+<span id="L256"><span class="lineNum">     256</span>                 :             : </span>
+<span id="L257"><span class="lineNum">     257</span>                 :             :     void sendPacket(QuicPacket *packet, PacketNumberSpace pnSpace, bool track = true);</span>
+<span id="L258"><span class="lineNum">     258</span>                 :             :     Stream *findOrCreateStream(uint64_t streamid);</span>
+<span id="L259"><span class="lineNum">     259</span>                 :             :     uint64_t getStreamsSendQueueLength();</span>
+<span id="L260"><span class="lineNum">     260</span>                 :             : };</span>
+<span id="L261"><span class="lineNum">     261</span>                 :             : </span>
+<span id="L262"><span class="lineNum">     262</span>                 :             : } /* namespace quic */</span>
+<span id="L263"><span class="lineNum">     263</span>                 :             : } /* namespace inet */</span>
+<span id="L264"><span class="lineNum">     264</span>                 :             : </span>
+<span id="L265"><span class="lineNum">     265</span>                 :             : #endif /* INET_APPLICATIONS_QUIC_CONNECTION_H_ */</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

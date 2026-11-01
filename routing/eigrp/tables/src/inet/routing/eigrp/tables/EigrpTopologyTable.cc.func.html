@@ -1,0 +1,504 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - routing/eigrp/tables/src/inet/routing/eigrp/tables/EigrpTopologyTable.cc - functions</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../index.html">top level</a> - <a href="index.html">routing/eigrp/tables/src/inet/routing/eigrp/tables</a> - EigrpTopologyTable.cc<span style="font-size: 80%;"> (<a href="EigrpTopologyTable.cc.gcov.html">source</a> / functions)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">93.3&nbsp;%</td>
+            <td class="headerCovTableEntry">252</td>
+            <td class="headerCovTableEntry">235</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">90.0&nbsp;%</td>
+            <td class="headerCovTableEntry">40</td>
+            <td class="headerCovTableEntry">36</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryMed">85.9&nbsp;%</td>
+            <td class="headerCovTableEntry">276</td>
+            <td class="headerCovTableEntry">237</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <center>
+          <table cellpadding=1 cellspacing=1 border=0>
+            <tr><td><br></td></tr>
+            <tr>
+              <td class="tableHead">Function Name <span  title="Click to sort table by function name" class="tableHeadSort"><img src="../../../../../../../../glass.png" width=10 height=14 alt="Sort by function name" title="Click to sort table by function name" border=0></span></td>
+              
+              <td class="tableHead">Hit count <span  title="Click to sort table by function hit count" class="tableHeadSort"><a href="EigrpTopologyTable.cc.func-c.html"><img src="../../../../../../../../updown.png" width=10 height=14 alt="Sort by function hit count" title="Click to sort table by function hit count" border=0></a></span></td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="EigrpTopologyTable.cc.gcov.html#L277">inet::eigrp::EigrpTopologyTable&lt;inet::Ipv4Address&gt;::addRoute(inet::EigrpRouteSource&lt;inet::Ipv4Address&gt;*)</a></td>
+              
+              <td class="coverFnHi">1380</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L277">inet::eigrp::EigrpTopologyTable<inet::Ipv4Address>::addRoute(inet::EigrpRouteSource<inet::Ipv4Address>*)</a></td>
+              
+              <td class="coverFnAliasHi">964</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L277">inet::eigrp::EigrpTopologyTable<inet::Ipv6Address>::addRoute(inet::EigrpRouteSource<inet::Ipv6Address>*)</a></td>
+              
+              <td class="coverFnAliasHi">416</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="EigrpTopologyTable.cc.gcov.html#L381">inet::eigrp::EigrpTopologyTable&lt;inet::Ipv4Address&gt;::delayedRemove(int)</a></td>
+              
+              <td class="coverFnHi">68</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L381">inet::eigrp::EigrpTopologyTable<inet::Ipv4Address>::delayedRemove(int)</a></td>
+              
+              <td class="coverFnAliasHi">42</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L381">inet::eigrp::EigrpTopologyTable<inet::Ipv6Address>::delayedRemove(int)</a></td>
+              
+              <td class="coverFnAliasHi">26</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="EigrpTopologyTable.cc.gcov.html#L459">inet::eigrp::EigrpTopologyTable&lt;inet::Ipv4Address&gt;::findOrCreateRoute(inet::Ipv4Address const&amp;, inet::Ipv4Address const&amp;, inet::Ipv4Address const&amp;, inet::eigrp::EigrpInterface*, int, bool*)</a></td>
+              
+              <td class="coverFnHi">1406</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L459">inet::eigrp::EigrpTopologyTable<inet::Ipv4Address>::findOrCreateRoute(inet::Ipv4Address const&, inet::Ipv4Address const&, inet::Ipv4Address const&, inet::eigrp::EigrpInterface*, int, bool*)</a></td>
+              
+              <td class="coverFnAliasHi">960</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L459">inet::eigrp::EigrpTopologyTable<inet::Ipv6Address>::findOrCreateRoute(inet::Ipv6Address const&, inet::Ipv6Address const&, inet::Ipv4Address const&, inet::eigrp::EigrpInterface*, int, bool*)</a></td>
+              
+              <td class="coverFnAliasHi">446</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="EigrpTopologyTable.cc.gcov.html#L115">inet::eigrp::EigrpTopologyTable&lt;inet::Ipv4Address&gt;::findRoute(inet::Ipv4Address const&amp;, inet::Ipv4Address const&amp;, inet::Ipv4Address const&amp;)</a></td>
+              
+              <td class="coverFnHi">1379</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L115">inet::eigrp::EigrpTopologyTable<inet::Ipv4Address>::findRoute(inet::Ipv4Address const&, inet::Ipv4Address const&, inet::Ipv4Address const&)</a></td>
+              
+              <td class="coverFnAliasHi">857</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L115">inet::eigrp::EigrpTopologyTable<inet::Ipv6Address>::findRoute(inet::Ipv6Address const&, inet::Ipv6Address const&, inet::Ipv6Address const&)</a></td>
+              
+              <td class="coverFnAliasHi">522</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="EigrpTopologyTable.cc.gcov.html#L133">inet::eigrp::EigrpTopologyTable&lt;inet::Ipv4Address&gt;::findRoute(inet::Ipv4Address const&amp;, inet::Ipv4Address const&amp;, int)</a></td>
+              
+              <td class="coverFnHi">1649</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L133">inet::eigrp::EigrpTopologyTable<inet::Ipv4Address>::findRoute(inet::Ipv4Address const&, inet::Ipv4Address const&, int)</a></td>
+              
+              <td class="coverFnAliasHi">1135</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L133">inet::eigrp::EigrpTopologyTable<inet::Ipv6Address>::findRoute(inet::Ipv6Address const&, inet::Ipv6Address const&, int)</a></td>
+              
+              <td class="coverFnAliasHi">514</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="EigrpTopologyTable.cc.gcov.html#L436">inet::eigrp::EigrpTopologyTable&lt;inet::Ipv4Address&gt;::findRouteById(int)</a></td>
+              
+              <td class="coverFnHi">1765</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L436">inet::eigrp::EigrpTopologyTable<inet::Ipv4Address>::findRouteById(int)</a></td>
+              
+              <td class="coverFnAliasHi">1177</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L436">inet::eigrp::EigrpTopologyTable<inet::Ipv6Address>::findRouteById(int)</a></td>
+              
+              <td class="coverFnAliasHi">588</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="EigrpTopologyTable.cc.gcov.html#L447">inet::eigrp::EigrpTopologyTable&lt;inet::Ipv4Address&gt;::findRouteByNextHop(int, int)</a></td>
+              
+              <td class="coverFnHi">1262</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L447">inet::eigrp::EigrpTopologyTable<inet::Ipv4Address>::findRouteByNextHop(int, int)</a></td>
+              
+              <td class="coverFnAliasHi">874</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L447">inet::eigrp::EigrpTopologyTable<inet::Ipv6Address>::findRouteByNextHop(int, int)</a></td>
+              
+              <td class="coverFnAliasHi">388</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="EigrpTopologyTable.cc.gcov.html#L152">inet::eigrp::EigrpTopologyTable&lt;inet::Ipv4Address&gt;::findRouteDMin(inet::EigrpRoute&lt;inet::Ipv4Address&gt;*)</a></td>
+              
+              <td class="coverFnHi">766</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L152">inet::eigrp::EigrpTopologyTable<inet::Ipv4Address>::findRouteDMin(inet::EigrpRoute<inet::Ipv4Address>*)</a></td>
+              
+              <td class="coverFnAliasHi">502</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L152">inet::eigrp::EigrpTopologyTable<inet::Ipv6Address>::findRouteDMin(inet::EigrpRoute<inet::Ipv6Address>*)</a></td>
+              
+              <td class="coverFnAliasHi">264</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="EigrpTopologyTable.cc.gcov.html#L496">inet::eigrp::EigrpTopologyTable&lt;inet::Ipv4Address&gt;::findRouteInfo(inet::Ipv4Address const&amp;, inet::Ipv4Address const&amp;)</a></td>
+              
+              <td class="coverFnHi">1091</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L496">inet::eigrp::EigrpTopologyTable<inet::Ipv4Address>::findRouteInfo(inet::Ipv4Address const&, inet::Ipv4Address const&)</a></td>
+              
+              <td class="coverFnAliasHi">751</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L496">inet::eigrp::EigrpTopologyTable<inet::Ipv6Address>::findRouteInfo(inet::Ipv6Address const&, inet::Ipv6Address const&)</a></td>
+              
+              <td class="coverFnAliasHi">340</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="EigrpTopologyTable.cc.gcov.html#L509">inet::eigrp::EigrpTopologyTable&lt;inet::Ipv4Address&gt;::findRouteInfoById(int)</a></td>
+              
+              <td class="coverFnHi">174</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L509">inet::eigrp::EigrpTopologyTable<inet::Ipv4Address>::findRouteInfoById(int)</a></td>
+              
+              <td class="coverFnAliasHi">114</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L509">inet::eigrp::EigrpTopologyTable<inet::Ipv6Address>::findRouteInfoById(int)</a></td>
+              
+              <td class="coverFnAliasHi">60</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="EigrpTopologyTable.cc.gcov.html#L175">inet::eigrp::EigrpTopologyTable&lt;inet::Ipv4Address&gt;::getBestSuccessor(inet::EigrpRoute&lt;inet::Ipv4Address&gt;*)</a></td>
+              
+              <td class="coverFnHi">4677</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L175">inet::eigrp::EigrpTopologyTable<inet::Ipv4Address>::getBestSuccessor(inet::EigrpRoute<inet::Ipv4Address>*)</a></td>
+              
+              <td class="coverFnAliasHi">3147</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L175">inet::eigrp::EigrpTopologyTable<inet::Ipv6Address>::getBestSuccessor(inet::EigrpRoute<inet::Ipv6Address>*)</a></td>
+              
+              <td class="coverFnAliasHi">1530</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="EigrpTopologyTable.cc.gcov.html#L216">inet::eigrp::EigrpTopologyTable&lt;inet::Ipv4Address&gt;::getBestSuccessorByIf(inet::EigrpRoute&lt;inet::Ipv4Address&gt;*, int)</a></td>
+              
+              <td class="coverFnHi">321</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L216">inet::eigrp::EigrpTopologyTable<inet::Ipv4Address>::getBestSuccessorByIf(inet::EigrpRoute<inet::Ipv4Address>*, int)</a></td>
+              
+              <td class="coverFnAliasHi">245</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L216">inet::eigrp::EigrpTopologyTable<inet::Ipv6Address>::getBestSuccessorByIf(inet::EigrpRoute<inet::Ipv6Address>*, int)</a></td>
+              
+              <td class="coverFnAliasHi">76</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="EigrpTopologyTable.cc.gcov.html#L85">inet::eigrp::EigrpTopologyTable&lt;inet::Ipv4Address&gt;::handleMessage(omnetpp::cMessage*)</a></td>
+              
+              <td class="coverFnLo">0</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L85">inet::eigrp::EigrpTopologyTable<inet::Ipv4Address>::handleMessage(omnetpp::cMessage*)</a></td>
+              
+              <td class="coverFnAliasLo">0</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L85">inet::eigrp::EigrpTopologyTable<inet::Ipv6Address>::handleMessage(omnetpp::cMessage*)</a></td>
+              
+              <td class="coverFnAliasLo">0</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="EigrpTopologyTable.cc.gcov.html#L238">inet::eigrp::EigrpTopologyTable&lt;inet::Ipv4Address&gt;::hasFeasibleSuccessor(inet::EigrpRoute&lt;inet::Ipv4Address&gt;*, unsigned long&amp;)</a></td>
+              
+              <td class="coverFnHi">2484</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L238">inet::eigrp::EigrpTopologyTable<inet::Ipv4Address>::hasFeasibleSuccessor(inet::EigrpRoute<inet::Ipv4Address>*, unsigned long&)</a></td>
+              
+              <td class="coverFnAliasHi">1642</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L238">inet::eigrp::EigrpTopologyTable<inet::Ipv6Address>::hasFeasibleSuccessor(inet::EigrpRoute<inet::Ipv6Address>*, unsigned long&)</a></td>
+              
+              <td class="coverFnAliasHi">842</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="EigrpTopologyTable.cc.gcov.html#L70">inet::eigrp::EigrpTopologyTable&lt;inet::Ipv4Address&gt;::initialize(int)</a></td>
+              
+              <td class="coverFnHi">2184</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L70">inet::eigrp::EigrpTopologyTable<inet::Ipv4Address>::initialize(int)</a></td>
+              
+              <td class="coverFnAliasHi">1368</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L70">inet::eigrp::EigrpTopologyTable<inet::Ipv6Address>::initialize(int)</a></td>
+              
+              <td class="coverFnAliasHi">816</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="EigrpTopologyTable.cc.gcov.html#L397">inet::eigrp::EigrpTopologyTable&lt;inet::Ipv4Address&gt;::purgeTable()</a></td>
+              
+              <td class="coverFnHi">1372</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L397">inet::eigrp::EigrpTopologyTable<inet::Ipv4Address>::purgeTable()</a></td>
+              
+              <td class="coverFnAliasHi">840</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L397">inet::eigrp::EigrpTopologyTable<inet::Ipv6Address>::purgeTable()</a></td>
+              
+              <td class="coverFnAliasHi">532</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="EigrpTopologyTable.cc.gcov.html#L411">inet::eigrp::EigrpTopologyTable&lt;inet::Ipv4Address&gt;::removeRoute(__gnu_cxx::__normal_iterator&lt;inet::EigrpRouteSource&lt;inet::Ipv4Address&gt;**, std::vector&lt;inet::EigrpRouteSource&lt;inet::Ipv4Address&gt;*, std::allocator&lt;inet::EigrpRouteSource&lt;inet::Ipv4Address&gt;*&gt; &gt; &gt;)</a></td>
+              
+              <td class="coverFnHi">1380</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L411">inet::eigrp::EigrpTopologyTable<inet::Ipv4Address>::removeRoute(__gnu_cxx::__normal_iterator<inet::EigrpRouteSource<inet::Ipv4Address>**, std::vector<inet::EigrpRouteSource<inet::Ipv4Address>*, std::allocator<inet::EigrpRouteSource<inet::Ipv4Address>*> > >)</a></td>
+              
+              <td class="coverFnAliasHi">964</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L411">inet::eigrp::EigrpTopologyTable<inet::Ipv6Address>::removeRoute(__gnu_cxx::__normal_iterator<inet::EigrpRouteSource<inet::Ipv6Address>**, std::vector<inet::EigrpRouteSource<inet::Ipv6Address>*, std::allocator<inet::EigrpRouteSource<inet::Ipv6Address>*> > >)</a></td>
+              
+              <td class="coverFnAliasHi">416</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="EigrpTopologyTable.cc.gcov.html#L368">inet::eigrp::EigrpTopologyTable&lt;inet::Ipv4Address&gt;::removeRoute(inet::EigrpRouteSource&lt;inet::Ipv4Address&gt;*)</a></td>
+              
+              <td class="coverFnLo">0</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L368">inet::eigrp::EigrpTopologyTable<inet::Ipv4Address>::removeRoute(inet::EigrpRouteSource<inet::Ipv4Address>*)</a></td>
+              
+              <td class="coverFnAliasLo">0</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L368">inet::eigrp::EigrpTopologyTable<inet::Ipv6Address>::removeRoute(inet::EigrpRouteSource<inet::Ipv6Address>*)</a></td>
+              
+              <td class="coverFnAliasLo">0</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="EigrpTopologyTable.cc.gcov.html#L483">inet::eigrp::EigrpTopologyTable&lt;inet::Ipv4Address&gt;::removeRouteInfo(inet::EigrpRoute&lt;inet::Ipv4Address&gt;*)</a></td>
+              
+              <td class="coverFnHi">660</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L483">inet::eigrp::EigrpTopologyTable<inet::Ipv4Address>::removeRouteInfo(inet::EigrpRoute<inet::Ipv4Address>*)</a></td>
+              
+              <td class="coverFnAliasHi">448</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L483">inet::eigrp::EigrpTopologyTable<inet::Ipv6Address>::removeRouteInfo(inet::EigrpRoute<inet::Ipv6Address>*)</a></td>
+              
+              <td class="coverFnAliasHi">212</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="EigrpTopologyTable.cc.gcov.html#L91">inet::eigrp::EigrpTopologyTable&lt;inet::Ipv4Address&gt;::~EigrpTopologyTable()</a></td>
+              
+              <td class="coverFnHi">91</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L91">inet::eigrp::EigrpTopologyTable<inet::Ipv4Address>::~EigrpTopologyTable()</a></td>
+              
+              <td class="coverFnAliasHi">57</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFnAlias"><a href="EigrpTopologyTable.cc.gcov.html#L91">inet::eigrp::EigrpTopologyTable<inet::Ipv6Address>::~EigrpTopologyTable()</a></td>
+              
+              <td class="coverFnAliasHi">34</td>
+              
+              
+            </tr>
+          </table>
+          <br>
+          </center>
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

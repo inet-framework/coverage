@@ -1,0 +1,196 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - transportlayer/tcp/flavours/src/inet/transportlayer/tcp/flavours/Rfc5681CongestionControl.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../index.html">top level</a> - <a href="index.html">transportlayer/tcp/flavours/src/inet/transportlayer/tcp/flavours</a> - Rfc5681CongestionControl.cc<span style="font-size: 80%;"> (source / <a href="Rfc5681CongestionControl.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">24</td>
+            <td class="headerCovTableEntry">24</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">3</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryLo">70.0&nbsp;%</td>
+            <td class="headerCovTableEntry">10</td>
+            <td class="headerCovTableEntry">7</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2020 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : #include &quot;inet/transportlayer/tcp/flavours/Rfc5681CongestionControl.h&quot;</span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : </span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : #include &lt;algorithm&gt;</span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &quot;inet/transportlayer/tcp/TcpSimsignals.h&quot;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : </span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : namespace inet {</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : namespace tcp {</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : </span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : void Rfc5681CongestionControl::receivedAckForUnackedData(uint32_t numBytesAcked)</span>
+<span id="L16"><span class="lineNum">      16</span>                 :<span class="tlaGNC tlaBgGNC">      291713 : {</span></span>
+<span id="L17"><span class="lineNum">      17</span>                 :             :     //&quot;</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             :     // 3.1. Slow Start and Congestion Avoidance</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             :     // ...</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             :     // The slow start algorithm is used when cwnd &lt; ssthresh, while the</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             :     // congestion avoidance algorithm is used when cwnd &gt; ssthresh.  When</span>
+<span id="L22"><span class="lineNum">      22</span>                 :             :     // cwnd and ssthresh are equal, the sender may use either slow start or</span>
+<span id="L23"><span class="lineNum">      23</span>                 :             :     // congestion avoidance.</span>
+<span id="L24"><span class="lineNum">      24</span>                 :             :     //&quot;</span>
+<span id="L25"><span class="lineNum">      25</span>         [<span class="tlaGBC" title="Branch 0 was taken 128250 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 163463 times"> + </span>]:<span class="tlaGNC">      291713 :     if (state-&gt;snd_cwnd &lt; state-&gt;ssthresh)</span></span>
+<span id="L26"><span class="lineNum">      26</span>                 :<span class="tlaGNC">      128250 :         slowStart(numBytesAcked);</span></span>
+<span id="L27"><span class="lineNum">      27</span>                 :<span class="tlaGNC">      163463 :     else</span></span>
+<span id="L28"><span class="lineNum">      28</span>                 :<span class="tlaGNC">      163463 :         congestionAvoidance(numBytesAcked);</span></span>
+<span id="L29"><span class="lineNum">      29</span>                 :<span class="tlaGNC">      291713 : }</span></span>
+<span id="L30"><span class="lineNum">      30</span>                 :             : </span>
+<span id="L31"><span class="lineNum">      31</span>                 :             : void Rfc5681CongestionControl::slowStart(uint32_t numBytesAcked)</span>
+<span id="L32"><span class="lineNum">      32</span>                 :<span class="tlaGNC">      128250 : {</span></span>
+<span id="L33"><span class="lineNum">      33</span>                 :             :     //&quot;</span>
+<span id="L34"><span class="lineNum">      34</span>                 :             :     // During slow start, a TCP increments cwnd by at most SMSS bytes for</span>
+<span id="L35"><span class="lineNum">      35</span>                 :             :     // each ACK received that cumulatively acknowledges new data.  Slow</span>
+<span id="L36"><span class="lineNum">      36</span>                 :             :     // start ends when cwnd exceeds ssthresh (or, optionally, when it</span>
+<span id="L37"><span class="lineNum">      37</span>                 :             :     // reaches it, as noted above) or when congestion is observed.  While</span>
+<span id="L38"><span class="lineNum">      38</span>                 :             :     // traditionally TCP implementations have increased cwnd by precisely</span>
+<span id="L39"><span class="lineNum">      39</span>                 :             :     // SMSS bytes upon receipt of an ACK covering new data, we RECOMMEND</span>
+<span id="L40"><span class="lineNum">      40</span>                 :             :     // that TCP implementations increase cwnd, per:</span>
+<span id="L41"><span class="lineNum">      41</span>                 :             :     //</span>
+<span id="L42"><span class="lineNum">      42</span>                 :             :     //   cwnd += min (N, SMSS)                      (2)</span>
+<span id="L43"><span class="lineNum">      43</span>                 :             :     //</span>
+<span id="L44"><span class="lineNum">      44</span>                 :             :     // where N is the number of previously unacknowledged bytes acknowledged</span>
+<span id="L45"><span class="lineNum">      45</span>                 :             :     // in the incoming ACK.  This adjustment is part of Appropriate Byte</span>
+<span id="L46"><span class="lineNum">      46</span>                 :             :     // Counting [RFC3465] and provides robustness against misbehaving</span>
+<span id="L47"><span class="lineNum">      47</span>                 :             :     // receivers that may attempt to induce a sender to artificially inflate</span>
+<span id="L48"><span class="lineNum">      48</span>                 :             :     // cwnd using a mechanism known as &quot;ACK Division&quot; [SCWA99].  ACK</span>
+<span id="L49"><span class="lineNum">      49</span>                 :             :     // Division consists of a receiver sending multiple ACKs for a single</span>
+<span id="L50"><span class="lineNum">      50</span>                 :             :     // TCP data segment, each acknowledging only a portion of its data.  A</span>
+<span id="L51"><span class="lineNum">      51</span>                 :             :     // TCP that increments cwnd by SMSS for each such ACK will</span>
+<span id="L52"><span class="lineNum">      52</span>                 :             :     // inappropriately inflate the amount of data injected into the network.</span>
+<span id="L53"><span class="lineNum">      53</span>                 :             :     //&quot;</span>
+<span id="L54"><span class="lineNum">      54</span>                 :             :     // Linux tcp_is_cwnd_limited(): in slow start, cwnd grows only while it is</span>
+<span id="L55"><span class="lineNum">      55</span>                 :             :     // below twice the peak segments in flight of the current window of data. An</span>
+<span id="L56"><span class="lineNum">      56</span>                 :             :     // application-limited flow that does not fill cwnd does not grow it.</span>
+<span id="L57"><span class="lineNum">      57</span> [<span class="tlaGBC" title="Branch 0 was taken 128250 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 119248 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 9002 times"> + </span>]:<span class="tlaGNC">      128250 :     if (state-&gt;snd_effmss &gt; 0 &amp;&amp; state-&gt;snd_cwnd / state-&gt;snd_effmss &gt;= 2 * state-&gt;maxPacketsOut) {</span></span>
+<span id="L58"><span class="lineNum">      58</span>                 :<span class="tlaGNC">      119248 :         EV_DETAIL &lt;&lt; &quot;Not growing cwnd in slow start: not cwnd-limited\n&quot;;</span></span>
+<span id="L59"><span class="lineNum">      59</span>                 :<span class="tlaGNC">      119248 :         return;</span></span>
+<span id="L60"><span class="lineNum">      60</span>                 :<span class="tlaGNC">      119248 :     }</span></span>
+<span id="L61"><span class="lineNum">      61</span>                 :             :     // Equation (2): an ACK that acknowledges less than SMSS grows cwnd by less.</span>
+<span id="L62"><span class="lineNum">      62</span>                 :<span class="tlaGNC">        9002 :     uint32_t increment = std::min(numBytesAcked, state-&gt;snd_effmss);</span></span>
+<span id="L63"><span class="lineNum">      63</span>                 :<span class="tlaGNC">        9002 :     EV_INFO &lt;&lt; &quot;cwnd &lt;= ssthresh: Slow Start: increasing cwnd by &quot; &lt;&lt; increment &lt;&lt; &quot; bytes to &quot;;</span></span>
+<span id="L64"><span class="lineNum">      64</span>                 :<span class="tlaGNC">        9002 :     state-&gt;snd_cwnd += increment;</span></span>
+<span id="L65"><span class="lineNum">      65</span>                 :<span class="tlaGNC">        9002 :     conn-&gt;emit(cwndSignal, state-&gt;snd_cwnd);</span></span>
+<span id="L66"><span class="lineNum">      66</span>                 :<span class="tlaGNC">        9002 :     EV_INFO &lt;&lt; &quot;cwnd=&quot; &lt;&lt; state-&gt;snd_cwnd &lt;&lt; &quot;\n&quot;;</span></span>
+<span id="L67"><span class="lineNum">      67</span>                 :<span class="tlaGNC">        9002 : }</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :             : </span>
+<span id="L69"><span class="lineNum">      69</span>                 :             : void Rfc5681CongestionControl::congestionAvoidance(uint32_t numBytesAcked)</span>
+<span id="L70"><span class="lineNum">      70</span>                 :<span class="tlaGNC">      163463 : {</span></span>
+<span id="L71"><span class="lineNum">      71</span>                 :             :     //&quot;</span>
+<span id="L72"><span class="lineNum">      72</span>                 :             :     // The RECOMMENDED way to increase cwnd during congestion avoidance is</span>
+<span id="L73"><span class="lineNum">      73</span>                 :             :     // to count the number of bytes that have been acknowledged by ACKs for</span>
+<span id="L74"><span class="lineNum">      74</span>                 :             :     // new data.  (A drawback of this implementation is that it requires</span>
+<span id="L75"><span class="lineNum">      75</span>                 :             :     // maintaining an additional state variable.)  When the number of bytes</span>
+<span id="L76"><span class="lineNum">      76</span>                 :             :     // acknowledged reaches cwnd, then cwnd can be incremented by up to SMSS</span>
+<span id="L77"><span class="lineNum">      77</span>                 :             :     // bytes.  Note that during congestion avoidance, cwnd MUST NOT be</span>
+<span id="L78"><span class="lineNum">      78</span>                 :             :     // increased by more than SMSS bytes per RTT.  This method both allows</span>
+<span id="L79"><span class="lineNum">      79</span>                 :             :     // TCPs to increase cwnd by one segment per RTT in the face of delayed</span>
+<span id="L80"><span class="lineNum">      80</span>                 :             :     // ACKs and provides robustness against ACK Division attacks.</span>
+<span id="L81"><span class="lineNum">      81</span>                 :             :     //</span>
+<span id="L82"><span class="lineNum">      82</span>                 :             :     // Another common formula that a TCP MAY use to update cwnd during</span>
+<span id="L83"><span class="lineNum">      83</span>                 :             :     // congestion avoidance is given in equation (3):</span>
+<span id="L84"><span class="lineNum">      84</span>                 :             :     //</span>
+<span id="L85"><span class="lineNum">      85</span>                 :             :     //   cwnd += SMSS*SMSS/cwnd                     (3)</span>
+<span id="L86"><span class="lineNum">      86</span>                 :             :     //</span>
+<span id="L87"><span class="lineNum">      87</span>                 :             :     // This adjustment is executed on every incoming ACK that acknowledges</span>
+<span id="L88"><span class="lineNum">      88</span>                 :             :     // new data.  Equation (3) provides an acceptable approximation to the</span>
+<span id="L89"><span class="lineNum">      89</span>                 :             :     // underlying principle of increasing cwnd by 1 full-sized segment per</span>
+<span id="L90"><span class="lineNum">      90</span>                 :             :     // RTT.  (Note that for a connection in which the receiver is</span>
+<span id="L91"><span class="lineNum">      91</span>                 :             :     // acknowledging every-other packet, (3) is less aggressive than allowed</span>
+<span id="L92"><span class="lineNum">      92</span>                 :             :     // -- roughly increasing cwnd every second RTT.)</span>
+<span id="L93"><span class="lineNum">      93</span>                 :             :     //</span>
+<span id="L94"><span class="lineNum">      94</span>                 :             :     // Implementation Note: Since integer arithmetic is usually used in TCP</span>
+<span id="L95"><span class="lineNum">      95</span>                 :             :     // implementations, the formula given in equation (3) can fail to</span>
+<span id="L96"><span class="lineNum">      96</span>                 :             :     // increase cwnd when the congestion window is larger than SMSS*SMSS.</span>
+<span id="L97"><span class="lineNum">      97</span>                 :             :     // If the above formula yields 0, the result SHOULD be rounded up to 1</span>
+<span id="L98"><span class="lineNum">      98</span>                 :             :     // byte.</span>
+<span id="L99"><span class="lineNum">      99</span>                 :             :     //&quot;</span>
+<span id="L100"><span class="lineNum">     100</span>                 :             :     // cwnd is floored at 2*SMSS everywhere it is reduced, but guard the division</span>
+<span id="L101"><span class="lineNum">     101</span>                 :             :     // anyway: a zero cwnd here would be a hard crash rather than a misprediction.</span>
+<span id="L102"><span class="lineNum">     102</span>         [<span class="tlaGBC" title="Branch 0 was taken 163463 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">      163463 :     uint32_t i = state-&gt;snd_cwnd &gt; 0 ? state-&gt;snd_effmss * state-&gt;snd_effmss / state-&gt;snd_cwnd : state-&gt;snd_effmss;</span></span>
+<span id="L103"><span class="lineNum">     103</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 163463 times"> + </span>]:<span class="tlaGNC">      163463 :     if (i == 0) i = 1;</span></span>
+<span id="L104"><span class="lineNum">     104</span>                 :<span class="tlaGNC">      163463 :     state-&gt;snd_cwnd += i;</span></span>
+<span id="L105"><span class="lineNum">     105</span>                 :<span class="tlaGNC">      163463 :     conn-&gt;emit(cwndSignal, state-&gt;snd_cwnd);</span></span>
+<span id="L106"><span class="lineNum">     106</span>                 :<span class="tlaGNC">      163463 :     EV_INFO &lt;&lt; &quot;cwnd &gt; ssthresh: Congestion Avoidance: increasing cwnd linearly, to &quot; &lt;&lt; state-&gt;snd_cwnd &lt;&lt; &quot;\n&quot;;</span></span>
+<span id="L107"><span class="lineNum">     107</span>                 :<span class="tlaGNC">      163463 : }</span></span>
+<span id="L108"><span class="lineNum">     108</span>                 :             : </span>
+<span id="L109"><span class="lineNum">     109</span>                 :             : } // namespace tcp</span>
+<span id="L110"><span class="lineNum">     110</span>                 :             : } // namespace inet</span>
+<span id="L111"><span class="lineNum">     111</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

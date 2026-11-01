@@ -1,0 +1,281 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - transportlayer/quic/src/inet/transportlayer/quic/AppSocket.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">transportlayer/quic/src/inet/transportlayer/quic</a> - AppSocket.cc<span style="font-size: 80%;"> (source / <a href="AppSocket.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">91.2&nbsp;%</td>
+            <td class="headerCovTableEntry">137</td>
+            <td class="headerCovTableEntry">125</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">16</td>
+            <td class="headerCovTableEntry">16</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryMed">83.3&nbsp;%</td>
+            <td class="headerCovTableEntry">24</td>
+            <td class="headerCovTableEntry">20</td>
+          </tr>
+                  <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2019-2024 Timo Völker, Ekaterina Volodina</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : // Copyright (C) 2025 OpenSim Ltd.</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : //</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : //</span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #include &quot;AppSocket.h&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : #include &quot;QueueAppSocket.h&quot;</span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &quot;inet/transportlayer/contract/quic/QuicCommand_m.h&quot;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &quot;inet/common/socket/SocketTag_m.h&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : </span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : namespace inet {</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : namespace quic {</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : </span>
+<span id="L16"><span class="lineNum">      16</span>                 :<span class="tlaGNC tlaBgGNC">         264 : AppSocket::AppSocket(Quic *quicSimpleMod, int socketId) : socketId(socketId), quicSimpleMod(quicSimpleMod) { }</span></span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : </span>
+<span id="L18"><span class="lineNum">      18</span>                 :<span class="tlaGNC">         263 : AppSocket::~AppSocket() { }</span></span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : </span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : void AppSocket::sendEstablished()</span>
+<span id="L21"><span class="lineNum">      21</span>                 :<span class="tlaGNC">         135 : {</span></span>
+<span id="L22"><span class="lineNum">      22</span>                 :<span class="tlaGNC">         135 :     EV_INFO &lt;&lt; &quot;Notifying app: quic established&quot; &lt;&lt; endl;</span></span>
+<span id="L23"><span class="lineNum">      23</span>                 :<span class="tlaGNC">         135 :     auto indication = new Indication(&quot;quic established&quot;, QUIC_I_ESTABLISHED);</span></span>
+<span id="L24"><span class="lineNum">      24</span>                 :<span class="tlaGNC">         135 :     QuicConnectionInfo *quicConnectionInfo = new QuicConnectionInfo();</span></span>
+<span id="L25"><span class="lineNum">      25</span>                 :<span class="tlaGNC">         135 :     quicConnectionInfo-&gt;setLocalAddr(connection-&gt;getPath()-&gt;getLocalAddr());</span></span>
+<span id="L26"><span class="lineNum">      26</span>                 :<span class="tlaGNC">         135 :     quicConnectionInfo-&gt;setRemoteAddr(connection-&gt;getPath()-&gt;getRemoteAddr());</span></span>
+<span id="L27"><span class="lineNum">      27</span>                 :<span class="tlaGNC">         135 :     quicConnectionInfo-&gt;setLocalPort(connection-&gt;getPath()-&gt;getLocalPort());</span></span>
+<span id="L28"><span class="lineNum">      28</span>                 :<span class="tlaGNC">         135 :     quicConnectionInfo-&gt;setRemotePort(connection-&gt;getPath()-&gt;getRemotePort());</span></span>
+<span id="L29"><span class="lineNum">      29</span>                 :<span class="tlaGNC">         135 :     indication-&gt;setControlInfo(quicConnectionInfo);</span></span>
+<span id="L30"><span class="lineNum">      30</span>                 :<span class="tlaGNC">         135 :     sendIndication(indication);</span></span>
+<span id="L31"><span class="lineNum">      31</span>                 :<span class="tlaGNC">         135 : }</span></span>
+<span id="L32"><span class="lineNum">      32</span>                 :             : </span>
+<span id="L33"><span class="lineNum">      33</span>                 :             : void AppSocket::sendSendQueueFull()</span>
+<span id="L34"><span class="lineNum">      34</span>                 :<span class="tlaGNC">        3062 : {</span></span>
+<span id="L35"><span class="lineNum">      35</span>                 :<span class="tlaGNC">        3062 :     auto indication = new Indication(&quot;quic send queue full&quot;, QUIC_I_SENDQUEUE_FULL);</span></span>
+<span id="L36"><span class="lineNum">      36</span>                 :<span class="tlaGNC">        3062 :     sendIndication(indication);</span></span>
+<span id="L37"><span class="lineNum">      37</span>                 :<span class="tlaGNC">        3062 : }</span></span>
+<span id="L38"><span class="lineNum">      38</span>                 :             : </span>
+<span id="L39"><span class="lineNum">      39</span>                 :             : void AppSocket::sendSendQueueDrain()</span>
+<span id="L40"><span class="lineNum">      40</span>                 :<span class="tlaGNC">        3032 : {</span></span>
+<span id="L41"><span class="lineNum">      41</span>                 :<span class="tlaGNC">        3032 :     auto indication = new Indication(&quot;quic send queue drain&quot;, QUIC_I_SENDQUEUE_DRAIN);</span></span>
+<span id="L42"><span class="lineNum">      42</span>                 :<span class="tlaGNC">        3032 :     sendIndication(indication);</span></span>
+<span id="L43"><span class="lineNum">      43</span>                 :<span class="tlaGNC">        3032 : }</span></span>
+<span id="L44"><span class="lineNum">      44</span>                 :             : </span>
+<span id="L45"><span class="lineNum">      45</span>                 :             : void AppSocket::sendMsgRejected()</span>
+<span id="L46"><span class="lineNum">      46</span>                 :<span class="tlaGNC">        3062 : {</span></span>
+<span id="L47"><span class="lineNum">      47</span>                 :<span class="tlaGNC">        3062 :     auto indication = new Indication(&quot;quic msg rejected&quot;, QUIC_I_MSG_REJECTED);</span></span>
+<span id="L48"><span class="lineNum">      48</span>                 :<span class="tlaGNC">        3062 :     sendIndication(indication);</span></span>
+<span id="L49"><span class="lineNum">      49</span>                 :<span class="tlaGNC">        3062 : }</span></span>
+<span id="L50"><span class="lineNum">      50</span>                 :             : </span>
+<span id="L51"><span class="lineNum">      51</span>                 :             : void AppSocket::sendConnectionAvailable()</span>
+<span id="L52"><span class="lineNum">      52</span>                 :<span class="tlaGNC">          68 : {</span></span>
+<span id="L53"><span class="lineNum">      53</span>                 :<span class="tlaGNC">          68 :     auto indication = new Indication(&quot;quic connection available&quot;, QUIC_I_CONNECTION_AVAILABLE);</span></span>
+<span id="L54"><span class="lineNum">      54</span>                 :<span class="tlaGNC">          68 :     sendIndication(indication);</span></span>
+<span id="L55"><span class="lineNum">      55</span>                 :<span class="tlaGNC">          68 : }</span></span>
+<span id="L56"><span class="lineNum">      56</span>                 :             : </span>
+<span id="L57"><span class="lineNum">      57</span>                 :             : void AppSocket::sendClosed()</span>
+<span id="L58"><span class="lineNum">      58</span>                 :<span class="tlaGNC">         109 : {</span></span>
+<span id="L59"><span class="lineNum">      59</span>                 :<span class="tlaGNC">         109 :     auto indication = new Indication(&quot;quic connection closed&quot;, QUIC_I_CLOSED);</span></span>
+<span id="L60"><span class="lineNum">      60</span>                 :<span class="tlaGNC">         109 :     sendIndication(indication);</span></span>
+<span id="L61"><span class="lineNum">      61</span>                 :<span class="tlaGNC">         109 : }</span></span>
+<span id="L62"><span class="lineNum">      62</span>                 :             : </span>
+<span id="L63"><span class="lineNum">      63</span>                 :             : void AppSocket::sendDestroyed()</span>
+<span id="L64"><span class="lineNum">      64</span>                 :<span class="tlaGNC">         108 : {</span></span>
+<span id="L65"><span class="lineNum">      65</span>                 :<span class="tlaGNC">         108 :     auto indication = new Indication(&quot;socket destroyed&quot;, QUIC_I_DESTROYED);</span></span>
+<span id="L66"><span class="lineNum">      66</span>                 :<span class="tlaGNC">         108 :     sendIndication(indication);</span></span>
+<span id="L67"><span class="lineNum">      67</span>                 :<span class="tlaGNC">         108 : }</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :             : </span>
+<span id="L69"><span class="lineNum">      69</span>                 :             : void AppSocket::sendData(Ptr&lt;const Chunk&gt; data)</span>
+<span id="L70"><span class="lineNum">      70</span>                 :<span class="tlaGNC">      188441 : {</span></span>
+<span id="L71"><span class="lineNum">      71</span>                 :<span class="tlaGNC">      188441 :     Packet *pkt = new Packet(&quot;data&quot;);</span></span>
+<span id="L72"><span class="lineNum">      72</span>                 :<span class="tlaGNC">      188441 :     pkt-&gt;setKind(QUIC_I_DATA);</span></span>
+<span id="L73"><span class="lineNum">      73</span>                 :<span class="tlaGNC">      188441 :     pkt-&gt;insertAtBack(data);</span></span>
+<span id="L74"><span class="lineNum">      74</span>                 :<span class="tlaGNC">      188441 :     sendPacket(pkt);</span></span>
+<span id="L75"><span class="lineNum">      75</span>                 :<span class="tlaGNC">      188441 : }</span></span>
+<span id="L76"><span class="lineNum">      76</span>                 :             : </span>
+<span id="L77"><span class="lineNum">      77</span>                 :             : void AppSocket::sendDataNotification(uint64_t streamId, uint64_t dataSize)</span>
+<span id="L78"><span class="lineNum">      78</span>                 :<span class="tlaGNC">      188607 : {</span></span>
+<span id="L79"><span class="lineNum">      79</span>                 :<span class="tlaGNC">      188607 :     EV_INFO &lt;&lt; &quot;Notifying app: quic has data ready to read&quot; &lt;&lt; endl;</span></span>
+<span id="L80"><span class="lineNum">      80</span>                 :<span class="tlaGNC">      188607 :     auto indication = new Indication(&quot;stream: data is ready for app&quot;, QUIC_I_DATA_AVAILABLE);</span></span>
+<span id="L81"><span class="lineNum">      81</span>                 :             : </span>
+<span id="L82"><span class="lineNum">      82</span>                 :<span class="tlaGNC">      188607 :     QuicDataInfo *ctrInfo = new QuicDataInfo();</span></span>
+<span id="L83"><span class="lineNum">      83</span>                 :<span class="tlaGNC">      188607 :     ctrInfo-&gt;setStreamID(streamId);</span></span>
+<span id="L84"><span class="lineNum">      84</span>                 :<span class="tlaGNC">      188607 :     ctrInfo-&gt;setAvaliableDataSize(dataSize);</span></span>
+<span id="L85"><span class="lineNum">      85</span>                 :<span class="tlaGNC">      188607 :     indication-&gt;setControlInfo(ctrInfo);</span></span>
+<span id="L86"><span class="lineNum">      86</span>                 :<span class="tlaGNC">      188607 :     sendIndication(indication);</span></span>
+<span id="L87"><span class="lineNum">      87</span>                 :<span class="tlaGNC">      188607 : }</span></span>
+<span id="L88"><span class="lineNum">      88</span>                 :             : </span>
+<span id="L89"><span class="lineNum">      89</span>                 :             : void AppSocket::sendToken(std::string clientToken)</span>
+<span id="L90"><span class="lineNum">      90</span>                 :<span class="tlaGNC">           8 : {</span></span>
+<span id="L91"><span class="lineNum">      91</span>                 :<span class="tlaGNC">           8 :     auto indication = new Indication(&quot;client token&quot;, QUIC_I_NEW_TOKEN);</span></span>
+<span id="L92"><span class="lineNum">      92</span>                 :<span class="tlaGNC">           8 :     QuicNewToken *quicNewToken = new QuicNewToken();</span></span>
+<span id="L93"><span class="lineNum">      93</span>                 :<span class="tlaGNC">           8 :     quicNewToken-&gt;setToken(clientToken.c_str());</span></span>
+<span id="L94"><span class="lineNum">      94</span>                 :<span class="tlaGNC">           8 :     indication-&gt;setControlInfo(quicNewToken);</span></span>
+<span id="L95"><span class="lineNum">      95</span>                 :<span class="tlaGNC">           8 :     sendIndication(indication);</span></span>
+<span id="L96"><span class="lineNum">      96</span>                 :<span class="tlaGNC">           8 : }</span></span>
+<span id="L97"><span class="lineNum">      97</span>                 :             : </span>
+<span id="L98"><span class="lineNum">      98</span>                 :             : void AppSocket::sendIndication(Indication *indication)</span>
+<span id="L99"><span class="lineNum">      99</span>                 :<span class="tlaGNC">      198190 : {</span></span>
+<span id="L100"><span class="lineNum">     100</span>                 :<span class="tlaGNC">      198190 :     indication-&gt;addTagIfAbsent&lt;SocketInd&gt;()-&gt;setSocketId(socketId);</span></span>
+<span id="L101"><span class="lineNum">     101</span>                 :<span class="tlaGNC">      198190 :     this-&gt;quicSimpleMod-&gt;send(indication, &quot;appOut&quot;);</span></span>
+<span id="L102"><span class="lineNum">     102</span>                 :<span class="tlaGNC">      198190 : }</span></span>
+<span id="L103"><span class="lineNum">     103</span>                 :             : </span>
+<span id="L104"><span class="lineNum">     104</span>                 :             : void AppSocket::sendIndications(std::list&lt;Indication *&gt; indications)</span>
+<span id="L105"><span class="lineNum">     105</span>                 :<span class="tlaGNC">          67 : {</span></span>
+<span id="L106"><span class="lineNum">     106</span>         [<span class="tlaGBC" title="Branch 0 was taken 67 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 67 times"> + </span>]:<span class="tlaGNC">          67 :     for (Indication *indication : indications) {</span></span>
+<span id="L107"><span class="lineNum">     107</span>                 :<span class="tlaGNC">          67 :         sendIndication(indication);</span></span>
+<span id="L108"><span class="lineNum">     108</span>                 :<span class="tlaGNC">          67 :     }</span></span>
+<span id="L109"><span class="lineNum">     109</span>                 :<span class="tlaGNC">          67 : }</span></span>
+<span id="L110"><span class="lineNum">     110</span>                 :             : </span>
+<span id="L111"><span class="lineNum">     111</span>                 :             : void AppSocket::sendPacket(Packet *pkt)</span>
+<span id="L112"><span class="lineNum">     112</span>                 :<span class="tlaGNC">      188441 : {</span></span>
+<span id="L113"><span class="lineNum">     113</span>                 :<span class="tlaGNC">      188441 :     pkt-&gt;addTagIfAbsent&lt;SocketInd&gt;()-&gt;setSocketId(socketId);</span></span>
+<span id="L114"><span class="lineNum">     114</span>                 :<span class="tlaGNC">      188441 :     this-&gt;quicSimpleMod-&gt;send(pkt, &quot;appOut&quot;);</span></span>
+<span id="L115"><span class="lineNum">     115</span>                 :<span class="tlaGNC">      188441 : }</span></span>
+<span id="L116"><span class="lineNum">     116</span>                 :             : </span>
+<span id="L117"><span class="lineNum">     117</span>                 :             : void AppSocket::processAppCommand(cMessage *msg)</span>
+<span id="L118"><span class="lineNum">     118</span>                 :<span class="tlaGNC">         392 : {</span></span>
+<span id="L119"><span class="lineNum">     119</span>         [<span class="tlaGBC" title="Branch 0 was taken 196 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 196 times"> + </span>]:<span class="tlaGNC">         392 :     if (!udpSocket) {</span></span>
+<span id="L120"><span class="lineNum">     120</span>                 :             :         // no udpSocket for AppSocket, find udpSocket by src addr/port for a bind</span>
+<span id="L121"><span class="lineNum">     121</span>         [<span class="tlaGBC" title="Branch 0 was taken 196 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">         196 :         if (msg-&gt;getKind() == QUIC_C_CREATE_PCB) { // bind</span></span>
+<span id="L122"><span class="lineNum">     122</span>                 :<span class="tlaGNC">         196 :             QuicBindCommand *quicBind = check_and_cast&lt;QuicBindCommand *&gt;(msg-&gt;getControlInfo());</span></span>
+<span id="L123"><span class="lineNum">     123</span>                 :<span class="tlaGNC">         196 :             L3Address localAddr = quicBind-&gt;getLocalAddr();</span></span>
+<span id="L124"><span class="lineNum">     124</span>                 :<span class="tlaGNC">         196 :             uint16_t localPort = quicBind-&gt;getLocalPort();</span></span>
+<span id="L125"><span class="lineNum">     125</span>                 :<span class="tlaGNC">         196 :             udpSocket = quicSimpleMod-&gt;findUdpSocket(localAddr, localPort);</span></span>
+<span id="L126"><span class="lineNum">     126</span>                 :<span class="tlaGNC">         196 :         }</span></span>
+<span id="L127"><span class="lineNum">     127</span>                 :             :         // if there is no existing udpSocket, create one</span>
+<span id="L128"><span class="lineNum">     128</span>         [<span class="tlaGBC" title="Branch 0 was taken 124 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 72 times"> + </span>]:<span class="tlaGNC">         196 :         if (!udpSocket) {</span></span>
+<span id="L129"><span class="lineNum">     129</span>                 :<span class="tlaGNC">         124 :             udpSocket = quicSimpleMod-&gt;createUdpSocket();</span></span>
+<span id="L130"><span class="lineNum">     130</span>                 :<span class="tlaGNC">         124 :         }</span></span>
+<span id="L131"><span class="lineNum">     131</span>                 :<span class="tlaGNC">         196 :     }</span></span>
+<span id="L132"><span class="lineNum">     132</span>                 :<span class="tlaGNC">         392 :     switch (msg-&gt;getKind()) {</span></span>
+<span id="L133"><span class="lineNum">     133</span>         [<span class="tlaGBC" title="Branch 0 was taken 196 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 196 times"> + </span>]:<span class="tlaGNC">         196 :         case QUIC_C_CREATE_PCB: { // bind</span></span>
+<span id="L134"><span class="lineNum">     134</span>                 :<span class="tlaGNC">         196 :             QuicBindCommand *quicBind = check_and_cast&lt;QuicBindCommand *&gt;(msg-&gt;getControlInfo());</span></span>
+<span id="L135"><span class="lineNum">     135</span>                 :<span class="tlaGNC">         196 :             udpSocket-&gt;bind(quicBind-&gt;getLocalAddr(), quicBind-&gt;getLocalPort());</span></span>
+<span id="L136"><span class="lineNum">     136</span>                 :<span class="tlaGNC">         196 :             break;</span></span>
+<span id="L137"><span class="lineNum">     137</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         }</span></span>
+<span id="L138"><span class="lineNum">     138</span>         [<span class="tlaGBC" title="Branch 0 was taken 61 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 331 times"> + </span>]:<span class="tlaGNC tlaBgGNC">          61 :         case QUIC_C_OPEN_PASSIVE: { // listen</span></span>
+<span id="L139"><span class="lineNum">     139</span>                 :<span class="tlaGNC">          61 :             udpSocket-&gt;listen(this);</span></span>
+<span id="L140"><span class="lineNum">     140</span>                 :<span class="tlaGNC">          61 :             break;</span></span>
+<span id="L141"><span class="lineNum">     141</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         }</span></span>
+<span id="L142"><span class="lineNum">     142</span>         [<span class="tlaGBC" title="Branch 0 was taken 64 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 328 times"> + </span>]:<span class="tlaGNC tlaBgGNC">          64 :         case QUIC_C_OPEN_ACTIVE: { // connect</span></span>
+<span id="L143"><span class="lineNum">     143</span>                 :<span class="tlaGNC">          64 :             QuicOpenCommand *quicOpen = check_and_cast&lt;QuicOpenCommand *&gt;(msg-&gt;getControlInfo());</span></span>
+<span id="L144"><span class="lineNum">     144</span>                 :<span class="tlaGNC">          64 :             L3Address remoteAddr = quicOpen-&gt;getRemoteAddr();</span></span>
+<span id="L145"><span class="lineNum">     145</span>                 :<span class="tlaGNC">          64 :             uint16_t remotePort = quicOpen-&gt;getRemotePort();</span></span>
+<span id="L146"><span class="lineNum">     146</span>                 :             : </span>
+<span id="L147"><span class="lineNum">     147</span>                 :<span class="tlaGNC">          64 :             quicSimpleMod-&gt;createConnection(udpSocket, this, remoteAddr, remotePort);</span></span>
+<span id="L148"><span class="lineNum">     148</span>                 :<span class="tlaGNC">          64 :             connection-&gt;processAppCommand(msg);</span></span>
+<span id="L149"><span class="lineNum">     149</span>                 :<span class="tlaGNC">          64 :             break;</span></span>
+<span id="L150"><span class="lineNum">     150</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         }</span></span>
+<span id="L151"><span class="lineNum">     151</span>         [<span class="tlaGBC" title="Branch 0 was taken 4 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 388 times"> + </span>]:<span class="tlaGNC tlaBgGNC">           4 :         case QUIC_C_CONNECT_AND_SEND: { // 0-RTT connection setup</span></span>
+<span id="L152"><span class="lineNum">     152</span>                 :<span class="tlaGNC">           4 :             Packet *pkt = check_and_cast&lt;Packet *&gt;(msg);</span></span>
+<span id="L153"><span class="lineNum">     153</span>                 :<span class="tlaGNC">           4 :             Ptr&lt;const QuicOpenCommand&gt; quicOpen = pkt-&gt;getTag&lt;QuicOpenCommand&gt;();</span></span>
+<span id="L154"><span class="lineNum">     154</span>                 :<span class="tlaGNC">           4 :             L3Address remoteAddr = quicOpen-&gt;getRemoteAddr();</span></span>
+<span id="L155"><span class="lineNum">     155</span>                 :<span class="tlaGNC">           4 :             uint16_t remotePort = quicOpen-&gt;getRemotePort();</span></span>
+<span id="L156"><span class="lineNum">     156</span>                 :             : </span>
+<span id="L157"><span class="lineNum">     157</span>                 :<span class="tlaGNC">           4 :             quicSimpleMod-&gt;createConnection(udpSocket, this, remoteAddr, remotePort);</span></span>
+<span id="L158"><span class="lineNum">     158</span>                 :<span class="tlaGNC">           4 :             connection-&gt;processAppCommand(msg);</span></span>
+<span id="L159"><span class="lineNum">     159</span>                 :<span class="tlaGNC">           4 :             break;</span></span>
+<span id="L160"><span class="lineNum">     160</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         }</span></span>
+<span id="L161"><span class="lineNum">     161</span>         [<span class="tlaGBC" title="Branch 0 was taken 67 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 325 times"> + </span>]:<span class="tlaGNC tlaBgGNC">          67 :         case QUIC_C_ACCEPT: { // accept</span></span>
+<span id="L162"><span class="lineNum">     162</span>                 :             :             // get available connection from listening UDP socket</span>
+<span id="L163"><span class="lineNum">     163</span>                 :<span class="tlaGNC">          67 :             Connection *acceptConnection = udpSocket-&gt;popConnection();</span></span>
+<span id="L164"><span class="lineNum">     164</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 67 times"> + </span>]:<span class="tlaGNC">          67 :             if (acceptConnection == nullptr) {</span></span>
+<span id="L165"><span class="lineNum">     165</span>                 :<span class="tlaUNC tlaBgUNC">           0 :                 throw cRuntimeError(&quot;AppSocket::processAppCommand: No connection to accept available&quot;);</span></span>
+<span id="L166"><span class="lineNum">     166</span>                 :<span class="tlaUNC">           0 :             }</span></span>
+<span id="L167"><span class="lineNum">     167</span>                 :             : </span>
+<span id="L168"><span class="lineNum">     168</span>                 :             :             // get AppSocket from new socket ID within ACCEPT request and set connection</span>
+<span id="L169"><span class="lineNum">     169</span>                 :<span class="tlaGNC tlaBgGNC">          67 :             QuicAcceptCommand *quicAccept = check_and_cast&lt;QuicAcceptCommand *&gt;(msg-&gt;getControlInfo());</span></span>
+<span id="L170"><span class="lineNum">     170</span>                 :<span class="tlaGNC">          67 :             int newSocketId = quicAccept-&gt;getNewSocketId();</span></span>
+<span id="L171"><span class="lineNum">     171</span>                 :<span class="tlaGNC">          67 :             EV_DEBUG &lt;&lt; &quot;AppSocket::processAppCommand: Got accept with new socket id &quot; &lt;&lt; newSocketId &lt;&lt; endl;</span></span>
+<span id="L172"><span class="lineNum">     172</span>                 :<span class="tlaGNC">          67 :             AppSocket *newAppSocket = quicSimpleMod-&gt;findOrCreateAppSocket(newSocketId);</span></span>
+<span id="L173"><span class="lineNum">     173</span>                 :<span class="tlaGNC">          67 :             newAppSocket-&gt;setConnection(acceptConnection);</span></span>
+<span id="L174"><span class="lineNum">     174</span>                 :             : </span>
+<span id="L175"><span class="lineNum">     175</span>                 :             :             // replace QueueAppSocket with the real AppSocket and send all queued indications over it</span>
+<span id="L176"><span class="lineNum">     176</span>                 :<span class="tlaGNC">          67 :             QueueAppSocket *queueAppSocket = check_and_cast&lt;QueueAppSocket *&gt;(acceptConnection-&gt;getAppSocket());</span></span>
+<span id="L177"><span class="lineNum">     177</span>                 :<span class="tlaGNC">          67 :             acceptConnection-&gt;setAppSocket(newAppSocket);</span></span>
+<span id="L178"><span class="lineNum">     178</span>                 :<span class="tlaGNC">          67 :             newAppSocket-&gt;sendIndications(queueAppSocket-&gt;getIndications());</span></span>
+<span id="L179"><span class="lineNum">     179</span>                 :<span class="tlaGNC">          67 :             delete queueAppSocket;</span></span>
+<span id="L180"><span class="lineNum">     180</span>                 :             : </span>
+<span id="L181"><span class="lineNum">     181</span>                 :<span class="tlaGNC">          67 :             break;</span></span>
+<span id="L182"><span class="lineNum">     182</span>                 :<span class="tlaGNC">          67 :         }</span></span>
+<span id="L183"><span class="lineNum">     183</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 392 times"> + </span>]:<span class="tlaUNC tlaBgUNC">           0 :         case QUIC_C_CLOSE: { // close (listening socket)</span></span>
+<span id="L184"><span class="lineNum">     184</span>                 :<span class="tlaUNC">           0 :             udpSocket-&gt;unlisten();</span></span>
+<span id="L185"><span class="lineNum">     185</span>                 :<span class="tlaUNC">           0 :             sendClosed();</span></span>
+<span id="L186"><span class="lineNum">     186</span>                 :<span class="tlaUNC">           0 :             break;</span></span>
+<span id="L187"><span class="lineNum">     187</span>                 :<span class="tlaGNC tlaBgGNC">          67 :         }</span></span>
+<span id="L188"><span class="lineNum">     188</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 392 times"> + </span>]:<span class="tlaUNC tlaBgUNC">           0 :         default: {</span></span>
+<span id="L189"><span class="lineNum">     189</span>                 :<span class="tlaUNC">           0 :             throw cRuntimeError(&quot;Unexpected/unknown App Command&quot;);</span></span>
+<span id="L190"><span class="lineNum">     190</span>                 :<span class="tlaGNC tlaBgGNC">          67 :         }</span></span>
+<span id="L191"><span class="lineNum">     191</span>                 :             : </span>
+<span id="L192"><span class="lineNum">     192</span>                 :<span class="tlaGNC">         392 :     }</span></span>
+<span id="L193"><span class="lineNum">     193</span>                 :<span class="tlaGNC">         392 : }</span></span>
+<span id="L194"><span class="lineNum">     194</span>                 :             : </span>
+<span id="L195"><span class="lineNum">     195</span>                 :             : } /* namespace quic */</span>
+<span id="L196"><span class="lineNum">     196</span>                 :             : } /* namespace inet */</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

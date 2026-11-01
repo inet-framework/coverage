@@ -1,0 +1,355 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - physicallayer/wireless/ieee80211/mode/src/inet/physicallayer/wireless/ieee80211/mode/Ieee80211OfdmMode.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../../../index.html">top level</a> - <a href="index.html">physicallayer/wireless/ieee80211/mode/src/inet/physicallayer/wireless/ieee80211/mode</a> - Ieee80211OfdmMode.h<span style="font-size: 80%;"> (source / <a href="Ieee80211OfdmMode.h.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">91.1&nbsp;%</td>
+            <td class="headerCovTableEntry">56</td>
+            <td class="headerCovTableEntry">51</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">91.1&nbsp;%</td>
+            <td class="headerCovTableEntry">56</td>
+            <td class="headerCovTableEntry">51</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2015 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #ifndef __INET_IEEE80211OFDMMODE_H</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : #define __INET_IEEE80211OFDMMODE_H</span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : </span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &quot;inet/physicallayer/wireless/ieee80211/mode/Ieee80211ModeBase.h&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &quot;inet/physicallayer/wireless/ieee80211/mode/Ieee80211OfdmCode.h&quot;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : #include &quot;inet/physicallayer/wireless/ieee80211/mode/Ieee80211OfdmModulation.h&quot;</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : </span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : namespace inet {</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : namespace physicallayer {</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : </span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : class INET_API Ieee80211OfdmTimingRelatedParametersBase</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : {</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             :   protected:</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             :     Hz channelSpacing;</span>
+<span id="L22"><span class="lineNum">      22</span>                 :             : </span>
+<span id="L23"><span class="lineNum">      23</span>                 :             :   public:</span>
+<span id="L24"><span class="lineNum">      24</span>                 :<span class="tlaGNC tlaBgGNC">      460567 :     Ieee80211OfdmTimingRelatedParametersBase(Hz channelSpacing) : channelSpacing(channelSpacing) {}</span></span>
+<span id="L25"><span class="lineNum">      25</span>                 :             : </span>
+<span id="L26"><span class="lineNum">      26</span>                 :<span class="tlaGNC">    58865010 :     Hz getSubcarrierFrequencySpacing() const { return channelSpacing / 64; }</span></span>
+<span id="L27"><span class="lineNum">      27</span>                 :<span class="tlaGNC">    51672902 :     const simtime_t getFFTTransformPeriod() const { return simtime_t(1 / getSubcarrierFrequencySpacing().get&lt;Hz&gt;()); }</span></span>
+<span id="L28"><span class="lineNum">      28</span>                 :<span class="tlaGNC">    14135191 :     const simtime_t getGIDuration() const { return getFFTTransformPeriod() / 4; }</span></span>
+<span id="L29"><span class="lineNum">      29</span>                 :<span class="tlaGNC">    14135191 :     const simtime_t getSymbolInterval() const { return getGIDuration() + getFFTTransformPeriod(); }</span></span>
+<span id="L30"><span class="lineNum">      30</span>                 :             : </span>
+<span id="L31"><span class="lineNum">      31</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     const Hz getChannelSpacing() const { return channelSpacing; }</span></span>
+<span id="L32"><span class="lineNum">      32</span>                 :             : };</span>
+<span id="L33"><span class="lineNum">      33</span>                 :             : </span>
+<span id="L34"><span class="lineNum">      34</span>                 :             : class INET_API Ieee80211OfdmModeBase : public Ieee80211OfdmTimingRelatedParametersBase</span>
+<span id="L35"><span class="lineNum">      35</span>                 :             : {</span>
+<span id="L36"><span class="lineNum">      36</span>                 :             :   protected:</span>
+<span id="L37"><span class="lineNum">      37</span>                 :             :     const Ieee80211OfdmModulation *modulation;</span>
+<span id="L38"><span class="lineNum">      38</span>                 :             :     const Ieee80211OfdmCode *code;</span>
+<span id="L39"><span class="lineNum">      39</span>                 :             :     const Hz bandwidth;</span>
+<span id="L40"><span class="lineNum">      40</span>                 :             :     mutable bps netBitrate; // cached</span>
+<span id="L41"><span class="lineNum">      41</span>                 :             :     mutable bps grossBitrate; // cached</span>
+<span id="L42"><span class="lineNum">      42</span>                 :             : </span>
+<span id="L43"><span class="lineNum">      43</span>                 :             :   protected:</span>
+<span id="L44"><span class="lineNum">      44</span>                 :             :     bps computeGrossBitrate(const Ieee80211OfdmModulation *modulation) const;</span>
+<span id="L45"><span class="lineNum">      45</span>                 :             :     bps computeNetBitrate(bps grossBitrate, const Ieee80211OfdmCode *code) const;</span>
+<span id="L46"><span class="lineNum">      46</span>                 :             : </span>
+<span id="L47"><span class="lineNum">      47</span>                 :             :   public:</span>
+<span id="L48"><span class="lineNum">      48</span>                 :             :     Ieee80211OfdmModeBase(const Ieee80211OfdmModulation *modulation, const Ieee80211OfdmCode *code, Hz channelSpacing, Hz bandwidth);</span>
+<span id="L49"><span class="lineNum">      49</span>                 :<span class="tlaGNC tlaBgGNC">           8 :     virtual ~Ieee80211OfdmModeBase() {}</span></span>
+<span id="L50"><span class="lineNum">      50</span>                 :             : </span>
+<span id="L51"><span class="lineNum">      51</span>                 :<span class="tlaGNC">    13347408 :     int getNumberOfDataSubcarriers() const { return 48; }</span></span>
+<span id="L52"><span class="lineNum">      52</span>                 :<span class="tlaGNC">     7189304 :     int getNumberOfPilotSubcarriers() const { return 4; }</span></span>
+<span id="L53"><span class="lineNum">      53</span>                 :             :     // The null subcarrier and the guard subcarriers at the sides are not included.</span>
+<span id="L54"><span class="lineNum">      54</span>                 :<span class="tlaGNC">     7189304 :     int getNumberOfTotalSubcarriers() const { return getNumberOfDataSubcarriers() + getNumberOfPilotSubcarriers(); }</span></span>
+<span id="L55"><span class="lineNum">      55</span>                 :             : </span>
+<span id="L56"><span class="lineNum">      56</span>                 :             :     Hz getSubcarrierStartFrequencyOffset(int subcarrierIndex) const;</span>
+<span id="L57"><span class="lineNum">      57</span>                 :             :     Hz getSubcarrierEndFrequencyOffset(int subcarrierIndex) const;</span>
+<span id="L58"><span class="lineNum">      58</span>                 :             : </span>
+<span id="L59"><span class="lineNum">      59</span>                 :             :     virtual bps getGrossBitrate() const;</span>
+<span id="L60"><span class="lineNum">      60</span>                 :             :     virtual bps getNetBitrate() const;</span>
+<span id="L61"><span class="lineNum">      61</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     virtual Hz getBandwidth() const { return bandwidth; }</span></span>
+<span id="L62"><span class="lineNum">      62</span>                 :             : };</span>
+<span id="L63"><span class="lineNum">      63</span>                 :             : </span>
+<span id="L64"><span class="lineNum">      64</span>                 :             : class INET_API Ieee80211OfdmPreambleMode : public IIeee80211PreambleMode, public Ieee80211OfdmTimingRelatedParametersBase</span>
+<span id="L65"><span class="lineNum">      65</span>                 :             : {</span>
+<span id="L66"><span class="lineNum">      66</span>                 :             :   public:</span>
+<span id="L67"><span class="lineNum">      67</span>                 :             :     Ieee80211OfdmPreambleMode(Hz channelSpacing);</span>
+<span id="L68"><span class="lineNum">      68</span>                 :<span class="tlaGNC tlaBgGNC">           4 :     virtual ~Ieee80211OfdmPreambleMode() {}</span></span>
+<span id="L69"><span class="lineNum">      69</span>                 :             : </span>
+<span id="L70"><span class="lineNum">      70</span>                 :             :     virtual std::ostream&amp; printToStream(std::ostream&amp; stream, int level, int evFlags = 0) const override;</span>
+<span id="L71"><span class="lineNum">      71</span>                 :             : </span>
+<span id="L72"><span class="lineNum">      72</span>                 :<span class="tlaGNC">     7800840 :     const simtime_t getTrainingSymbolGIDuration() const { return getFFTTransformPeriod() / 2; }</span></span>
+<span id="L73"><span class="lineNum">      73</span>                 :<span class="tlaGNC">     7800840 :     const simtime_t getShortTrainingSequenceDuration() const { return 10 * getFFTTransformPeriod() / 4; }</span></span>
+<span id="L74"><span class="lineNum">      74</span>                 :<span class="tlaGNC">     7800840 :     const simtime_t getLongTrainingSequenceDuration() const { return getTrainingSymbolGIDuration() + 2 * getFFTTransformPeriod(); }</span></span>
+<span id="L75"><span class="lineNum">      75</span>                 :<span class="tlaGNC">     7800840 :     virtual const simtime_t getDuration() const override { return getShortTrainingSequenceDuration() + getLongTrainingSequenceDuration(); }</span></span>
+<span id="L76"><span class="lineNum">      76</span>                 :             : </span>
+<span id="L77"><span class="lineNum">      77</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     virtual Ptr&lt;Ieee80211PhyPreamble&gt; createPreamble() const override { return makeShared&lt;Ieee80211OfdmPhyPreamble&gt;(); }</span></span>
+<span id="L78"><span class="lineNum">      78</span>                 :             : };</span>
+<span id="L79"><span class="lineNum">      79</span>                 :             : </span>
+<span id="L80"><span class="lineNum">      80</span>                 :             : class INET_API Ieee80211OfdmSignalMode : public IIeee80211HeaderMode, public Ieee80211OfdmModeBase</span>
+<span id="L81"><span class="lineNum">      81</span>                 :             : {</span>
+<span id="L82"><span class="lineNum">      82</span>                 :             :   protected:</span>
+<span id="L83"><span class="lineNum">      83</span>                 :             :     unsigned int rate;</span>
+<span id="L84"><span class="lineNum">      84</span>                 :             : </span>
+<span id="L85"><span class="lineNum">      85</span>                 :             :   public:</span>
+<span id="L86"><span class="lineNum">      86</span>                 :             :     Ieee80211OfdmSignalMode(const Ieee80211OfdmCode *code, const Ieee80211OfdmModulation *modulation, Hz channelSpacing, Hz bandwidth, unsigned int rate);</span>
+<span id="L87"><span class="lineNum">      87</span>                 :<span class="tlaGNC tlaBgGNC">           4 :     virtual ~Ieee80211OfdmSignalMode() {}</span></span>
+<span id="L88"><span class="lineNum">      88</span>                 :             : </span>
+<span id="L89"><span class="lineNum">      89</span>                 :             :     virtual std::ostream&amp; printToStream(std::ostream&amp; stream, int level, int evFlags = 0) const override;</span>
+<span id="L90"><span class="lineNum">      90</span>                 :             : </span>
+<span id="L91"><span class="lineNum">      91</span>                 :<span class="tlaGNC">     1651343 :     unsigned int getRate() const { return rate; }</span></span>
+<span id="L92"><span class="lineNum">      92</span>                 :<span class="tlaGNC">     6197078 :     b getRateFieldLength() const { return b(4); }</span></span>
+<span id="L93"><span class="lineNum">      93</span>                 :<span class="tlaGNC">     6197078 :     b getReservedFieldLength() const { return b(1); }</span></span>
+<span id="L94"><span class="lineNum">      94</span>                 :<span class="tlaGNC">     6197078 :     b getLengthFieldLength() const { return b(12); }</span></span>
+<span id="L95"><span class="lineNum">      95</span>                 :<span class="tlaGNC">     6197078 :     b getParityFieldLength() const { return b(1); }</span></span>
+<span id="L96"><span class="lineNum">      96</span>                 :<span class="tlaGNC">     6197078 :     b getTailFieldLength() const { return b(6); }</span></span>
+<span id="L97"><span class="lineNum">      97</span>                 :<span class="tlaGNC">    15294182 :     b getServiceFieldLength() const { return b(16); }</span></span>
+<span id="L98"><span class="lineNum">      98</span>                 :             : </span>
+<span id="L99"><span class="lineNum">      99</span>                 :<span class="tlaGNC">     6197078 :     virtual b getLength() const override { return getRateFieldLength() + getReservedFieldLength() + getLengthFieldLength() + getParityFieldLength() + getTailFieldLength() + getServiceFieldLength(); }</span></span>
+<span id="L100"><span class="lineNum">     100</span>                 :<span class="tlaGNC">     7968257 :     virtual const simtime_t getDuration() const override { return getSymbolInterval(); }</span></span>
+<span id="L101"><span class="lineNum">     101</span>                 :             : </span>
+<span id="L102"><span class="lineNum">     102</span>                 :<span class="tlaGNC">     4550965 :     const Ieee80211OfdmCode *getCode() const { return code; }</span></span>
+<span id="L103"><span class="lineNum">     103</span>                 :<span class="tlaGNC">     7968257 :     virtual const simtime_t getSymbolInterval() const override { return Ieee80211OfdmTimingRelatedParametersBase::getSymbolInterval(); }</span></span>
+<span id="L104"><span class="lineNum">     104</span>                 :<span class="tlaGNC">     4551367 :     virtual const Ieee80211OfdmModulation *getModulation() const override { return modulation; }</span></span>
+<span id="L105"><span class="lineNum">     105</span>                 :             : </span>
+<span id="L106"><span class="lineNum">     106</span>                 :<span class="tlaGNC">        2823 :     virtual bps getGrossBitrate() const override { return Ieee80211OfdmModeBase::getGrossBitrate(); }</span></span>
+<span id="L107"><span class="lineNum">     107</span>                 :<span class="tlaGNC">        2813 :     virtual bps getNetBitrate() const override { return Ieee80211OfdmModeBase::getNetBitrate(); }</span></span>
+<span id="L108"><span class="lineNum">     108</span>                 :             : </span>
+<span id="L109"><span class="lineNum">     109</span>                 :<span class="tlaGNC">        7852 :     virtual Ptr&lt;Ieee80211PhyHeader&gt; createHeader() const override { return makeShared&lt;Ieee80211OfdmPhyHeader&gt;(); }</span></span>
+<span id="L110"><span class="lineNum">     110</span>                 :             : };</span>
+<span id="L111"><span class="lineNum">     111</span>                 :             : </span>
+<span id="L112"><span class="lineNum">     112</span>                 :             : class INET_API Ieee80211OfdmDataMode : public IIeee80211DataMode, public Ieee80211OfdmModeBase</span>
+<span id="L113"><span class="lineNum">     113</span>                 :             : {</span>
+<span id="L114"><span class="lineNum">     114</span>                 :             :   public:</span>
+<span id="L115"><span class="lineNum">     115</span>                 :             :     Ieee80211OfdmDataMode(const Ieee80211OfdmCode *code, const Ieee80211OfdmModulation *modulation, Hz channelSpacing, Hz bandwidth);</span>
+<span id="L116"><span class="lineNum">     116</span>                 :<span class="tlaGNC">           4 :     virtual ~Ieee80211OfdmDataMode() {}</span></span>
+<span id="L117"><span class="lineNum">     117</span>                 :             : </span>
+<span id="L118"><span class="lineNum">     118</span>                 :             :     virtual std::ostream&amp; printToStream(std::ostream&amp; stream, int level, int evFlags = 0) const override;</span>
+<span id="L119"><span class="lineNum">     119</span>                 :             : </span>
+<span id="L120"><span class="lineNum">     120</span>                 :<span class="tlaGNC">     6149499 :     b getServiceFieldLength() const { return b(16); }</span></span>
+<span id="L121"><span class="lineNum">     121</span>                 :<span class="tlaGNC">    10698051 :     b getTailFieldLength() const { return b(6); }</span></span>
+<span id="L122"><span class="lineNum">     122</span>                 :             : </span>
+<span id="L123"><span class="lineNum">     123</span>                 :<span class="tlaGNC">     1654446 :     virtual Hz getBandwidth() const override { return bandwidth; }</span></span>
+<span id="L124"><span class="lineNum">     124</span>                 :             :     virtual b getPaddingLength(b dataLength) const override;</span>
+<span id="L125"><span class="lineNum">     125</span>                 :             :     virtual b getCompleteLength(b dataLength) const override;</span>
+<span id="L126"><span class="lineNum">     126</span>                 :             :     virtual const simtime_t getDuration(b dataLength) const override;</span>
+<span id="L127"><span class="lineNum">     127</span>                 :             : </span>
+<span id="L128"><span class="lineNum">     128</span>                 :<span class="tlaGNC">     4553369 :     const Ieee80211OfdmCode *getCode() const { return code; }</span></span>
+<span id="L129"><span class="lineNum">     129</span>                 :<span class="tlaGNC">     6152303 :     virtual const simtime_t getSymbolInterval() const override { return Ieee80211OfdmTimingRelatedParametersBase::getSymbolInterval(); }</span></span>
+<span id="L130"><span class="lineNum">     130</span>                 :<span class="tlaGNC">     4556184 :     virtual const Ieee80211OfdmModulation *getModulation() const override { return modulation; }</span></span>
+<span id="L131"><span class="lineNum">     131</span>                 :<span class="tlaGNC">       11408 :     virtual bps getGrossBitrate() const override { return Ieee80211OfdmModeBase::getGrossBitrate(); }</span></span>
+<span id="L132"><span class="lineNum">     132</span>                 :<span class="tlaGNC">     2117131 :     virtual bps getNetBitrate() const override { return Ieee80211OfdmModeBase::getNetBitrate(); }</span></span>
+<span id="L133"><span class="lineNum">     133</span>                 :<span class="tlaGNC">     1667112 :     virtual int getNumberOfSpatialStreams() const override { return 1; }</span></span>
+<span id="L134"><span class="lineNum">     134</span>                 :             : };</span>
+<span id="L135"><span class="lineNum">     135</span>                 :             : </span>
+<span id="L136"><span class="lineNum">     136</span>                 :             : class INET_API Ieee80211OfdmMode : public Ieee80211ModeBase, public Ieee80211OfdmTimingRelatedParametersBase</span>
+<span id="L137"><span class="lineNum">     137</span>                 :             : {</span>
+<span id="L138"><span class="lineNum">     138</span>                 :             :   protected:</span>
+<span id="L139"><span class="lineNum">     139</span>                 :             :     const Ieee80211OfdmPreambleMode *preambleMode;</span>
+<span id="L140"><span class="lineNum">     140</span>                 :             :     const Ieee80211OfdmSignalMode *signalMode;</span>
+<span id="L141"><span class="lineNum">     141</span>                 :             :     const Ieee80211OfdmDataMode *dataMode;</span>
+<span id="L142"><span class="lineNum">     142</span>                 :             : </span>
+<span id="L143"><span class="lineNum">     143</span>                 :             :   protected:</span>
+<span id="L144"><span class="lineNum">     144</span>                 :<span class="tlaGNC">        6512 :     virtual int getLegacyCwMin() const override { return 15; }</span></span>
+<span id="L145"><span class="lineNum">     145</span>                 :<span class="tlaGNC">        3805 :     virtual int getLegacyCwMax() const override { return 1023; }</span></span>
+<span id="L146"><span class="lineNum">     146</span>                 :             : </span>
+<span id="L147"><span class="lineNum">     147</span>                 :             :   public:</span>
+<span id="L148"><span class="lineNum">     148</span>                 :             :     Ieee80211OfdmMode(const char *name, const Ieee80211OfdmPreambleMode *preambleMode, const Ieee80211OfdmSignalMode *signalMode, const Ieee80211OfdmDataMode *dataMode, Hz channelSpacing, Hz bandwidth);</span>
+<span id="L149"><span class="lineNum">     149</span>                 :             : </span>
+<span id="L150"><span class="lineNum">     150</span>                 :             :     virtual std::ostream&amp; printToStream(std::ostream&amp; stream, int level, int evFlags = 0) const override;</span>
+<span id="L151"><span class="lineNum">     151</span>                 :             : </span>
+<span id="L152"><span class="lineNum">     152</span>                 :<span class="tlaGNC">     1651345 :     virtual const Ieee80211OfdmPreambleMode *getPreambleMode() const override { return preambleMode; }</span></span>
+<span id="L153"><span class="lineNum">     153</span>                 :<span class="tlaGNC">    26053292 :     virtual const Ieee80211OfdmSignalMode *getHeaderMode() const override { return signalMode; }</span></span>
+<span id="L154"><span class="lineNum">     154</span>                 :<span class="tlaGNC">    23069937 :     virtual const Ieee80211OfdmDataMode *getDataMode() const override { return dataMode; }</span></span>
+<span id="L155"><span class="lineNum">     155</span>                 :<span class="tlaGNC">        1099 :     virtual bps getNonHtReferenceRate() const override { return dataMode-&gt;getNetBitrate(); }</span></span>
+<span id="L156"><span class="lineNum">     156</span>                 :<span class="tlaGNC">       16941 :     virtual ModulationClass getModulationClass() const override { return ModulationClass::OFDM; }</span></span>
+<span id="L157"><span class="lineNum">     157</span>                 :<span class="tlaGNC">        5802 :     virtual PreambleType getLegacyPreambleType() const override { return PreambleType::NOT_APPLICABLE; }</span></span>
+<span id="L158"><span class="lineNum">     158</span>                 :<span class="tlaGNC">     1664614 :     virtual const Ieee80211OfdmSignalMode *getSignalMode() const { return signalMode; }</span></span>
+<span id="L159"><span class="lineNum">     159</span>                 :             : </span>
+<span id="L160"><span class="lineNum">     160</span>                 :<span class="tlaGNC">       34074 :     virtual inline const simtime_t getDuration(b dataLength) const override { return preambleMode-&gt;getDuration() + signalMode-&gt;getDuration() + dataMode-&gt;getDuration(dataLength); }</span></span>
+<span id="L161"><span class="lineNum">     161</span>                 :             : </span>
+<span id="L162"><span class="lineNum">     162</span>                 :             :     // Table 18-17—OFDM PHY characteristics</span>
+<span id="L163"><span class="lineNum">     163</span>                 :             :     virtual const simtime_t getSlotTime() const override;</span>
+<span id="L164"><span class="lineNum">     164</span>                 :             :     virtual const simtime_t getSifsTime() const override;</span>
+<span id="L165"><span class="lineNum">     165</span>                 :             :     virtual const simtime_t getRifsTime() const override;</span>
+<span id="L166"><span class="lineNum">     166</span>                 :             :     virtual const simtime_t getCcaTime() const override;</span>
+<span id="L167"><span class="lineNum">     167</span>                 :             :     virtual const simtime_t getPhyRxStartDelay() const override;</span>
+<span id="L168"><span class="lineNum">     168</span>                 :             :     virtual const simtime_t getRxTxTurnaroundTime() const override;</span>
+<span id="L169"><span class="lineNum">     169</span>                 :<span class="tlaGNC">        2813 :     virtual inline const simtime_t getPreambleLength() const override { return preambleMode-&gt;getDuration(); }</span></span>
+<span id="L170"><span class="lineNum">     170</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     virtual inline const simtime_t getPlcpHeaderLength() const override { return signalMode-&gt;getDuration(); }</span></span>
+<span id="L171"><span class="lineNum">     171</span>                 :<span class="tlaUNC">           0 :     virtual inline int getMpduMaxLength() const override { return 4095; }</span></span>
+<span id="L172"><span class="lineNum">     172</span>                 :             : };</span>
+<span id="L173"><span class="lineNum">     173</span>                 :             : </span>
+<span id="L174"><span class="lineNum">     174</span>                 :             : class INET_API Ieee80211OfdmCompliantModes</span>
+<span id="L175"><span class="lineNum">     175</span>                 :             : {</span>
+<span id="L176"><span class="lineNum">     176</span>                 :             :   public:</span>
+<span id="L177"><span class="lineNum">     177</span>                 :             :     // Preamble modes: 18.3.3 PLCS preamble (SYNC).</span>
+<span id="L178"><span class="lineNum">     178</span>                 :             :     static const Ieee80211OfdmPreambleMode ofdmPreambleModeCS5MHz;</span>
+<span id="L179"><span class="lineNum">     179</span>                 :             :     static const Ieee80211OfdmPreambleMode ofdmPreambleModeCS10MHz;</span>
+<span id="L180"><span class="lineNum">     180</span>                 :             :     static const Ieee80211OfdmPreambleMode ofdmPreambleModeCS20MHz;</span>
+<span id="L181"><span class="lineNum">     181</span>                 :             : </span>
+<span id="L182"><span class="lineNum">     182</span>                 :             :     // Signal modes: Table 18-6—Contents of the SIGNAL field</span>
+<span id="L183"><span class="lineNum">     183</span>                 :             :     static const Ieee80211OfdmSignalMode ofdmHeaderMode6MbpsRate13;</span>
+<span id="L184"><span class="lineNum">     184</span>                 :             :     static const Ieee80211OfdmSignalMode ofdmHeaderMode6MbpsRate15;</span>
+<span id="L185"><span class="lineNum">     185</span>                 :             :     static const Ieee80211OfdmSignalMode ofdmHeaderMode6MbpsRate5;</span>
+<span id="L186"><span class="lineNum">     186</span>                 :             :     static const Ieee80211OfdmSignalMode ofdmHeaderMode6MbpsRate7;</span>
+<span id="L187"><span class="lineNum">     187</span>                 :             :     static const Ieee80211OfdmSignalMode ofdmHeaderMode6MbpsRate9;</span>
+<span id="L188"><span class="lineNum">     188</span>                 :             :     static const Ieee80211OfdmSignalMode ofdmHeaderMode6MbpsRate11;</span>
+<span id="L189"><span class="lineNum">     189</span>                 :             :     static const Ieee80211OfdmSignalMode ofdmHeaderMode6MbpsRate1;</span>
+<span id="L190"><span class="lineNum">     190</span>                 :             :     static const Ieee80211OfdmSignalMode ofdmHeaderMode6MbpsRate3;</span>
+<span id="L191"><span class="lineNum">     191</span>                 :             : </span>
+<span id="L192"><span class="lineNum">     192</span>                 :             :     static const Ieee80211OfdmSignalMode ofdmHeaderMode3MbpsRate13;</span>
+<span id="L193"><span class="lineNum">     193</span>                 :             :     static const Ieee80211OfdmSignalMode ofdmHeaderMode3MbpsRate15;</span>
+<span id="L194"><span class="lineNum">     194</span>                 :             :     static const Ieee80211OfdmSignalMode ofdmHeaderMode3MbpsRate5;</span>
+<span id="L195"><span class="lineNum">     195</span>                 :             :     static const Ieee80211OfdmSignalMode ofdmHeaderMode3MbpsRate7;</span>
+<span id="L196"><span class="lineNum">     196</span>                 :             :     static const Ieee80211OfdmSignalMode ofdmHeaderMode3MbpsRate9;</span>
+<span id="L197"><span class="lineNum">     197</span>                 :             :     static const Ieee80211OfdmSignalMode ofdmHeaderMode3MbpsRate11;</span>
+<span id="L198"><span class="lineNum">     198</span>                 :             :     static const Ieee80211OfdmSignalMode ofdmHeaderMode3MbpsRate1;</span>
+<span id="L199"><span class="lineNum">     199</span>                 :             :     static const Ieee80211OfdmSignalMode ofdmHeaderMode3MbpsRate3;</span>
+<span id="L200"><span class="lineNum">     200</span>                 :             : </span>
+<span id="L201"><span class="lineNum">     201</span>                 :             :     static const Ieee80211OfdmSignalMode ofdmHeaderMode1_5MbpsRate13;</span>
+<span id="L202"><span class="lineNum">     202</span>                 :             :     static const Ieee80211OfdmSignalMode ofdmHeaderMode1_5MbpsRate15;</span>
+<span id="L203"><span class="lineNum">     203</span>                 :             :     static const Ieee80211OfdmSignalMode ofdmHeaderMode1_5MbpsRate5;</span>
+<span id="L204"><span class="lineNum">     204</span>                 :             :     static const Ieee80211OfdmSignalMode ofdmHeaderMode1_5MbpsRate7;</span>
+<span id="L205"><span class="lineNum">     205</span>                 :             :     static const Ieee80211OfdmSignalMode ofdmHeaderMode1_5MbpsRate9;</span>
+<span id="L206"><span class="lineNum">     206</span>                 :             :     static const Ieee80211OfdmSignalMode ofdmHeaderMode1_5MbpsRate11;</span>
+<span id="L207"><span class="lineNum">     207</span>                 :             :     static const Ieee80211OfdmSignalMode ofdmHeaderMode1_5MbpsRate1;</span>
+<span id="L208"><span class="lineNum">     208</span>                 :             :     static const Ieee80211OfdmSignalMode ofdmHeaderMode1_5MbpsRate3;</span>
+<span id="L209"><span class="lineNum">     209</span>                 :             : </span>
+<span id="L210"><span class="lineNum">     210</span>                 :             :     // Data modes: Table 18-4—Modulation-dependent parameters</span>
+<span id="L211"><span class="lineNum">     211</span>                 :             :     static const Ieee80211OfdmDataMode ofdmDataMode1_5Mbps;</span>
+<span id="L212"><span class="lineNum">     212</span>                 :             :     static const Ieee80211OfdmDataMode ofdmDataMode2_25Mbps;</span>
+<span id="L213"><span class="lineNum">     213</span>                 :             :     static const Ieee80211OfdmDataMode ofdmDataMode3MbpsCS5MHz;</span>
+<span id="L214"><span class="lineNum">     214</span>                 :             :     static const Ieee80211OfdmDataMode ofdmDataMode3MbpsCS10MHz;</span>
+<span id="L215"><span class="lineNum">     215</span>                 :             :     static const Ieee80211OfdmDataMode ofdmDataMode4_5MbpsCS5MHz;</span>
+<span id="L216"><span class="lineNum">     216</span>                 :             :     static const Ieee80211OfdmDataMode ofdmDataMode4_5MbpsCS10MHz;</span>
+<span id="L217"><span class="lineNum">     217</span>                 :             :     static const Ieee80211OfdmDataMode ofdmDataMode6MbpsCS5MHz;</span>
+<span id="L218"><span class="lineNum">     218</span>                 :             :     static const Ieee80211OfdmDataMode ofdmDataMode6MbpsCS10MHz;</span>
+<span id="L219"><span class="lineNum">     219</span>                 :             :     static const Ieee80211OfdmDataMode ofdmDataMode6MbpsCS20MHz;</span>
+<span id="L220"><span class="lineNum">     220</span>                 :             :     static const Ieee80211OfdmDataMode ofdmDataMode9MbpsCS5MHz;</span>
+<span id="L221"><span class="lineNum">     221</span>                 :             :     static const Ieee80211OfdmDataMode ofdmDataMode9MbpsCS10MHz;</span>
+<span id="L222"><span class="lineNum">     222</span>                 :             :     static const Ieee80211OfdmDataMode ofdmDataMode9MbpsCS20MHz;</span>
+<span id="L223"><span class="lineNum">     223</span>                 :             :     static const Ieee80211OfdmDataMode ofdmDataMode12MbpsCS5MHz;</span>
+<span id="L224"><span class="lineNum">     224</span>                 :             :     static const Ieee80211OfdmDataMode ofdmDataMode12MbpsCS10MHz;</span>
+<span id="L225"><span class="lineNum">     225</span>                 :             :     static const Ieee80211OfdmDataMode ofdmDataMode12MbpsCS20MHz;</span>
+<span id="L226"><span class="lineNum">     226</span>                 :             :     static const Ieee80211OfdmDataMode ofdmDataMode13_5Mbps;</span>
+<span id="L227"><span class="lineNum">     227</span>                 :             :     static const Ieee80211OfdmDataMode ofdmDataMode18MbpsCS10MHz;</span>
+<span id="L228"><span class="lineNum">     228</span>                 :             :     static const Ieee80211OfdmDataMode ofdmDataMode18MbpsCS20MHz;</span>
+<span id="L229"><span class="lineNum">     229</span>                 :             :     static const Ieee80211OfdmDataMode ofdmDataMode24MbpsCS10MHz;</span>
+<span id="L230"><span class="lineNum">     230</span>                 :             :     static const Ieee80211OfdmDataMode ofdmDataMode24MbpsCS20MHz;</span>
+<span id="L231"><span class="lineNum">     231</span>                 :             :     static const Ieee80211OfdmDataMode ofdmDataMode27Mbps;</span>
+<span id="L232"><span class="lineNum">     232</span>                 :             :     static const Ieee80211OfdmDataMode ofdmDataMode36Mbps;</span>
+<span id="L233"><span class="lineNum">     233</span>                 :             :     static const Ieee80211OfdmDataMode ofdmDataMode48Mbps;</span>
+<span id="L234"><span class="lineNum">     234</span>                 :             :     static const Ieee80211OfdmDataMode ofdmDataMode54Mbps;</span>
+<span id="L235"><span class="lineNum">     235</span>                 :             : </span>
+<span id="L236"><span class="lineNum">     236</span>                 :             :     // Modes</span>
+<span id="L237"><span class="lineNum">     237</span>                 :             :     static const Ieee80211OfdmMode ofdmMode1_5Mbps;</span>
+<span id="L238"><span class="lineNum">     238</span>                 :             :     static const Ieee80211OfdmMode ofdmMode2_25Mbps;</span>
+<span id="L239"><span class="lineNum">     239</span>                 :             :     static const Ieee80211OfdmMode ofdmMode3MbpsCS5MHz;</span>
+<span id="L240"><span class="lineNum">     240</span>                 :             :     static const Ieee80211OfdmMode ofdmMode3MbpsCS10MHz;</span>
+<span id="L241"><span class="lineNum">     241</span>                 :             :     static const Ieee80211OfdmMode ofdmMode4_5MbpsCS5MHz;</span>
+<span id="L242"><span class="lineNum">     242</span>                 :             :     static const Ieee80211OfdmMode ofdmMode4_5MbpsCS10MHz;</span>
+<span id="L243"><span class="lineNum">     243</span>                 :             :     static const Ieee80211OfdmMode ofdmMode6MbpsCS5MHz;</span>
+<span id="L244"><span class="lineNum">     244</span>                 :             :     static const Ieee80211OfdmMode ofdmMode6MbpsCS10MHz;</span>
+<span id="L245"><span class="lineNum">     245</span>                 :             :     static const Ieee80211OfdmMode ofdmMode6MbpsCS20MHz;</span>
+<span id="L246"><span class="lineNum">     246</span>                 :             :     static const Ieee80211OfdmMode ofdmMode9MbpsCS5MHz;</span>
+<span id="L247"><span class="lineNum">     247</span>                 :             :     static const Ieee80211OfdmMode ofdmMode9MbpsCS10MHz;</span>
+<span id="L248"><span class="lineNum">     248</span>                 :             :     static const Ieee80211OfdmMode ofdmMode9MbpsCS20MHz;</span>
+<span id="L249"><span class="lineNum">     249</span>                 :             :     static const Ieee80211OfdmMode ofdmMode12MbpsCS5MHz;</span>
+<span id="L250"><span class="lineNum">     250</span>                 :             :     static const Ieee80211OfdmMode ofdmMode12MbpsCS10MHz;</span>
+<span id="L251"><span class="lineNum">     251</span>                 :             :     static const Ieee80211OfdmMode ofdmMode12MbpsCS20MHz;</span>
+<span id="L252"><span class="lineNum">     252</span>                 :             :     static const Ieee80211OfdmMode ofdmMode13_5Mbps;</span>
+<span id="L253"><span class="lineNum">     253</span>                 :             :     static const Ieee80211OfdmMode ofdmMode18MbpsCS10MHz;</span>
+<span id="L254"><span class="lineNum">     254</span>                 :             :     static const Ieee80211OfdmMode ofdmMode18MbpsCS20MHz;</span>
+<span id="L255"><span class="lineNum">     255</span>                 :             :     static const Ieee80211OfdmMode ofdmMode24MbpsCS10MHz;</span>
+<span id="L256"><span class="lineNum">     256</span>                 :             :     static const Ieee80211OfdmMode ofdmMode24MbpsCS20MHz;</span>
+<span id="L257"><span class="lineNum">     257</span>                 :             :     static const Ieee80211OfdmMode ofdmMode27Mbps;</span>
+<span id="L258"><span class="lineNum">     258</span>                 :             :     static const Ieee80211OfdmMode ofdmMode36Mbps;</span>
+<span id="L259"><span class="lineNum">     259</span>                 :             :     static const Ieee80211OfdmMode ofdmMode48Mbps;</span>
+<span id="L260"><span class="lineNum">     260</span>                 :             :     static const Ieee80211OfdmMode ofdmMode54Mbps;</span>
+<span id="L261"><span class="lineNum">     261</span>                 :             : </span>
+<span id="L262"><span class="lineNum">     262</span>                 :             :   public:</span>
+<span id="L263"><span class="lineNum">     263</span>                 :             :     static const Ieee80211OfdmMode *findCompliantMode(unsigned int signalRateField, Hz channelSpacing);</span>
+<span id="L264"><span class="lineNum">     264</span>                 :             :     static const Ieee80211OfdmMode&amp; getCompliantMode(unsigned int signalRateField, Hz channelSpacing);</span>
+<span id="L265"><span class="lineNum">     265</span>                 :             : };</span>
+<span id="L266"><span class="lineNum">     266</span>                 :             : </span>
+<span id="L267"><span class="lineNum">     267</span>                 :             : } // namespace physicallayer</span>
+<span id="L268"><span class="lineNum">     268</span>                 :             : } // namespace inet</span>
+<span id="L269"><span class="lineNum">     269</span>                 :             : </span>
+<span id="L270"><span class="lineNum">     270</span>                 :             : #endif</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

@@ -1,0 +1,340 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - physicallayer/wireless/common/medium/src/inet/physicallayer/wireless/common/medium/MediumLimitCache.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../../../index.html">top level</a> - <a href="index.html">physicallayer/wireless/common/medium/src/inet/physicallayer/wireless/common/medium</a> - MediumLimitCache.cc<span style="font-size: 80%;"> (source / <a href="MediumLimitCache.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">95.1&nbsp;%</td>
+            <td class="headerCovTableEntry">185</td>
+            <td class="headerCovTableEntry">176</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">96.0&nbsp;%</td>
+            <td class="headerCovTableEntry">25</td>
+            <td class="headerCovTableEntry">24</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryLo">67.5&nbsp;%</td>
+            <td class="headerCovTableEntry">114</td>
+            <td class="headerCovTableEntry">77</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2013 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #include &quot;inet/physicallayer/wireless/common/medium/MediumLimitCache.h&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : </span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &lt;algorithm&gt;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : </span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : namespace inet {</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : namespace physicallayer {</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : </span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : Define_Module(MediumLimitCache);</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : </span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : template&lt;typename T&gt; inline T minIgnoreNaN(T a, T b)</span>
+<span id="L18"><span class="lineNum">      18</span>                 :<span class="tlaGNC tlaBgGNC">       66966 : {</span></span>
+<span id="L19"><span class="lineNum">      19</span>         [<span class="tlaGBC" title="Branch 0 was taken 20064 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 46902 times"> + </span>]:<span class="tlaGNC">       66966 :     if (std::isnan(a.get()))</span></span>
+<span id="L20"><span class="lineNum">      20</span>                 :<span class="tlaGNC">       20064 :         return b;</span></span>
+<span id="L21"><span class="lineNum">      21</span>         [<span class="tlaGBC" title="Branch 0 was taken 22893 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 24009 times"> + </span>]:<span class="tlaGNC">       46902 :     else if (std::isnan(b.get()))</span></span>
+<span id="L22"><span class="lineNum">      22</span>                 :<span class="tlaGNC">       22893 :         return a;</span></span>
+<span id="L23"><span class="lineNum">      23</span>         [<span class="tlaGBC" title="Branch 0 was taken 207 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 23802 times"> + </span>]:<span class="tlaGNC">       24009 :     else if (a &lt; b)</span></span>
+<span id="L24"><span class="lineNum">      24</span>                 :<span class="tlaGNC">         207 :         return a;</span></span>
+<span id="L25"><span class="lineNum">      25</span>                 :<span class="tlaGNC">       23802 :     else</span></span>
+<span id="L26"><span class="lineNum">      26</span>                 :<span class="tlaGNC">       23802 :         return b;</span></span>
+<span id="L27"><span class="lineNum">      27</span>                 :<span class="tlaGNC">       66966 : }</span></span>
+<span id="L28"><span class="lineNum">      28</span>                 :             : </span>
+<span id="L29"><span class="lineNum">      29</span>                 :             : template&lt;typename T&gt; inline T maxIgnoreNaN(T a, T b)</span>
+<span id="L30"><span class="lineNum">      30</span>                 :<span class="tlaGNC">       76210 : {</span></span>
+<span id="L31"><span class="lineNum">      31</span> [<span class="tlaGBC" title="Branch 0 was taken 5936 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 27549 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 9160 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 80 times"> + </span>]:<span class="tlaGNC">       76210 :     if (std::isnan(a.get()))</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 12474 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 21011 times"> + </span>]
+<span id="L32"><span class="lineNum">      32</span>                 :<span class="tlaGNC">       27570 :         return b;</span></span>
+<span id="L33"><span class="lineNum">      33</span> [<span class="tlaGBC" title="Branch 0 was taken 80 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 21009 times"> + </span>]:<span class="tlaGNC">       48640 :     else if (std::isnan(b.get()))</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 513 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 27036 times"> + </span>]
+<span id="L34"><span class="lineNum">      34</span>                 :<span class="tlaGNC">         595 :         return a;</span></span>
+<span id="L35"><span class="lineNum">      35</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaGBC" title="Branch 0 was taken 131 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 20878 times"> + </span>]:<span class="tlaGNC">       48045 :     else if (a &gt; b)</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 79 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 26957 times"> + </span>]
+<span id="L36"><span class="lineNum">      36</span>                 :<span class="tlaGNC">         210 :         return a;</span></span>
+<span id="L37"><span class="lineNum">      37</span>                 :<span class="tlaGNC">       47835 :     else</span></span>
+<span id="L38"><span class="lineNum">      38</span>                 :<span class="tlaGNC">       47835 :         return b;</span></span>
+<span id="L39"><span class="lineNum">      39</span>                 :<span class="tlaGNC">       76210 : }</span></span>
+<span id="L40"><span class="lineNum">      40</span>                 :             : </span>
+<span id="L41"><span class="lineNum">      41</span>                 :             : inline double maxIgnoreNaN(double a, double b)</span>
+<span id="L42"><span class="lineNum">      42</span>                 :<span class="tlaGNC">       33485 : {</span></span>
+<span id="L43"><span class="lineNum">      43</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 33485 times"> + </span>]:<span class="tlaGNC">       33485 :     if (std::isnan(a))</span></span>
+<span id="L44"><span class="lineNum">      44</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         return b;</span></span>
+<span id="L45"><span class="lineNum">      45</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 33485 times"> + </span>]:<span class="tlaGNC tlaBgGNC">       33485 :     else if (std::isnan(b))</span></span>
+<span id="L46"><span class="lineNum">      46</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         return a;</span></span>
+<span id="L47"><span class="lineNum">      47</span>         [<span class="tlaGBC" title="Branch 0 was taken 10 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 33475 times"> + </span>]:<span class="tlaGNC tlaBgGNC">       33485 :     else if (a &gt; b)</span></span>
+<span id="L48"><span class="lineNum">      48</span>                 :<span class="tlaGNC">          10 :         return a;</span></span>
+<span id="L49"><span class="lineNum">      49</span>                 :<span class="tlaGNC">       33475 :     else</span></span>
+<span id="L50"><span class="lineNum">      50</span>                 :<span class="tlaGNC">       33475 :         return b;</span></span>
+<span id="L51"><span class="lineNum">      51</span>                 :<span class="tlaGNC">       33485 : }</span></span>
+<span id="L52"><span class="lineNum">      52</span>                 :             : </span>
+<span id="L53"><span class="lineNum">      53</span>                 :             : MediumLimitCache::MediumLimitCache() :</span>
+<span id="L54"><span class="lineNum">      54</span>                 :<span class="tlaGNC">        1242 :     radioMedium(nullptr),</span></span>
+<span id="L55"><span class="lineNum">      55</span>                 :<span class="tlaGNC">        1242 :     minConstraintArea(Coord::NIL),</span></span>
+<span id="L56"><span class="lineNum">      56</span>                 :<span class="tlaGNC">        1242 :     maxConstraintArea(Coord::NIL),</span></span>
+<span id="L57"><span class="lineNum">      57</span>                 :<span class="tlaGNC">        1242 :     maxSpeed(mps(NaN)),</span></span>
+<span id="L58"><span class="lineNum">      58</span>                 :<span class="tlaGNC">        1242 :     maxTransmissionPower(W(NaN)),</span></span>
+<span id="L59"><span class="lineNum">      59</span>                 :<span class="tlaGNC">        1242 :     minInterferencePower(W(NaN)),</span></span>
+<span id="L60"><span class="lineNum">      60</span>                 :<span class="tlaGNC">        1242 :     minReceptionPower(W(NaN)),</span></span>
+<span id="L61"><span class="lineNum">      61</span>                 :             :     maxAntennaGain(NaN),</span>
+<span id="L62"><span class="lineNum">      62</span>                 :<span class="tlaGNC">        1242 :     minInterferenceTime(-1),</span></span>
+<span id="L63"><span class="lineNum">      63</span>                 :<span class="tlaGNC">        1242 :     maxTransmissionDuration(-1),</span></span>
+<span id="L64"><span class="lineNum">      64</span>                 :<span class="tlaGNC">        1242 :     maxCommunicationRange(m(NaN)),</span></span>
+<span id="L65"><span class="lineNum">      65</span>                 :<span class="tlaGNC">        1242 :     maxInterferenceRange(m(NaN))</span></span>
+<span id="L66"><span class="lineNum">      66</span>                 :<span class="tlaGNC">        1242 : {</span></span>
+<span id="L67"><span class="lineNum">      67</span>                 :<span class="tlaGNC">        1242 : }</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :             : </span>
+<span id="L69"><span class="lineNum">      69</span>                 :             : void MediumLimitCache::initialize(int stage)</span>
+<span id="L70"><span class="lineNum">      70</span>                 :<span class="tlaGNC">       29732 : {</span></span>
+<span id="L71"><span class="lineNum">      71</span>         [<span class="tlaGBC" title="Branch 0 was taken 1241 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 28491 times"> + </span>]:<span class="tlaGNC">       29732 :     if (stage == INITSTAGE_LOCAL) {</span></span>
+<span id="L72"><span class="lineNum">      72</span>                 :<span class="tlaGNC">        1241 :         radioMedium = check_and_cast&lt;IRadioMedium *&gt;(getParentModule());</span></span>
+<span id="L73"><span class="lineNum">      73</span>                 :<span class="tlaGNC">        1241 :         WATCH(minConstraintArea);</span></span>
+<span id="L74"><span class="lineNum">      74</span>                 :<span class="tlaGNC">        1241 :         WATCH(maxConstraintArea);</span></span>
+<span id="L75"><span class="lineNum">      75</span>                 :<span class="tlaGNC">        1241 :         WATCH(maxSpeed);</span></span>
+<span id="L76"><span class="lineNum">      76</span>                 :<span class="tlaGNC">        1241 :         WATCH(maxTransmissionPower);</span></span>
+<span id="L77"><span class="lineNum">      77</span>                 :<span class="tlaGNC">        1241 :         WATCH(minInterferencePower);</span></span>
+<span id="L78"><span class="lineNum">      78</span>                 :<span class="tlaGNC">        1241 :         WATCH(minReceptionPower);</span></span>
+<span id="L79"><span class="lineNum">      79</span>                 :<span class="tlaGNC">        1241 :         WATCH(maxAntennaGain);</span></span>
+<span id="L80"><span class="lineNum">      80</span>                 :<span class="tlaGNC">        1241 :         WATCH(minInterferenceTime);</span></span>
+<span id="L81"><span class="lineNum">      81</span>                 :<span class="tlaGNC">        1241 :         WATCH(maxTransmissionDuration);</span></span>
+<span id="L82"><span class="lineNum">      82</span>                 :<span class="tlaGNC">        1241 :         WATCH(maxCommunicationRange);</span></span>
+<span id="L83"><span class="lineNum">      83</span>                 :<span class="tlaGNC">        1241 :         WATCH(maxInterferenceRange);</span></span>
+<span id="L84"><span class="lineNum">      84</span>                 :<span class="tlaGNC">        1241 :     }</span></span>
+<span id="L85"><span class="lineNum">      85</span>                 :<span class="tlaGNC">       29732 : }</span></span>
+<span id="L86"><span class="lineNum">      86</span>                 :             : </span>
+<span id="L87"><span class="lineNum">      87</span>                 :             : std::ostream&amp; MediumLimitCache::printToStream(std::ostream&amp; stream, int level, int evFlags) const</span>
+<span id="L88"><span class="lineNum">      88</span>                 :<span class="tlaGNC">       73406 : {</span></span>
+<span id="L89"><span class="lineNum">      89</span>                 :<span class="tlaGNC">       73406 :     stream &lt;&lt; &quot;RadioMediumLimits&quot;;</span></span>
+<span id="L90"><span class="lineNum">      90</span>         [<span class="tlaGBC" title="Branch 0 was taken 272 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 73134 times"> + </span>]:<span class="tlaGNC">       73406 :     if (level &lt;= PRINT_LEVEL_TRACE)</span></span>
+<span id="L91"><span class="lineNum">      91</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 272 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 272 times"> + </span>]:<span class="tlaGNC">         272 :         stream &lt;&lt; EV_FIELD(minConstraintArea)</span></span>
+<span id="L92"><span class="lineNum">      92</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 272 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 272 times"> + </span>]:<span class="tlaGNC">         272 :                &lt;&lt; EV_FIELD(maxConstraintArea)</span></span>
+<span id="L93"><span class="lineNum">      93</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 272 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 272 times"> + </span>]:<span class="tlaGNC">         272 :                &lt;&lt; EV_FIELD(maxSpeed)</span></span>
+<span id="L94"><span class="lineNum">      94</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 272 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 272 times"> + </span>]:<span class="tlaGNC">         272 :                &lt;&lt; EV_FIELD(maxTransmissionPower)</span></span>
+<span id="L95"><span class="lineNum">      95</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 272 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 272 times"> + </span>]:<span class="tlaGNC">         272 :                &lt;&lt; EV_FIELD(minInterferencePower)</span></span>
+<span id="L96"><span class="lineNum">      96</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 272 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 272 times"> + </span>]:<span class="tlaGNC">         272 :                &lt;&lt; EV_FIELD(minReceptionPower)</span></span>
+<span id="L97"><span class="lineNum">      97</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 272 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 272 times"> + </span>]:<span class="tlaGNC">         272 :                &lt;&lt; EV_FIELD(maxAntennaGain)</span></span>
+<span id="L98"><span class="lineNum">      98</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 272 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 272 times"> + </span>]:<span class="tlaGNC">         272 :                &lt;&lt; EV_FIELD(minInterferenceTime)</span></span>
+<span id="L99"><span class="lineNum">      99</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 272 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 272 times"> + </span>]:<span class="tlaGNC">         272 :                &lt;&lt; EV_FIELD(maxTransmissionDuration)</span></span>
+<span id="L100"><span class="lineNum">     100</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 272 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 272 times"> + </span>]:<span class="tlaGNC">         272 :                &lt;&lt; EV_FIELD(maxCommunicationRange)</span></span>
+<span id="L101"><span class="lineNum">     101</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 272 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 272 times"> + </span>]:<span class="tlaGNC">         272 :                &lt;&lt; EV_FIELD(maxInterferenceRange);</span></span>
+<span id="L102"><span class="lineNum">     102</span>                 :<span class="tlaGNC">       73406 :     return stream;</span></span>
+<span id="L103"><span class="lineNum">     103</span>                 :<span class="tlaGNC">       73406 : }</span></span>
+<span id="L104"><span class="lineNum">     104</span>                 :             : </span>
+<span id="L105"><span class="lineNum">     105</span>                 :             : void MediumLimitCache::updateLimits()</span>
+<span id="L106"><span class="lineNum">     106</span>                 :<span class="tlaGNC">        4620 : {</span></span>
+<span id="L107"><span class="lineNum">     107</span>                 :<span class="tlaGNC">        4620 :     minConstraintArea = computeMinConstraintArea();</span></span>
+<span id="L108"><span class="lineNum">     108</span>                 :<span class="tlaGNC">        4620 :     maxConstraintArea = computeMaxConstreaintArea();</span></span>
+<span id="L109"><span class="lineNum">     109</span>                 :<span class="tlaGNC">        4620 :     maxSpeed = computeMaxSpeed();</span></span>
+<span id="L110"><span class="lineNum">     110</span>                 :<span class="tlaGNC">        4620 :     maxTransmissionPower = computeMaxTransmissionPower();</span></span>
+<span id="L111"><span class="lineNum">     111</span>                 :<span class="tlaGNC">        4620 :     minInterferencePower = computeMinInterferencePower();</span></span>
+<span id="L112"><span class="lineNum">     112</span>                 :<span class="tlaGNC">        4620 :     minReceptionPower = computeMinReceptionPower();</span></span>
+<span id="L113"><span class="lineNum">     113</span>                 :<span class="tlaGNC">        4620 :     maxAntennaGain = computeMaxAntennaGain();</span></span>
+<span id="L114"><span class="lineNum">     114</span>                 :<span class="tlaGNC">        4620 :     minInterferenceTime = computeMinInterferenceTime();</span></span>
+<span id="L115"><span class="lineNum">     115</span>                 :<span class="tlaGNC">        4620 :     maxTransmissionDuration = computeMaxTransmissionDuration();</span></span>
+<span id="L116"><span class="lineNum">     116</span>                 :<span class="tlaGNC">        4620 :     maxCommunicationRange = computeMaxCommunicationRange();</span></span>
+<span id="L117"><span class="lineNum">     117</span>                 :<span class="tlaGNC">        4620 :     maxInterferenceRange = computeMaxInterferenceRange();</span></span>
+<span id="L118"><span class="lineNum">     118</span>                 :<span class="tlaGNC">        4620 : }</span></span>
+<span id="L119"><span class="lineNum">     119</span>                 :             : </span>
+<span id="L120"><span class="lineNum">     120</span>                 :             : void MediumLimitCache::addRadio(const IRadio *radio)</span>
+<span id="L121"><span class="lineNum">     121</span>                 :<span class="tlaGNC">        4360 : {</span></span>
+<span id="L122"><span class="lineNum">     122</span>                 :<span class="tlaGNC">        4360 :     radios.push_back(radio);</span></span>
+<span id="L123"><span class="lineNum">     123</span>                 :<span class="tlaGNC">        4360 :     updateLimits();</span></span>
+<span id="L124"><span class="lineNum">     124</span>                 :<span class="tlaGNC">        4360 : }</span></span>
+<span id="L125"><span class="lineNum">     125</span>                 :             : </span>
+<span id="L126"><span class="lineNum">     126</span>                 :             : void MediumLimitCache::removeRadio(const IRadio *radio)</span>
+<span id="L127"><span class="lineNum">     127</span>                 :<span class="tlaGNC">         260 : {</span></span>
+<span id="L128"><span class="lineNum">     128</span>                 :<span class="tlaGNC">         260 :     radios.erase(std::remove(radios.begin(), radios.end(), radio), radios.end());</span></span>
+<span id="L129"><span class="lineNum">     129</span>                 :<span class="tlaGNC">         260 :     updateLimits();</span></span>
+<span id="L130"><span class="lineNum">     130</span>                 :<span class="tlaGNC">         260 : }</span></span>
+<span id="L131"><span class="lineNum">     131</span>                 :             : </span>
+<span id="L132"><span class="lineNum">     132</span>                 :             : mps MediumLimitCache::computeMaxSpeed() const</span>
+<span id="L133"><span class="lineNum">     133</span>                 :<span class="tlaGNC">        4620 : {</span></span>
+<span id="L134"><span class="lineNum">     134</span>                 :<span class="tlaGNC">        4620 :     mps maxSpeed = mps(par(&quot;maxSpeed&quot;));</span></span>
+<span id="L135"><span class="lineNum">     135</span>         [<span class="tlaGBC" title="Branch 0 was taken 33485 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4620 times"> + </span>]:<span class="tlaGNC">       33485 :     for (const auto radio : radios) {</span></span>
+<span id="L136"><span class="lineNum">     136</span>         [<span class="tlaGBC" title="Branch 0 was taken 33485 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">       33485 :         if (radio != nullptr)</span></span>
+<span id="L137"><span class="lineNum">     137</span>                 :<span class="tlaGNC">       33485 :             maxSpeed = maxIgnoreNaN(maxSpeed, mps(radio-&gt;getAntenna()-&gt;getMobility()-&gt;getMaxSpeed()));</span></span>
+<span id="L138"><span class="lineNum">     138</span>                 :<span class="tlaGNC">       33485 :     }</span></span>
+<span id="L139"><span class="lineNum">     139</span>                 :<span class="tlaGNC">        4620 :     return maxSpeed;</span></span>
+<span id="L140"><span class="lineNum">     140</span>                 :<span class="tlaGNC">        4620 : }</span></span>
+<span id="L141"><span class="lineNum">     141</span>                 :             : </span>
+<span id="L142"><span class="lineNum">     142</span>                 :             : W MediumLimitCache::computeMaxTransmissionPower() const</span>
+<span id="L143"><span class="lineNum">     143</span>                 :<span class="tlaGNC">        4620 : {</span></span>
+<span id="L144"><span class="lineNum">     144</span>                 :<span class="tlaGNC">        4620 :     W maxTransmissionPower = W(par(&quot;maxTransmissionPower&quot;));</span></span>
+<span id="L145"><span class="lineNum">     145</span>         [<span class="tlaGBC" title="Branch 0 was taken 33485 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4620 times"> + </span>]:<span class="tlaGNC">       33485 :     for (const auto radio : radios) {</span></span>
+<span id="L146"><span class="lineNum">     146</span>         [<span class="tlaGBC" title="Branch 0 was taken 33485 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">       33485 :         if (radio != nullptr)</span></span>
+<span id="L147"><span class="lineNum">     147</span>                 :<span class="tlaGNC">       33485 :             maxTransmissionPower = maxIgnoreNaN(maxTransmissionPower, radio-&gt;getTransmitter()-&gt;getMaxPower());</span></span>
+<span id="L148"><span class="lineNum">     148</span>                 :<span class="tlaGNC">       33485 :     }</span></span>
+<span id="L149"><span class="lineNum">     149</span>                 :<span class="tlaGNC">        4620 :     return maxTransmissionPower;</span></span>
+<span id="L150"><span class="lineNum">     150</span>                 :<span class="tlaGNC">        4620 : }</span></span>
+<span id="L151"><span class="lineNum">     151</span>                 :             : </span>
+<span id="L152"><span class="lineNum">     152</span>                 :             : W MediumLimitCache::computeMinInterferencePower() const</span>
+<span id="L153"><span class="lineNum">     153</span>                 :<span class="tlaGNC">        4620 : {</span></span>
+<span id="L154"><span class="lineNum">     154</span>                 :<span class="tlaGNC">        4620 :     W minInterferencePower = mW(math::dBmW2mW(par(&quot;minInterferencePower&quot;)));</span></span>
+<span id="L155"><span class="lineNum">     155</span>         [<span class="tlaGBC" title="Branch 0 was taken 33485 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4620 times"> + </span>]:<span class="tlaGNC">       33485 :     for (const auto radio : radios) {</span></span>
+<span id="L156"><span class="lineNum">     156</span> [<span class="tlaGBC" title="Branch 0 was taken 33485 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 33483 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:<span class="tlaGNC">       33485 :         if (radio != nullptr &amp;&amp; radio-&gt;getReceiver() != nullptr)</span></span>
+<span id="L157"><span class="lineNum">     157</span>                 :<span class="tlaGNC">       33483 :             minInterferencePower = minIgnoreNaN(minInterferencePower, radio-&gt;getReceiver()-&gt;getMinInterferencePower());</span></span>
+<span id="L158"><span class="lineNum">     158</span>                 :<span class="tlaGNC">       33485 :     }</span></span>
+<span id="L159"><span class="lineNum">     159</span>                 :<span class="tlaGNC">        4620 :     return minInterferencePower;</span></span>
+<span id="L160"><span class="lineNum">     160</span>                 :<span class="tlaGNC">        4620 : }</span></span>
+<span id="L161"><span class="lineNum">     161</span>                 :             : </span>
+<span id="L162"><span class="lineNum">     162</span>                 :             : W MediumLimitCache::computeMinReceptionPower() const</span>
+<span id="L163"><span class="lineNum">     163</span>                 :<span class="tlaGNC">        4620 : {</span></span>
+<span id="L164"><span class="lineNum">     164</span>                 :<span class="tlaGNC">        4620 :     W minReceptionPower = mW(math::dBmW2mW(par(&quot;minReceptionPower&quot;)));</span></span>
+<span id="L165"><span class="lineNum">     165</span>         [<span class="tlaGBC" title="Branch 0 was taken 33485 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4620 times"> + </span>]:<span class="tlaGNC">       33485 :     for (const auto radio : radios) {</span></span>
+<span id="L166"><span class="lineNum">     166</span> [<span class="tlaGBC" title="Branch 0 was taken 33485 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 33483 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:<span class="tlaGNC">       33485 :         if (radio != nullptr &amp;&amp; radio-&gt;getReceiver() != nullptr)</span></span>
+<span id="L167"><span class="lineNum">     167</span>                 :<span class="tlaGNC">       33483 :             minReceptionPower = minIgnoreNaN(minReceptionPower, radio-&gt;getReceiver()-&gt;getMinReceptionPower());</span></span>
+<span id="L168"><span class="lineNum">     168</span>                 :<span class="tlaGNC">       33485 :     }</span></span>
+<span id="L169"><span class="lineNum">     169</span>                 :<span class="tlaGNC">        4620 :     return minReceptionPower;</span></span>
+<span id="L170"><span class="lineNum">     170</span>                 :<span class="tlaGNC">        4620 : }</span></span>
+<span id="L171"><span class="lineNum">     171</span>                 :             : </span>
+<span id="L172"><span class="lineNum">     172</span>                 :             : double MediumLimitCache::computeMaxAntennaGain() const</span>
+<span id="L173"><span class="lineNum">     173</span>                 :<span class="tlaGNC">        4620 : {</span></span>
+<span id="L174"><span class="lineNum">     174</span>                 :<span class="tlaGNC">        4620 :     double maxAntennaGain = math::dB2fraction(par(&quot;maxAntennaGain&quot;));</span></span>
+<span id="L175"><span class="lineNum">     175</span>         [<span class="tlaGBC" title="Branch 0 was taken 33485 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4620 times"> + </span>]:<span class="tlaGNC">       33485 :     for (const auto radio : radios) {</span></span>
+<span id="L176"><span class="lineNum">     176</span>         [<span class="tlaGBC" title="Branch 0 was taken 33485 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">       33485 :         if (radio != nullptr)</span></span>
+<span id="L177"><span class="lineNum">     177</span>                 :<span class="tlaGNC">       33485 :             maxAntennaGain = maxIgnoreNaN(maxAntennaGain, radio-&gt;getAntenna()-&gt;getGain()-&gt;getMaxGain());</span></span>
+<span id="L178"><span class="lineNum">     178</span>                 :<span class="tlaGNC">       33485 :     }</span></span>
+<span id="L179"><span class="lineNum">     179</span>                 :<span class="tlaGNC">        4620 :     return maxAntennaGain;</span></span>
+<span id="L180"><span class="lineNum">     180</span>                 :<span class="tlaGNC">        4620 : }</span></span>
+<span id="L181"><span class="lineNum">     181</span>                 :             : </span>
+<span id="L182"><span class="lineNum">     182</span>                 :             : m MediumLimitCache::computeMaxRange(W maxTransmissionPower, W minReceptionPower) const</span>
+<span id="L183"><span class="lineNum">     183</span>                 :<span class="tlaGNC">       15357 : {</span></span>
+<span id="L184"><span class="lineNum">     184</span>                 :             :     // TODO this is NaN by default</span>
+<span id="L185"><span class="lineNum">     185</span>                 :<span class="tlaGNC">       15357 :     Hz centerFrequency = Hz(par(&quot;centerFrequency&quot;));</span></span>
+<span id="L186"><span class="lineNum">     186</span>                 :<span class="tlaGNC">       15357 :     double loss = (minReceptionPower / maxTransmissionPower).get&lt;unit&gt;() / maxAntennaGain / maxAntennaGain;</span></span>
+<span id="L187"><span class="lineNum">     187</span>                 :<span class="tlaGNC">       15357 :     return radioMedium-&gt;getPathLoss()-&gt;computeRange(radioMedium-&gt;getPropagation()-&gt;getPropagationSpeed(), centerFrequency, loss);</span></span>
+<span id="L188"><span class="lineNum">     188</span>                 :<span class="tlaGNC">       15357 : }</span></span>
+<span id="L189"><span class="lineNum">     189</span>                 :             : </span>
+<span id="L190"><span class="lineNum">     190</span>                 :             : m MediumLimitCache::computeMaxCommunicationRange() const</span>
+<span id="L191"><span class="lineNum">     191</span>                 :<span class="tlaGNC">        4620 : {</span></span>
+<span id="L192"><span class="lineNum">     192</span>                 :<span class="tlaGNC">        4620 :     return maxIgnoreNaN(m(par(&quot;maxCommunicationRange&quot;)), computeMaxRange(maxTransmissionPower, minReceptionPower));</span></span>
+<span id="L193"><span class="lineNum">     193</span>                 :<span class="tlaGNC">        4620 : }</span></span>
+<span id="L194"><span class="lineNum">     194</span>                 :             : </span>
+<span id="L195"><span class="lineNum">     195</span>                 :             : m MediumLimitCache::computeMaxInterferenceRange() const</span>
+<span id="L196"><span class="lineNum">     196</span>                 :<span class="tlaGNC">        4620 : {</span></span>
+<span id="L197"><span class="lineNum">     197</span>                 :<span class="tlaGNC">        4620 :     return maxIgnoreNaN(m(par(&quot;maxInterferenceRange&quot;)), computeMaxRange(maxTransmissionPower, minInterferencePower));</span></span>
+<span id="L198"><span class="lineNum">     198</span>                 :<span class="tlaGNC">        4620 : }</span></span>
+<span id="L199"><span class="lineNum">     199</span>                 :             : </span>
+<span id="L200"><span class="lineNum">     200</span>                 :             : const simtime_t MediumLimitCache::computeMinInterferenceTime() const</span>
+<span id="L201"><span class="lineNum">     201</span>                 :<span class="tlaGNC">        4620 : {</span></span>
+<span id="L202"><span class="lineNum">     202</span>                 :<span class="tlaGNC">        4620 :     return simtime_t(par(&quot;minInterferenceTime&quot;));</span></span>
+<span id="L203"><span class="lineNum">     203</span>                 :<span class="tlaGNC">        4620 : }</span></span>
+<span id="L204"><span class="lineNum">     204</span>                 :             : </span>
+<span id="L205"><span class="lineNum">     205</span>                 :             : const simtime_t MediumLimitCache::computeMaxTransmissionDuration() const</span>
+<span id="L206"><span class="lineNum">     206</span>                 :<span class="tlaGNC">        4620 : {</span></span>
+<span id="L207"><span class="lineNum">     207</span>                 :<span class="tlaGNC">        4620 :     return simtime_t(par(&quot;maxTransmissionDuration&quot;));</span></span>
+<span id="L208"><span class="lineNum">     208</span>                 :<span class="tlaGNC">        4620 : }</span></span>
+<span id="L209"><span class="lineNum">     209</span>                 :             : </span>
+<span id="L210"><span class="lineNum">     210</span>                 :             : Coord MediumLimitCache::computeMinConstraintArea() const</span>
+<span id="L211"><span class="lineNum">     211</span>                 :<span class="tlaGNC">        4620 : {</span></span>
+<span id="L212"><span class="lineNum">     212</span>                 :<span class="tlaGNC">        4620 :     Coord minConstraintArea = Coord::NIL;</span></span>
+<span id="L213"><span class="lineNum">     213</span>         [<span class="tlaGBC" title="Branch 0 was taken 33485 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4620 times"> + </span>]:<span class="tlaGNC">       33485 :     for (const auto radio : radios) {</span></span>
+<span id="L214"><span class="lineNum">     214</span>         [<span class="tlaGBC" title="Branch 0 was taken 33485 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">       33485 :         if (radio != nullptr) {</span></span>
+<span id="L215"><span class="lineNum">     215</span>                 :<span class="tlaGNC">       33485 :             const IMobility *mobility = radio-&gt;getAntenna()-&gt;getMobility();</span></span>
+<span id="L216"><span class="lineNum">     216</span>                 :<span class="tlaGNC">       33485 :             minConstraintArea = minConstraintArea.min(mobility-&gt;getConstraintAreaMin());</span></span>
+<span id="L217"><span class="lineNum">     217</span>                 :<span class="tlaGNC">       33485 :         }</span></span>
+<span id="L218"><span class="lineNum">     218</span>                 :<span class="tlaGNC">       33485 :     }</span></span>
+<span id="L219"><span class="lineNum">     219</span>                 :<span class="tlaGNC">        4620 :     return minConstraintArea;</span></span>
+<span id="L220"><span class="lineNum">     220</span>                 :<span class="tlaGNC">        4620 : }</span></span>
+<span id="L221"><span class="lineNum">     221</span>                 :             : </span>
+<span id="L222"><span class="lineNum">     222</span>                 :             : Coord MediumLimitCache::computeMaxConstreaintArea() const</span>
+<span id="L223"><span class="lineNum">     223</span>                 :<span class="tlaGNC">        4620 : {</span></span>
+<span id="L224"><span class="lineNum">     224</span>                 :<span class="tlaGNC">        4620 :     Coord maxConstraintArea = Coord::NIL;</span></span>
+<span id="L225"><span class="lineNum">     225</span>         [<span class="tlaGBC" title="Branch 0 was taken 33485 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4620 times"> + </span>]:<span class="tlaGNC">       33485 :     for (const auto radio : radios) {</span></span>
+<span id="L226"><span class="lineNum">     226</span>         [<span class="tlaGBC" title="Branch 0 was taken 33485 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">       33485 :         if (radio != nullptr) {</span></span>
+<span id="L227"><span class="lineNum">     227</span>                 :<span class="tlaGNC">       33485 :             const IMobility *mobility = radio-&gt;getAntenna()-&gt;getMobility();</span></span>
+<span id="L228"><span class="lineNum">     228</span>                 :<span class="tlaGNC">       33485 :             maxConstraintArea = maxConstraintArea.max(mobility-&gt;getConstraintAreaMax());</span></span>
+<span id="L229"><span class="lineNum">     229</span>                 :<span class="tlaGNC">       33485 :         }</span></span>
+<span id="L230"><span class="lineNum">     230</span>                 :<span class="tlaGNC">       33485 :     }</span></span>
+<span id="L231"><span class="lineNum">     231</span>                 :<span class="tlaGNC">        4620 :     return maxConstraintArea;</span></span>
+<span id="L232"><span class="lineNum">     232</span>                 :<span class="tlaGNC">        4620 : }</span></span>
+<span id="L233"><span class="lineNum">     233</span>                 :             : </span>
+<span id="L234"><span class="lineNum">     234</span>                 :             : m MediumLimitCache::getMaxInterferenceRange(const IRadio *radio) const</span>
+<span id="L235"><span class="lineNum">     235</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L236"><span class="lineNum">     236</span>                 :<span class="tlaUNC">           0 :     m maxInterferenceRange = computeMaxRange(radio-&gt;getTransmitter()-&gt;getMaxPower(), minInterferencePower);</span></span>
+<span id="L237"><span class="lineNum">     237</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (!std::isnan(maxInterferenceRange.get()))</span></span>
+<span id="L238"><span class="lineNum">     238</span>                 :<span class="tlaUNC">           0 :         return maxInterferenceRange;</span></span>
+<span id="L239"><span class="lineNum">     239</span>                 :<span class="tlaUNC">           0 :     return radio-&gt;getTransmitter()-&gt;getMaxInterferenceRange();</span></span>
+<span id="L240"><span class="lineNum">     240</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L241"><span class="lineNum">     241</span>                 :             : </span>
+<span id="L242"><span class="lineNum">     242</span>                 :             : m MediumLimitCache::getMaxCommunicationRange(const IRadio *radio) const</span>
+<span id="L243"><span class="lineNum">     243</span>                 :<span class="tlaGNC tlaBgGNC">        6117 : {</span></span>
+<span id="L244"><span class="lineNum">     244</span>                 :<span class="tlaGNC">        6117 :     m maxCommunicationRange = computeMaxRange(radio-&gt;getTransmitter()-&gt;getMaxPower(), minReceptionPower);</span></span>
+<span id="L245"><span class="lineNum">     245</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 6117 times"> + </span>]:<span class="tlaGNC">        6117 :     if (!std::isnan(maxCommunicationRange.get()))</span></span>
+<span id="L246"><span class="lineNum">     246</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         return maxCommunicationRange;</span></span>
+<span id="L247"><span class="lineNum">     247</span>                 :<span class="tlaGNC tlaBgGNC">        6117 :     return radio-&gt;getTransmitter()-&gt;getMaxCommunicationRange();</span></span>
+<span id="L248"><span class="lineNum">     248</span>                 :<span class="tlaGNC">        6117 : }</span></span>
+<span id="L249"><span class="lineNum">     249</span>                 :             : </span>
+<span id="L250"><span class="lineNum">     250</span>                 :             : } // namespace physicallayer</span>
+<span id="L251"><span class="lineNum">     251</span>                 :             : } // namespace inet</span>
+<span id="L252"><span class="lineNum">     252</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

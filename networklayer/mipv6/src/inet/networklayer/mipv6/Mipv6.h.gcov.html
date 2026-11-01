@@ -1,0 +1,760 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - networklayer/mipv6/src/inet/networklayer/mipv6/Mipv6.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">networklayer/mipv6/src/inet/networklayer/mipv6</a> - Mipv6.h<span style="font-size: 80%;"> (source / <a href="Mipv6.h.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">93.1&nbsp;%</td>
+            <td class="headerCovTableEntry">29</td>
+            <td class="headerCovTableEntry">27</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryMed">85.7&nbsp;%</td>
+            <td class="headerCovTableEntry">14</td>
+            <td class="headerCovTableEntry">12</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryMed">80.0&nbsp;%</td>
+            <td class="headerCovTableEntry">10</td>
+            <td class="headerCovTableEntry">8</td>
+          </tr>
+                  <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2007</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : // Faqir Zarrar Yousaf</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // Communication Networks Institute, University of Dortmund, Germany.</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : // Christian Bauer</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : // Institute of Communications and Navigation, German Aerospace Center (DLR)</span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : //</span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : //</span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : //</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : </span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #ifndef __INET_MIPV6_H</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : #define __INET_MIPV6_H</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : </span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : #include &lt;map&gt;</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : #include &lt;vector&gt;</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : </span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : #include &quot;inet/common/ModuleRefByPar.h&quot;</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : #include &quot;inet/common/lifecycle/OperationalBase.h&quot;</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : #include &quot;inet/common/lifecycle/ModuleOperations.h&quot;</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             : </span>
+<span id="L22"><span class="lineNum">      22</span>                 :             : #include &quot;inet/networklayer/contract/ipv6/Ipv6Address.h&quot;</span>
+<span id="L23"><span class="lineNum">      23</span>                 :             : #include &quot;inet/networklayer/contract/INetfilter.h&quot;</span>
+<span id="L24"><span class="lineNum">      24</span>                 :             : #include &quot;inet/networklayer/ipv6/IIpv6ExtensionHeaderHandler.h&quot;</span>
+<span id="L25"><span class="lineNum">      25</span>                 :             : #include &quot;inet/networklayer/mipv6/BindingUpdateList.h&quot;</span>
+<span id="L26"><span class="lineNum">      26</span>                 :             : #include &quot;inet/networklayer/mipv6/MobilityHeader_m.h&quot; // for HAOpt &amp; RH2</span>
+<span id="L27"><span class="lineNum">      27</span>                 :             : </span>
+<span id="L28"><span class="lineNum">      28</span>                 :             : namespace inet {</span>
+<span id="L29"><span class="lineNum">      29</span>                 :             : </span>
+<span id="L30"><span class="lineNum">      30</span>                 :             : // Foreign declarations:</span>
+<span id="L31"><span class="lineNum">      31</span>                 :             : class BindingCache;</span>
+<span id="L32"><span class="lineNum">      32</span>                 :             : class BindingUpdate;</span>
+<span id="L33"><span class="lineNum">      33</span>                 :             : class NetworkInterface;</span>
+<span id="L34"><span class="lineNum">      34</span>                 :             : class Ipv6Header;</span>
+<span id="L35"><span class="lineNum">      35</span>                 :             : class Ipv6NeighbourDiscovery;</span>
+<span id="L36"><span class="lineNum">      36</span>                 :             : class Ipv6RoutingTable;</span>
+<span id="L37"><span class="lineNum">      37</span>                 :             : </span>
+<span id="L38"><span class="lineNum">      38</span>                 :             : // Keys for timer list (=message type)</span>
+<span id="L39"><span class="lineNum">      39</span>                 :             : enum TimerKey {</span>
+<span id="L40"><span class="lineNum">      40</span>                 :             :     KEY_BU               = 0, // Binding Update</span>
+<span id="L41"><span class="lineNum">      41</span>                 :             :     KEY_HI               = 1, // HoTI</span>
+<span id="L42"><span class="lineNum">      42</span>                 :             :     KEY_CI               = 2, // CoTI</span>
+<span id="L43"><span class="lineNum">      43</span>                 :             :     KEY_BR               = 3, // Binding Refresh Request</span>
+<span id="L44"><span class="lineNum">      44</span>                 :             :     KEY_BUL_EXP          = 4, // BUL entry expiry</span>
+<span id="L45"><span class="lineNum">      45</span>                 :             :     KEY_BC_EXP           = 5, // BC entry expiry</span>
+<span id="L46"><span class="lineNum">      46</span>                 :             :     KEY_HTOKEN_EXP       = 6, // home token expiry</span>
+<span id="L47"><span class="lineNum">      47</span>                 :             :     KEY_CTOKEN_EXP       = 7, // care-of token expiry</span>
+<span id="L48"><span class="lineNum">      48</span>                 :             : };</span>
+<span id="L49"><span class="lineNum">      49</span>                 :             : </span>
+<span id="L50"><span class="lineNum">      50</span>                 :             : // Timer-if-entry type codes</span>
+<span id="L51"><span class="lineNum">      51</span>                 :             : enum TimerIfEntryType {</span>
+<span id="L52"><span class="lineNum">      52</span>                 :             :     TRANSMIT_TYPE_BU     = 51, // BuTransmitIfEntry</span>
+<span id="L53"><span class="lineNum">      53</span>                 :             :     TRANSMIT_TYPE_TI     = 52, // TestInitTransmitIfEntry</span>
+<span id="L54"><span class="lineNum">      54</span>                 :             :     EXPIRY_TYPE_BUL      = 61, // BulExpiryIfEntry</span>
+<span id="L55"><span class="lineNum">      55</span>                 :             :     EXPIRY_TYPE_BC       = 62, // BcExpiryIfEntry</span>
+<span id="L56"><span class="lineNum">      56</span>                 :             :     EXPIRY_TYPE_TOKEN    = 63, // {Home, CareOf}TokenExpiryIfEntry</span>
+<span id="L57"><span class="lineNum">      57</span>                 :             : };</span>
+<span id="L58"><span class="lineNum">      58</span>                 :             : </span>
+<span id="L59"><span class="lineNum">      59</span>                 :             : /**</span>
+<span id="L60"><span class="lineNum">      60</span>                 :             :  * Implements RFC 3775 Mobility Support in Ipv6.</span>
+<span id="L61"><span class="lineNum">      61</span>                 :             :  */</span>
+<span id="L62"><span class="lineNum">      62</span>                 :             : class INET_API Mipv6 : public OperationalBase, public IIpv6ExtensionHeaderHandler, public IIpv6TlvOptionHandler, public NetfilterBase::HookBase</span>
+<span id="L63"><span class="lineNum">      63</span>                 :             : {</span>
+<span id="L64"><span class="lineNum">      64</span>                 :             :   public:</span>
+<span id="L65"><span class="lineNum">      65</span>                 :             :     virtual ~Mipv6();</span>
+<span id="L66"><span class="lineNum">      66</span>                 :             : </span>
+<span id="L67"><span class="lineNum">      67</span>                 :             :   protected:</span>
+<span id="L68"><span class="lineNum">      68</span>                 :             :     ModuleRefByPar&lt;IInterfaceTable&gt; ift;</span>
+<span id="L69"><span class="lineNum">      69</span>                 :             :     opp_component_ptr&lt;Ipv6RoutingTable&gt; rt6;</span>
+<span id="L70"><span class="lineNum">      70</span>                 :             :     ModuleRefByPar&lt;BindingUpdateList&gt; bul;</span>
+<span id="L71"><span class="lineNum">      71</span>                 :             :     ModuleRefByPar&lt;BindingCache&gt; bc;</span>
+<span id="L72"><span class="lineNum">      72</span>                 :             :     ModuleRefByPar&lt;Ipv6NeighbourDiscovery&gt; ipv6nd;</span>
+<span id="L73"><span class="lineNum">      73</span>                 :             : </span>
+<span id="L74"><span class="lineNum">      74</span>                 :             :     //</span>
+<span id="L75"><span class="lineNum">      75</span>                 :             :     // IP tunnel management (RFC 2473), moved here from the former Ipv6Tunneling</span>
+<span id="L76"><span class="lineNum">      76</span>                 :             :     // module. A &quot;tunnel&quot; is a dynamically created Ipv6TunnelInterface (built by</span>
+<span id="L77"><span class="lineNum">      77</span>                 :             :     // Ipv6RoutingTable::createTunnelNetworkInterface) that performs IPv6-in-IPv6</span>
+<span id="L78"><span class="lineNum">      78</span>                 :             :     // encapsulation; the IPv6 layer routes to it like any interface. Tunnels are</span>
+<span id="L79"><span class="lineNum">      79</span>                 :             :     // indexed by their interface id. Mipv6 steers home-address traffic onto them</span>
+<span id="L80"><span class="lineNum">      80</span>                 :             :     // via requestTunnelOutputInterface().</span>
+<span id="L81"><span class="lineNum">      81</span>                 :             :     //</span>
+<span id="L82"><span class="lineNum">      82</span>                 :             :     enum TunnelType {</span>
+<span id="L83"><span class="lineNum">      83</span>                 :             :         INVALID = 0,</span>
+<span id="L84"><span class="lineNum">      84</span>                 :             :         SPLIT,</span>
+<span id="L85"><span class="lineNum">      85</span>                 :             :         NON_SPLIT,</span>
+<span id="L86"><span class="lineNum">      86</span>                 :             :         NORMAL, // either split or non-split</span>
+<span id="L87"><span class="lineNum">      87</span>                 :             :     };</span>
+<span id="L88"><span class="lineNum">      88</span>                 :             : </span>
+<span id="L89"><span class="lineNum">      89</span>                 :             :     struct Tunnel {</span>
+<span id="L90"><span class="lineNum">      90</span>                 :             :         Tunnel(const Ipv6Address&amp; entry = Ipv6Address::UNSPECIFIED_ADDRESS,</span>
+<span id="L91"><span class="lineNum">      91</span>                 :             :                 const Ipv6Address&amp; exit = Ipv6Address::UNSPECIFIED_ADDRESS,</span>
+<span id="L92"><span class="lineNum">      92</span>                 :             :                 const Ipv6Address&amp; destTrigger = Ipv6Address::UNSPECIFIED_ADDRESS)</span>
+<span id="L93"><span class="lineNum">      93</span>                 :<span class="tlaGNC tlaBgGNC">         192 :             : entry(entry), exit(exit), tunnelType(SPLIT), destTrigger(destTrigger) {}</span></span>
+<span id="L94"><span class="lineNum">      94</span>                 :             : </span>
+<span id="L95"><span class="lineNum">      95</span>                 :             :         bool operator==(const Tunnel&amp; rhs) const</span>
+<span id="L96"><span class="lineNum">      96</span>                 :<span class="tlaGNC">          33 :         {</span></span>
+<span id="L97"><span class="lineNum">      97</span> [<span class="tlaGBC" title="Branch 0 was taken 33 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 30 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3 times"> + </span>]:<span class="tlaGNC">          33 :             return entry == rhs.entry &amp;&amp; exit == rhs.exit &amp;&amp; destTrigger == rhs.destTrigger;</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 30 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span id="L98"><span class="lineNum">      98</span>                 :<span class="tlaGNC">          33 :         }</span></span>
+<span id="L99"><span class="lineNum">      99</span>                 :             : </span>
+<span id="L100"><span class="lineNum">     100</span>                 :             :         Ipv6Address entry; // entry point of the tunnel</span>
+<span id="L101"><span class="lineNum">     101</span>                 :             :         Ipv6Address exit; // exit point of the tunnel</span>
+<span id="L102"><span class="lineNum">     102</span>                 :             :         TunnelType tunnelType = INVALID; // split or non-split (defaults to SPLIT, see ctor)</span>
+<span id="L103"><span class="lineNum">     103</span>                 :             :         // if set, only packets to this destination are routed over the tunnel</span>
+<span id="L104"><span class="lineNum">     104</span>                 :             :         // (split tunnel); if unspecified, (nearly) everything is (non-split tunnel)</span>
+<span id="L105"><span class="lineNum">     105</span>                 :             :         Ipv6Address destTrigger;</span>
+<span id="L106"><span class="lineNum">     106</span>                 :             :         // the backing virtual interface that performs the encapsulation</span>
+<span id="L107"><span class="lineNum">     107</span>                 :             :         NetworkInterface *networkInterface = nullptr;</span>
+<span id="L108"><span class="lineNum">     108</span>                 :             :     };</span>
+<span id="L109"><span class="lineNum">     109</span>                 :             : </span>
+<span id="L110"><span class="lineNum">     110</span>                 :             :     typedef std::map&lt;int, struct Tunnel&gt; Tunnels;</span>
+<span id="L111"><span class="lineNum">     111</span>                 :             :     Tunnels tunnels; // indexed by the tunnel interface id</span>
+<span id="L112"><span class="lineNum">     112</span>                 :             :     int noOfNonSplitTunnels = 0; // number of non-split tunnels on this host</span>
+<span id="L113"><span class="lineNum">     113</span>                 :             : </span>
+<span id="L114"><span class="lineNum">     114</span>                 :             :     /**</span>
+<span id="L115"><span class="lineNum">     115</span>                 :             :      * Create a tunnel (entry -&gt; exit). If destTrigger is set, only traffic to that</span>
+<span id="L116"><span class="lineNum">     116</span>                 :             :      * destination is routed over it (split tunnel); otherwise everything is</span>
+<span id="L117"><span class="lineNum">     117</span>                 :             :      * (non-split tunnel). Returns the tunnel interface id (0 if not created).</span>
+<span id="L118"><span class="lineNum">     118</span>                 :             :      */</span>
+<span id="L119"><span class="lineNum">     119</span>                 :             :     int createTunnel(TunnelType tunnelType, const Ipv6Address&amp; entry, const Ipv6Address&amp; exit,</span>
+<span id="L120"><span class="lineNum">     120</span>                 :             :             const Ipv6Address&amp; destTrigger = Ipv6Address::UNSPECIFIED_ADDRESS);</span>
+<span id="L121"><span class="lineNum">     121</span>                 :             :     bool destroyTunnel(const Ipv6Address&amp; src, const Ipv6Address&amp; dest, const Ipv6Address&amp; destTrigger);</span>
+<span id="L122"><span class="lineNum">     122</span>                 :             :     void destroyTunnels(const Ipv6Address&amp; entry);</span>
+<span id="L123"><span class="lineNum">     123</span>                 :             :     void destroyTunnel(const Ipv6Address&amp; entry, const Ipv6Address&amp; exit);</span>
+<span id="L124"><span class="lineNum">     124</span>                 :             :     void destroyTunnelForExitAndTrigger(const Ipv6Address&amp; exit, const Ipv6Address&amp; trigger);</span>
+<span id="L125"><span class="lineNum">     125</span>                 :             :     void destroyTunnelForEntryAndTrigger(const Ipv6Address&amp; entry, const Ipv6Address&amp; trigger);</span>
+<span id="L126"><span class="lineNum">     126</span>                 :             :     void destroyTunnelFromTrigger(const Ipv6Address&amp; trigger);</span>
+<span id="L127"><span class="lineNum">     127</span>                 :             :     /**</span>
+<span id="L128"><span class="lineNum">     128</span>                 :             :      * Returns the tunnel interface id whose destination trigger matches destAddress</span>
+<span id="L129"><span class="lineNum">     129</span>                 :             :      * (split tunnels first, then the non-split catch-all), or -1 if none.</span>
+<span id="L130"><span class="lineNum">     130</span>                 :             :      */</span>
+<span id="L131"><span class="lineNum">     131</span>                 :             :     int getVIfIndexForDest(const Ipv6Address&amp; destAddress);</span>
+<span id="L132"><span class="lineNum">     132</span>                 :             :     int getVIfIndexForDest(const Ipv6Address&amp; destAddress, TunnelType tunnelType);</span>
+<span id="L133"><span class="lineNum">     133</span>                 :             :     // true if there exists a tunnel with the given exit point</span>
+<span id="L134"><span class="lineNum">     134</span>                 :             :     bool isTunnelExit(const Ipv6Address&amp; exit);</span>
+<span id="L135"><span class="lineNum">     135</span>                 :             :     // returns the interface id of the matching tunnel, or 0 if none</span>
+<span id="L136"><span class="lineNum">     136</span>                 :             :     int findTunnel(const Ipv6Address&amp; src, const Ipv6Address&amp; dest, const Ipv6Address&amp; destTrigger) const;</span>
+<span id="L137"><span class="lineNum">     137</span>                 :             :     int lookupTunnels(const Ipv6Address&amp; dest);</span>
+<span id="L138"><span class="lineNum">     138</span>                 :             :     int doPrefixMatch(const Ipv6Address&amp; dest);</span>
+<span id="L139"><span class="lineNum">     139</span>                 :             : </span>
+<span id="L140"><span class="lineNum">     140</span>                 :             :     // statistic collection</span>
+<span id="L141"><span class="lineNum">     141</span>                 :             :     cOutVector statVectorBUtoHA, statVectorBUtoCN, statVectorBUtoMN;</span>
+<span id="L142"><span class="lineNum">     142</span>                 :             :     // 1 means BA from HA, 2 means BA from CN</span>
+<span id="L143"><span class="lineNum">     143</span>                 :             :     cOutVector statVectorBAtoMN;</span>
+<span id="L144"><span class="lineNum">     144</span>                 :             :     // 1 means BA to register BU, 2 means BA to deregister BU message</span>
+<span id="L145"><span class="lineNum">     145</span>                 :             :     // 3 means invalid BA</span>
+<span id="L146"><span class="lineNum">     146</span>                 :             :     cOutVector statVectorBAfromHA, statVectorBAfromCN;</span>
+<span id="L147"><span class="lineNum">     147</span>                 :             : </span>
+<span id="L148"><span class="lineNum">     148</span>                 :             :     cOutVector statVectorHoTItoCN, statVectorCoTItoCN;</span>
+<span id="L149"><span class="lineNum">     149</span>                 :             :     cOutVector statVectorHoTtoMN, statVectorCoTtoMN;</span>
+<span id="L150"><span class="lineNum">     150</span>                 :             :     cOutVector statVectorHoTfromCN, statVectorCoTfromCN;</span>
+<span id="L151"><span class="lineNum">     151</span>                 :             : </span>
+<span id="L152"><span class="lineNum">     152</span>                 :             :     /**</span>
+<span id="L153"><span class="lineNum">     153</span>                 :             :      * The base class for all other timers that are used for retransmissions.</span>
+<span id="L154"><span class="lineNum">     154</span>                 :             :      */</span>
+<span id="L155"><span class="lineNum">     155</span>                 :             :     class INET_API TimerIfEntry {</span>
+<span id="L156"><span class="lineNum">     156</span>                 :             :       public:</span>
+<span id="L157"><span class="lineNum">     157</span>                 :             :         cMessage *timer; // pointer to the scheduled timer message</span>
+<span id="L158"><span class="lineNum">     158</span>                 :<span class="tlaGNC">         196 :         virtual ~TimerIfEntry() {} // to make it a polymorphic base class</span></span>
+<span id="L159"><span class="lineNum">     159</span>                 :             : </span>
+<span id="L160"><span class="lineNum">     160</span>                 :             :         Ipv6Address dest; // the address (HA or CN(s) for which the message is sent</span>
+<span id="L161"><span class="lineNum">     161</span>                 :             :         simtime_t ackTimeout; // timeout for the Ack</span>
+<span id="L162"><span class="lineNum">     162</span>                 :             :         simtime_t nextScheduledTime; // time when the corrsponding message is supposed to be sent</span>
+<span id="L163"><span class="lineNum">     163</span>                 :             :         NetworkInterface *ifEntry; // interface from which the message will be transmitted</span>
+<span id="L164"><span class="lineNum">     164</span>                 :             :     };</span>
+<span id="L165"><span class="lineNum">     165</span>                 :             : </span>
+<span id="L166"><span class="lineNum">     166</span>                 :             :     class INET_API Key {</span>
+<span id="L167"><span class="lineNum">     167</span>                 :             :       public:</span>
+<span id="L168"><span class="lineNum">     168</span>                 :             :         int type; // type of the message (BU, HoTI, CoTI) stored in the map, indexed by this key</span>
+<span id="L169"><span class="lineNum">     169</span>                 :             :         int interfaceID; // ID of the interface over which the message is sent</span>
+<span id="L170"><span class="lineNum">     170</span>                 :             :         Ipv6Address dest; // the address of either the HA or the CN</span>
+<span id="L171"><span class="lineNum">     171</span>                 :             : </span>
+<span id="L172"><span class="lineNum">     172</span>                 :             :         Key(Ipv6Address _dest, int _interfaceID, int _type)</span>
+<span id="L173"><span class="lineNum">     173</span>                 :<span class="tlaGNC">         563 :         {</span></span>
+<span id="L174"><span class="lineNum">     174</span>                 :<span class="tlaGNC">         563 :             dest = _dest;</span></span>
+<span id="L175"><span class="lineNum">     175</span>                 :<span class="tlaGNC">         563 :             interfaceID = _interfaceID;</span></span>
+<span id="L176"><span class="lineNum">     176</span>                 :<span class="tlaGNC">         563 :             type = _type;</span></span>
+<span id="L177"><span class="lineNum">     177</span>                 :<span class="tlaGNC">         563 :         }</span></span>
+<span id="L178"><span class="lineNum">     178</span>                 :             : </span>
+<span id="L179"><span class="lineNum">     179</span>                 :             :         bool operator&lt;(const Key&amp; b) const</span>
+<span id="L180"><span class="lineNum">     180</span>                 :<span class="tlaGNC">        2742 :         {</span></span>
+<span id="L181"><span class="lineNum">     181</span>         [<span class="tlaGBC" title="Branch 0 was taken 1203 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1539 times"> + </span>]:<span class="tlaGNC">        2742 :             if (type == b.type)</span></span>
+<span id="L182"><span class="lineNum">     182</span>         [<span class="tlaGBC" title="Branch 0 was taken 1199 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4 times"> + </span>]:<span class="tlaGNC">        1203 :                 return interfaceID == b.interfaceID ? dest &lt; b.dest : interfaceID &lt; b.interfaceID;</span></span>
+<span id="L183"><span class="lineNum">     183</span>                 :<span class="tlaGNC">        1539 :             else</span></span>
+<span id="L184"><span class="lineNum">     184</span>                 :<span class="tlaGNC">        1539 :                 return type &lt; b.type;</span></span>
+<span id="L185"><span class="lineNum">     185</span>                 :<span class="tlaGNC">        2742 :         }</span></span>
+<span id="L186"><span class="lineNum">     186</span>                 :             :     };</span>
+<span id="L187"><span class="lineNum">     187</span>                 :             : </span>
+<span id="L188"><span class="lineNum">     188</span>                 :             :     typedef std::map&lt;Key, TimerIfEntry *&gt; TransmitIfList;</span>
+<span id="L189"><span class="lineNum">     189</span>                 :             :     TransmitIfList transmitIfList;</span>
+<span id="L190"><span class="lineNum">     190</span>                 :             : </span>
+<span id="L191"><span class="lineNum">     191</span>                 :             :     /** holds the tuples of currently available {InterfaceID, CoA} pairs */</span>
+<span id="L192"><span class="lineNum">     192</span>                 :             :     typedef std::map&lt;int, Ipv6Address&gt; InterfaceCoAList;</span>
+<span id="L193"><span class="lineNum">     193</span>                 :             :     InterfaceCoAList interfaceCoAList;</span>
+<span id="L194"><span class="lineNum">     194</span>                 :             : </span>
+<span id="L195"><span class="lineNum">     195</span>                 :             :     /** whether this mobile node is currently at home; toggled at the home/away</span>
+<span id="L196"><span class="lineNum">     196</span>                 :             :      *  transitions (returningHome() / initiateMipv6Protocol()). Used only for the</span>
+<span id="L197"><span class="lineNum">     197</span>                 :             :      *  display string -- interfaceCoAList is not a reliable &quot;at home&quot; indicator</span>
+<span id="L198"><span class="lineNum">     198</span>                 :             :      *  because it is not cleared on returning home. */</span>
+<span id="L199"><span class="lineNum">     199</span>                 :             :     bool atHome = true;</span>
+<span id="L200"><span class="lineNum">     200</span>                 :             : </span>
+<span id="L201"><span class="lineNum">     201</span>                 :             :     // A vector that will contain and maintain a list of all the CN(s) that the MN is in communication with. Although this is a quick fix, but this list should be populated and depopulated in sync with the destination cache. Final version should rely on the destinaion cache for acquiring the CN(s) address for use in Correspodent Registeration</span>
+<span id="L202"><span class="lineNum">     202</span>                 :             :     typedef std::vector&lt;Ipv6Address&gt; CnList;</span>
+<span id="L203"><span class="lineNum">     203</span>                 :             :     CnList cnList;</span>
+<span id="L204"><span class="lineNum">     204</span>                 :             :     CnList::iterator itCNList; // declaring an iterator over the cnList vector</span>
+<span id="L205"><span class="lineNum">     205</span>                 :             : </span>
+<span id="L206"><span class="lineNum">     206</span>                 :             :     /** Subclasses for the different timers */</span>
+<span id="L207"><span class="lineNum">     207</span>                 :             :     class INET_API BuTransmitIfEntry : public TimerIfEntry {</span>
+<span id="L208"><span class="lineNum">     208</span>                 :             :       public:</span>
+<span id="L209"><span class="lineNum">     209</span>                 :             :         uint buSequenceNumber; // sequence number of the BU sent</span>
+<span id="L210"><span class="lineNum">     210</span>                 :             :         uint lifeTime; // lifetime of the BU sent</span>
+<span id="L211"><span class="lineNum">     211</span>                 :             :         // Time variable related to the time at which BU was sent</span>
+<span id="L212"><span class="lineNum">     212</span>                 :             :         simtime_t presentSentTimeBU; // stores the present time at which BU is/was sent</span>
+<span id="L213"><span class="lineNum">     213</span>                 :             :         bool homeRegistration; // indicates whether this goes to HA or CN;</span>
+<span id="L214"><span class="lineNum">     214</span>                 :             :     };</span>
+<span id="L215"><span class="lineNum">     215</span>                 :             : </span>
+<span id="L216"><span class="lineNum">     216</span>                 :             :     class INET_API TestInitTransmitIfEntry : public TimerIfEntry {</span>
+<span id="L217"><span class="lineNum">     217</span>                 :             :       public:</span>
+<span id="L218"><span class="lineNum">     218</span>                 :             :         Ptr&lt;MobilityHeader&gt; testInitMsg; // either the HoTI or CoTI</span>
+<span id="L219"><span class="lineNum">     219</span>                 :             :     };</span>
+<span id="L220"><span class="lineNum">     220</span>                 :             : </span>
+<span id="L221"><span class="lineNum">     221</span>                 :             :     class INET_API BrTransmitIfEntry : public TimerIfEntry {</span>
+<span id="L222"><span class="lineNum">     222</span>                 :             :       public:</span>
+<span id="L223"><span class="lineNum">     223</span>                 :             :         uint retries; // number of BRRs already sent</span>
+<span id="L224"><span class="lineNum">     224</span>                 :             :     };</span>
+<span id="L225"><span class="lineNum">     225</span>                 :             : </span>
+<span id="L226"><span class="lineNum">     226</span>                 :             :     class INET_API BulExpiryIfEntry : public TimerIfEntry {</span>
+<span id="L227"><span class="lineNum">     227</span>                 :             :       public:</span>
+<span id="L228"><span class="lineNum">     228</span>                 :             :         Ipv6Address CoA, HoA; // the CoA and HoA of the MN that were used for this BUL entry</span>
+<span id="L229"><span class="lineNum">     229</span>                 :             :     };</span>
+<span id="L230"><span class="lineNum">     230</span>                 :             : </span>
+<span id="L231"><span class="lineNum">     231</span>                 :             :     class INET_API BcExpiryIfEntry : public TimerIfEntry {</span>
+<span id="L232"><span class="lineNum">     232</span>                 :             :       public:</span>
+<span id="L233"><span class="lineNum">     233</span>                 :             :         Ipv6Address HoA; // HoA of the MN</span>
+<span id="L234"><span class="lineNum">     234</span>                 :             :     };</span>
+<span id="L235"><span class="lineNum">     235</span>                 :             : </span>
+<span id="L236"><span class="lineNum">     236</span>                 :             :     class INET_API TokenExpiryIfEntry : public TimerIfEntry {</span>
+<span id="L237"><span class="lineNum">     237</span>                 :             :       public:</span>
+<span id="L238"><span class="lineNum">     238</span>                 :             :         Ipv6Address cnAddr; // CN whose token is expiring</span>
+<span id="L239"><span class="lineNum">     239</span>                 :             :         int tokenType; // KEY_XX indicates whether it is a care-of token, etc.</span>
+<span id="L240"><span class="lineNum">     240</span>                 :             :     };</span>
+<span id="L241"><span class="lineNum">     241</span>                 :             : </span>
+<span id="L242"><span class="lineNum">     242</span>                 :             :   protected:</span>
+<span id="L243"><span class="lineNum">     243</span>                 :             :     /************************Miscellaneous Stuff***************************/</span>
+<span id="L244"><span class="lineNum">     244</span>                 :             :     virtual void initialize(int stage) override;</span>
+<span id="L245"><span class="lineNum">     245</span>                 :             :     virtual void handleMessageWhenUp(cMessage *msg) override;</span>
+<span id="L246"><span class="lineNum">     246</span>                 :             : </span>
+<span id="L247"><span class="lineNum">     247</span>                 :             :     // lifecycle:</span>
+<span id="L248"><span class="lineNum">     248</span>                 :<span class="tlaGNC">        1128 :     virtual bool isInitializeStage(int stage) const override { return stage == INITSTAGE_NETWORK_LAYER; }</span></span>
+<span id="L249"><span class="lineNum">     249</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     virtual bool isModuleStartStage(int stage) const override { return stage == ModuleStartOperation::STAGE_NETWORK_LAYER; }</span></span>
+<span id="L250"><span class="lineNum">     250</span>                 :<span class="tlaUNC">           0 :     virtual bool isModuleStopStage(int stage) const override { return stage == ModuleStopOperation::STAGE_NETWORK_LAYER; }</span></span>
+<span id="L251"><span class="lineNum">     251</span>                 :<span class="tlaGNC tlaBgGNC">          47 :     virtual void handleStartOperation(LifecycleOperation *operation) override {}</span></span>
+<span id="L252"><span class="lineNum">     252</span>                 :             :     virtual void handleStopOperation(LifecycleOperation *operation) override;</span>
+<span id="L253"><span class="lineNum">     253</span>                 :             :     virtual void handleCrashOperation(LifecycleOperation *operation) override;</span>
+<span id="L254"><span class="lineNum">     254</span>                 :             : </span>
+<span id="L255"><span class="lineNum">     255</span>                 :             :     //================MIPv6 Related Functions=================================================</span>
+<span id="L256"><span class="lineNum">     256</span>                 :             :     /**</span>
+<span id="L257"><span class="lineNum">     257</span>                 :             :      * This is where all the mobility messages are sifted through and sent to appropriate functions</span>
+<span id="L258"><span class="lineNum">     258</span>                 :             :      * for processing.</span>
+<span id="L259"><span class="lineNum">     259</span>                 :             :      */</span>
+<span id="L260"><span class="lineNum">     260</span>                 :             :     void processMobilityMessage(Packet *inPacket);</span>
+<span id="L261"><span class="lineNum">     261</span>                 :             : </span>
+<span id="L262"><span class="lineNum">     262</span>                 :             :     /**</span>
+<span id="L263"><span class="lineNum">     263</span>                 :             :      * This method finally creates the timer structure and schedules the message for sending.</span>
+<span id="L264"><span class="lineNum">     264</span>                 :             :      */</span>
+<span id="L265"><span class="lineNum">     265</span>                 :             :     void createBUTimer(const Ipv6Address&amp; buDest, NetworkInterface *ie, const uint lifeTime,</span>
+<span id="L266"><span class="lineNum">     266</span>                 :             :             bool homeRegistration);</span>
+<span id="L267"><span class="lineNum">     267</span>                 :             : </span>
+<span id="L268"><span class="lineNum">     268</span>                 :             :     /**</span>
+<span id="L269"><span class="lineNum">     269</span>                 :             :      * Similiar to the previous one, this method creates an BU timer with registration lifetime equal to 0.</span>
+<span id="L270"><span class="lineNum">     270</span>                 :             :      */</span>
+<span id="L271"><span class="lineNum">     271</span>                 :             :     void createDeregisterBUTimer(const Ipv6Address&amp; buDest, NetworkInterface *ie);</span>
+<span id="L272"><span class="lineNum">     272</span>                 :             : </span>
+<span id="L273"><span class="lineNum">     273</span>                 :             :     /*</span>
+<span id="L274"><span class="lineNum">     274</span>                 :             :      * This method creates and starts a timer for an advertising interface over which BUs will be sent until it gets acknowledged</span>
+<span id="L275"><span class="lineNum">     275</span>                 :             :      * by an appropriate BA. This routine also &quot;intialises&quot; the necessary variables in a struct BuTransmitIfEntry that is created to</span>
+<span id="L276"><span class="lineNum">     276</span>                 :             :      * keep these variables for access.</span>
+<span id="L277"><span class="lineNum">     277</span>                 :             :      */</span>
+<span id="L278"><span class="lineNum">     278</span>                 :             :     void createBUTimer(const Ipv6Address&amp; buDest, NetworkInterface *ie);</span>
+<span id="L279"><span class="lineNum">     279</span>                 :             : </span>
+<span id="L280"><span class="lineNum">     280</span>                 :             :     /**</span>
+<span id="L281"><span class="lineNum">     281</span>                 :             :      * This method is called when the timer created in createBUTimer() has fired.</span>
+<span id="L282"><span class="lineNum">     282</span>                 :             :      * The BU is created and the appropriate method for sending it called. The timer structure is updated and rescheduled.</span>
+<span id="L283"><span class="lineNum">     283</span>                 :             :      */</span>
+<span id="L284"><span class="lineNum">     284</span>                 :             :     void sendPeriodicBU(cMessage *msg);</span>
+<span id="L285"><span class="lineNum">     285</span>                 :             : </span>
+<span id="L286"><span class="lineNum">     286</span>                 :             :     /**</span>
+<span id="L287"><span class="lineNum">     287</span>                 :             :      * Method for creating and sending a BU by a MN.</span>
+<span id="L288"><span class="lineNum">     288</span>                 :             :      */</span>
+<span id="L289"><span class="lineNum">     289</span>                 :             :     void createAndSendBUMessage(const Ipv6Address&amp; dest, NetworkInterface *ie, const uint buSeq,</span>
+<span id="L290"><span class="lineNum">     290</span>                 :             :             const uint lifeTime, const int bindAuthData = 0);</span>
+<span id="L291"><span class="lineNum">     291</span>                 :             : </span>
+<span id="L292"><span class="lineNum">     292</span>                 :             :     /**</span>
+<span id="L293"><span class="lineNum">     293</span>                 :             :      * Update the an entry of the BUL with the provided parameters.</span>
+<span id="L294"><span class="lineNum">     294</span>                 :             :      */</span>
+<span id="L295"><span class="lineNum">     295</span>                 :             :     void updateBUL(BindingUpdate *bu, const Ipv6Address&amp; dest, const Ipv6Address&amp; CoA,</span>
+<span id="L296"><span class="lineNum">     296</span>                 :             :             NetworkInterface *ie, const simtime_t sendTime);</span>
+<span id="L297"><span class="lineNum">     297</span>                 :             : </span>
+<span id="L298"><span class="lineNum">     298</span>                 :             :     /**</span>
+<span id="L299"><span class="lineNum">     299</span>                 :             :      * This method takes an interface and a destination address and returns the appropriate IfEntry for an BU.</span>
+<span id="L300"><span class="lineNum">     300</span>                 :             :      * Is supposed to be used until the valid BA is received for the respective BU.</span>
+<span id="L301"><span class="lineNum">     301</span>                 :             :      */</span>
+<span id="L302"><span class="lineNum">     302</span>                 :             :     Mipv6::BuTransmitIfEntry *fetchBUTransmitIfEntry(NetworkInterface *ie, const Ipv6Address&amp; dest);</span>
+<span id="L303"><span class="lineNum">     303</span>                 :             : </span>
+<span id="L304"><span class="lineNum">     304</span>                 :             :     /**</span>
+<span id="L305"><span class="lineNum">     305</span>                 :             :      * Append tags to the Mobility Messages (BU, BA etc) and send it out to the Ipv6 Module</span>
+<span id="L306"><span class="lineNum">     306</span>                 :             :      */</span>
+<span id="L307"><span class="lineNum">     307</span>                 :             :     void sendMobilityMessageToIPv6Module(Packet *msg, const Ipv6Address&amp; destAddr,</span>
+<span id="L308"><span class="lineNum">     308</span>                 :             :             const Ipv6Address&amp; srcAddr = Ipv6Address::UNSPECIFIED_ADDRESS, int interfaceId = -1,</span>
+<span id="L309"><span class="lineNum">     309</span>                 :             :             simtime_t sendTime = 0); // overloaded for use at CN - CB</span>
+<span id="L310"><span class="lineNum">     310</span>                 :             : //    void sendMobilityMessageToIPv6Module(cMessage *msg, const Ipv6Address&amp; destAddr, simtime_t sendTime = 0); // overloaded for use at CN - CB</span>
+<span id="L311"><span class="lineNum">     311</span>                 :             : </span>
+<span id="L312"><span class="lineNum">     312</span>                 :             :     /**</span>
+<span id="L313"><span class="lineNum">     313</span>                 :             :      * Process a BU - only applicable to HAs and CNs.</span>
+<span id="L314"><span class="lineNum">     314</span>                 :             :      */</span>
+<span id="L315"><span class="lineNum">     315</span>                 :             :     void processBUMessage(Packet *inPacket, const Ptr&lt;const BindingUpdate&gt;&amp; bu);</span>
+<span id="L316"><span class="lineNum">     316</span>                 :             : </span>
+<span id="L317"><span class="lineNum">     317</span>                 :             :     /**</span>
+<span id="L318"><span class="lineNum">     318</span>                 :             :      * Validate a BU - only applicable to HAs and CNs</span>
+<span id="L319"><span class="lineNum">     319</span>                 :             :      */</span>
+<span id="L320"><span class="lineNum">     320</span>                 :             :     bool validateBUMessage(Packet *inPacket, const Ptr&lt;const BindingUpdate&gt;&amp; bu);</span>
+<span id="L321"><span class="lineNum">     321</span>                 :             : </span>
+<span id="L322"><span class="lineNum">     322</span>                 :             :     /**</span>
+<span id="L323"><span class="lineNum">     323</span>                 :             :      * Similiar to validateBUMessage(). However, this one is used only by HA to verify deregistration BU.</span>
+<span id="L324"><span class="lineNum">     324</span>                 :             :      */</span>
+<span id="L325"><span class="lineNum">     325</span>                 :             :     bool validateBUderegisterMessage(Packet *inPacket, const Ptr&lt;const BindingUpdate&gt;&amp; bu);</span>
+<span id="L326"><span class="lineNum">     326</span>                 :             : </span>
+<span id="L327"><span class="lineNum">     327</span>                 :             :     /**</span>
+<span id="L328"><span class="lineNum">     328</span>                 :             :      * Constructs and send a BA to the Ipv6 module. Only applicable to HAs and CNs.</span>
+<span id="L329"><span class="lineNum">     329</span>                 :             :      */</span>
+<span id="L330"><span class="lineNum">     330</span>                 :             :     void createAndSendBAMessage(const Ipv6Address&amp; src,</span>
+<span id="L331"><span class="lineNum">     331</span>                 :             :             const Ipv6Address&amp; dest, int interfaceId, const BaStatus&amp; baStatus, const uint baSeq,</span>
+<span id="L332"><span class="lineNum">     332</span>                 :             :             const int bindingAuthorizationData, const uint lifeTime, simtime_t sendTime = 0);</span>
+<span id="L333"><span class="lineNum">     333</span>                 :             : </span>
+<span id="L334"><span class="lineNum">     334</span>                 :             :     /**</span>
+<span id="L335"><span class="lineNum">     335</span>                 :             :      * Processes the received BA and creates tunnels or mobility header paths if appropriate.</span>
+<span id="L336"><span class="lineNum">     336</span>                 :             :      */</span>
+<span id="L337"><span class="lineNum">     337</span>                 :             :     void processBAMessage(Packet *inPacket, const Ptr&lt;const BindingAcknowledgement&gt;&amp; ba);</span>
+<span id="L338"><span class="lineNum">     338</span>                 :             : </span>
+<span id="L339"><span class="lineNum">     339</span>                 :             :     /**</span>
+<span id="L340"><span class="lineNum">     340</span>                 :             :      * Validates a Binding Acknowledgement for a mobile node.</span>
+<span id="L341"><span class="lineNum">     341</span>                 :             :      */</span>
+<span id="L342"><span class="lineNum">     342</span>                 :             :     bool validateBAck(Packet *inPacket, const BindingAcknowledgement&amp; ba);</span>
+<span id="L343"><span class="lineNum">     343</span>                 :             : </span>
+<span id="L344"><span class="lineNum">     344</span>                 :             :     /**</span>
+<span id="L345"><span class="lineNum">     345</span>                 :             :      * Creates and sends Binding Error message.</span>
+<span id="L346"><span class="lineNum">     346</span>                 :             :      */</span>
+<span id="L347"><span class="lineNum">     347</span>                 :             :     void createAndSendBEMessage(const Ipv6Address&amp; dest, const BeStatus&amp; beStatus);</span>
+<span id="L348"><span class="lineNum">     348</span>                 :             : </span>
+<span id="L349"><span class="lineNum">     349</span>                 :             :   public:</span>
+<span id="L350"><span class="lineNum">     350</span>                 :             :     /**</span>
+<span id="L351"><span class="lineNum">     351</span>                 :             :      * Initiates the Mobile IP protocol.</span>
+<span id="L352"><span class="lineNum">     352</span>                 :             :      * Method to be used when we have moved to a new access network and the new CoA is available for that interface.</span>
+<span id="L353"><span class="lineNum">     353</span>                 :             :      */</span>
+<span id="L354"><span class="lineNum">     354</span>                 :             :     void initiateMipv6Protocol(NetworkInterface *ie, const Ipv6Address&amp; CoA);</span>
+<span id="L355"><span class="lineNum">     355</span>                 :             : </span>
+<span id="L356"><span class="lineNum">     356</span>                 :             :     /**</span>
+<span id="L357"><span class="lineNum">     357</span>                 :             :      * This method destroys all tunnels associated to the previous CoA</span>
+<span id="L358"><span class="lineNum">     358</span>                 :             :      * and sends appropriate BU(s) to HA and CN(s).</span>
+<span id="L359"><span class="lineNum">     359</span>                 :             :      */</span>
+<span id="L360"><span class="lineNum">     360</span>                 :             :     void returningHome(const Ipv6Address&amp; CoA, NetworkInterface *ie);</span>
+<span id="L361"><span class="lineNum">     361</span>                 :             : </span>
+<span id="L362"><span class="lineNum">     362</span>                 :             : //</span>
+<span id="L363"><span class="lineNum">     363</span>                 :             : // Route Optimization related functions</span>
+<span id="L364"><span class="lineNum">     364</span>                 :             : //</span>
+<span id="L365"><span class="lineNum">     365</span>                 :             :     /**</span>
+<span id="L366"><span class="lineNum">     366</span>                 :             :      *  The following method is used for triggering RO to a CN.</span>
+<span id="L367"><span class="lineNum">     367</span>                 :             :      */</span>
+<span id="L368"><span class="lineNum">     368</span>                 :             :     virtual void triggerRouteOptimization(const Ipv6Address&amp; destAddress,</span>
+<span id="L369"><span class="lineNum">     369</span>                 :             :             const Ipv6Address&amp; HoA, NetworkInterface *ie);</span>
+<span id="L370"><span class="lineNum">     370</span>                 :             : </span>
+<span id="L371"><span class="lineNum">     371</span>                 :             :   protected:</span>
+<span id="L372"><span class="lineNum">     372</span>                 :             :     /**</span>
+<span id="L373"><span class="lineNum">     373</span>                 :             :      * Creates HoTI and CoTI messages and sends them to the CN if timers are not already existing.</span>
+<span id="L374"><span class="lineNum">     374</span>                 :             :      * If home and care-of tokens are already available a BU is directly sent to the CN.</span>
+<span id="L375"><span class="lineNum">     375</span>                 :             :      */</span>
+<span id="L376"><span class="lineNum">     376</span>                 :             :     virtual void initReturnRoutability(const Ipv6Address&amp; cnDest, NetworkInterface *ie);</span>
+<span id="L377"><span class="lineNum">     377</span>                 :             : </span>
+<span id="L378"><span class="lineNum">     378</span>                 :             :     /**</span>
+<span id="L379"><span class="lineNum">     379</span>                 :             :      * Creates and schedules a timer for either a HoTI or a CoTI transmission.</span>
+<span id="L380"><span class="lineNum">     380</span>                 :             :      */</span>
+<span id="L381"><span class="lineNum">     381</span>                 :             :     void createTestInitTimer(const Ptr&lt;MobilityHeader&gt; testInit, const Ipv6Address&amp; dest, NetworkInterface *ie, simtime_t sendTime = 0);</span>
+<span id="L382"><span class="lineNum">     382</span>                 :             : </span>
+<span id="L383"><span class="lineNum">     383</span>                 :             :     /**</span>
+<span id="L384"><span class="lineNum">     384</span>                 :             :      * If a TestInit timer was fired, this method gets called. The message is sent and the Binding Update List accordingly updated.</span>
+<span id="L385"><span class="lineNum">     385</span>                 :             :      * Afterwards the transmission timer is rescheduled.</span>
+<span id="L386"><span class="lineNum">     386</span>                 :             :      */</span>
+<span id="L387"><span class="lineNum">     387</span>                 :             :     void sendTestInit(cMessage *msg);</span>
+<span id="L388"><span class="lineNum">     388</span>                 :             : </span>
+<span id="L389"><span class="lineNum">     389</span>                 :             :     /**</span>
+<span id="L390"><span class="lineNum">     390</span>                 :             :      * Cancels the current existing timer and reschedules it with initial values.</span>
+<span id="L391"><span class="lineNum">     391</span>                 :             :      */</span>
+<span id="L392"><span class="lineNum">     392</span>                 :             :     /*void resetTestInitIfEntry(const Ipv6Address&amp; dest, int interfaceID, int msgType);*/</span>
+<span id="L393"><span class="lineNum">     393</span>                 :             : </span>
+<span id="L394"><span class="lineNum">     394</span>                 :             :     /**</span>
+<span id="L395"><span class="lineNum">     395</span>                 :             :      * Similiar to the other resetTestInitIfEntry() method, but this one searches for the appropriate</span>
+<span id="L396"><span class="lineNum">     396</span>                 :             :      * transmission structure first as the interfaceID is not known but needed as lookup key.</span>
+<span id="L397"><span class="lineNum">     397</span>                 :             :      */</span>
+<span id="L398"><span class="lineNum">     398</span>                 :             : //    void resetTestInitIfEntry(const Ipv6Address&amp; dest, int msgType);</span>
+<span id="L399"><span class="lineNum">     399</span>                 :             : </span>
+<span id="L400"><span class="lineNum">     400</span>                 :             :     /**</span>
+<span id="L401"><span class="lineNum">     401</span>                 :             :      * Reset the transmission structure for a BU and reschedule it for the provided time.</span>
+<span id="L402"><span class="lineNum">     402</span>                 :             :      */</span>
+<span id="L403"><span class="lineNum">     403</span>                 :             :     void resetBUIfEntry(const Ipv6Address&amp; dest, int interfaceID, simtime_t retransmissionTime);</span>
+<span id="L404"><span class="lineNum">     404</span>                 :             : </span>
+<span id="L405"><span class="lineNum">     405</span>                 :             :     /**</span>
+<span id="L406"><span class="lineNum">     406</span>                 :             :      * Creates and sends a HoTI message to the specified destination.</span>
+<span id="L407"><span class="lineNum">     407</span>                 :             :      */</span>
+<span id="L408"><span class="lineNum">     408</span>                 :             :     void createAndSendHoTIMessage(const Ipv6Address&amp; cnDest, NetworkInterface *ie);</span>
+<span id="L409"><span class="lineNum">     409</span>                 :             : </span>
+<span id="L410"><span class="lineNum">     410</span>                 :             :     /**</span>
+<span id="L411"><span class="lineNum">     411</span>                 :             :      * Creates and sends a CoTI message to the specified destination.</span>
+<span id="L412"><span class="lineNum">     412</span>                 :             :      */</span>
+<span id="L413"><span class="lineNum">     413</span>                 :             :     void createAndSendCoTIMessage(const Ipv6Address&amp; cnDest, NetworkInterface *ie);</span>
+<span id="L414"><span class="lineNum">     414</span>                 :             : </span>
+<span id="L415"><span class="lineNum">     415</span>                 :             :     /**</span>
+<span id="L416"><span class="lineNum">     416</span>                 :             :      * Create and send a HoT message.</span>
+<span id="L417"><span class="lineNum">     417</span>                 :             :      */</span>
+<span id="L418"><span class="lineNum">     418</span>                 :             :     void processHoTIMessage(Packet *inPacket, const Ptr&lt;const HomeTestInit&gt;&amp; HoTI);</span>
+<span id="L419"><span class="lineNum">     419</span>                 :             : </span>
+<span id="L420"><span class="lineNum">     420</span>                 :             :     /**</span>
+<span id="L421"><span class="lineNum">     421</span>                 :             :      * Create and send a CoT message.</span>
+<span id="L422"><span class="lineNum">     422</span>                 :             :      */</span>
+<span id="L423"><span class="lineNum">     423</span>                 :             :     void processCoTIMessage(Packet *inPacket, const Ptr&lt;const CareOfTestInit&gt;&amp; CoTI);</span>
+<span id="L424"><span class="lineNum">     424</span>                 :             : </span>
+<span id="L425"><span class="lineNum">     425</span>                 :             :     /**</span>
+<span id="L426"><span class="lineNum">     426</span>                 :             :      * First verifies a received HoT message and sends a BU to the CN if the care-of keygen token</span>
+<span id="L427"><span class="lineNum">     427</span>                 :             :      * is available as well. Retransmission of HoTI message is rescheduled.</span>
+<span id="L428"><span class="lineNum">     428</span>                 :             :      */</span>
+<span id="L429"><span class="lineNum">     429</span>                 :             :     void processHoTMessage(Packet *inPacket, const Ptr&lt;const HomeTest&gt;&amp; HoT);</span>
+<span id="L430"><span class="lineNum">     430</span>                 :             : </span>
+<span id="L431"><span class="lineNum">     431</span>                 :             :     /**</span>
+<span id="L432"><span class="lineNum">     432</span>                 :             :      * Verifies a HoT according to the RFC, Section 11.6.2</span>
+<span id="L433"><span class="lineNum">     433</span>                 :             :      */</span>
+<span id="L434"><span class="lineNum">     434</span>                 :             :     bool validateHoTMessage(Packet *inPacket, const HomeTest&amp; HoT);</span>
+<span id="L435"><span class="lineNum">     435</span>                 :             : </span>
+<span id="L436"><span class="lineNum">     436</span>                 :             :     /**</span>
+<span id="L437"><span class="lineNum">     437</span>                 :             :      * Like processHoTMessage(), but related to CoT.</span>
+<span id="L438"><span class="lineNum">     438</span>                 :             :      */</span>
+<span id="L439"><span class="lineNum">     439</span>                 :             :     void processCoTMessage(Packet *inPacket, const Ptr&lt;const CareOfTest&gt;&amp; CoT);</span>
+<span id="L440"><span class="lineNum">     440</span>                 :             : </span>
+<span id="L441"><span class="lineNum">     441</span>                 :             :     /**</span>
+<span id="L442"><span class="lineNum">     442</span>                 :             :      * Like validateHoTMessage(), but related to CoT.</span>
+<span id="L443"><span class="lineNum">     443</span>                 :             :      */</span>
+<span id="L444"><span class="lineNum">     444</span>                 :             :     bool validateCoTMessage(Packet *inPacket, const CareOfTest&amp; CoT);</span>
+<span id="L445"><span class="lineNum">     445</span>                 :             : </span>
+<span id="L446"><span class="lineNum">     446</span>                 :             :     /**</span>
+<span id="L447"><span class="lineNum">     447</span>                 :             :      * Send a BU depending on current status of:</span>
+<span id="L448"><span class="lineNum">     448</span>                 :             :      * * Registration or Deregistration phase</span>
+<span id="L449"><span class="lineNum">     449</span>                 :             :      * * Availability of tokens</span>
+<span id="L450"><span class="lineNum">     450</span>                 :             :      *</span>
+<span id="L451"><span class="lineNum">     451</span>                 :             :      * Return true or false depending on whether a BU has been sent or not.</span>
+<span id="L452"><span class="lineNum">     452</span>                 :             :      */</span>
+<span id="L453"><span class="lineNum">     453</span>                 :             :     bool checkForBUtoCN(BindingUpdateList::BindingUpdateListEntry&amp; bulEntry, NetworkInterface *ie);</span>
+<span id="L454"><span class="lineNum">     454</span>                 :             : </span>
+<span id="L455"><span class="lineNum">     455</span>                 :             :     /**</span>
+<span id="L456"><span class="lineNum">     456</span>                 :             :      * Creates a timer for sending a BU.</span>
+<span id="L457"><span class="lineNum">     457</span>                 :             :      */</span>
+<span id="L458"><span class="lineNum">     458</span>                 :             :     void sendBUtoCN(BindingUpdateList::BindingUpdateListEntry&amp; bulEntry, NetworkInterface *ie);</span>
+<span id="L459"><span class="lineNum">     459</span>                 :             : </span>
+<span id="L460"><span class="lineNum">     460</span>                 :             :     /**</span>
+<span id="L461"><span class="lineNum">     461</span>                 :             :      * Process the Type 2 Routing Header which belongs to the provided datagram.</span>
+<span id="L462"><span class="lineNum">     462</span>                 :             :      *</span>
+<span id="L463"><span class="lineNum">     463</span>                 :             :      * Swaps the addresses between the original destination address of the datagram and</span>
+<span id="L464"><span class="lineNum">     464</span>                 :             :      * the field in the routing header.</span>
+<span id="L465"><span class="lineNum">     465</span>                 :             :      */</span>
+<span id="L466"><span class="lineNum">     466</span>                 :             :     bool processType2RH(Packet *packet, Ipv6RoutingHeader *rh);</span>
+<span id="L467"><span class="lineNum">     467</span>                 :             : </span>
+<span id="L468"><span class="lineNum">     468</span>                 :             :     // IIpv6ExtensionHeaderHandler</span>
+<span id="L469"><span class="lineNum">     469</span>                 :             :     virtual bool processExtensionHeader(Packet *packet, const Ipv6ExtensionHeader *eh) override;</span>
+<span id="L470"><span class="lineNum">     470</span>                 :             :     // IIpv6TlvOptionHandler</span>
+<span id="L471"><span class="lineNum">     471</span>                 :             :     virtual bool processTlvOption(Packet *packet, const Ipv6ExtensionHeader *eh, const TlvOptionBase *option) override;</span>
+<span id="L472"><span class="lineNum">     472</span>                 :             : </span>
+<span id="L473"><span class="lineNum">     473</span>                 :             :     // INetfilter::IHook -- Mipv6 inserts the Type 2 Routing Header (CN-&gt;MN) and</span>
+<span id="L474"><span class="lineNum">     474</span>                 :             :     // the Home Address Option (MN-&gt;CN) on locally-originated, route-optimized</span>
+<span id="L475"><span class="lineNum">     475</span>                 :             :     // traffic via the datagramLocalOutHook (instead of the old T2RH/HA_OPT</span>
+<span id="L476"><span class="lineNum">     476</span>                 :             :     // pseudo-tunnels in Ipv6Tunneling).</span>
+<span id="L477"><span class="lineNum">     477</span>                 :             :     virtual Result datagramPreRoutingHook(Packet *datagram) override;</span>
+<span id="L478"><span class="lineNum">     478</span>                 :<span class="tlaGNC">         717 :     virtual Result datagramForwardHook(Packet *datagram) override { return ACCEPT; }</span></span>
+<span id="L479"><span class="lineNum">     479</span>                 :<span class="tlaGNC">       21253 :     virtual Result datagramPostRoutingHook(Packet *datagram) override { return ACCEPT; }</span></span>
+<span id="L480"><span class="lineNum">     480</span>                 :<span class="tlaGNC">       30403 :     virtual Result datagramLocalInHook(Packet *datagram) override { return ACCEPT; }</span></span>
+<span id="L481"><span class="lineNum">     481</span>                 :             :     virtual Result datagramLocalOutHook(Packet *datagram) override;</span>
+<span id="L482"><span class="lineNum">     482</span>                 :             : </span>
+<span id="L483"><span class="lineNum">     483</span>                 :             :     /**</span>
+<span id="L484"><span class="lineNum">     484</span>                 :             :      * If the datagram is home-address-destined traffic at a home agent or</span>
+<span id="L485"><span class="lineNum">     485</span>                 :             :      * home-address-sourced traffic at a mobile node, request the corresponding tunnel</span>
+<span id="L486"><span class="lineNum">     486</span>                 :             :      * interface as its output interface (called from the local-out and pre-routing</span>
+<span id="L487"><span class="lineNum">     487</span>                 :             :      * hooks). Replaces the tunnel lookup that used to be in the Ipv6 module.</span>
+<span id="L488"><span class="lineNum">     488</span>                 :             :      */</span>
+<span id="L489"><span class="lineNum">     489</span>                 :             :     void requestTunnelOutputInterface(Packet *datagram);</span>
+<span id="L490"><span class="lineNum">     490</span>                 :             : </span>
+<span id="L491"><span class="lineNum">     491</span>                 :             :     /**</span>
+<span id="L492"><span class="lineNum">     492</span>                 :             :      * A route-optimization extension-header insertion that the local-out hook</span>
+<span id="L493"><span class="lineNum">     493</span>                 :             :      * applies to outgoing traffic, replacing a T2RH/HA_OPT pseudo-tunnel.</span>
+<span id="L494"><span class="lineNum">     494</span>                 :             :      */</span>
+<span id="L495"><span class="lineNum">     495</span>                 :             :     struct RouteOptimization {</span>
+<span id="L496"><span class="lineNum">     496</span>                 :             :         enum Type { TYPE2_ROUTING_HEADER, HOME_ADDRESS_OPTION };</span>
+<span id="L497"><span class="lineNum">     497</span>                 :             :         Type type = TYPE2_ROUTING_HEADER;</span>
+<span id="L498"><span class="lineNum">     498</span>                 :             :         Ipv6Address entry; // T2RH: CN address; HA_OPT: care-of address</span>
+<span id="L499"><span class="lineNum">     499</span>                 :             :         Ipv6Address exit;  // T2RH: care-of address; HA_OPT: home address</span>
+<span id="L500"><span class="lineNum">     500</span>                 :             :     };</span>
+<span id="L501"><span class="lineNum">     501</span>                 :             : </span>
+<span id="L502"><span class="lineNum">     502</span>                 :             :     // route-optimization insertions, keyed by the destination that triggers them</span>
+<span id="L503"><span class="lineNum">     503</span>                 :             :     // (T2RH: the MN home address; HA_OPT: the correspondent node address)</span>
+<span id="L504"><span class="lineNum">     504</span>                 :             :     std::map&lt;Ipv6Address, RouteOptimization&gt; routeOptimizations;</span>
+<span id="L505"><span class="lineNum">     505</span>                 :             : </span>
+<span id="L506"><span class="lineNum">     506</span>                 :             :     void addRouteOptimization(RouteOptimization::Type type, const Ipv6Address&amp; entry, const Ipv6Address&amp; exit, const Ipv6Address&amp; trigger);</span>
+<span id="L507"><span class="lineNum">     507</span>                 :             :     void removeRouteOptimizationForTrigger(const Ipv6Address&amp; trigger);</span>
+<span id="L508"><span class="lineNum">     508</span>                 :             :     void removeRouteOptimizationForExitAndTrigger(const Ipv6Address&amp; exit, const Ipv6Address&amp; trigger);</span>
+<span id="L509"><span class="lineNum">     509</span>                 :             : </span>
+<span id="L510"><span class="lineNum">     510</span>                 :             :     /**</span>
+<span id="L511"><span class="lineNum">     511</span>                 :             :      * Perform validity checks according to RFC 3775 - Section 6.4</span>
+<span id="L512"><span class="lineNum">     512</span>                 :             :      */</span>
+<span id="L513"><span class="lineNum">     513</span>                 :             :     bool validateType2RH(const Ipv6Header&amp; ipv6Header, const Ipv6RoutingHeader&amp; rh);</span>
+<span id="L514"><span class="lineNum">     514</span>                 :             : </span>
+<span id="L515"><span class="lineNum">     515</span>                 :             :     /**</span>
+<span id="L516"><span class="lineNum">     516</span>                 :             :      * Process the Home Address Option which belongs to the provided datagram.</span>
+<span id="L517"><span class="lineNum">     517</span>                 :             :      *</span>
+<span id="L518"><span class="lineNum">     518</span>                 :             :      * Swaps the addresses between the original source address of the datagram and</span>
+<span id="L519"><span class="lineNum">     519</span>                 :             :      * the field in the option.</span>
+<span id="L520"><span class="lineNum">     520</span>                 :             :      */</span>
+<span id="L521"><span class="lineNum">     521</span>                 :             :     bool processHoAOpt(Packet *packet, HomeAddressOption *hoaOpt);</span>
+<span id="L522"><span class="lineNum">     522</span>                 :             : </span>
+<span id="L523"><span class="lineNum">     523</span>                 :             : //</span>
+<span id="L524"><span class="lineNum">     524</span>                 :             : // Binding Refresh Request related functions</span>
+<span id="L525"><span class="lineNum">     525</span>                 :             : //</span>
+<span id="L526"><span class="lineNum">     526</span>                 :             : </span>
+<span id="L527"><span class="lineNum">     527</span>                 :             :     /**</span>
+<span id="L528"><span class="lineNum">     528</span>                 :             :      * Creates a timer for a Binding Refresh Request message that is going to be fired in scheduledTime seconds.</span>
+<span id="L529"><span class="lineNum">     529</span>                 :             :      */</span>
+<span id="L530"><span class="lineNum">     530</span>                 :             :     void createBRRTimer(const Ipv6Address&amp; brDest, NetworkInterface *ie, const uint scheduledTime);</span>
+<span id="L531"><span class="lineNum">     531</span>                 :             : </span>
+<span id="L532"><span class="lineNum">     532</span>                 :             :     /**</span>
+<span id="L533"><span class="lineNum">     533</span>                 :             :      * Handles a fired BRR message transmission structure.</span>
+<span id="L534"><span class="lineNum">     534</span>                 :             :      * Creates and sends and appropriate Binding Refresh Request.</span>
+<span id="L535"><span class="lineNum">     535</span>                 :             :      * Transmission structure is rescheduled afterwards.</span>
+<span id="L536"><span class="lineNum">     536</span>                 :             :      */</span>
+<span id="L537"><span class="lineNum">     537</span>                 :             :     void sendPeriodicBRR(cMessage *msg);</span>
+<span id="L538"><span class="lineNum">     538</span>                 :             : </span>
+<span id="L539"><span class="lineNum">     539</span>                 :             :     /**</span>
+<span id="L540"><span class="lineNum">     540</span>                 :             :      * Creates a Binding Refresh Request and sends it to the Ipv6 module.</span>
+<span id="L541"><span class="lineNum">     541</span>                 :             :      */</span>
+<span id="L542"><span class="lineNum">     542</span>                 :             :     void createAndSendBRRMessage(const Ipv6Address&amp; dest, NetworkInterface *ie);</span>
+<span id="L543"><span class="lineNum">     543</span>                 :             : </span>
+<span id="L544"><span class="lineNum">     544</span>                 :             :     /**</span>
+<span id="L545"><span class="lineNum">     545</span>                 :             :      * Processes the Binding Refresh Message.</span>
+<span id="L546"><span class="lineNum">     546</span>                 :             :      */</span>
+<span id="L547"><span class="lineNum">     547</span>                 :             :     void processBRRMessage(Packet *inPacket, const Ptr&lt;const BindingRefreshRequest&gt;&amp; brr);</span>
+<span id="L548"><span class="lineNum">     548</span>                 :             : </span>
+<span id="L549"><span class="lineNum">     549</span>                 :             :   protected:</span>
+<span id="L550"><span class="lineNum">     550</span>                 :             : //</span>
+<span id="L551"><span class="lineNum">     551</span>                 :             : // Helper functions</span>
+<span id="L552"><span class="lineNum">     552</span>                 :             : //</span>
+<span id="L553"><span class="lineNum">     553</span>                 :             : </span>
+<span id="L554"><span class="lineNum">     554</span>                 :             :     /**</span>
+<span id="L555"><span class="lineNum">     555</span>                 :             :      * Deletes the appropriate entry from the transmitIfList and cancels</span>
+<span id="L556"><span class="lineNum">     556</span>                 :             :      * the corresponding retransmission timer.</span>
+<span id="L557"><span class="lineNum">     557</span>                 :             :      */</span>
+<span id="L558"><span class="lineNum">     558</span>                 :             :     bool cancelTimerIfEntry(const Ipv6Address&amp; dest, int interfaceID, int msgType);</span>
+<span id="L559"><span class="lineNum">     559</span>                 :             : </span>
+<span id="L560"><span class="lineNum">     560</span>                 :             :     /**</span>
+<span id="L561"><span class="lineNum">     561</span>                 :             :      * Checks whether there exists an TransmitIfEntry for the specified values.</span>
+<span id="L562"><span class="lineNum">     562</span>                 :             :      * In case a new TODOTimerIfEntry is added, this method has to be appropriately extended in order</span>
+<span id="L563"><span class="lineNum">     563</span>                 :             :      * to cover the new data structure.</span>
+<span id="L564"><span class="lineNum">     564</span>                 :             :      * Returns true on success and false otherwise.</span>
+<span id="L565"><span class="lineNum">     565</span>                 :             :      */</span>
+<span id="L566"><span class="lineNum">     566</span>                 :             :     bool pendingTimerIfEntry(Ipv6Address&amp; dest, int interfaceID, int msgType);</span>
+<span id="L567"><span class="lineNum">     567</span>                 :             : </span>
+<span id="L568"><span class="lineNum">     568</span>                 :             :     /**</span>
+<span id="L569"><span class="lineNum">     569</span>                 :             :      * Returns a pointer to an TimerIfEntry object identified by the provided key,</span>
+<span id="L570"><span class="lineNum">     570</span>                 :             :      * which can be one of the possible polymorphic types. In case there does not yet</span>
+<span id="L571"><span class="lineNum">     571</span>                 :             :      * exist such an entry, a new one is created.</span>
+<span id="L572"><span class="lineNum">     572</span>                 :             :      * The type of the TimerIfEntry is specified with the provided timerType.</span>
+<span id="L573"><span class="lineNum">     573</span>                 :             :      */</span>
+<span id="L574"><span class="lineNum">     574</span>                 :             :     TimerIfEntry *getTimerIfEntry(Key&amp; key, int timerType);</span>
+<span id="L575"><span class="lineNum">     575</span>                 :             : </span>
+<span id="L576"><span class="lineNum">     576</span>                 :             :     /**</span>
+<span id="L577"><span class="lineNum">     577</span>                 :             :      * Searches for a transmitEntry with the given destination address which is of type</span>
+<span id="L578"><span class="lineNum">     578</span>                 :             :      * timerType.</span>
+<span id="L579"><span class="lineNum">     579</span>                 :             :      * Returns nullptr if no such entry exists.</span>
+<span id="L580"><span class="lineNum">     580</span>                 :             :      */</span>
+<span id="L581"><span class="lineNum">     581</span>                 :             :     TimerIfEntry *searchTimerIfEntry(Ipv6Address&amp; dest, int timerType);</span>
+<span id="L582"><span class="lineNum">     582</span>                 :             : </span>
+<span id="L583"><span class="lineNum">     583</span>                 :             :     /**</span>
+<span id="L584"><span class="lineNum">     584</span>                 :             :      * Removes timers of all types for the specified destination address and interfaceId.</span>
+<span id="L585"><span class="lineNum">     585</span>                 :             :      * Whenever a new mobility related timer is added, is MUST be added within this method</span>
+<span id="L586"><span class="lineNum">     586</span>                 :             :      * to ensure proper removal.</span>
+<span id="L587"><span class="lineNum">     587</span>                 :             :      */</span>
+<span id="L588"><span class="lineNum">     588</span>                 :             :     void removeTimerEntries(const Ipv6Address&amp; dest, int interfaceId);</span>
+<span id="L589"><span class="lineNum">     589</span>                 :             : </span>
+<span id="L590"><span class="lineNum">     590</span>                 :             :     /**</span>
+<span id="L591"><span class="lineNum">     591</span>                 :             :      * Cancel all timers (TransmitIf entities for HA and CNs) related to the provided interfaceId and CoA.</span>
+<span id="L592"><span class="lineNum">     592</span>                 :             :      * In addition the tunnels to the Home Agent and the CNs are destroyed as well.</span>
+<span id="L593"><span class="lineNum">     593</span>                 :             :        0     */</span>
+<span id="L594"><span class="lineNum">     594</span>                 :             :     void cancelEntries(int interfaceId, Ipv6Address&amp; CoA);</span>
+<span id="L595"><span class="lineNum">     595</span>                 :             : </span>
+<span id="L596"><span class="lineNum">     596</span>                 :             :     /**</span>
+<span id="L597"><span class="lineNum">     597</span>                 :             :      * Remove all entries from the interfaceCoAList.</span>
+<span id="L598"><span class="lineNum">     598</span>                 :             :      */</span>
+<span id="L599"><span class="lineNum">     599</span>                 :             :     void removeCoAEntries();</span>
+<span id="L600"><span class="lineNum">     600</span>                 :             : </span>
+<span id="L601"><span class="lineNum">     601</span>                 :             :     /**</span>
+<span id="L602"><span class="lineNum">     602</span>                 :             :      * Human-readable mobility status of this (mobile) node, for the display string</span>
+<span id="L603"><span class="lineNum">     603</span>                 :             :      * (WATCH_EXPR &quot;mobilityStatus&quot;): &quot;at home&quot;, &quot;away (via home agent)&quot; or</span>
+<span id="L604"><span class="lineNum">     604</span>                 :             :      * &quot;route-optimized (N CN[s])&quot;.</span>
+<span id="L605"><span class="lineNum">     605</span>                 :             :      */</span>
+<span id="L606"><span class="lineNum">     606</span>                 :             :     std::string getMobilityStatusInfo() const;</span>
+<span id="L607"><span class="lineNum">     607</span>                 :             : </span>
+<span id="L608"><span class="lineNum">     608</span>                 :             :     /**</span>
+<span id="L609"><span class="lineNum">     609</span>                 :             :      * The node's current care-of address as a string, or &quot;(home)&quot; when it has none,</span>
+<span id="L610"><span class="lineNum">     610</span>                 :             :      * for the display string (WATCH_EXPR &quot;careOfAddress&quot;).</span>
+<span id="L611"><span class="lineNum">     611</span>                 :             :      */</span>
+<span id="L612"><span class="lineNum">     612</span>                 :             :     std::string getCareOfAddressInfo() const;</span>
+<span id="L613"><span class="lineNum">     613</span>                 :             : </span>
+<span id="L614"><span class="lineNum">     614</span>                 :             : //</span>
+<span id="L615"><span class="lineNum">     615</span>                 :             : // Helper functions for BUL/BC expiry management</span>
+<span id="L616"><span class="lineNum">     616</span>                 :             : //</span>
+<span id="L617"><span class="lineNum">     617</span>                 :             :     /**</span>
+<span id="L618"><span class="lineNum">     618</span>                 :             :      * Creates or overwrites a timer for BUL expiry that fires at provided scheduledTime.</span>
+<span id="L619"><span class="lineNum">     619</span>                 :             :      */</span>
+<span id="L620"><span class="lineNum">     620</span>                 :             :     void createBULEntryExpiryTimer(BindingUpdateList::BindingUpdateListEntry *entry,</span>
+<span id="L621"><span class="lineNum">     621</span>                 :             :             NetworkInterface *ie, simtime_t scheduledTime);</span>
+<span id="L622"><span class="lineNum">     622</span>                 :             : </span>
+<span id="L623"><span class="lineNum">     623</span>                 :             :     /**</span>
+<span id="L624"><span class="lineNum">     624</span>                 :             :      * Handles the situation of a BUL expiry. Either a BU is sent in advance for renewal or the BUL entry is removed.</span>
+<span id="L625"><span class="lineNum">     625</span>                 :             :      */</span>
+<span id="L626"><span class="lineNum">     626</span>                 :             :     void handleBULExpiry(cMessage *msg);</span>
+<span id="L627"><span class="lineNum">     627</span>                 :             : </span>
+<span id="L628"><span class="lineNum">     628</span>                 :             :     /**</span>
+<span id="L629"><span class="lineNum">     629</span>                 :             :      * Creates or overwrites a timer for BC expiry that fires at provided scheduledTime.</span>
+<span id="L630"><span class="lineNum">     630</span>                 :             :      */</span>
+<span id="L631"><span class="lineNum">     631</span>                 :             :     void createBCEntryExpiryTimer(const Ipv6Address&amp; HoA, NetworkInterface *ie, simtime_t scheduledTime);</span>
+<span id="L632"><span class="lineNum">     632</span>                 :             : </span>
+<span id="L633"><span class="lineNum">     633</span>                 :             :     /**</span>
+<span id="L634"><span class="lineNum">     634</span>                 :             :      * Handles the expiry of a BC entry.</span>
+<span id="L635"><span class="lineNum">     635</span>                 :             :      * Entry is removed from BC and tunnels/routing paths are destroyed.</span>
+<span id="L636"><span class="lineNum">     636</span>                 :             :      */</span>
+<span id="L637"><span class="lineNum">     637</span>                 :             :     void handleBCExpiry(cMessage *msg);</span>
+<span id="L638"><span class="lineNum">     638</span>                 :             : </span>
+<span id="L639"><span class="lineNum">     639</span>                 :             : //</span>
+<span id="L640"><span class="lineNum">     640</span>                 :             : // Helper functions for token expiry</span>
+<span id="L641"><span class="lineNum">     641</span>                 :             : //</span>
+<span id="L642"><span class="lineNum">     642</span>                 :             :     /**</span>
+<span id="L643"><span class="lineNum">     643</span>                 :             :      * Creates or overwrites a timer for home keygen token expiry that fires at provided scheduledTime.</span>
+<span id="L644"><span class="lineNum">     644</span>                 :             :      */</span>
+<span id="L645"><span class="lineNum">     645</span>                 :             :     void createHomeTokenEntryExpiryTimer(Ipv6Address&amp; cnAddr, NetworkInterface *ie, simtime_t scheduledTime)</span>
+<span id="L646"><span class="lineNum">     646</span>                 :<span class="tlaGNC">          20 :     {</span></span>
+<span id="L647"><span class="lineNum">     647</span>                 :<span class="tlaGNC">          20 :         createTokenEntryExpiryTimer(cnAddr, ie, scheduledTime, KEY_HTOKEN_EXP);</span></span>
+<span id="L648"><span class="lineNum">     648</span>                 :<span class="tlaGNC">          20 :     }</span></span>
+<span id="L649"><span class="lineNum">     649</span>                 :             : </span>
+<span id="L650"><span class="lineNum">     650</span>                 :             :     /**</span>
+<span id="L651"><span class="lineNum">     651</span>                 :             :      * Creates or overwrites a timer for care-of keygen token expiry that fires at provided scheduledTime.</span>
+<span id="L652"><span class="lineNum">     652</span>                 :             :      */</span>
+<span id="L653"><span class="lineNum">     653</span>                 :             :     void createCareOfTokenEntryExpiryTimer(Ipv6Address&amp; cnAddr, NetworkInterface *ie, simtime_t scheduledTime)</span>
+<span id="L654"><span class="lineNum">     654</span>                 :<span class="tlaGNC">          14 :     {</span></span>
+<span id="L655"><span class="lineNum">     655</span>                 :<span class="tlaGNC">          14 :         createTokenEntryExpiryTimer(cnAddr, ie, scheduledTime, KEY_CTOKEN_EXP);</span></span>
+<span id="L656"><span class="lineNum">     656</span>                 :<span class="tlaGNC">          14 :     }</span></span>
+<span id="L657"><span class="lineNum">     657</span>                 :             : </span>
+<span id="L658"><span class="lineNum">     658</span>                 :             :   private:</span>
+<span id="L659"><span class="lineNum">     659</span>                 :             :     /**</span>
+<span id="L660"><span class="lineNum">     660</span>                 :             :      * Creates or overwrites a timer for {home, care-of} keygen token expiry that fires at provided scheduledTime.</span>
+<span id="L661"><span class="lineNum">     661</span>                 :             :      * Parameter tokenType is provided as KEY_XTOKEN_EXP</span>
+<span id="L662"><span class="lineNum">     662</span>                 :             :      */</span>
+<span id="L663"><span class="lineNum">     663</span>                 :             :     void createTokenEntryExpiryTimer(Ipv6Address&amp; cnAddr, NetworkInterface *ie, simtime_t scheduledTime, int tokenType);</span>
+<span id="L664"><span class="lineNum">     664</span>                 :             : </span>
+<span id="L665"><span class="lineNum">     665</span>                 :             :     /**</span>
+<span id="L666"><span class="lineNum">     666</span>                 :             :      * Handles the event that indicates that a {care-of,home} keygen token has expired.</span>
+<span id="L667"><span class="lineNum">     667</span>                 :             :      */</span>
+<span id="L668"><span class="lineNum">     668</span>                 :             :     void handleTokenExpiry(cMessage *msg);</span>
+<span id="L669"><span class="lineNum">     669</span>                 :             : };</span>
+<span id="L670"><span class="lineNum">     670</span>                 :             : </span>
+<span id="L671"><span class="lineNum">     671</span>                 :             : } // namespace inet</span>
+<span id="L672"><span class="lineNum">     672</span>                 :             : </span>
+<span id="L673"><span class="lineNum">     673</span>                 :             : #endif</span>
+<span id="L674"><span class="lineNum">     674</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

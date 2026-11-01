@@ -1,0 +1,206 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - common/src/inet/common/FingerprintCalculator.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">common/src/inet/common</a> - FingerprintCalculator.cc<span style="font-size: 80%;"> (source / <a href="FingerprintCalculator.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryMed">82.0&nbsp;%</td>
+            <td class="headerCovTableEntry">89</td>
+            <td class="headerCovTableEntry">73</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntry">4</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryLo">70.6&nbsp;%</td>
+            <td class="headerCovTableEntry">68</td>
+            <td class="headerCovTableEntry">48</td>
+          </tr>
+                  <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2020 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #include &quot;inet/common/FingerprintCalculator.h&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : </span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &quot;inet/common/ModuleAccess.h&quot;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &quot;inet/common/packet/Packet.h&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &quot;inet/networklayer/common/NetworkInterface.h&quot;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : </span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : namespace inet {</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : </span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : Register_Class(FingerprintCalculator);</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : </span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : void FingerprintCalculator::parseIngredients(const char *s)</span>
+<span id="L19"><span class="lineNum">      19</span>                 :<span class="tlaGNC tlaBgGNC">        4703 : {</span></span>
+<span id="L20"><span class="lineNum">      20</span>                 :<span class="tlaGNC">        4703 :     cSingleFingerprintCalculator::parseIngredients(s);</span></span>
+<span id="L21"><span class="lineNum">      21</span>                 :<span class="tlaGNC">        4703 :     networkCommunicationFilter = strchr(s, NETWORK_COMMUNICATION_FILTER) != nullptr;</span></span>
+<span id="L22"><span class="lineNum">      22</span>                 :<span class="tlaGNC">        4703 :     packetUpdateFilter = strchr(s, PACKET_UPDATE_FILTER) != nullptr;</span></span>
+<span id="L23"><span class="lineNum">      23</span>                 :<span class="tlaGNC">        4703 : }</span></span>
+<span id="L24"><span class="lineNum">      24</span>                 :             : </span>
+<span id="L25"><span class="lineNum">      25</span>                 :             : cSingleFingerprintCalculator::FingerprintIngredient FingerprintCalculator::validateIngredient(char ch)</span>
+<span id="L26"><span class="lineNum">      26</span>                 :<span class="tlaGNC">       18812 : {</span></span>
+<span id="L27"><span class="lineNum">      27</span>         [<span class="tlaGBC" title="Branch 0 was taken 7738 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 11074 times"> + </span>]:<span class="tlaGNC">       18812 :     if (strchr(INET_FINGERPRINT_INGREDIENTS, ch) != nullptr)</span></span>
+<span id="L28"><span class="lineNum">      28</span>                 :<span class="tlaGNC">        7738 :         return (cSingleFingerprintCalculator::FingerprintIngredient)ch;</span></span>
+<span id="L29"><span class="lineNum">      29</span>                 :<span class="tlaGNC">       11074 :     else</span></span>
+<span id="L30"><span class="lineNum">      30</span>                 :<span class="tlaGNC">       11074 :         return cSingleFingerprintCalculator::validateIngredient(ch);</span></span>
+<span id="L31"><span class="lineNum">      31</span>                 :<span class="tlaGNC">       18812 : }</span></span>
+<span id="L32"><span class="lineNum">      32</span>                 :             : </span>
+<span id="L33"><span class="lineNum">      33</span>                 :             : bool FingerprintCalculator::addEventIngredient(cEvent *event, cSingleFingerprintCalculator::FingerprintIngredient ingredient)</span>
+<span id="L34"><span class="lineNum">      34</span>                 :<span class="tlaGNC">  1324147720 : {</span></span>
+<span id="L35"><span class="lineNum">      35</span>         [<span class="tlaGBC" title="Branch 0 was taken 1165979412 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 158168308 times"> + </span>]:<span class="tlaGNC">  1324147720 :     if (strchr(INET_FINGERPRINT_INGREDIENTS, ingredient) == nullptr)</span></span>
+<span id="L36"><span class="lineNum">      36</span>                 :<span class="tlaGNC">  1165979412 :         return cSingleFingerprintCalculator::addEventIngredient(event, ingredient);</span></span>
+<span id="L37"><span class="lineNum">      37</span>                 :<span class="tlaGNC">   158168308 :     else {</span></span>
+<span id="L38"><span class="lineNum">      38</span>                 :<span class="tlaGNC">   158168308 :         switch ((FingerprintIngredient)ingredient) {</span></span>
+<span id="L39"><span class="lineNum">      39</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 158168308 times"> + </span>]:<span class="tlaUNC tlaBgUNC">           0 :             case PACKET_UPDATE_FILTER:</span></span>
+<span id="L40"><span class="lineNum">      40</span>         [<span class="tlaGBC" title="Branch 0 was taken 64245767 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 93922541 times"> + </span>]:<span class="tlaGNC tlaBgGNC">    64245767 :             case NETWORK_COMMUNICATION_FILTER:</span></span>
+<span id="L41"><span class="lineNum">      41</span>                 :<span class="tlaGNC">    64245767 :                 break;</span></span>
+<span id="L42"><span class="lineNum">      42</span>         [<span class="tlaGBC" title="Branch 0 was taken 64245767 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 93922541 times"> + </span>]:<span class="tlaGNC">    64245767 :             case NETWORK_NODE_PATH:</span></span>
+<span id="L43"><span class="lineNum">      43</span>         [<span class="tlaGBC" title="Branch 0 was taken 64245767 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">    64245767 :                 if (event-&gt;isPacket()) {</span></span>
+<span id="L44"><span class="lineNum">      44</span>                 :<span class="tlaGNC">    64245767 :                     auto cpacket = static_cast&lt;cPacket *&gt;(event);</span></span>
+<span id="L45"><span class="lineNum">      45</span>         [<span class="tlaGBC" title="Branch 0 was taken 62990821 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1254946 times"> + </span>]:<span class="tlaGNC">    64245767 :                     if (auto senderNode = findContainingNode(cpacket-&gt;getSenderModule()))</span></span>
+<span id="L46"><span class="lineNum">      46</span>                 :<span class="tlaGNC">    62990821 :                         hasher_ &lt;&lt; senderNode-&gt;getFullPath();</span></span>
+<span id="L47"><span class="lineNum">      47</span>         [<span class="tlaGBC" title="Branch 0 was taken 63748255 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 497512 times"> + </span>]:<span class="tlaGNC">    64245767 :                     if (auto arrivalNode = findContainingNode(cpacket-&gt;getArrivalModule()))</span></span>
+<span id="L48"><span class="lineNum">      48</span>                 :<span class="tlaGNC">    63748255 :                         hasher_ &lt;&lt; arrivalNode-&gt;getFullPath();</span></span>
+<span id="L49"><span class="lineNum">      49</span>                 :<span class="tlaGNC">    64245767 :                 }</span></span>
+<span id="L50"><span class="lineNum">      50</span>                 :<span class="tlaGNC">    64245767 :                 break;</span></span>
+<span id="L51"><span class="lineNum">      51</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 158168308 times"> + </span>]:<span class="tlaUNC tlaBgUNC">           0 :             case NETWORK_INTERFACE_PATH:</span></span>
+<span id="L52"><span class="lineNum">      52</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                 if (event-&gt;isPacket()) {</span></span>
+<span id="L53"><span class="lineNum">      53</span>                 :<span class="tlaUNC">           0 :                     auto cpacket = static_cast&lt;cPacket *&gt;(event);</span></span>
+<span id="L54"><span class="lineNum">      54</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                     if (auto senderInterface = findContainingNicModule(cpacket-&gt;getSenderModule()))</span></span>
+<span id="L55"><span class="lineNum">      55</span>                 :<span class="tlaUNC">           0 :                         hasher_ &lt;&lt; senderInterface-&gt;getInterfaceFullPath();</span></span>
+<span id="L56"><span class="lineNum">      56</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                     if (auto arrivalInterface = findContainingNicModule(cpacket-&gt;getArrivalModule()))</span></span>
+<span id="L57"><span class="lineNum">      57</span>                 :<span class="tlaUNC">           0 :                         hasher_ &lt;&lt; arrivalInterface-&gt;getInterfaceFullPath();</span></span>
+<span id="L58"><span class="lineNum">      58</span>                 :<span class="tlaUNC">           0 :                 }</span></span>
+<span id="L59"><span class="lineNum">      59</span>                 :<span class="tlaUNC">           0 :                 break;</span></span>
+<span id="L60"><span class="lineNum">      60</span>         [<span class="tlaGBC" title="Branch 0 was taken 29676774 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 128491534 times"> + </span>]:<span class="tlaGNC tlaBgGNC">    29676774 :             case PACKET_DATA: {</span></span>
+<span id="L61"><span class="lineNum">      61</span>         [<span class="tlaGBC" title="Branch 0 was taken 29676774 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">    29676774 :                 if (event-&gt;isPacket()) {</span></span>
+<span id="L62"><span class="lineNum">      62</span>                 :<span class="tlaGNC">    29676774 :                     auto cpacket = static_cast&lt;cPacket *&gt;(event);</span></span>
+<span id="L63"><span class="lineNum">      63</span>                 :<span class="tlaGNC">    29676774 :                     auto packet = dynamic_cast&lt;Packet *&gt;(cpacket);</span></span>
+<span id="L64"><span class="lineNum">      64</span>         [<span class="tlaGBC" title="Branch 0 was taken 27714995 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1961779 times"> + </span>]:<span class="tlaGNC">    29676774 :                     if (packet == nullptr)</span></span>
+<span id="L65"><span class="lineNum">      65</span>                 :<span class="tlaGNC">    27714995 :                         packet = dynamic_cast&lt;Packet *&gt;(cpacket-&gt;getEncapsulatedPacket());</span></span>
+<span id="L66"><span class="lineNum">      66</span> [<span class="tlaGBC" title="Branch 0 was taken 29676774 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 29397224 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 279550 times"> + </span>]:<span class="tlaGNC">    29676774 :                     if (packet != nullptr &amp;&amp; packet-&gt;getTotalLength().get&lt;b&gt;() &gt; 0) {</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 29397224 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 279550 times"> + </span>]
+<span id="L67"><span class="lineNum">      67</span>         [<span class="tlaGBC" title="Branch 0 was taken 29393696 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3528 times"> + </span>]:<span class="tlaGNC">    29397224 :                         if (packet-&gt;getTotalLength().get&lt;b&gt;() % 8 == 0) {</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :<span class="tlaGNC">    29393696 :                             const auto&amp; content = packet-&gt;peekAllAsBytes();</span></span>
+<span id="L69"><span class="lineNum">      69</span>         [<span class="tlaGBC" title="Branch 0 was taken 10651911141 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 29393696 times"> + </span>]:<span class="tlaGNC">    29393696 :                             for (auto byte : content-&gt;getBytes())</span></span>
+<span id="L70"><span class="lineNum">      70</span>                 :<span class="tlaGNC"> 10651911141 :                                 hasher_ &lt;&lt; byte;</span></span>
+<span id="L71"><span class="lineNum">      71</span>                 :<span class="tlaGNC">    29393696 :                         }</span></span>
+<span id="L72"><span class="lineNum">      72</span>                 :<span class="tlaGNC">        3528 :                         else {</span></span>
+<span id="L73"><span class="lineNum">      73</span>                 :<span class="tlaGNC">        3528 :                             const auto&amp; content = packet-&gt;peekAllAsBits();</span></span>
+<span id="L74"><span class="lineNum">      74</span>         [<span class="tlaGBC" title="Branch 0 was taken 3055843 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3528 times"> + </span>]:<span class="tlaGNC">        3528 :                             for (auto bit : content-&gt;getBits())</span></span>
+<span id="L75"><span class="lineNum">      75</span>                 :<span class="tlaGNC">     3055843 :                                 hasher_ &lt;&lt; bit;</span></span>
+<span id="L76"><span class="lineNum">      76</span>                 :<span class="tlaGNC">        3528 :                         }</span></span>
+<span id="L77"><span class="lineNum">      77</span>                 :<span class="tlaGNC">    29397224 :                     }</span></span>
+<span id="L78"><span class="lineNum">      78</span>                 :<span class="tlaGNC">    29676774 :                 }</span></span>
+<span id="L79"><span class="lineNum">      79</span>                 :<span class="tlaGNC">    29676774 :                 break;</span></span>
+<span id="L80"><span class="lineNum">      80</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             }</span></span>
+<span id="L81"><span class="lineNum">      81</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 158168308 times"> + </span>]:<span class="tlaUNC">           0 :             default:</span></span>
+<span id="L82"><span class="lineNum">      82</span>                 :<span class="tlaUNC">           0 :                 throw cRuntimeError(&quot;Unknown fingerprint ingredient '%c' (%d)&quot;, ingredient, ingredient);</span></span>
+<span id="L83"><span class="lineNum">      83</span>                 :<span class="tlaGNC tlaBgGNC">   158168308 :         }</span></span>
+<span id="L84"><span class="lineNum">      84</span>                 :<span class="tlaGNC">   158168308 :         return true;</span></span>
+<span id="L85"><span class="lineNum">      85</span>                 :<span class="tlaGNC">   158168308 :     }</span></span>
+<span id="L86"><span class="lineNum">      86</span>                 :<span class="tlaGNC">  1324147720 : }</span></span>
+<span id="L87"><span class="lineNum">      87</span>                 :             : </span>
+<span id="L88"><span class="lineNum">      88</span>                 :             : void FingerprintCalculator::addEvent(cEvent *event)</span>
+<span id="L89"><span class="lineNum">      89</span>                 :<span class="tlaGNC">   780642820 : {</span></span>
+<span id="L90"><span class="lineNum">      90</span> [<span class="tlaGBC" title="Branch 0 was taken 513851657 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 266791163 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 266791163 times"> + </span>]:<span class="tlaGNC">   780642820 :     if (networkCommunicationFilter || packetUpdateFilter) {</span></span>
+<span id="L91"><span class="lineNum">      91</span>                 :<span class="tlaGNC">   513851657 :         cPacket *cpacket =</span></span>
+<span id="L92"><span class="lineNum">      92</span> [<span class="tlaGBC" title="Branch 0 was taken 513851657 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 327106400 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 186745257 times"> + </span>]:<span class="tlaGNC">   513851657 :             (event-&gt;isMessage() &amp;&amp; static_cast&lt;cMessage *&gt;(event)-&gt;isPacket()) ?</span></span>
+<span id="L93"><span class="lineNum">      93</span>                 :<span class="tlaGNC">   327106400 :             static_cast&lt;cPacket *&gt;(event) : nullptr;</span></span>
+<span id="L94"><span class="lineNum">      94</span>                 :             : </span>
+<span id="L95"><span class="lineNum">      95</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 513851657 times"> + </span>]:<span class="tlaGNC">   513851657 :         if (packetUpdateFilter) {</span></span>
+<span id="L96"><span class="lineNum">      96</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC tlaBgUNC">           0 :             if (cpacket != nullptr &amp;&amp; cpacket-&gt;isUpdate())</span></span>
+<span id="L97"><span class="lineNum">      97</span>                 :<span class="tlaUNC">           0 :                 return;</span></span>
+<span id="L98"><span class="lineNum">      98</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L99"><span class="lineNum">      99</span>                 :             : </span>
+<span id="L100"><span class="lineNum">     100</span>         [<span class="tlaGBC" title="Branch 0 was taken 513851657 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC tlaBgGNC">   513851657 :         if (networkCommunicationFilter) {</span></span>
+<span id="L101"><span class="lineNum">     101</span>         [<span class="tlaGBC" title="Branch 0 was taken 186745257 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 327106400 times"> + </span>]:<span class="tlaGNC">   513851657 :             if (cpacket == nullptr)</span></span>
+<span id="L102"><span class="lineNum">     102</span>                 :<span class="tlaGNC">   186745257 :                 return;</span></span>
+<span id="L103"><span class="lineNum">     103</span>                 :             : </span>
+<span id="L104"><span class="lineNum">     104</span>                 :<span class="tlaGNC">   327106400 :             auto packet = dynamic_cast&lt;Packet *&gt;(cpacket);</span></span>
+<span id="L105"><span class="lineNum">     105</span>         [<span class="tlaGBC" title="Branch 0 was taken 63554282 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 263552118 times"> + </span>]:<span class="tlaGNC">   327106400 :             if (packet == nullptr)</span></span>
+<span id="L106"><span class="lineNum">     106</span>                 :<span class="tlaGNC">    63554282 :                 packet = dynamic_cast&lt;Packet *&gt;(cpacket-&gt;getEncapsulatedPacket());</span></span>
+<span id="L107"><span class="lineNum">     107</span>         [<span class="tlaGBC" title="Branch 0 was taken 2960946 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 324145454 times"> + </span>]:<span class="tlaGNC">   327106400 :             if (packet == nullptr)</span></span>
+<span id="L108"><span class="lineNum">     108</span>                 :<span class="tlaGNC">     2960946 :                 return;</span></span>
+<span id="L109"><span class="lineNum">     109</span>                 :             : </span>
+<span id="L110"><span class="lineNum">     110</span>                 :<span class="tlaGNC">   324145454 :             auto senderNode = findContainingNode(cpacket-&gt;getSenderModule());</span></span>
+<span id="L111"><span class="lineNum">     111</span>                 :<span class="tlaGNC">   324145454 :             auto arrivalNode = findContainingNode(cpacket-&gt;getArrivalModule());</span></span>
+<span id="L112"><span class="lineNum">     112</span>         [<span class="tlaGBC" title="Branch 0 was taken 259899687 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 64245767 times"> + </span>]:<span class="tlaGNC">   324145454 :             if (senderNode == arrivalNode)</span></span>
+<span id="L113"><span class="lineNum">     113</span>                 :<span class="tlaGNC">   259899687 :                 return;</span></span>
+<span id="L114"><span class="lineNum">     114</span>                 :<span class="tlaGNC">   324145454 :         }</span></span>
+<span id="L115"><span class="lineNum">     115</span>                 :<span class="tlaGNC">   513851657 :     }</span></span>
+<span id="L116"><span class="lineNum">     116</span>                 :<span class="tlaGNC">   331036930 :     cSingleFingerprintCalculator::addEvent(event);</span></span>
+<span id="L117"><span class="lineNum">     117</span>                 :<span class="tlaGNC">   331036930 : }</span></span>
+<span id="L118"><span class="lineNum">     118</span>                 :             : </span>
+<span id="L119"><span class="lineNum">     119</span>                 :             : } // namespace</span>
+<span id="L120"><span class="lineNum">     120</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - linklayer/ieee80211/mib/src/inet/linklayer/ieee80211/mib/Ieee80211HtCapabilities.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../index.html">top level</a> - <a href="index.html">linklayer/ieee80211/mib/src/inet/linklayer/ieee80211/mib</a> - Ieee80211HtCapabilities.h<span style="font-size: 80%;"> (source / <a href="Ieee80211HtCapabilities.h.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">60</td>
+            <td class="headerCovTableEntry">60</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntry">5</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryMed">88.0&nbsp;%</td>
+            <td class="headerCovTableEntry">92</td>
+            <td class="headerCovTableEntry">81</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2026 INET Framework contributors</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : #ifndef __INET_IEEE80211HTCAPABILITIES_H</span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #define __INET_IEEE80211HTCAPABILITIES_H</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : </span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &lt;algorithm&gt;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &lt;array&gt;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &lt;set&gt;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : </span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : #include &quot;inet/common/Units.h&quot;</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : </span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : namespace inet {</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : namespace ieee80211 {</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : </span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : using namespace units::values;</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : </span>
+<span id="L21"><span class="lineNum">      21</span>                 :             : // IEEE Std 802.11-2024, Table 9-230.</span>
+<span id="L22"><span class="lineNum">      22</span>                 :             : enum class Ieee80211HtProtectionMode : uint8_t {</span>
+<span id="L23"><span class="lineNum">      23</span>                 :             :     NO_PROTECTION = 0,</span>
+<span id="L24"><span class="lineNum">      24</span>                 :             :     NONMEMBER_PROTECTION = 1,</span>
+<span id="L25"><span class="lineNum">      25</span>                 :             :     TWENTY_MHZ_PROTECTION = 2,</span>
+<span id="L26"><span class="lineNum">      26</span>                 :             :     NON_HT_MIXED = 3,</span>
+<span id="L27"><span class="lineNum">      27</span>                 :             : };</span>
+<span id="L28"><span class="lineNum">      28</span>                 :             : </span>
+<span id="L29"><span class="lineNum">      29</span>                 :             : struct Ieee80211HtMcsNssMap</span>
+<span id="L30"><span class="lineNum">      30</span>                 :             : {</span>
+<span id="L31"><span class="lineNum">      31</span>                 :             :     std::array&lt;int, 4&gt; maxMcsPerNss;</span>
+<span id="L32"><span class="lineNum">      32</span>                 :             : </span>
+<span id="L33"><span class="lineNum">      33</span>                 :<span class="tlaGNC tlaBgGNC">      122164 :     Ieee80211HtMcsNssMap() { maxMcsPerNss.fill(-1); }</span></span>
+<span id="L34"><span class="lineNum">      34</span>                 :             : };</span>
+<span id="L35"><span class="lineNum">      35</span>                 :             : </span>
+<span id="L36"><span class="lineNum">      36</span>                 :             : /**</span>
+<span id="L37"><span class="lineNum">      37</span>                 :             :  * Model-backed subset of the HT Capabilities element (IEEE Std 802.11-2024, 9.4.2.54).</span>
+<span id="L38"><span class="lineNum">      38</span>                 :             :  * Unrepresented optional capabilities are encoded as unsupported or reserved.</span>
+<span id="L39"><span class="lineNum">      39</span>                 :             :  */</span>
+<span id="L40"><span class="lineNum">      40</span>                 :             : struct Ieee80211HtCapabilities</span>
+<span id="L41"><span class="lineNum">      41</span>                 :             : {</span>
+<span id="L42"><span class="lineNum">      42</span>                 :             :     std::set&lt;Hz&gt; supportedChannelWidths;</span>
+<span id="L43"><span class="lineNum">      43</span>                 :             :     std::array&lt;bool, 77&gt; rxMcsSupported = {};</span>
+<span id="L44"><span class="lineNum">      44</span>                 :             :     bool txMcsSetDefined = true;</span>
+<span id="L45"><span class="lineNum">      45</span>                 :             :     bool txRxMcsSetNotEqual = false;</span>
+<span id="L46"><span class="lineNum">      46</span>                 :             :     int txMaxNss = 0;</span>
+<span id="L47"><span class="lineNum">      47</span>                 :             :     bool txUnequalModulation = false;</span>
+<span id="L48"><span class="lineNum">      48</span>                 :             :     // Modeled per-NSS local Tx ceiling. It is deliberately left unknown when a</span>
+<span id="L49"><span class="lineNum">      49</span>                 :             :     // received unequal Tx/Rx advertisement supplies only Table 9-226's summary fields.</span>
+<span id="L50"><span class="lineNum">      50</span>                 :             :     Ieee80211HtMcsNssMap txMcsNss;</span>
+<span id="L51"><span class="lineNum">      51</span>                 :             :     bool ldpc = false;</span>
+<span id="L52"><span class="lineNum">      52</span>                 :             :     bool greenfield = false;</span>
+<span id="L53"><span class="lineNum">      53</span>                 :             :     bool shortGi20 = false;</span>
+<span id="L54"><span class="lineNum">      54</span>                 :             :     bool shortGi40 = false;</span>
+<span id="L55"><span class="lineNum">      55</span>                 :             :     int maxAmpduLengthExponent = 0;</span>
+<span id="L56"><span class="lineNum">      56</span>                 :             : </span>
+<span id="L57"><span class="lineNum">      57</span>                 :<span class="tlaGNC">        5286 :     bool operator==(const Ieee80211HtCapabilities&amp; other) const {</span></span>
+<span id="L58"><span class="lineNum">      58</span> [<span class="tlaGBC" title="Branch 0 was taken 5285 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 5280 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5 times"> + </span>]:<span class="tlaGNC">        5286 :         return supportedChannelWidths == other.supportedChannelWidths &amp;&amp; rxMcsSupported == other.rxMcsSupported &amp;&amp;</span></span>
+<span id="L59"><span class="lineNum">      59</span> [<span class="tlaGBC" title="Branch 0 was taken 5272 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 8 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 5268 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4 times"> + </span>]:<span class="tlaGNC">        5286 :                 txMcsSetDefined == other.txMcsSetDefined &amp;&amp; txRxMcsSetNotEqual == other.txRxMcsSetNotEqual &amp;&amp;</span></span>
+<span id="L60"><span class="lineNum">      60</span> [<span class="tlaGBC" title="Branch 0 was taken 5268 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 5268 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        5286 :                 txMaxNss == other.txMaxNss &amp;&amp; txUnequalModulation == other.txUnequalModulation &amp;&amp;</span></span>
+<span id="L61"><span class="lineNum">      61</span> [<span class="tlaGBC" title="Branch 0 was taken 5268 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 5268 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        5286 :                 txMcsNss.maxMcsPerNss == other.txMcsNss.maxMcsPerNss &amp;&amp; ldpc == other.ldpc &amp;&amp; greenfield == other.greenfield &amp;&amp;</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 5268 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span id="L62"><span class="lineNum">      62</span> [<span class="tlaGBC" title="Branch 0 was taken 5252 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 16 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 5252 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        5286 :                 shortGi20 == other.shortGi20 &amp;&amp; shortGi40 == other.shortGi40 &amp;&amp; maxAmpduLengthExponent == other.maxAmpduLengthExponent;</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 5252 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span id="L63"><span class="lineNum">      63</span>                 :<span class="tlaGNC">        5286 :     }</span></span>
+<span id="L64"><span class="lineNum">      64</span>                 :             : };</span>
+<span id="L65"><span class="lineNum">      65</span>                 :             : </span>
+<span id="L66"><span class="lineNum">      66</span>                 :             : /** Model-backed subset of the HT Operation element (IEEE Std 802.11-2024, 9.4.2.55). */</span>
+<span id="L67"><span class="lineNum">      67</span>                 :             : struct Ieee80211HtOperation</span>
+<span id="L68"><span class="lineNum">      68</span>                 :             : {</span>
+<span id="L69"><span class="lineNum">      69</span>                 :             :     Hz operatingChannelWidth = MHz(20);</span>
+<span id="L70"><span class="lineNum">      70</span>                 :             :     int primaryChannel = 0;</span>
+<span id="L71"><span class="lineNum">      71</span>                 :             :     int secondaryChannelOffset = 0;</span>
+<span id="L72"><span class="lineNum">      72</span>                 :             :     Ieee80211HtProtectionMode protectionMode = Ieee80211HtProtectionMode::NO_PROTECTION;</span>
+<span id="L73"><span class="lineNum">      73</span>                 :             :     bool rifsMode = false;</span>
+<span id="L74"><span class="lineNum">      74</span>                 :             :     std::array&lt;bool, 77&gt; basicMcsSupported = {};</span>
+<span id="L75"><span class="lineNum">      75</span>                 :             : </span>
+<span id="L76"><span class="lineNum">      76</span>                 :<span class="tlaGNC">        3854 :     bool operator==(const Ieee80211HtOperation&amp; other) const {</span></span>
+<span id="L77"><span class="lineNum">      77</span> [<span class="tlaGBC" title="Branch 0 was taken 3850 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 3844 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 6 times"> + </span>]:<span class="tlaGNC">        3854 :         return operatingChannelWidth == other.operatingChannelWidth &amp;&amp; primaryChannel == other.primaryChannel &amp;&amp;</span></span>
+<span id="L78"><span class="lineNum">      78</span> [<span class="tlaGBC" title="Branch 0 was taken 3844 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 3844 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        3854 :                 secondaryChannelOffset == other.secondaryChannelOffset &amp;&amp; protectionMode == other.protectionMode &amp;&amp;</span></span>
+<span id="L79"><span class="lineNum">      79</span> [<span class="tlaGBC" title="Branch 0 was taken 3841 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 3840 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:<span class="tlaGNC">        3854 :                 rifsMode == other.rifsMode &amp;&amp; basicMcsSupported == other.basicMcsSupported;</span></span>
+<span id="L80"><span class="lineNum">      80</span>                 :<span class="tlaGNC">        3854 :     }</span></span>
+<span id="L81"><span class="lineNum">      81</span>                 :             : };</span>
+<span id="L82"><span class="lineNum">      82</span>                 :             : </span>
+<span id="L83"><span class="lineNum">      83</span>                 :             : struct Ieee80211HtDirectionalCapabilities</span>
+<span id="L84"><span class="lineNum">      84</span>                 :             : {</span>
+<span id="L85"><span class="lineNum">      85</span>                 :             :     bool valid = false;</span>
+<span id="L86"><span class="lineNum">      86</span>                 :             :     std::set&lt;Hz&gt; supportedChannelWidths;</span>
+<span id="L87"><span class="lineNum">      87</span>                 :             :     Ieee80211HtMcsNssMap mcsNss;</span>
+<span id="L88"><span class="lineNum">      88</span>                 :             :     std::array&lt;bool, 77&gt; supportedMcs = {};</span>
+<span id="L89"><span class="lineNum">      89</span>                 :             :     bool receiverLdpc = false;</span>
+<span id="L90"><span class="lineNum">      90</span>                 :             :     bool receiverShortGi20 = false;</span>
+<span id="L91"><span class="lineNum">      91</span>                 :             :     bool receiverShortGi40 = false;</span>
+<span id="L92"><span class="lineNum">      92</span>                 :             :     int receiverMaxAmpduLengthExponent = 0;</span>
+<span id="L93"><span class="lineNum">      93</span>                 :             : };</span>
+<span id="L94"><span class="lineNum">      94</span>                 :             : </span>
+<span id="L95"><span class="lineNum">      95</span>                 :             : struct Ieee80211NegotiatedHtCapabilities</span>
+<span id="L96"><span class="lineNum">      96</span>                 :             : {</span>
+<span id="L97"><span class="lineNum">      97</span>                 :             :     Ieee80211HtCapabilities localAdvertisement;</span>
+<span id="L98"><span class="lineNum">      98</span>                 :             :     Ieee80211HtCapabilities peerAdvertisement;</span>
+<span id="L99"><span class="lineNum">      99</span>                 :             :     Ieee80211HtDirectionalCapabilities localTxPeerRx;</span>
+<span id="L100"><span class="lineNum">     100</span>                 :             :     Ieee80211HtDirectionalCapabilities localRxPeerTx;</span>
+<span id="L101"><span class="lineNum">     101</span>                 :             :     Ieee80211HtOperation operation;</span>
+<span id="L102"><span class="lineNum">     102</span>                 :             : };</span>
+<span id="L103"><span class="lineNum">     103</span>                 :             : </span>
+<span id="L104"><span class="lineNum">     104</span>                 :             : inline Ieee80211NegotiatedHtCapabilities negotiateHtCapabilities(const Ieee80211HtCapabilities&amp; local,</span>
+<span id="L105"><span class="lineNum">     105</span>                 :             :         const Ieee80211HtCapabilities&amp; peer, const Ieee80211HtOperation&amp; operation)</span>
+<span id="L106"><span class="lineNum">     106</span>                 :<span class="tlaGNC">        3938 : {</span></span>
+<span id="L107"><span class="lineNum">     107</span>                 :<span class="tlaGNC">        3938 :     Ieee80211NegotiatedHtCapabilities negotiated;</span></span>
+<span id="L108"><span class="lineNum">     108</span>                 :<span class="tlaGNC">        3938 :     negotiated.localAdvertisement = local;</span></span>
+<span id="L109"><span class="lineNum">     109</span>                 :<span class="tlaGNC">        3938 :     negotiated.peerAdvertisement = peer;</span></span>
+<span id="L110"><span class="lineNum">     110</span>                 :<span class="tlaGNC">        3938 :     negotiated.operation = operation;</span></span>
+<span id="L111"><span class="lineNum">     111</span>         [<span class="tlaGBC" title="Branch 0 was taken 3957 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3938 times"> + </span>]:<span class="tlaGNC">        3938 :     for (const auto&amp; width : local.supportedChannelWidths)</span></span>
+<span id="L112"><span class="lineNum">     112</span>         [<span class="tlaGBC" title="Branch 0 was taken 3948 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 9 times"> + </span>]:<span class="tlaGNC">        3957 :         if (peer.supportedChannelWidths.count(width)) {</span></span>
+<span id="L113"><span class="lineNum">     113</span>                 :<span class="tlaGNC">        3948 :             negotiated.localTxPeerRx.supportedChannelWidths.insert(width);</span></span>
+<span id="L114"><span class="lineNum">     114</span>                 :<span class="tlaGNC">        3948 :             negotiated.localRxPeerTx.supportedChannelWidths.insert(width);</span></span>
+<span id="L115"><span class="lineNum">     115</span>                 :<span class="tlaGNC">        3948 :     }</span></span>
+<span id="L116"><span class="lineNum">     116</span>         [<span class="tlaGBC" title="Branch 0 was taken 303226 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3938 times"> + </span>]:<span class="tlaGNC">      307164 :     for (int mcs = 0; mcs &lt; 77; mcs++) {</span></span>
+<span id="L117"><span class="lineNum">     117</span>                 :<span class="tlaGNC">      303226 :         int nss = mcs / 8;</span></span>
+<span id="L118"><span class="lineNum">     118</span> [<span class="tlaGBC" title="Branch 0 was taken 303072 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 154 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 302918 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 154 times"> + </span>]:<span class="tlaGNC">      303226 :         bool localTx = local.txMcsSetDefined &amp;&amp; !local.txRxMcsSetNotEqual ? local.rxMcsSupported[mcs] :</span></span>
+<span id="L119"><span class="lineNum">     119</span> [<span class="tlaGBC" title="Branch 0 was taken 128 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 180 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 32 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 96 times"> + </span>]:<span class="tlaGNC">      303226 :                 nss &lt; 4 &amp;&amp; local.txMcsNss.maxMcsPerNss[nss] &gt;= mcs % 8;</span></span>
+<span id="L120"><span class="lineNum">     120</span>                 :             :         // Table 9-226 defines the equal case as the exact Rx MCS bitmap, not</span>
+<span id="L121"><span class="lineNum">     121</span>                 :             :         // a contiguous range ending at the highest advertised MCS.</span>
+<span id="L122"><span class="lineNum">     122</span> [<span class="tlaGBC" title="Branch 0 was taken 302995 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 231 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 302687 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 308 times"> + </span>]:<span class="tlaGNC">      303226 :         bool peerTx = peer.txMcsSetDefined &amp;&amp; !peer.txRxMcsSetNotEqual &amp;&amp; peer.rxMcsSupported[mcs];</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 56962 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 245725 times"> + </span>]
+<span id="L123"><span class="lineNum">     123</span> [<span class="tlaGBC" title="Branch 0 was taken 57396 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 245830 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 56991 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 405 times"> + </span>]:<span class="tlaGNC">      303226 :         negotiated.localTxPeerRx.supportedMcs[mcs] = localTx &amp;&amp; peer.rxMcsSupported[mcs];</span></span>
+<span id="L124"><span class="lineNum">     124</span> [<span class="tlaGBC" title="Branch 0 was taken 57396 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 245830 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 56954 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 442 times"> + </span>]:<span class="tlaGNC">      303226 :         negotiated.localRxPeerTx.supportedMcs[mcs] = local.rxMcsSupported[mcs] &amp;&amp; peerTx;</span></span>
+<span id="L125"><span class="lineNum">     125</span>                 :<span class="tlaGNC">      303226 :     }</span></span>
+<span id="L126"><span class="lineNum">     126</span>         [<span class="tlaGBC" title="Branch 0 was taken 15752 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3938 times"> + </span>]:<span class="tlaGNC">       19690 :     for (int nss = 0; nss &lt; 4; nss++) {</span></span>
+<span id="L127"><span class="lineNum">     127</span>         [<span class="tlaGBC" title="Branch 0 was taken 126016 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 15752 times"> + </span>]:<span class="tlaGNC">      141768 :         for (int mcs = 0; mcs &lt; 8; mcs++) {</span></span>
+<span id="L128"><span class="lineNum">     128</span>         [<span class="tlaGBC" title="Branch 0 was taken 56991 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 69025 times"> + </span>]:<span class="tlaGNC">      126016 :             if (negotiated.localTxPeerRx.supportedMcs[nss * 8 + mcs])</span></span>
+<span id="L129"><span class="lineNum">     129</span>                 :<span class="tlaGNC">       56991 :                 negotiated.localTxPeerRx.mcsNss.maxMcsPerNss[nss] = mcs;</span></span>
+<span id="L130"><span class="lineNum">     130</span>         [<span class="tlaGBC" title="Branch 0 was taken 56954 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 69062 times"> + </span>]:<span class="tlaGNC">      126016 :             if (negotiated.localRxPeerTx.supportedMcs[nss * 8 + mcs])</span></span>
+<span id="L131"><span class="lineNum">     131</span>                 :<span class="tlaGNC">       56954 :                 negotiated.localRxPeerTx.mcsNss.maxMcsPerNss[nss] = mcs;</span></span>
+<span id="L132"><span class="lineNum">     132</span>                 :<span class="tlaGNC">      126016 :         }</span></span>
+<span id="L133"><span class="lineNum">     133</span>                 :<span class="tlaGNC">       15752 :     }</span></span>
+<span id="L134"><span class="lineNum">     134</span>                 :             :     // LDPC and short-GI bits advertise receiver capability, so they are directional.</span>
+<span id="L135"><span class="lineNum">     135</span>                 :<span class="tlaGNC">        3938 :     negotiated.localTxPeerRx.receiverLdpc = peer.ldpc;</span></span>
+<span id="L136"><span class="lineNum">     136</span>                 :<span class="tlaGNC">        3938 :     negotiated.localRxPeerTx.receiverLdpc = local.ldpc;</span></span>
+<span id="L137"><span class="lineNum">     137</span>                 :<span class="tlaGNC">        3938 :     negotiated.localTxPeerRx.receiverShortGi20 = peer.shortGi20;</span></span>
+<span id="L138"><span class="lineNum">     138</span>                 :<span class="tlaGNC">        3938 :     negotiated.localRxPeerTx.receiverShortGi20 = local.shortGi20;</span></span>
+<span id="L139"><span class="lineNum">     139</span>                 :<span class="tlaGNC">        3938 :     negotiated.localTxPeerRx.receiverShortGi40 = peer.shortGi40;</span></span>
+<span id="L140"><span class="lineNum">     140</span>                 :<span class="tlaGNC">        3938 :     negotiated.localRxPeerTx.receiverShortGi40 = local.shortGi40;</span></span>
+<span id="L141"><span class="lineNum">     141</span>                 :<span class="tlaGNC">        3938 :     negotiated.localTxPeerRx.receiverMaxAmpduLengthExponent = peer.maxAmpduLengthExponent;</span></span>
+<span id="L142"><span class="lineNum">     142</span>                 :<span class="tlaGNC">        3938 :     negotiated.localRxPeerTx.receiverMaxAmpduLengthExponent = local.maxAmpduLengthExponent;</span></span>
+<span id="L143"><span class="lineNum">     143</span>                 :             :     // The HT Operation width is the BSS maximum. A 20 MHz-only STA may join a</span>
+<span id="L144"><span class="lineNum">     144</span>                 :             :     // 20/40 MHz BSS, so validity requires a common usable width, not equality</span>
+<span id="L145"><span class="lineNum">     145</span>                 :             :     // with the advertised BSS width (IEEE Std 802.11-2024, 11.15.2).</span>
+<span id="L146"><span class="lineNum">     146</span>         [<span class="tlaGBC" title="Branch 0 was taken 3938 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        3938 :     negotiated.localTxPeerRx.valid = !negotiated.localTxPeerRx.supportedChannelWidths.empty() &amp;&amp;</span></span>
+<span id="L147"><span class="lineNum">     147</span>         [<span class="tlaGBC" title="Branch 0 was taken 3937 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:<span class="tlaGNC">        3938 :             negotiated.localTxPeerRx.supportedMcs[0];</span></span>
+<span id="L148"><span class="lineNum">     148</span>                 :             :     // An undefined peer Tx MCS set is permitted by Table 9-226. It is unknown,</span>
+<span id="L149"><span class="lineNum">     149</span>                 :             :     // rather than an advertisement that the peer cannot transmit.</span>
+<span id="L150"><span class="lineNum">     150</span> [<span class="tlaGBC" title="Branch 0 was taken 3 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3935 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 4 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3931 times"> + </span>]:<span class="tlaGNC">        3938 :     bool peerTxMcsUnknown = !peer.txMcsSetDefined || peer.txRxMcsSetNotEqual;</span></span>
+<span id="L151"><span class="lineNum">     151</span>         [<span class="tlaGBC" title="Branch 0 was taken 3938 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        3938 :     negotiated.localRxPeerTx.valid = !negotiated.localRxPeerTx.supportedChannelWidths.empty() &amp;&amp;</span></span>
+<span id="L152"><span class="lineNum">     152</span> [<span class="tlaGBC" title="Branch 0 was taken 7 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3931 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 3930 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:<span class="tlaGNC">        3938 :             (peerTxMcsUnknown || negotiated.localRxPeerTx.supportedMcs[0]);</span></span>
+<span id="L153"><span class="lineNum">     153</span>                 :<span class="tlaGNC">        3938 :     return negotiated;</span></span>
+<span id="L154"><span class="lineNum">     154</span>                 :<span class="tlaGNC">        3938 : }</span></span>
+<span id="L155"><span class="lineNum">     155</span>                 :             : </span>
+<span id="L156"><span class="lineNum">     156</span>                 :             : inline bool supportsBasicHtMcsSet(const Ieee80211HtCapabilities&amp; capabilities, const Ieee80211HtOperation&amp; operation)</span>
+<span id="L157"><span class="lineNum">     157</span>                 :<span class="tlaGNC">        2228 : {</span></span>
+<span id="L158"><span class="lineNum">     158</span>         [<span class="tlaGBC" title="Branch 0 was taken 171393 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2225 times"> + </span>]:<span class="tlaGNC">      173618 :     for (int mcs = 0; mcs &lt; 77; mcs++)</span></span>
+<span id="L159"><span class="lineNum">     159</span> [<span class="tlaGBC" title="Branch 0 was taken 17784 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 153609 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 3 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 17781 times"> + </span>]:<span class="tlaGNC">      171393 :         if (operation.basicMcsSupported[mcs] &amp;&amp; !capabilities.rxMcsSupported[mcs])</span></span>
+<span id="L160"><span class="lineNum">     160</span>                 :<span class="tlaGNC">           3 :             return false;</span></span>
+<span id="L161"><span class="lineNum">     161</span>                 :<span class="tlaGNC">        2225 :     return true;</span></span>
+<span id="L162"><span class="lineNum">     162</span>                 :<span class="tlaGNC">        2228 : }</span></span>
+<span id="L163"><span class="lineNum">     163</span>                 :             : </span>
+<span id="L164"><span class="lineNum">     164</span>                 :             : } // namespace ieee80211</span>
+<span id="L165"><span class="lineNum">     165</span>                 :             : } // namespace inet</span>
+<span id="L166"><span class="lineNum">     166</span>                 :             : </span>
+<span id="L167"><span class="lineNum">     167</span>                 :             : #endif</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

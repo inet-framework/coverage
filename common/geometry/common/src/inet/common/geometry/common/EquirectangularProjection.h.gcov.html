@@ -1,0 +1,181 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - common/geometry/common/src/inet/common/geometry/common/EquirectangularProjection.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../index.html">top level</a> - <a href="index.html">common/geometry/common/src/inet/common/geometry/common</a> - EquirectangularProjection.h<span style="font-size: 80%;"> (source / <a href="EquirectangularProjection.h.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">25.0&nbsp;%</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntry">2</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryLo">25.0&nbsp;%</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntry">2</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2026 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #ifndef __INET_EQUIRECTANGULARPROJECTION_H</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : #define __INET_EQUIRECTANGULARPROJECTION_H</span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : </span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &lt;vector&gt;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : </span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : #include &quot;inet/common/INETDefs.h&quot;</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : #include &quot;inet/common/geometry/common/IMapProjection.h&quot;</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : </span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : namespace inet {</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : </span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : /**</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             :  * The equirectangular (plate-carree) map projection over a configurable latitude/longitude window.</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             :  * This is the single owner of the equirectangular/geodesy logic: it implements the IMapProjection</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             :  * first stage that CanvasProjection delegates to (ECEF &lt;-&gt; geographic mapping with antimeridian-aware</span>
+<span id="L22"><span class="lineNum">      22</span>                 :             :  * longitude wrapping, and the WGS84 direction Jacobian), and additionally provides the degree-space</span>
+<span id="L23"><span class="lineNum">      23</span>                 :             :  * window helpers used by the geo map scene/overlay visualizers (window-to-pixel mapping, the</span>
+<span id="L24"><span class="lineNum">      24</span>                 :             :  * antimeridian polygon tiling, and configuring the shared CanvasProjection).</span>
+<span id="L25"><span class="lineNum">      25</span>                 :             :  *</span>
+<span id="L26"><span class="lineNum">      26</span>                 :             :  * The window may span any sub-rectangle of the globe; a window whose eastern edge is at or west of its</span>
+<span id="L27"><span class="lineNum">      27</span>                 :             :  * western edge wraps across the antimeridian, and a window spanning the full 360 degrees of longitude</span>
+<span id="L28"><span class="lineNum">      28</span>                 :             :  * &quot;wraps the globe&quot; (geometry running off one side reappears on the other).</span>
+<span id="L29"><span class="lineNum">      29</span>                 :             :  */</span>
+<span id="L30"><span class="lineNum">      30</span>                 :             : class INET_API EquirectangularProjection : public IMapProjection</span>
+<span id="L31"><span class="lineNum">      31</span>                 :             : {</span>
+<span id="L32"><span class="lineNum">      32</span>                 :             :   protected:</span>
+<span id="L33"><span class="lineNum">      33</span>                 :             :     double mapWidth = 720;</span>
+<span id="L34"><span class="lineNum">      34</span>                 :             :     double mapHeight = 360;</span>
+<span id="L35"><span class="lineNum">      35</span>                 :             :     double minLatitude = -90, maxLatitude = 90; // latitude bounds of the visible window, degrees</span>
+<span id="L36"><span class="lineNum">      36</span>                 :             :     double minLongitude = -180; // western edge of the visible window, degrees</span>
+<span id="L37"><span class="lineNum">      37</span>                 :             :     double longitudeSpan = 360; // (maxLongitude - minLongitude) wrapped into (0, 360], degrees</span>
+<span id="L38"><span class="lineNum">      38</span>                 :             :     bool wrapsGlobe = true; // true when the window spans the full 360 deg of longitude</span>
+<span id="L39"><span class="lineNum">      39</span>                 :             :     double referenceLongitude = -180; // antimeridian seam; longitudes are wrapped into [ref, ref+360), degrees</span>
+<span id="L40"><span class="lineNum">      40</span>                 :             : </span>
+<span id="L41"><span class="lineNum">      41</span>                 :             :   public:</span>
+<span id="L42"><span class="lineNum">      42</span>                 :<span class="tlaGNC tlaBgGNC">         232 :     EquirectangularProjection() {}</span></span>
+<span id="L43"><span class="lineNum">      43</span>                 :             : </span>
+<span id="L44"><span class="lineNum">      44</span>                 :             :     /** Configures the latitude/longitude window and the pixel size of the map. */</span>
+<span id="L45"><span class="lineNum">      45</span>                 :             :     void setWindow(double minLatitudeDeg, double maxLatitudeDeg, double minLongitudeDeg, double maxLongitudeDeg, double mapWidth, double mapHeight);</span>
+<span id="L46"><span class="lineNum">      46</span>                 :             : </span>
+<span id="L47"><span class="lineNum">      47</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     double getMapWidth() const { return mapWidth; }</span></span>
+<span id="L48"><span class="lineNum">      48</span>                 :<span class="tlaUNC">           0 :     double getMapHeight() const { return mapHeight; }</span></span>
+<span id="L49"><span class="lineNum">      49</span>                 :<span class="tlaGNC tlaBgGNC">           2 :     double getLongitudeSpan() const { return longitudeSpan; }</span></span>
+<span id="L50"><span class="lineNum">      50</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     bool getWrapsGlobe() const { return wrapsGlobe; }</span></span>
+<span id="L51"><span class="lineNum">      51</span>                 :<span class="tlaUNC">           0 :     double getMinLatitude() const { return minLatitude; }</span></span>
+<span id="L52"><span class="lineNum">      52</span>                 :<span class="tlaUNC">           0 :     double getMaxLatitude() const { return maxLatitude; }</span></span>
+<span id="L53"><span class="lineNum">      53</span>                 :<span class="tlaUNC">           0 :     double getMinLongitude() const { return minLongitude; }</span></span>
+<span id="L54"><span class="lineNum">      54</span>                 :             : </span>
+<span id="L55"><span class="lineNum">      55</span>                 :             :     // IMapProjection: the first projection stage (ECEF &lt;-&gt; longitude/latitude/altitude with wrapping)</span>
+<span id="L56"><span class="lineNum">      56</span>                 :             :     // and the WGS84 direction Jacobian, delegated to from CanvasProjection.</span>
+<span id="L57"><span class="lineNum">      57</span>                 :             :     virtual Coord applyForward(const Coord&amp; scenePoint) const override;</span>
+<span id="L58"><span class="lineNum">      58</span>                 :             :     virtual Coord applyInverse(const Coord&amp; projectedPoint) const override;</span>
+<span id="L59"><span class="lineNum">      59</span>                 :             :     virtual cFigure::Point computeCanvasDirection(const Coord&amp; point, const Coord&amp; direction, double&amp; depth,</span>
+<span id="L60"><span class="lineNum">      60</span>                 :             :             DirectionProjection directionProjection, const RotationMatrix&amp; rotation, const cFigure::Point&amp; scale) const override;</span>
+<span id="L61"><span class="lineNum">      61</span>                 :             : </span>
+<span id="L62"><span class="lineNum">      62</span>                 :             :     /**</span>
+<span id="L63"><span class="lineNum">      63</span>                 :             :      * Projects a geographic point to map pixels within the configured window. When normalizeLongitude is</span>
+<span id="L64"><span class="lineNum">      64</span>                 :             :      * false the longitude is used as given (relative to the window's western edge, possibly outside one</span>
+<span id="L65"><span class="lineNum">      65</span>                 :             :      * span) so a sequence of points stays continuous across the window edge instead of wrapping.</span>
+<span id="L66"><span class="lineNum">      66</span>                 :             :      */</span>
+<span id="L67"><span class="lineNum">      67</span>                 :             :     cFigure::Point geoToCanvas(double latitudeDeg, double longitudeDeg, bool normalizeLongitude = true) const;</span>
+<span id="L68"><span class="lineNum">      68</span>                 :             : </span>
+<span id="L69"><span class="lineNum">      69</span>                 :             :     /** Returns true when the geographic point falls inside the configured window. */</span>
+<span id="L70"><span class="lineNum">      70</span>                 :             :     bool isInsideWindow(double latitudeDeg, double longitudeDeg) const;</span>
+<span id="L71"><span class="lineNum">      71</span>                 :             : </span>
+<span id="L72"><span class="lineNum">      72</span>                 :             :     /**</span>
+<span id="L73"><span class="lineNum">      73</span>                 :             :      * Sets up the shared canvas CanvasProjection so this equirectangular projection (and the optional</span>
+<span id="L74"><span class="lineNum">      74</span>                 :             :      * figure clipping) applies to every other canvas visualizer drawing scene coordinates: it attaches</span>
+<span id="L75"><span class="lineNum">      75</span>                 :             :      * this projection as the canvas first stage and derives the scale/translation reproducing</span>
+<span id="L76"><span class="lineNum">      76</span>                 :             :      * geoToCanvas() for the unwrapped window. This is the single place that derives the equirectangular</span>
+<span id="L77"><span class="lineNum">      77</span>                 :             :      * affine/clip setup.</span>
+<span id="L78"><span class="lineNum">      78</span>                 :             :      */</span>
+<span id="L79"><span class="lineNum">      79</span>                 :             :     void configureCanvasProjection(cCanvas *canvas, bool clipFigures = true) const;</span>
+<span id="L80"><span class="lineNum">      80</span>                 :             : </span>
+<span id="L81"><span class="lineNum">      81</span>                 :             :     /**</span>
+<span id="L82"><span class="lineNum">      82</span>                 :             :      * Clips a polygon whose vertices are given in continuous (unwrapped) map pixels to the map rectangle,</span>
+<span id="L83"><span class="lineNum">      83</span>                 :             :      * tiling at +/-mapWidth when the window wraps the globe so the part running off one side reappears on</span>
+<span id="L84"><span class="lineNum">      84</span>                 :             :      * the other. Returns one polygon piece per tile copy that has a visible part; pieces with fewer than</span>
+<span id="L85"><span class="lineNum">      85</span>                 :             :      * 3 vertices are dropped. (The rectangle clipping uses CanvasProjection::clipPolygonToRect.)</span>
+<span id="L86"><span class="lineNum">      86</span>                 :             :      */</span>
+<span id="L87"><span class="lineNum">      87</span>                 :             :     std::vector&lt;std::vector&lt;cFigure::Point&gt;&gt; clipAndTilePolygon(const std::vector&lt;cFigure::Point&gt;&amp; continuousPoints) const;</span>
+<span id="L88"><span class="lineNum">      88</span>                 :             : </span>
+<span id="L89"><span class="lineNum">      89</span>                 :             :   private:</span>
+<span id="L90"><span class="lineNum">      90</span>                 :             :     // Wraps a window-relative longitude offset into [0, 360) degrees.</span>
+<span id="L91"><span class="lineNum">      91</span>                 :             :     static double normalizeRelativeLongitude(double relativeLongitudeDeg);</span>
+<span id="L92"><span class="lineNum">      92</span>                 :             : };</span>
+<span id="L93"><span class="lineNum">      93</span>                 :             : </span>
+<span id="L94"><span class="lineNum">      94</span>                 :             : } // namespace inet</span>
+<span id="L95"><span class="lineNum">      95</span>                 :             : </span>
+<span id="L96"><span class="lineNum">      96</span>                 :             : #endif</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

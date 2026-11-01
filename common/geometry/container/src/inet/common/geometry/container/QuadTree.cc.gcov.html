@@ -1,0 +1,353 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - common/geometry/container/src/inet/common/geometry/container/QuadTree.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../index.html">top level</a> - <a href="index.html">common/geometry/container/src/inet/common/geometry/container</a> - QuadTree.cc<span style="font-size: 80%;"> (source / <a href="QuadTree.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">55.7&nbsp;%</td>
+            <td class="headerCovTableEntry">174</td>
+            <td class="headerCovTableEntry">97</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryLo">68.8&nbsp;%</td>
+            <td class="headerCovTableEntry">16</td>
+            <td class="headerCovTableEntry">11</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryLo">50.0&nbsp;%</td>
+            <td class="headerCovTableEntry">104</td>
+            <td class="headerCovTableEntry">52</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2014 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #include &quot;inet/common/geometry/container/QuadTree.h&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : </span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &quot;inet/common/stlutils.h&quot;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : </span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : namespace inet {</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : </span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : bool QuadTree::insert(const cObject *point, const Coord&amp; pos)</span>
+<span id="L15"><span class="lineNum">      15</span>                 :<span class="tlaGNC tlaBgGNC">       11907 : {</span></span>
+<span id="L16"><span class="lineNum">      16</span>         [<span class="tlaGBC" title="Branch 0 was taken 5035 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 6872 times"> + </span>]:<span class="tlaGNC">       11907 :     if (!isInRectangleRange(pos))</span></span>
+<span id="L17"><span class="lineNum">      17</span>                 :<span class="tlaGNC">        5035 :         return false;</span></span>
+<span id="L18"><span class="lineNum">      18</span> [<span class="tlaGBC" title="Branch 0 was taken 6124 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 748 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 3516 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2608 times"> + </span>]:<span class="tlaGNC">        6872 :     if (points.size() &lt; quadrantCapacity &amp;&amp; !hasChild()) {</span></span>
+<span id="L19"><span class="lineNum">      19</span>                 :<span class="tlaGNC">        3516 :         (*lastPosition)[point] = pos;</span></span>
+<span id="L20"><span class="lineNum">      20</span>                 :<span class="tlaGNC">        3516 :         points.push_back(point);</span></span>
+<span id="L21"><span class="lineNum">      21</span>                 :<span class="tlaGNC">        3516 :         return true;</span></span>
+<span id="L22"><span class="lineNum">      22</span>                 :<span class="tlaGNC">        3516 :     }</span></span>
+<span id="L23"><span class="lineNum">      23</span>                 :             :     // If the rootNode is a leaf with a point set</span>
+<span id="L24"><span class="lineNum">      24</span>                 :             :     // with no free capacity, then we must split its</span>
+<span id="L25"><span class="lineNum">      25</span>                 :             :     // points into new quadrants</span>
+<span id="L26"><span class="lineNum">      26</span>         [<span class="tlaGBC" title="Branch 0 was taken 748 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2608 times"> + </span>]:<span class="tlaGNC">        3356 :     if (!hasChild())</span></span>
+<span id="L27"><span class="lineNum">      27</span>                 :<span class="tlaGNC">         748 :         splitPoints();</span></span>
+<span id="L28"><span class="lineNum">      28</span>         [<span class="tlaGBC" title="Branch 0 was taken 8391 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        3356 :     for (auto&amp; elem : quadrants)</span></span>
+<span id="L29"><span class="lineNum">      29</span>         [<span class="tlaGBC" title="Branch 0 was taken 3356 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5035 times"> + </span>]:<span class="tlaGNC">        8391 :         if (elem-&gt;insert(point, pos))</span></span>
+<span id="L30"><span class="lineNum">      30</span>                 :<span class="tlaGNC">        3356 :             return true;</span></span>
+<span id="L31"><span class="lineNum">      31</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     throw cRuntimeError(&quot;QuadTree insertion failed for object: %s with position: (%f, %f, %f)&quot;, point-&gt;getFullName(), pos.x, pos.y, pos.z);</span></span>
+<span id="L32"><span class="lineNum">      32</span>                 :<span class="tlaUNC">           0 :     return false;</span></span>
+<span id="L33"><span class="lineNum">      33</span>                 :<span class="tlaGNC tlaBgGNC">        3356 : }</span></span>
+<span id="L34"><span class="lineNum">      34</span>                 :             : </span>
+<span id="L35"><span class="lineNum">      35</span>                 :             : unsigned int QuadTree::whichQuadrant(const Coord&amp; pos) const</span>
+<span id="L36"><span class="lineNum">      36</span>                 :<span class="tlaGNC">        1496 : {</span></span>
+<span id="L37"><span class="lineNum">      37</span>         [<span class="tlaGBC" title="Branch 0 was taken 3446 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        3446 :     for (unsigned int i = 0; i &lt; 4; i++)</span></span>
+<span id="L38"><span class="lineNum">      38</span>         [<span class="tlaGBC" title="Branch 0 was taken 1496 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1950 times"> + </span>]:<span class="tlaGNC">        3446 :         if (quadrants[i]-&gt;isInRectangleRange(pos))</span></span>
+<span id="L39"><span class="lineNum">      39</span>                 :<span class="tlaGNC">        1496 :             return i;</span></span>
+<span id="L40"><span class="lineNum">      40</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     throw cRuntimeError(&quot;QuadTree failed to determine to which quadrant point (%f, %f, %f) belongs to&quot;, pos.x, pos.y, pos.z);</span></span>
+<span id="L41"><span class="lineNum">      41</span>                 :<span class="tlaUNC">           0 :     return 19920213;</span></span>
+<span id="L42"><span class="lineNum">      42</span>                 :<span class="tlaGNC tlaBgGNC">        1496 : }</span></span>
+<span id="L43"><span class="lineNum">      43</span>                 :             : </span>
+<span id="L44"><span class="lineNum">      44</span>                 :             : void QuadTree::setBoundary(Coord *minBoundaries, Coord *maxBoundaries) const</span>
+<span id="L45"><span class="lineNum">      45</span>                 :<span class="tlaGNC">         748 : {</span></span>
+<span id="L46"><span class="lineNum">      46</span>                 :             :     // We just divide a rectangle into four smaller congruent rectangle</span>
+<span id="L47"><span class="lineNum">      47</span>                 :<span class="tlaGNC">         748 :     maxBoundaries[0].x = (boundaryMax.x - boundaryMin.x) / 2 + boundaryMin.x;</span></span>
+<span id="L48"><span class="lineNum">      48</span>                 :<span class="tlaGNC">         748 :     minBoundaries[0].y = (boundaryMax.y - boundaryMin.y) / 2 + boundaryMin.y;</span></span>
+<span id="L49"><span class="lineNum">      49</span>                 :<span class="tlaGNC">         748 :     minBoundaries[0].x = boundaryMin.x;</span></span>
+<span id="L50"><span class="lineNum">      50</span>                 :<span class="tlaGNC">         748 :     maxBoundaries[0].y = boundaryMax.y;</span></span>
+<span id="L51"><span class="lineNum">      51</span>                 :             : </span>
+<span id="L52"><span class="lineNum">      52</span>                 :<span class="tlaGNC">         748 :     minBoundaries[1].x = (boundaryMax.x - boundaryMin.x) / 2 + boundaryMin.x;</span></span>
+<span id="L53"><span class="lineNum">      53</span>                 :<span class="tlaGNC">         748 :     minBoundaries[1].y = (boundaryMax.y - boundaryMin.y) / 2 + boundaryMin.y;</span></span>
+<span id="L54"><span class="lineNum">      54</span>                 :<span class="tlaGNC">         748 :     maxBoundaries[1].x = boundaryMax.x;</span></span>
+<span id="L55"><span class="lineNum">      55</span>                 :<span class="tlaGNC">         748 :     maxBoundaries[1].y = boundaryMax.y;</span></span>
+<span id="L56"><span class="lineNum">      56</span>                 :             : </span>
+<span id="L57"><span class="lineNum">      57</span>                 :<span class="tlaGNC">         748 :     maxBoundaries[2].y = (boundaryMax.y - boundaryMin.y) / 2 + boundaryMin.y;</span></span>
+<span id="L58"><span class="lineNum">      58</span>                 :<span class="tlaGNC">         748 :     maxBoundaries[2].x = (boundaryMax.x - boundaryMin.x) / 2 + boundaryMin.x;</span></span>
+<span id="L59"><span class="lineNum">      59</span>                 :<span class="tlaGNC">         748 :     minBoundaries[2].x = boundaryMin.x;</span></span>
+<span id="L60"><span class="lineNum">      60</span>                 :<span class="tlaGNC">         748 :     minBoundaries[2].y = boundaryMin.y;</span></span>
+<span id="L61"><span class="lineNum">      61</span>                 :             : </span>
+<span id="L62"><span class="lineNum">      62</span>                 :<span class="tlaGNC">         748 :     minBoundaries[3].x = (boundaryMax.x - boundaryMin.x) / 2 + boundaryMin.x;</span></span>
+<span id="L63"><span class="lineNum">      63</span>                 :<span class="tlaGNC">         748 :     maxBoundaries[3].y = (boundaryMax.y - boundaryMin.y) / 2 + boundaryMin.y;</span></span>
+<span id="L64"><span class="lineNum">      64</span>                 :<span class="tlaGNC">         748 :     maxBoundaries[3].x = boundaryMax.x;</span></span>
+<span id="L65"><span class="lineNum">      65</span>                 :<span class="tlaGNC">         748 :     minBoundaries[3].y = boundaryMin.y;</span></span>
+<span id="L66"><span class="lineNum">      66</span>                 :<span class="tlaGNC">         748 : }</span></span>
+<span id="L67"><span class="lineNum">      67</span>                 :             : </span>
+<span id="L68"><span class="lineNum">      68</span>                 :             : void QuadTree::splitPoints()</span>
+<span id="L69"><span class="lineNum">      69</span>                 :<span class="tlaGNC">         748 : {</span></span>
+<span id="L70"><span class="lineNum">      70</span>                 :<span class="tlaGNC">         748 :     Coord minBoundaries[4], maxBoundaries[4];</span></span>
+<span id="L71"><span class="lineNum">      71</span>                 :<span class="tlaGNC">         748 :     setBoundary(minBoundaries, maxBoundaries);</span></span>
+<span id="L72"><span class="lineNum">      72</span>                 :             :     // We make four new quadrants</span>
+<span id="L73"><span class="lineNum">      73</span>         [<span class="tlaGBC" title="Branch 0 was taken 2992 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 748 times"> + </span>]:<span class="tlaGNC">        3740 :     for (unsigned int i = 0; i &lt; 4; i++)</span></span>
+<span id="L74"><span class="lineNum">      74</span>                 :<span class="tlaGNC">        2992 :         quadrants[i] = new QuadTree(minBoundaries[i], maxBoundaries[i], quadrantCapacity, this);</span></span>
+<span id="L75"><span class="lineNum">      75</span>                 :             :     // The node is not a leaf anymore</span>
+<span id="L76"><span class="lineNum">      76</span>                 :             :     // so we have to split its point</span>
+<span id="L77"><span class="lineNum">      77</span>         [<span class="tlaGBC" title="Branch 0 was taken 1496 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 748 times"> + </span>]:<span class="tlaGNC">        1496 :     for (auto&amp; elem : points) {</span></span>
+<span id="L78"><span class="lineNum">      78</span>                 :<span class="tlaGNC">        1496 :         auto it = lastPosition-&gt;find(elem);</span></span>
+<span id="L79"><span class="lineNum">      79</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1496 times"> + </span>]:<span class="tlaGNC">        1496 :         if (it == lastPosition-&gt;end())</span></span>
+<span id="L80"><span class="lineNum">      80</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             throw cRuntimeError(&quot;Last position not found for object: %s&quot;, elem-&gt;getFullName());</span></span>
+<span id="L81"><span class="lineNum">      81</span>                 :<span class="tlaGNC tlaBgGNC">        1496 :         Coord pos = it-&gt;second;</span></span>
+<span id="L82"><span class="lineNum">      82</span>                 :<span class="tlaGNC">        1496 :         unsigned int quadrantNum = whichQuadrant(pos);</span></span>
+<span id="L83"><span class="lineNum">      83</span>                 :             :         // We recursively call insert() for each points</span>
+<span id="L84"><span class="lineNum">      84</span>                 :<span class="tlaGNC">        1496 :         quadrants[quadrantNum]-&gt;insert(elem, pos);</span></span>
+<span id="L85"><span class="lineNum">      85</span>                 :<span class="tlaGNC">        1496 :     }</span></span>
+<span id="L86"><span class="lineNum">      86</span>                 :             :     // Now we can free the node's vector</span>
+<span id="L87"><span class="lineNum">      87</span>                 :<span class="tlaGNC">         748 :     points.clear();</span></span>
+<span id="L88"><span class="lineNum">      88</span>                 :<span class="tlaGNC">         748 : }</span></span>
+<span id="L89"><span class="lineNum">      89</span>                 :             : </span>
+<span id="L90"><span class="lineNum">      90</span>                 :             : void QuadTree::setToLeaf()</span>
+<span id="L91"><span class="lineNum">      91</span>                 :<span class="tlaGNC">        3094 : {</span></span>
+<span id="L92"><span class="lineNum">      92</span>         [<span class="tlaGBC" title="Branch 0 was taken 12376 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3094 times"> + </span>]:<span class="tlaGNC">        3094 :     for (auto&amp; elem : quadrants)</span></span>
+<span id="L93"><span class="lineNum">      93</span>                 :<span class="tlaGNC">       12376 :         elem = nullptr;</span></span>
+<span id="L94"><span class="lineNum">      94</span>                 :<span class="tlaGNC">        3094 : }</span></span>
+<span id="L95"><span class="lineNum">      95</span>                 :             : </span>
+<span id="L96"><span class="lineNum">      96</span>                 :             : void QuadTree::rangeQuery(const Coord&amp; pos, double range, const IVisitor *visitor) const</span>
+<span id="L97"><span class="lineNum">      97</span>                 :<span class="tlaGNC">       62203 : {</span></span>
+<span id="L98"><span class="lineNum">      98</span>                 :             :     // If our rectangle intersects with a quadrant then we insert its objects to the</span>
+<span id="L99"><span class="lineNum">      99</span>                 :             :     // neighbors vector</span>
+<span id="L100"><span class="lineNum">     100</span>                 :             :     // Note that, a node have points only if it is a leaf node</span>
+<span id="L101"><span class="lineNum">     101</span> [<span class="tlaGBC" title="Branch 0 was taken 47162 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 15041 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 29939 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 17223 times"> + </span>]:<span class="tlaGNC">       62203 :     if (!hasChild() &amp;&amp; doesIntersectWithQuadrant(pos, range))</span></span>
+<span id="L102"><span class="lineNum">     102</span>         [<span class="tlaGBC" title="Branch 0 was taken 26526 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 29939 times"> + </span>]:<span class="tlaGNC">       29939 :         for (auto&amp; elem : points)</span></span>
+<span id="L103"><span class="lineNum">     103</span>                 :<span class="tlaGNC">       26526 :             visitor-&gt;visit(elem);</span></span>
+<span id="L104"><span class="lineNum">     104</span>         [<span class="tlaGBC" title="Branch 0 was taken 15041 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 17223 times"> + </span>]:<span class="tlaGNC">       32264 :     else if (hasChild())</span></span>
+<span id="L105"><span class="lineNum">     105</span>         [<span class="tlaGBC" title="Branch 0 was taken 60164 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 15041 times"> + </span>]:<span class="tlaGNC">       15041 :         for (auto&amp; elem : quadrants)</span></span>
+<span id="L106"><span class="lineNum">     106</span>                 :<span class="tlaGNC">       60164 :             elem-&gt;rangeQuery(pos, range, visitor);</span></span>
+<span id="L107"><span class="lineNum">     107</span>                 :<span class="tlaGNC">       62203 : }</span></span>
+<span id="L108"><span class="lineNum">     108</span>                 :             : </span>
+<span id="L109"><span class="lineNum">     109</span>                 :             : void QuadTree::strictRangeQuery(const Coord&amp; pos, double range, const IVisitor *visitor) const</span>
+<span id="L110"><span class="lineNum">     110</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L111"><span class="lineNum">     111</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (!hasChild() &amp;&amp; doesIntersectWithQuadrant(pos, range)) {</span></span>
+<span id="L112"><span class="lineNum">     112</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         for (auto&amp; elem : points) {</span></span>
+<span id="L113"><span class="lineNum">     113</span>                 :<span class="tlaUNC">           0 :             Coord otherPos = (*lastPosition)[elem];</span></span>
+<span id="L114"><span class="lineNum">     114</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             if (pos.sqrdist(otherPos) &lt;= range * range)</span></span>
+<span id="L115"><span class="lineNum">     115</span>                 :<span class="tlaUNC">           0 :                 visitor-&gt;visit(elem);</span></span>
+<span id="L116"><span class="lineNum">     116</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L117"><span class="lineNum">     117</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L118"><span class="lineNum">     118</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     else if (hasChild()) {</span></span>
+<span id="L119"><span class="lineNum">     119</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         for (auto&amp; elem : quadrants)</span></span>
+<span id="L120"><span class="lineNum">     120</span>                 :<span class="tlaUNC">           0 :             elem-&gt;strictRangeQuery(pos, range, visitor);</span></span>
+<span id="L121"><span class="lineNum">     121</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L122"><span class="lineNum">     122</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L123"><span class="lineNum">     123</span>                 :             : </span>
+<span id="L124"><span class="lineNum">     124</span>                 :             : bool QuadTree::isInRectangleRange(const Coord&amp; pointCoord) const</span>
+<span id="L125"><span class="lineNum">     125</span>                 :<span class="tlaGNC tlaBgGNC">       15353 : {</span></span>
+<span id="L126"><span class="lineNum">     126</span> [<span class="tlaGBC" title="Branch 0 was taken 11968 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3385 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 10719 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1249 times"> + </span>]:<span class="tlaGNC">       15353 :     return pointCoord.x &lt;= boundaryMax.x &amp;&amp; pointCoord.x &gt;= boundaryMin.x &amp;&amp;</span></span>
+<span id="L127"><span class="lineNum">     127</span> [<span class="tlaGBC" title="Branch 0 was taken 10719 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 8368 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2351 times"> + </span>]:<span class="tlaGNC">       15353 :            pointCoord.y &lt;= boundaryMax.y &amp;&amp; pointCoord.y &gt;= boundaryMin.y;</span></span>
+<span id="L128"><span class="lineNum">     128</span>                 :<span class="tlaGNC">       15353 : }</span></span>
+<span id="L129"><span class="lineNum">     129</span>                 :             : </span>
+<span id="L130"><span class="lineNum">     130</span>                 :             : bool QuadTree::doesIntersectWithQuadrant(const Coord&amp; pos, double range) const</span>
+<span id="L131"><span class="lineNum">     131</span>                 :<span class="tlaGNC">       47162 : {</span></span>
+<span id="L132"><span class="lineNum">     132</span>                 :<span class="tlaGNC">       47162 :     Coord minRectangleBoundary = pos;</span></span>
+<span id="L133"><span class="lineNum">     133</span>                 :<span class="tlaGNC">       47162 :     Coord maxRectangleBoundary = pos;</span></span>
+<span id="L134"><span class="lineNum">     134</span>                 :<span class="tlaGNC">       47162 :     minRectangleBoundary.x -= range;</span></span>
+<span id="L135"><span class="lineNum">     135</span>                 :<span class="tlaGNC">       47162 :     minRectangleBoundary.y -= range;</span></span>
+<span id="L136"><span class="lineNum">     136</span>                 :<span class="tlaGNC">       47162 :     maxRectangleBoundary.x += range;</span></span>
+<span id="L137"><span class="lineNum">     137</span>                 :<span class="tlaGNC">       47162 :     maxRectangleBoundary.y += range;</span></span>
+<span id="L138"><span class="lineNum">     138</span> [<span class="tlaGBC" title="Branch 0 was taken 2264 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 44898 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 6675 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 38223 times"> + </span>]:<span class="tlaGNC">       47162 :     return !((minRectangleBoundary.x &gt; boundaryMax.x) || (maxRectangleBoundary.x &lt; boundaryMin.x) ||</span></span>
+<span id="L139"><span class="lineNum">     139</span> [<span class="tlaGBC" title="Branch 0 was taken 4594 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 33629 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 3690 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 29939 times"> + </span>]:<span class="tlaGNC">       47162 :              (minRectangleBoundary.y &gt; boundaryMax.y) || (maxRectangleBoundary.y &lt; boundaryMin.y));</span></span>
+<span id="L140"><span class="lineNum">     140</span>                 :<span class="tlaGNC">       47162 : }</span></span>
+<span id="L141"><span class="lineNum">     141</span>                 :             : </span>
+<span id="L142"><span class="lineNum">     142</span>                 :             : bool QuadTree::remove(const cObject *point)</span>
+<span id="L143"><span class="lineNum">     143</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L144"><span class="lineNum">     144</span>                 :             :     // We search for the quadrant that may contain our object</span>
+<span id="L145"><span class="lineNum">     145</span>                 :             :     // Note that, we need the last position of the object, that is, the position when we</span>
+<span id="L146"><span class="lineNum">     146</span>                 :             :     // inserted it into the QuadTree</span>
+<span id="L147"><span class="lineNum">     147</span>                 :             :     // This helps to searchRadioQuadrant(), since we don't have to traverse</span>
+<span id="L148"><span class="lineNum">     148</span>                 :             :     // the whole QuadTree and check each node's vector one by one.</span>
+<span id="L149"><span class="lineNum">     149</span>                 :<span class="tlaUNC">           0 :     Coord lastPos;</span></span>
+<span id="L150"><span class="lineNum">     150</span>                 :<span class="tlaUNC">           0 :     auto lastIt = lastPosition-&gt;find(point);</span></span>
+<span id="L151"><span class="lineNum">     151</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (lastIt == lastPosition-&gt;end())</span></span>
+<span id="L152"><span class="lineNum">     152</span>                 :<span class="tlaUNC">           0 :         return false;</span></span>
+<span id="L153"><span class="lineNum">     153</span>                 :<span class="tlaUNC">           0 :     lastPos = lastIt-&gt;second;</span></span>
+<span id="L154"><span class="lineNum">     154</span>                 :<span class="tlaUNC">           0 :     QuadTree *quadrant = searchQuadrant(lastPos);</span></span>
+<span id="L155"><span class="lineNum">     155</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (quadrant == nullptr)</span></span>
+<span id="L156"><span class="lineNum">     156</span>                 :<span class="tlaUNC">           0 :         throw cRuntimeError(&quot;Quadrant not found for point: (%f, %f, %f)&quot;, lastPos.x, lastPos.y, lastPos.z);</span></span>
+<span id="L157"><span class="lineNum">     157</span>                 :<span class="tlaUNC">           0 :     auto it = find(quadrant-&gt;points, point);</span></span>
+<span id="L158"><span class="lineNum">     158</span>                 :             :     // If we find the object then we erase it from the quadrant's vector and lastPosition map</span>
+<span id="L159"><span class="lineNum">     159</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (it != quadrant-&gt;points.end()) {</span></span>
+<span id="L160"><span class="lineNum">     160</span>                 :<span class="tlaUNC">           0 :         lastPosition-&gt;erase(lastIt);</span></span>
+<span id="L161"><span class="lineNum">     161</span>                 :<span class="tlaUNC">           0 :         quadrant-&gt;points.erase(it);</span></span>
+<span id="L162"><span class="lineNum">     162</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L163"><span class="lineNum">     163</span>                 :<span class="tlaUNC">           0 :     else</span></span>
+<span id="L164"><span class="lineNum">     164</span>                 :<span class="tlaUNC">           0 :         throw cRuntimeError(&quot;Point (%f, %f, %f) not found in its quadrant's vector&quot;, lastPos.x, lastPos.y, lastPos.z);</span></span>
+<span id="L165"><span class="lineNum">     165</span>                 :<span class="tlaUNC">           0 :     quadrant-&gt;parent-&gt;tryToJoinChildQuadrants();</span></span>
+<span id="L166"><span class="lineNum">     166</span>                 :<span class="tlaUNC">           0 :     return true;</span></span>
+<span id="L167"><span class="lineNum">     167</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L168"><span class="lineNum">     168</span>                 :             : </span>
+<span id="L169"><span class="lineNum">     169</span>                 :             : QuadTree *QuadTree::searchQuadrant(const Coord&amp; lastPos)</span>
+<span id="L170"><span class="lineNum">     170</span>                 :<span class="tlaUNC">           0 : {</span></span>
+<span id="L171"><span class="lineNum">     171</span>                 :             :     // If lastPos is in the quadrant and that quadrant has no child,</span>
+<span id="L172"><span class="lineNum">     172</span>                 :             :     // then we found the quadrant which _may_ contain our object.</span>
+<span id="L173"><span class="lineNum">     173</span>                 :             :     // Note that, this can not guarantee that the object is in the quadrant's</span>
+<span id="L174"><span class="lineNum">     174</span>                 :             :     // vector, so you must check it yourself!</span>
+<span id="L175"><span class="lineNum">     175</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (!hasChild() &amp;&amp; isInRectangleRange(lastPos))</span></span>
+<span id="L176"><span class="lineNum">     176</span>                 :<span class="tlaUNC">           0 :         return this;</span></span>
+<span id="L177"><span class="lineNum">     177</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     else if (hasChild()) {</span></span>
+<span id="L178"><span class="lineNum">     178</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         for (auto&amp; elem : quadrants)</span></span>
+<span id="L179"><span class="lineNum">     179</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             if (elem-&gt;isInRectangleRange(lastPos))</span></span>
+<span id="L180"><span class="lineNum">     180</span>                 :<span class="tlaUNC">           0 :                 return elem-&gt;searchQuadrant(lastPos);</span></span>
+<span id="L181"><span class="lineNum">     181</span>                 :<span class="tlaUNC">           0 :         return nullptr;</span></span>
+<span id="L182"><span class="lineNum">     182</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L183"><span class="lineNum">     183</span>                 :<span class="tlaUNC">           0 :     else</span></span>
+<span id="L184"><span class="lineNum">     184</span>                 :<span class="tlaUNC">           0 :         return nullptr;</span></span>
+<span id="L185"><span class="lineNum">     185</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L186"><span class="lineNum">     186</span>                 :             : </span>
+<span id="L187"><span class="lineNum">     187</span>                 :             : bool QuadTree::hasChild() const</span>
+<span id="L188"><span class="lineNum">     188</span>                 :<span class="tlaGNC tlaBgGNC">      103947 : {</span></span>
+<span id="L189"><span class="lineNum">     189</span>                 :<span class="tlaGNC">      103947 :     return quadrants[0] != nullptr;</span></span>
+<span id="L190"><span class="lineNum">     190</span>                 :<span class="tlaGNC">      103947 : }</span></span>
+<span id="L191"><span class="lineNum">     191</span>                 :             : </span>
+<span id="L192"><span class="lineNum">     192</span>                 :             : void QuadTree::tryToJoinChildQuadrants()</span>
+<span id="L193"><span class="lineNum">     193</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L194"><span class="lineNum">     194</span>                 :<span class="tlaUNC">           0 :     unsigned int quadrantSum = 0;</span></span>
+<span id="L195"><span class="lineNum">     195</span>                 :             : </span>
+<span id="L196"><span class="lineNum">     196</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     for (auto&amp; elem : quadrants) {</span></span>
+<span id="L197"><span class="lineNum">     197</span>                 :             :         // We surely can't join quadrants if one quadrant has another</span>
+<span id="L198"><span class="lineNum">     198</span>                 :             :         // subquadrants</span>
+<span id="L199"><span class="lineNum">     199</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         if (elem-&gt;hasChild())</span></span>
+<span id="L200"><span class="lineNum">     200</span>                 :<span class="tlaUNC">           0 :             return;</span></span>
+<span id="L201"><span class="lineNum">     201</span>                 :<span class="tlaUNC">           0 :         quadrantSum += elem-&gt;points.size();</span></span>
+<span id="L202"><span class="lineNum">     202</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L203"><span class="lineNum">     203</span>                 :             :     // If the child quadrants together contain no more</span>
+<span id="L204"><span class="lineNum">     204</span>                 :             :     // than quadrantCapacity objects then we can</span>
+<span id="L205"><span class="lineNum">     205</span>                 :             :     // join these quadrants</span>
+<span id="L206"><span class="lineNum">     206</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (quadrantSum &lt;= quadrantCapacity) {</span></span>
+<span id="L207"><span class="lineNum">     207</span>                 :             :         // Copy the points to the parent node</span>
+<span id="L208"><span class="lineNum">     208</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         for (auto quadrant : quadrants) {</span></span>
+<span id="L209"><span class="lineNum">     209</span>                 :             : </span>
+<span id="L210"><span class="lineNum">     210</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             for (auto&amp; elem : quadrant-&gt;points)</span></span>
+<span id="L211"><span class="lineNum">     211</span>                 :<span class="tlaUNC">           0 :                 points.push_back(elem);</span></span>
+<span id="L212"><span class="lineNum">     212</span>                 :             :             // Delete the child quadrants</span>
+<span id="L213"><span class="lineNum">     213</span>                 :<span class="tlaUNC">           0 :             delete quadrant;</span></span>
+<span id="L214"><span class="lineNum">     214</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L215"><span class="lineNum">     215</span>                 :             :         // Then set to leaf</span>
+<span id="L216"><span class="lineNum">     216</span>                 :<span class="tlaUNC">           0 :         setToLeaf();</span></span>
+<span id="L217"><span class="lineNum">     217</span>                 :             :         // Finally, we call it for the parent node</span>
+<span id="L218"><span class="lineNum">     218</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         if (parent)</span></span>
+<span id="L219"><span class="lineNum">     219</span>                 :<span class="tlaUNC">           0 :             parent-&gt;tryToJoinChildQuadrants();</span></span>
+<span id="L220"><span class="lineNum">     220</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L221"><span class="lineNum">     221</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L222"><span class="lineNum">     222</span>                 :             : </span>
+<span id="L223"><span class="lineNum">     223</span>                 :             : bool QuadTree::move(const cObject *point, const Coord&amp; newPos)</span>
+<span id="L224"><span class="lineNum">     224</span>                 :<span class="tlaUNC">           0 : {</span></span>
+<span id="L225"><span class="lineNum">     225</span>                 :<span class="tlaUNC">           0 :     QuadTree *quadrant = searchQuadrant(newPos);</span></span>
+<span id="L226"><span class="lineNum">     226</span>                 :             :     // It is an error! Our QuadTree must find an appropriate quadrant since the root node</span>
+<span id="L227"><span class="lineNum">     227</span>                 :             :     // boundary coordinates equal to the constraint area coordinates.</span>
+<span id="L228"><span class="lineNum">     228</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (quadrant == nullptr)</span></span>
+<span id="L229"><span class="lineNum">     229</span>                 :<span class="tlaUNC">           0 :         throw cRuntimeError(&quot;Quadrant not found for point (%f %f %f)&quot;, newPos.x, newPos.y, newPos.z);</span></span>
+<span id="L230"><span class="lineNum">     230</span>                 :<span class="tlaUNC">           0 :     auto it = find(quadrant-&gt;points, point);</span></span>
+<span id="L231"><span class="lineNum">     231</span>                 :             :     // If we search for a quadrant with the object's current position and then we find</span>
+<span id="L232"><span class="lineNum">     232</span>                 :             :     // it in the quadrant's vector, then the move occurred inside this quadrant,</span>
+<span id="L233"><span class="lineNum">     233</span>                 :             :     // thus we have nothing to do with this case</span>
+<span id="L234"><span class="lineNum">     234</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (it != quadrant-&gt;points.end())</span></span>
+<span id="L235"><span class="lineNum">     235</span>                 :<span class="tlaUNC">           0 :         return true;</span></span>
+<span id="L236"><span class="lineNum">     236</span>                 :<span class="tlaUNC">           0 :     else // Otherwise, we remove the object and insert it again</span></span>
+<span id="L237"><span class="lineNum">     237</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         return remove(point) &amp;&amp; insert(point, newPos);</span></span>
+<span id="L238"><span class="lineNum">     238</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L239"><span class="lineNum">     239</span>                 :             : </span>
+<span id="L240"><span class="lineNum">     240</span>                 :             : QuadTree::QuadTree(const Coord&amp; boundaryMin, const Coord&amp; boundaryMax, unsigned int quadrantCapacity, QuadTree *parent)</span>
+<span id="L241"><span class="lineNum">     241</span>                 :<span class="tlaGNC tlaBgGNC">        3094 : {</span></span>
+<span id="L242"><span class="lineNum">     242</span>                 :<span class="tlaGNC">        3094 :     this-&gt;boundaryMax = boundaryMax;</span></span>
+<span id="L243"><span class="lineNum">     243</span>                 :<span class="tlaGNC">        3094 :     this-&gt;boundaryMin = boundaryMin;</span></span>
+<span id="L244"><span class="lineNum">     244</span>                 :<span class="tlaGNC">        3094 :     this-&gt;quadrantCapacity = quadrantCapacity;</span></span>
+<span id="L245"><span class="lineNum">     245</span>                 :<span class="tlaGNC">        3094 :     this-&gt;parent = parent;</span></span>
+<span id="L246"><span class="lineNum">     246</span>                 :<span class="tlaGNC">        3094 :     setToLeaf();</span></span>
+<span id="L247"><span class="lineNum">     247</span>                 :             :     // lastPosition containing information for all subtrees in a QuadTree</span>
+<span id="L248"><span class="lineNum">     248</span>                 :             :     // so we only create it when we create a root (indicated by parent == nullptr)</span>
+<span id="L249"><span class="lineNum">     249</span>                 :             :     // node. Each subtree inherits this pointer and use its global</span>
+<span id="L250"><span class="lineNum">     250</span>                 :             :     // information</span>
+<span id="L251"><span class="lineNum">     251</span>         [<span class="tlaGBC" title="Branch 0 was taken 102 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2992 times"> + </span>]:<span class="tlaGNC">        3094 :     if (parent == nullptr)</span></span>
+<span id="L252"><span class="lineNum">     252</span>                 :<span class="tlaGNC">         102 :         lastPosition = new std::map&lt;const cObject *, Coord&gt;;</span></span>
+<span id="L253"><span class="lineNum">     253</span>                 :<span class="tlaGNC">        2992 :     else</span></span>
+<span id="L254"><span class="lineNum">     254</span>                 :<span class="tlaGNC">        2992 :         lastPosition = parent-&gt;lastPosition;</span></span>
+<span id="L255"><span class="lineNum">     255</span>                 :<span class="tlaGNC">        3094 : }</span></span>
+<span id="L256"><span class="lineNum">     256</span>                 :             : </span>
+<span id="L257"><span class="lineNum">     257</span>                 :             : QuadTree::~QuadTree()</span>
+<span id="L258"><span class="lineNum">     258</span>                 :<span class="tlaGNC">        3094 : {</span></span>
+<span id="L259"><span class="lineNum">     259</span>         [<span class="tlaGBC" title="Branch 0 was taken 12376 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3094 times"> + </span>]:<span class="tlaGNC">        3094 :     for (auto&amp; elem : quadrants)</span></span>
+<span id="L260"><span class="lineNum">     260</span>                 :<span class="tlaGNC">       12376 :         delete elem;</span></span>
+<span id="L261"><span class="lineNum">     261</span>                 :             :     // We clear lastPosition if and only if we delete the whole tree</span>
+<span id="L262"><span class="lineNum">     262</span>                 :             :     // Take a look at the constructor to see why we do this!</span>
+<span id="L263"><span class="lineNum">     263</span>         [<span class="tlaGBC" title="Branch 0 was taken 102 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2992 times"> + </span>]:<span class="tlaGNC">        3094 :     if (parent == nullptr)</span></span>
+<span id="L264"><span class="lineNum">     264</span>                 :<span class="tlaGNC">         102 :         delete lastPosition;</span></span>
+<span id="L265"><span class="lineNum">     265</span>                 :<span class="tlaGNC">        3094 : }</span></span>
+<span id="L266"><span class="lineNum">     266</span>                 :             : </span>
+<span id="L267"><span class="lineNum">     267</span>                 :             : } // namespace inet</span>
+<span id="L268"><span class="lineNum">     268</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

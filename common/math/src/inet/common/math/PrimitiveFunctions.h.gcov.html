@@ -1,0 +1,1074 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - common/math/src/inet/common/math/PrimitiveFunctions.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">common/math/src/inet/common/math</a> - PrimitiveFunctions.h<span style="font-size: 80%;"> (source / <a href="PrimitiveFunctions.h.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">57.2&nbsp;%</td>
+            <td class="headerCovTableEntry">325</td>
+            <td class="headerCovTableEntry">186</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryLo">12.7&nbsp;%</td>
+            <td class="headerCovTableEntry">1024</td>
+            <td class="headerCovTableEntry">130</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryLo">11.4&nbsp;%</td>
+            <td class="headerCovTableEntry">866</td>
+            <td class="headerCovTableEntry">99</td>
+          </tr>
+                  <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2020 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #ifndef __INET_PRIMITIVEFUNCTIONS_H</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : #define __INET_PRIMITIVEFUNCTIONS_H</span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : </span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &quot;inet/common/math/FunctionBase.h&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &quot;inet/common/math/Interpolators.h&quot;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : </span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : namespace inet {</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : </span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : namespace math {</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : </span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : template&lt;typename R, typename D&gt;</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : class INET_API ConstantFunction : public FunctionBase&lt;R, D&gt;</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : {</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             :   protected:</span>
+<span id="L22"><span class="lineNum">      22</span>                 :             :     const R value;</span>
+<span id="L23"><span class="lineNum">      23</span>                 :             : </span>
+<span id="L24"><span class="lineNum">      24</span>                 :             :   public:</span>
+<span id="L25"><span class="lineNum">      25</span>                 :<span class="tlaGNC tlaBgGNC">   217068854 :     ConstantFunction(R value) : value(value) {}</span></span>
+<span id="L26"><span class="lineNum">      26</span>                 :             : </span>
+<span id="L27"><span class="lineNum">      27</span>                 :<span class="tlaGNC">   435826084 :     virtual R getConstantValue() const { return value; }</span></span>
+<span id="L28"><span class="lineNum">      28</span>                 :             : </span>
+<span id="L29"><span class="lineNum">      29</span>                 :<span class="tlaGNC">           1 :     virtual Interval&lt;R&gt; getRange() const override { return Interval&lt;R&gt;(value, value, 0b1, 0b1, 0b0); }</span></span>
+<span id="L30"><span class="lineNum">      30</span>                 :             : </span>
+<span id="L31"><span class="lineNum">      31</span>                 :<span class="tlaGNC">         712 :     virtual R getValue(const typename D::P&amp; p) const override { return value; }</span></span>
+<span id="L32"><span class="lineNum">      32</span>                 :             : </span>
+<span id="L33"><span class="lineNum">      33</span>                 :<span class="tlaGNC">    66748276 :     virtual void partition(const typename D::I&amp; i, const std::function&lt;void(const typename D::I&amp;, const IFunction&lt;R, D&gt; *)&gt; callback) const override {</span></span>
+<span id="L34"><span class="lineNum">      34</span>                 :<span class="tlaGNC">    66748276 :         callback(i, this);</span></span>
+<span id="L35"><span class="lineNum">      35</span>                 :<span class="tlaGNC">    66748276 :     }</span></span>
+<span id="L36"><span class="lineNum">      36</span>                 :             : </span>
+<span id="L37"><span class="lineNum">      37</span>                 :<span class="tlaGNC">    12138080 :     virtual bool isFinite(const typename D::I&amp; i) const override { return std::isfinite(toDouble(value)); }</span></span>
+<span id="L38"><span class="lineNum">      38</span>                 :<span class="tlaGNC">     7189714 :     virtual bool isNonZero(const typename D::I&amp; i) const override { return value != R(0); }</span></span>
+<span id="L39"><span class="lineNum">      39</span>                 :<span class="tlaGNC">    18131821 :     virtual R getMin(const typename D::I&amp; i) const override { return value; }</span></span>
+<span id="L40"><span class="lineNum">      40</span>                 :<span class="tlaGNC">    23153617 :     virtual R getMax(const typename D::I&amp; i) const override { return value; }</span></span>
+<span id="L41"><span class="lineNum">      41</span>                 :<span class="tlaGNC">     7915238 :     virtual R getMean(const typename D::I&amp; i) const override { return value; }</span></span>
+<span id="L42"><span class="lineNum">      42</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaGNC">    14545488 :     virtual R getIntegral(const typename D::I&amp; i) const override { return value == R(0) ? value : value *i.getVolume(); }</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaGBC" title="Branch 0 was taken 4 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaGBC" title="Branch 0 was taken 10853514 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3691968 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L43"><span class="lineNum">      43</span>                 :             : </span>
+<span id="L44"><span class="lineNum">      44</span>                 :<span class="tlaGNC">        3347 :     virtual void printPartition(std::ostream&amp; os, const typename D::I&amp; i, int level = 0) const override {</span></span>
+<span id="L45"><span class="lineNum">      45</span>                 :<span class="tlaGNC">        3347 :         os &lt;&lt; &quot;constant over &quot; &lt;&lt; i &lt;&lt; &quot;\n&quot; &lt;&lt; std::string(level + 2, ' ') &lt;&lt; &quot;→ &quot; &lt;&lt; value &lt;&lt; std::endl;</span></span>
+<span id="L46"><span class="lineNum">      46</span>                 :<span class="tlaGNC">        3347 :     }</span></span>
+<span id="L47"><span class="lineNum">      47</span>                 :             : </span>
+<span id="L48"><span class="lineNum">      48</span>                 :<span class="tlaGNC">         683 :     virtual void printStructure(std::ostream&amp; os, int level = 0) const override {</span></span>
+<span id="L49"><span class="lineNum">      49</span>                 :<span class="tlaGNC">         683 :         os &lt;&lt; &quot;Constant &quot; &lt;&lt; value;</span></span>
+<span id="L50"><span class="lineNum">      50</span>                 :<span class="tlaGNC">         683 :     }</span></span>
+<span id="L51"><span class="lineNum">      51</span>                 :             : };</span>
+<span id="L52"><span class="lineNum">      52</span>                 :             : </span>
+<span id="L53"><span class="lineNum">      53</span>                 :             : /**</span>
+<span id="L54"><span class="lineNum">      54</span>                 :             :  * Linear in one dimension and constant in the others.</span>
+<span id="L55"><span class="lineNum">      55</span>                 :             :  */</span>
+<span id="L56"><span class="lineNum">      56</span>                 :             : template&lt;typename R, typename D&gt;</span>
+<span id="L57"><span class="lineNum">      57</span>                 :             : class INET_API UnilinearFunction : public FunctionBase&lt;R, D&gt;</span>
+<span id="L58"><span class="lineNum">      58</span>                 :             : {</span>
+<span id="L59"><span class="lineNum">      59</span>                 :             :   protected:</span>
+<span id="L60"><span class="lineNum">      60</span>                 :             :     const typename D::P lower; // value is ignored in all but one dimension</span>
+<span id="L61"><span class="lineNum">      61</span>                 :             :     const typename D::P upper; // value is ignored in all but one dimension</span>
+<span id="L62"><span class="lineNum">      62</span>                 :             :     const R rLower;</span>
+<span id="L63"><span class="lineNum">      63</span>                 :             :     const R rUpper;</span>
+<span id="L64"><span class="lineNum">      64</span>                 :             :     const int dimension;</span>
+<span id="L65"><span class="lineNum">      65</span>                 :             : </span>
+<span id="L66"><span class="lineNum">      66</span>                 :             :   public:</span>
+<span id="L67"><span class="lineNum">      67</span>                 :             :     UnilinearFunction(typename D::P lower, typename D::P upper, R rLower, R rUpper, int dimension) :</span>
+<span id="L68"><span class="lineNum">      68</span>                 :<span class="tlaGNC">   135177695 :         lower(lower), upper(upper), rLower(rLower), rUpper(rUpper), dimension(dimension) {}</span></span>
+<span id="L69"><span class="lineNum">      69</span>                 :             : </span>
+<span id="L70"><span class="lineNum">      70</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     virtual const typename D::P&amp; getLower() const { return lower; }</span></span>
+<span id="L71"><span class="lineNum">      71</span>                 :<span class="tlaUNC">           0 :     virtual const typename D::P&amp; getUpper() const { return upper; }</span></span>
+<span id="L72"><span class="lineNum">      72</span>                 :<span class="tlaGNC tlaBgGNC">   144268290 :     virtual R getRLower() const { return rLower; }</span></span>
+<span id="L73"><span class="lineNum">      73</span>                 :<span class="tlaGNC">   130409125 :     virtual R getRUpper() const { return rUpper; }</span></span>
+<span id="L74"><span class="lineNum">      74</span>                 :<span class="tlaGNC">    89226389 :     virtual int getDimension() const { return dimension; }</span></span>
+<span id="L75"><span class="lineNum">      75</span>                 :             : </span>
+<span id="L76"><span class="lineNum">      76</span>                 :<span class="tlaGNC">        9402 :     virtual double getA() const { return toDouble(rUpper - rLower) / toDouble(upper.get(dimension) - lower.get(dimension)); }</span></span>
+<span id="L77"><span class="lineNum">      77</span>                 :<span class="tlaGNC">        9402 :     virtual double getB() const { return (toDouble(rLower) * upper.get(dimension) - toDouble(rUpper) * lower.get(dimension)) / (upper.get(dimension) - lower.get(dimension)); }</span></span>
+<span id="L78"><span class="lineNum">      78</span>                 :             : </span>
+<span id="L79"><span class="lineNum">      79</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     virtual Interval&lt;R&gt; getRange() const override { return Interval&lt;R&gt;(math::minnan(rLower, rUpper), math::maxnan(rLower, rUpper), 0b1, 0b1, 0b0); }</span></span>
+<span id="L80"><span class="lineNum">      80</span>                 :             : </span>
+<span id="L81"><span class="lineNum">      81</span>                 :<span class="tlaGNC tlaBgGNC">   226760368 :     virtual R getValue(const typename D::P&amp; p) const override {</span></span>
+<span id="L82"><span class="lineNum">      82</span>                 :<span class="tlaGNC">   226760368 :         double alpha = (p - lower).get(dimension) / (upper - lower).get(dimension);</span></span>
+<span id="L83"><span class="lineNum">      83</span>                 :<span class="tlaGNC">   226760368 :         return rLower * (1 - alpha) + rUpper * alpha;</span></span>
+<span id="L84"><span class="lineNum">      84</span>                 :<span class="tlaGNC">   226760368 :     }</span></span>
+<span id="L85"><span class="lineNum">      85</span>                 :             : </span>
+<span id="L86"><span class="lineNum">      86</span>                 :<span class="tlaGNC">     4778056 :     virtual void partition(const typename D::I&amp; i, const std::function&lt;void(const typename D::I&amp;, const IFunction&lt;R, D&gt; *)&gt; callback) const override {</span></span>
+<span id="L87"><span class="lineNum">      87</span>                 :<span class="tlaGNC">     4778056 :         callback(i, this);</span></span>
+<span id="L88"><span class="lineNum">      88</span>                 :<span class="tlaGNC">     4778056 :     }</span></span>
+<span id="L89"><span class="lineNum">      89</span>                 :             : </span>
+<span id="L90"><span class="lineNum">      90</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     virtual bool isFinite(const typename D::I&amp; i) const override {</span></span>
+<span id="L91"><span class="lineNum">      91</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         return std::isfinite(toDouble(rLower)) &amp;&amp; std::isfinite(toDouble(rUpper));</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L92"><span class="lineNum">      92</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L93"><span class="lineNum">      93</span>                 :             : </span>
+<span id="L94"><span class="lineNum">      94</span>                 :<span class="tlaUNC">           0 :     virtual bool isNonZero(const typename D::I&amp; i) const override {</span></span>
+<span id="L95"><span class="lineNum">      95</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         return rLower != R(0) || rUpper != R(0);</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L96"><span class="lineNum">      96</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L97"><span class="lineNum">      97</span>                 :             : </span>
+<span id="L98"><span class="lineNum">      98</span>                 :<span class="tlaGNC tlaBgGNC">     1585028 :     virtual R getMin(const typename D::I&amp; i) const override {</span></span>
+<span id="L99"><span class="lineNum">      99</span>                 :<span class="tlaGNC">     1585028 :         return math::minnan(getValue(i.getLower()), getValue(i.getUpper()));</span></span>
+<span id="L100"><span class="lineNum">     100</span>                 :<span class="tlaGNC">     1585028 :     }</span></span>
+<span id="L101"><span class="lineNum">     101</span>                 :             : </span>
+<span id="L102"><span class="lineNum">     102</span>                 :<span class="tlaGNC">     1585028 :     virtual R getMax(const typename D::I&amp; i) const override {</span></span>
+<span id="L103"><span class="lineNum">     103</span>                 :<span class="tlaGNC">     1585028 :         return math::maxnan(getValue(i.getLower()), getValue(i.getUpper()));</span></span>
+<span id="L104"><span class="lineNum">     104</span>                 :<span class="tlaGNC">     1585028 :     }</span></span>
+<span id="L105"><span class="lineNum">     105</span>                 :             : </span>
+<span id="L106"><span class="lineNum">     106</span>                 :<span class="tlaGNC">     6363080 :     virtual R getMean(const typename D::I&amp; i) const override {</span></span>
+<span id="L107"><span class="lineNum">     107</span>                 :<span class="tlaGNC">     6363080 :         return getValue((i.getLower() + i.getUpper()) / 2);</span></span>
+<span id="L108"><span class="lineNum">     108</span>                 :<span class="tlaGNC">     6363080 :     }</span></span>
+<span id="L109"><span class="lineNum">     109</span>                 :             : </span>
+<span id="L110"><span class="lineNum">     110</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     virtual void printPartition(std::ostream&amp; os, const typename D::I&amp; i, int level = 0) const override {</span></span>
+<span id="L111"><span class="lineNum">     111</span>                 :<span class="tlaUNC">           0 :         os &lt;&lt; &quot;linear in dim. &quot; &lt;&lt; dimension &lt;&lt; &quot; over &quot; &lt;&lt; i &lt;&lt; &quot;\n&quot;</span></span>
+<span id="L112"><span class="lineNum">     112</span>                 :<span class="tlaUNC">           0 :            &lt;&lt; std::string(level + 2, ' ') &lt;&lt; &quot;→ &quot; &lt;&lt; getValue(i.getLower()) &lt;&lt; &quot; … &quot; &lt;&lt; getValue(i.getUpper()) &lt;&lt; std::endl;</span></span>
+<span id="L113"><span class="lineNum">     113</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L114"><span class="lineNum">     114</span>                 :             : </span>
+<span id="L115"><span class="lineNum">     115</span>                 :<span class="tlaUNC">           0 :     virtual void printStructure(std::ostream&amp; os, int level = 0) const override {</span></span>
+<span id="L116"><span class="lineNum">     116</span>                 :<span class="tlaUNC">           0 :         os &lt;&lt; &quot;Linear, &quot; &lt;&lt; lower &lt;&lt; &quot; … &quot; &lt;&lt; upper &lt;&lt; &quot; → &quot; &lt;&lt; rLower &lt;&lt; &quot; … &quot; &lt;&lt; rUpper;</span></span>
+<span id="L117"><span class="lineNum">     117</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L118"><span class="lineNum">     118</span>                 :             : };</span>
+<span id="L119"><span class="lineNum">     119</span>                 :             : </span>
+<span id="L120"><span class="lineNum">     120</span>                 :             : /**</span>
+<span id="L121"><span class="lineNum">     121</span>                 :             :  * Linear in two dimensions and constant in the others.</span>
+<span id="L122"><span class="lineNum">     122</span>                 :             :  */</span>
+<span id="L123"><span class="lineNum">     123</span>                 :             : template&lt;typename R, typename D&gt;</span>
+<span id="L124"><span class="lineNum">     124</span>                 :             : class INET_API BilinearFunction : public FunctionBase&lt;R, D&gt;</span>
+<span id="L125"><span class="lineNum">     125</span>                 :             : {</span>
+<span id="L126"><span class="lineNum">     126</span>                 :             :   protected:</span>
+<span id="L127"><span class="lineNum">     127</span>                 :             :     const typename D::P lowerLower; // value is ignored in all but two dimensions</span>
+<span id="L128"><span class="lineNum">     128</span>                 :             :     const typename D::P lowerUpper; // value is ignored in all but two dimensions</span>
+<span id="L129"><span class="lineNum">     129</span>                 :             :     const typename D::P upperLower; // value is ignored in all but two dimensions</span>
+<span id="L130"><span class="lineNum">     130</span>                 :             :     const typename D::P upperUpper; // value is ignored in all but two dimensions</span>
+<span id="L131"><span class="lineNum">     131</span>                 :             :     const R rLowerLower;</span>
+<span id="L132"><span class="lineNum">     132</span>                 :             :     const R rLowerUpper;</span>
+<span id="L133"><span class="lineNum">     133</span>                 :             :     const R rUpperLower;</span>
+<span id="L134"><span class="lineNum">     134</span>                 :             :     const R rUpperUpper;</span>
+<span id="L135"><span class="lineNum">     135</span>                 :             :     const int dimension1;</span>
+<span id="L136"><span class="lineNum">     136</span>                 :             :     const int dimension2;</span>
+<span id="L137"><span class="lineNum">     137</span>                 :             : </span>
+<span id="L138"><span class="lineNum">     138</span>                 :             :   protected:</span>
+<span id="L139"><span class="lineNum">     139</span>                 :<span class="tlaUNC">           0 :     typename D::I getOtherInterval(const typename D::I&amp; i) const {</span></span>
+<span id="L140"><span class="lineNum">     140</span>                 :<span class="tlaUNC">           0 :         const typename D::P&amp; lower = i.getLower();</span></span>
+<span id="L141"><span class="lineNum">     141</span>                 :<span class="tlaUNC">           0 :         const typename D::P&amp; upper = i.getUpper();</span></span>
+<span id="L142"><span class="lineNum">     142</span>                 :<span class="tlaUNC">           0 :         typename D::P lowerUpper = D::P::getZero();</span></span>
+<span id="L143"><span class="lineNum">     143</span>                 :<span class="tlaUNC">           0 :         typename D::P upperLower = D::P::getZero();</span></span>
+<span id="L144"><span class="lineNum">     144</span>                 :<span class="tlaUNC">           0 :         lowerUpper.set(dimension1, lower.get(dimension1));</span></span>
+<span id="L145"><span class="lineNum">     145</span>                 :<span class="tlaUNC">           0 :         lowerUpper.set(dimension2, upper.get(dimension2));</span></span>
+<span id="L146"><span class="lineNum">     146</span>                 :<span class="tlaUNC">           0 :         upperLower.set(dimension1, upper.get(dimension1));</span></span>
+<span id="L147"><span class="lineNum">     147</span>                 :<span class="tlaUNC">           0 :         upperLower.set(dimension2, lower.get(dimension2));</span></span>
+<span id="L148"><span class="lineNum">     148</span>                 :<span class="tlaUNC">           0 :         return typename D::I(lowerUpper, upperLower, i.getLowerClosed(), i.getUpperClosed(), i.getFixed());</span></span>
+<span id="L149"><span class="lineNum">     149</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L150"><span class="lineNum">     150</span>                 :             : </span>
+<span id="L151"><span class="lineNum">     151</span>                 :             :   public:</span>
+<span id="L152"><span class="lineNum">     152</span>                 :             :     BilinearFunction(const typename D::P&amp; lowerLower, const typename D::P&amp; lowerUpper, const typename D::P&amp; upperLower, const typename D::P&amp; upperUpper,</span>
+<span id="L153"><span class="lineNum">     153</span>                 :             :                      const R rLowerLower, const R rLowerUpper, const R rUpperLower, const R rUpperUpper, const int dimension1, const int dimension2) :</span>
+<span id="L154"><span class="lineNum">     154</span>                 :<span class="tlaUNC">           0 :         lowerLower(lowerLower), lowerUpper(lowerUpper), upperLower(upperLower), upperUpper(upperUpper),</span></span>
+<span id="L155"><span class="lineNum">     155</span>                 :<span class="tlaUNC">           0 :         rLowerLower(rLowerLower), rLowerUpper(rLowerUpper), rUpperLower(rUpperLower), rUpperUpper(rUpperUpper),</span></span>
+<span id="L156"><span class="lineNum">     156</span>                 :<span class="tlaUNC">           0 :         dimension1(dimension1), dimension2(dimension2) {}</span></span>
+<span id="L157"><span class="lineNum">     157</span>                 :             : </span>
+<span id="L158"><span class="lineNum">     158</span>                 :<span class="tlaUNC">           0 :     virtual const typename D::P&amp; getLowerLower() const { return lowerLower; }</span></span>
+<span id="L159"><span class="lineNum">     159</span>                 :<span class="tlaUNC">           0 :     virtual const typename D::P&amp; getLowerUpper() const { return lowerUpper; }</span></span>
+<span id="L160"><span class="lineNum">     160</span>                 :<span class="tlaUNC">           0 :     virtual const typename D::P&amp; getUpperLower() const { return upperLower; }</span></span>
+<span id="L161"><span class="lineNum">     161</span>                 :<span class="tlaUNC">           0 :     virtual const typename D::P&amp; getUpperUpper() const { return upperUpper; }</span></span>
+<span id="L162"><span class="lineNum">     162</span>                 :<span class="tlaUNC">           0 :     virtual R getRLowerLower() const { return rLowerLower; }</span></span>
+<span id="L163"><span class="lineNum">     163</span>                 :<span class="tlaUNC">           0 :     virtual R getRLowerUpper() const { return rLowerUpper; }</span></span>
+<span id="L164"><span class="lineNum">     164</span>                 :<span class="tlaUNC">           0 :     virtual R getRUpperLower() const { return rUpperLower; }</span></span>
+<span id="L165"><span class="lineNum">     165</span>                 :<span class="tlaUNC">           0 :     virtual R getRUpperUpper() const { return rUpperUpper; }</span></span>
+<span id="L166"><span class="lineNum">     166</span>                 :<span class="tlaUNC">           0 :     virtual int getDimension1() const { return dimension1; }</span></span>
+<span id="L167"><span class="lineNum">     167</span>                 :<span class="tlaUNC">           0 :     virtual int getDimension2() const { return dimension2; }</span></span>
+<span id="L168"><span class="lineNum">     168</span>                 :             : </span>
+<span id="L169"><span class="lineNum">     169</span>                 :<span class="tlaUNC">           0 :     virtual Interval&lt;R&gt; getRange() const override {</span></span>
+<span id="L170"><span class="lineNum">     170</span>                 :<span class="tlaUNC">           0 :         return Interval&lt;R&gt;(math::minnan(math::minnan(rLowerLower, rLowerUpper), math::minnan(rUpperLower, rUpperUpper)),</span></span>
+<span id="L171"><span class="lineNum">     171</span>                 :<span class="tlaUNC">           0 :                 math::maxnan(math::maxnan(rLowerLower, rLowerUpper), math::maxnan(rUpperLower, rUpperUpper)),</span></span>
+<span id="L172"><span class="lineNum">     172</span>                 :<span class="tlaUNC">           0 :                 0b1, 0b1, 0b0);</span></span>
+<span id="L173"><span class="lineNum">     173</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L174"><span class="lineNum">     174</span>                 :             : </span>
+<span id="L175"><span class="lineNum">     175</span>                 :<span class="tlaUNC">           0 :     virtual R getValue(const typename D::P&amp; p) const override {</span></span>
+<span id="L176"><span class="lineNum">     176</span>                 :<span class="tlaUNC">           0 :         double lowerAlpha = (p - lowerLower).get(dimension1) / (upperLower - lowerLower).get(dimension1);</span></span>
+<span id="L177"><span class="lineNum">     177</span>                 :<span class="tlaUNC">           0 :         R rLower = rLowerLower * (1 - lowerAlpha) + rUpperLower * lowerAlpha;</span></span>
+<span id="L178"><span class="lineNum">     178</span>                 :<span class="tlaUNC">           0 :         const typename D::P lower = lowerLower * (1 - lowerAlpha) + upperLower * lowerAlpha;</span></span>
+<span id="L179"><span class="lineNum">     179</span>                 :             : </span>
+<span id="L180"><span class="lineNum">     180</span>                 :<span class="tlaUNC">           0 :         double upperAlpha = (p - lowerUpper).get(dimension1) / (upperUpper - lowerUpper).get(dimension1);</span></span>
+<span id="L181"><span class="lineNum">     181</span>                 :<span class="tlaUNC">           0 :         R rUpper = rLowerUpper * (1 - upperAlpha) + rUpperUpper * upperAlpha;</span></span>
+<span id="L182"><span class="lineNum">     182</span>                 :<span class="tlaUNC">           0 :         const typename D::P upper = lowerUpper * (1 - upperAlpha) + upperUpper * upperAlpha;</span></span>
+<span id="L183"><span class="lineNum">     183</span>                 :             : </span>
+<span id="L184"><span class="lineNum">     184</span>                 :<span class="tlaUNC">           0 :         double alpha = (p - lower).get(dimension2) / (upper - lower).get(dimension2);</span></span>
+<span id="L185"><span class="lineNum">     185</span>                 :<span class="tlaUNC">           0 :         return rLower * (1 - alpha) + rUpper * alpha;</span></span>
+<span id="L186"><span class="lineNum">     186</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L187"><span class="lineNum">     187</span>                 :             : </span>
+<span id="L188"><span class="lineNum">     188</span>                 :<span class="tlaUNC">           0 :     virtual void partition(const typename D::I&amp; i, const std::function&lt;void(const typename D::I&amp;, const IFunction&lt;R, D&gt; *)&gt; callback) const override {</span></span>
+<span id="L189"><span class="lineNum">     189</span>                 :<span class="tlaUNC">           0 :         callback(i, this);</span></span>
+<span id="L190"><span class="lineNum">     190</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L191"><span class="lineNum">     191</span>                 :             : </span>
+<span id="L192"><span class="lineNum">     192</span>                 :<span class="tlaUNC">           0 :     virtual bool isFinite(const typename D::I&amp; i) const override {</span></span>
+<span id="L193"><span class="lineNum">     193</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         return std::isfinite(toDouble(rLowerLower)) &amp;&amp; std::isfinite(toDouble(rLowerUpper)) &amp;&amp; std::isfinite(toDouble(rUpperLower)) &amp;&amp; std::isfinite(toDouble(rUpperUpper));</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L194"><span class="lineNum">     194</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L195"><span class="lineNum">     195</span>                 :             : </span>
+<span id="L196"><span class="lineNum">     196</span>                 :<span class="tlaUNC">           0 :     virtual bool isNonZero(const typename D::I&amp; i) const override {</span></span>
+<span id="L197"><span class="lineNum">     197</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         return rLowerLower != R(0) || rLowerUpper != R(0) || rUpperLower != R(0) || rUpperUpper != R(0);</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L198"><span class="lineNum">     198</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L199"><span class="lineNum">     199</span>                 :             : </span>
+<span id="L200"><span class="lineNum">     200</span>                 :<span class="tlaUNC">           0 :     virtual R getMin(const typename D::I&amp; i) const override {</span></span>
+<span id="L201"><span class="lineNum">     201</span>                 :<span class="tlaUNC">           0 :         auto j = getOtherInterval(i);</span></span>
+<span id="L202"><span class="lineNum">     202</span>                 :<span class="tlaUNC">           0 :         return math::minnan(math::minnan(getValue(i.getLower()), getValue(j.getLower())), math::minnan(getValue(j.getUpper()), getValue(i.getUpper())));</span></span>
+<span id="L203"><span class="lineNum">     203</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L204"><span class="lineNum">     204</span>                 :             : </span>
+<span id="L205"><span class="lineNum">     205</span>                 :<span class="tlaUNC">           0 :     virtual R getMax(const typename D::I&amp; i) const override {</span></span>
+<span id="L206"><span class="lineNum">     206</span>                 :<span class="tlaUNC">           0 :         auto j = getOtherInterval(i);</span></span>
+<span id="L207"><span class="lineNum">     207</span>                 :<span class="tlaUNC">           0 :         return math::maxnan(math::maxnan(getValue(i.getLower()), getValue(j.getLower())), math::maxnan(getValue(j.getUpper()), getValue(i.getUpper())));</span></span>
+<span id="L208"><span class="lineNum">     208</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L209"><span class="lineNum">     209</span>                 :             : </span>
+<span id="L210"><span class="lineNum">     210</span>                 :<span class="tlaUNC">           0 :     virtual R getMean(const typename D::I&amp; i) const override {</span></span>
+<span id="L211"><span class="lineNum">     211</span>                 :<span class="tlaUNC">           0 :         return getValue((i.getLower() + i.getUpper()) / 2);</span></span>
+<span id="L212"><span class="lineNum">     212</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L213"><span class="lineNum">     213</span>                 :             : </span>
+<span id="L214"><span class="lineNum">     214</span>                 :<span class="tlaUNC">           0 :     virtual void printPartition(std::ostream&amp; os, const typename D::I&amp; i, int level = 0) const override {</span></span>
+<span id="L215"><span class="lineNum">     215</span>                 :<span class="tlaUNC">           0 :         os &lt;&lt; &quot;bilinear in dims. &quot; &lt;&lt; dimension1 &lt;&lt; &quot;, &quot; &lt;&lt; dimension2 &lt;&lt; &quot; over &quot; &lt;&lt; i &lt;&lt; &quot;\n&quot;</span></span>
+<span id="L216"><span class="lineNum">     216</span>                 :<span class="tlaUNC">           0 :            &lt;&lt; std::string(level + 2, ' ') &lt;&lt; &quot;→ &quot; &lt;&lt; getValue(i.getLower()) &lt;&lt; &quot; … &quot; &lt;&lt; getValue(i.getUpper()) &lt;&lt; std::endl;</span></span>
+<span id="L217"><span class="lineNum">     217</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L218"><span class="lineNum">     218</span>                 :             : };</span>
+<span id="L219"><span class="lineNum">     219</span>                 :             : </span>
+<span id="L220"><span class="lineNum">     220</span>                 :             : /**</span>
+<span id="L221"><span class="lineNum">     221</span>                 :             :  * Reciprocal in a given dimension and constant in the others.</span>
+<span id="L222"><span class="lineNum">     222</span>                 :             :  */</span>
+<span id="L223"><span class="lineNum">     223</span>                 :             : template&lt;typename R, typename D&gt;</span>
+<span id="L224"><span class="lineNum">     224</span>                 :             : class INET_API UnireciprocalFunction : public FunctionBase&lt;R, D&gt;</span>
+<span id="L225"><span class="lineNum">     225</span>                 :             : {</span>
+<span id="L226"><span class="lineNum">     226</span>                 :             :   protected:</span>
+<span id="L227"><span class="lineNum">     227</span>                 :             :     // f(x) = (a * x + b) / (c * x + d)</span>
+<span id="L228"><span class="lineNum">     228</span>                 :             :     const double a;</span>
+<span id="L229"><span class="lineNum">     229</span>                 :             :     const double b;</span>
+<span id="L230"><span class="lineNum">     230</span>                 :             :     const double c;</span>
+<span id="L231"><span class="lineNum">     231</span>                 :             :     const double d;</span>
+<span id="L232"><span class="lineNum">     232</span>                 :             :     const int dimension;</span>
+<span id="L233"><span class="lineNum">     233</span>                 :             : </span>
+<span id="L234"><span class="lineNum">     234</span>                 :             :   protected:</span>
+<span id="L235"><span class="lineNum">     235</span>                 :<span class="tlaGNC tlaBgGNC">        6110 :     virtual double getIntegralFunctionValue(const typename D::P&amp; p) const {</span></span>
+<span id="L236"><span class="lineNum">     236</span>                 :             :         // https://www.wolframalpha.com/input/?i=integrate+(a+*+x+%2B+b)+%2F+(c+*+x+%2B+d)</span>
+<span id="L237"><span class="lineNum">     237</span>                 :<span class="tlaGNC">        6110 :         double x = p.get(dimension);</span></span>
+<span id="L238"><span class="lineNum">     238</span>                 :<span class="tlaGNC">        6110 :         return (a * c * x + (b * c - a * d) * std::log(d + c * x)) / (c * c);</span></span>
+<span id="L239"><span class="lineNum">     239</span>                 :<span class="tlaGNC">        6110 :     }</span></span>
+<span id="L240"><span class="lineNum">     240</span>                 :             : </span>
+<span id="L241"><span class="lineNum">     241</span>                 :             :   public:</span>
+<span id="L242"><span class="lineNum">     242</span>                 :<span class="tlaGNC">        9165 :     UnireciprocalFunction(double a, double b, double c, double d, int dimension) : a(a), b(b), c(c), d(d), dimension(dimension) {}</span></span>
+<span id="L243"><span class="lineNum">     243</span>                 :             : </span>
+<span id="L244"><span class="lineNum">     244</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     virtual int getDimension() const { return dimension; }</span></span>
+<span id="L245"><span class="lineNum">     245</span>                 :             : </span>
+<span id="L246"><span class="lineNum">     246</span>                 :<span class="tlaGNC tlaBgGNC">       12220 :     virtual R getValue(const typename D::P&amp; p) const override {</span></span>
+<span id="L247"><span class="lineNum">     247</span>                 :<span class="tlaGNC">       12220 :         double x = p.get(dimension);</span></span>
+<span id="L248"><span class="lineNum">     248</span>                 :<span class="tlaGNC">       12220 :         return R(a * x + b) / (c * x + d);</span></span>
+<span id="L249"><span class="lineNum">     249</span>                 :<span class="tlaGNC">       12220 :     }</span></span>
+<span id="L250"><span class="lineNum">     250</span>                 :             : </span>
+<span id="L251"><span class="lineNum">     251</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     virtual void partition(const typename D::I&amp; i, const std::function&lt;void(const typename D::I&amp;, const IFunction&lt;R, D&gt; *)&gt; callback) const override {</span></span>
+<span id="L252"><span class="lineNum">     252</span>                 :<span class="tlaUNC">           0 :         callback(i, this);</span></span>
+<span id="L253"><span class="lineNum">     253</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L254"><span class="lineNum">     254</span>                 :             : </span>
+<span id="L255"><span class="lineNum">     255</span>                 :<span class="tlaGNC tlaBgGNC">        3055 :     virtual R getMin(const typename D::I&amp; i) const override {</span></span>
+<span id="L256"><span class="lineNum">     256</span>                 :<span class="tlaGNC">        3055 :         double x = -d / c;</span></span>
+<span id="L257"><span class="lineNum">     257</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaGNC">        3055 :         if (i.getLower().get(dimension) &lt; x &amp;&amp; x &lt; i.getUpper().get(dimension))</span></span>
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 1528 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1527 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1528 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L258"><span class="lineNum">     258</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             return getLowerBound&lt;R&gt;();</span></span>
+<span id="L259"><span class="lineNum">     259</span>                 :<span class="tlaGNC tlaBgGNC">        3055 :         else</span></span>
+<span id="L260"><span class="lineNum">     260</span>                 :<span class="tlaGNC">        3055 :             return math::minnan(getValue(i.getLower()), getValue(i.getUpper()));</span></span>
+<span id="L261"><span class="lineNum">     261</span>                 :<span class="tlaGNC">        3055 :     }</span></span>
+<span id="L262"><span class="lineNum">     262</span>                 :             : </span>
+<span id="L263"><span class="lineNum">     263</span>                 :<span class="tlaGNC">        3055 :     virtual R getMax(const typename D::I&amp; i) const override {</span></span>
+<span id="L264"><span class="lineNum">     264</span>                 :<span class="tlaGNC">        3055 :         double x = -d / c;</span></span>
+<span id="L265"><span class="lineNum">     265</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaGNC">        3055 :         if (i.getLower().get(dimension) &lt; x &amp;&amp; x &lt; i.getUpper().get(dimension))</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 1528 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1527 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1528 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L266"><span class="lineNum">     266</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             return getUpperBound&lt;R&gt;();</span></span>
+<span id="L267"><span class="lineNum">     267</span>                 :<span class="tlaGNC tlaBgGNC">        3055 :         else</span></span>
+<span id="L268"><span class="lineNum">     268</span>                 :<span class="tlaGNC">        3055 :             return math::maxnan(getValue(i.getLower()), getValue(i.getUpper()));</span></span>
+<span id="L269"><span class="lineNum">     269</span>                 :<span class="tlaGNC">        3055 :     }</span></span>
+<span id="L270"><span class="lineNum">     270</span>                 :             : </span>
+<span id="L271"><span class="lineNum">     271</span>                 :<span class="tlaGNC">        3055 :     virtual R getMean(const typename D::I&amp; i) const override {</span></span>
+<span id="L272"><span class="lineNum">     272</span>                 :<span class="tlaGNC">        3055 :         return getIntegral(i) / (i.getUpper().get(dimension) - i.getLower().get(dimension));</span></span>
+<span id="L273"><span class="lineNum">     273</span>                 :<span class="tlaGNC">        3055 :     }</span></span>
+<span id="L274"><span class="lineNum">     274</span>                 :             : </span>
+<span id="L275"><span class="lineNum">     275</span>                 :<span class="tlaGNC">        3055 :     virtual R getIntegral(const typename D::I&amp; i) const override {</span></span>
+<span id="L276"><span class="lineNum">     276</span>                 :<span class="tlaGNC">        3055 :         return R(getIntegralFunctionValue(i.getUpper()) - getIntegralFunctionValue(i.getLower()));</span></span>
+<span id="L277"><span class="lineNum">     277</span>                 :<span class="tlaGNC">        3055 :     }</span></span>
+<span id="L278"><span class="lineNum">     278</span>                 :             : </span>
+<span id="L279"><span class="lineNum">     279</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     virtual void printPartition(std::ostream&amp; os, const typename D::I&amp; i, int level = 0) const override {</span></span>
+<span id="L280"><span class="lineNum">     280</span>                 :<span class="tlaUNC">           0 :         os &lt;&lt; &quot;reciprocal in dim. &quot; &lt;&lt; dimension &lt;&lt; &quot; over &quot; &lt;&lt; i &lt;&lt; &quot;\n&quot;</span></span>
+<span id="L281"><span class="lineNum">     281</span>                 :<span class="tlaUNC">           0 :            &lt;&lt; std::string(level + 2, ' ') &lt;&lt; &quot;→ &quot; &lt;&lt; getValue(i.getLower()) &lt;&lt; &quot; … &quot; &lt;&lt; getValue(i.getUpper()) &lt;&lt; std::endl;</span></span>
+<span id="L282"><span class="lineNum">     282</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L283"><span class="lineNum">     283</span>                 :             : };</span>
+<span id="L284"><span class="lineNum">     284</span>                 :             : </span>
+<span id="L285"><span class="lineNum">     285</span>                 :             : //template&lt;typename R, typename D&gt;</span>
+<span id="L286"><span class="lineNum">     286</span>                 :             : //class INET_API BireciprocalFunction : public FunctionBase&lt;R, D&gt;</span>
+<span id="L287"><span class="lineNum">     287</span>                 :             : //{</span>
+<span id="L288"><span class="lineNum">     288</span>                 :             : //  protected:</span>
+<span id="L289"><span class="lineNum">     289</span>                 :             : //    // f(x, y) = (a0 + a1 * x + a2 * y + a3 * x * y) / (b0 + b1 * x + b2 * y + b3 * x * y)</span>
+<span id="L290"><span class="lineNum">     290</span>                 :             : //    const double a0;</span>
+<span id="L291"><span class="lineNum">     291</span>                 :             : //    const double a1;</span>
+<span id="L292"><span class="lineNum">     292</span>                 :             : //    const double a2;</span>
+<span id="L293"><span class="lineNum">     293</span>                 :             : //    const double a3;</span>
+<span id="L294"><span class="lineNum">     294</span>                 :             : //    const double b0;</span>
+<span id="L295"><span class="lineNum">     295</span>                 :             : //    const double b1;</span>
+<span id="L296"><span class="lineNum">     296</span>                 :             : //    const double b2;</span>
+<span id="L297"><span class="lineNum">     297</span>                 :             : //    const double b3;</span>
+<span id="L298"><span class="lineNum">     298</span>                 :             : //    const int dimension1;</span>
+<span id="L299"><span class="lineNum">     299</span>                 :             : //    const int dimension2;</span>
+<span id="L300"><span class="lineNum">     300</span>                 :             : //</span>
+<span id="L301"><span class="lineNum">     301</span>                 :             : //  protected:</span>
+<span id="L302"><span class="lineNum">     302</span>                 :             : //    double getIntegral(const typename D::P&amp; p) const {</span>
+<span id="L303"><span class="lineNum">     303</span>                 :             : //        double x = p.get(dimension1);</span>
+<span id="L304"><span class="lineNum">     304</span>                 :             : //        double y = p.get(dimension2);</span>
+<span id="L305"><span class="lineNum">     305</span>                 :             : //        throw cRuntimeError(&quot;TODO&quot;);</span>
+<span id="L306"><span class="lineNum">     306</span>                 :             : //    }</span>
+<span id="L307"><span class="lineNum">     307</span>                 :             : //</span>
+<span id="L308"><span class="lineNum">     308</span>                 :             : //  public:</span>
+<span id="L309"><span class="lineNum">     309</span>                 :             : //    BireciprocalFunction(double a0, double a1, double a2, double a3, double b0, double b1, double b2, double b3, int dimension1, int dimension2) :</span>
+<span id="L310"><span class="lineNum">     310</span>                 :             : //        a0(a0), a1(a1), a2(a2), a3(a3), b0(b0), b1(b1), b2(b2), b3(b3), dimension1(dimension1), dimension2(dimension2) {}</span>
+<span id="L311"><span class="lineNum">     311</span>                 :             : //</span>
+<span id="L312"><span class="lineNum">     312</span>                 :             : //    virtual R getValue(const typename D::P&amp; p) const override {</span>
+<span id="L313"><span class="lineNum">     313</span>                 :             : //        double x = p.get(dimension1);</span>
+<span id="L314"><span class="lineNum">     314</span>                 :             : //        double y = p.get(dimension2);</span>
+<span id="L315"><span class="lineNum">     315</span>                 :             : //        return R((a0 + a1 * x + a2 * y + a3 * x * y) / (b0 + b1 * x + b2 * y + b3 * x * y));</span>
+<span id="L316"><span class="lineNum">     316</span>                 :             : //    }</span>
+<span id="L317"><span class="lineNum">     317</span>                 :             : //</span>
+<span id="L318"><span class="lineNum">     318</span>                 :             : //    virtual void partition(const typename D::I&amp; i, const std::function&lt;void (const typename D::I&amp;, const IFunction&lt;R, D&gt; *)&gt; callback) const override {</span>
+<span id="L319"><span class="lineNum">     319</span>                 :             : //        callback(i, this);</span>
+<span id="L320"><span class="lineNum">     320</span>                 :             : //    }</span>
+<span id="L321"><span class="lineNum">     321</span>                 :             : //</span>
+<span id="L322"><span class="lineNum">     322</span>                 :             : //    virtual R getMin(const typename D::I&amp; i) const override {</span>
+<span id="L323"><span class="lineNum">     323</span>                 :             : //        throw cRuntimeError(&quot;TODO&quot;);</span>
+<span id="L324"><span class="lineNum">     324</span>                 :             : //    }</span>
+<span id="L325"><span class="lineNum">     325</span>                 :             : //</span>
+<span id="L326"><span class="lineNum">     326</span>                 :             : //    virtual R getMax(const typename D::I&amp; i) const override {</span>
+<span id="L327"><span class="lineNum">     327</span>                 :             : //        throw cRuntimeError(&quot;TODO&quot;);</span>
+<span id="L328"><span class="lineNum">     328</span>                 :             : //    }</span>
+<span id="L329"><span class="lineNum">     329</span>                 :             : //</span>
+<span id="L330"><span class="lineNum">     330</span>                 :             : //    virtual R getMean(const typename D::I&amp; i) const override {</span>
+<span id="L331"><span class="lineNum">     331</span>                 :             : //        throw cRuntimeError(&quot;TODO&quot;);</span>
+<span id="L332"><span class="lineNum">     332</span>                 :             : //    }</span>
+<span id="L333"><span class="lineNum">     333</span>                 :             : //};</span>
+<span id="L334"><span class="lineNum">     334</span>                 :             : </span>
+<span id="L335"><span class="lineNum">     335</span>                 :             : //template&lt;typename R, typename D&gt;</span>
+<span id="L336"><span class="lineNum">     336</span>                 :             : //class INET_API QuadraticFunction : public Function&lt;R, D&gt;</span>
+<span id="L337"><span class="lineNum">     337</span>                 :             : //{</span>
+<span id="L338"><span class="lineNum">     338</span>                 :             : //  protected:</span>
+<span id="L339"><span class="lineNum">     339</span>                 :             : //    const double a;</span>
+<span id="L340"><span class="lineNum">     340</span>                 :             : //    const double b;</span>
+<span id="L341"><span class="lineNum">     341</span>                 :             : //    const double c;</span>
+<span id="L342"><span class="lineNum">     342</span>                 :             : //</span>
+<span id="L343"><span class="lineNum">     343</span>                 :             : //  public:</span>
+<span id="L344"><span class="lineNum">     344</span>                 :             : //    QuadraticFunction(double a, double b, double c) : a(a), b(b), c(c) {}</span>
+<span id="L345"><span class="lineNum">     345</span>                 :             : //</span>
+<span id="L346"><span class="lineNum">     346</span>                 :             : //    virtual R getValue(const typename D::P&amp; p) const override {</span>
+<span id="L347"><span class="lineNum">     347</span>                 :             : //        return R(0);</span>
+<span id="L348"><span class="lineNum">     348</span>                 :             : //    }</span>
+<span id="L349"><span class="lineNum">     349</span>                 :             : //</span>
+<span id="L350"><span class="lineNum">     350</span>                 :             : //    virtual void partition(const typename D::I&amp; i, const std::function&lt;void (const typename D::I&amp;, const IFunction&lt;R, D&gt; *)&gt; callback) const override {</span>
+<span id="L351"><span class="lineNum">     351</span>                 :             : //        callback(i, this);</span>
+<span id="L352"><span class="lineNum">     352</span>                 :             : //    }</span>
+<span id="L353"><span class="lineNum">     353</span>                 :             : //};</span>
+<span id="L354"><span class="lineNum">     354</span>                 :             : </span>
+<span id="L355"><span class="lineNum">     355</span>                 :             : /**</span>
+<span id="L356"><span class="lineNum">     356</span>                 :             :  * Some constant value r between lower and upper and zero otherwise.</span>
+<span id="L357"><span class="lineNum">     357</span>                 :             :  */</span>
+<span id="L358"><span class="lineNum">     358</span>                 :             : template&lt;typename R, typename X&gt;</span>
+<span id="L359"><span class="lineNum">     359</span>                 :             : class INET_API Boxcar1DFunction : public FunctionBase&lt;R, Domain&lt;X&gt;&gt;</span>
+<span id="L360"><span class="lineNum">     360</span>                 :             : {</span>
+<span id="L361"><span class="lineNum">     361</span>                 :             :   protected:</span>
+<span id="L362"><span class="lineNum">     362</span>                 :             :     const X lower;</span>
+<span id="L363"><span class="lineNum">     363</span>                 :             :     const X upper;</span>
+<span id="L364"><span class="lineNum">     364</span>                 :             :     const R value;</span>
+<span id="L365"><span class="lineNum">     365</span>                 :             : </span>
+<span id="L366"><span class="lineNum">     366</span>                 :             :   public:</span>
+<span id="L367"><span class="lineNum">     367</span>                 :<span class="tlaGNC tlaBgGNC">    15775346 :     Boxcar1DFunction(X lower, X upper, R value) : lower(lower), upper(upper), value(value) {</span></span>
+<span id="L368"><span class="lineNum">     368</span>                 :<span class="tlaGNC">    15775346 :         ASSERT(value &gt; R(0));</span></span>
+<span id="L369"><span class="lineNum">     369</span>                 :<span class="tlaGNC">    15775346 :     }</span></span>
+<span id="L370"><span class="lineNum">     370</span>                 :             : </span>
+<span id="L371"><span class="lineNum">     371</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     virtual Interval&lt;R&gt; getRange() const override { return Interval&lt;R&gt;(R(0), value, 0b1, 0b1, 0b0); }</span></span>
+<span id="L372"><span class="lineNum">     372</span>                 :             : </span>
+<span id="L373"><span class="lineNum">     373</span>                 :<span class="tlaGNC tlaBgGNC">         102 :     virtual R getValue(const Point&lt;X&gt;&amp; p) const override {</span></span>
+<span id="L374"><span class="lineNum">     374</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaGNC">         102 :         return std::get&lt;0&gt;(p) &lt; lower || std::get&lt;0&gt;(p) &gt;= upper ? R(0) : value;</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 102 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 102 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L375"><span class="lineNum">     375</span>                 :<span class="tlaGNC">         102 :     }</span></span>
+<span id="L376"><span class="lineNum">     376</span>                 :             : </span>
+<span id="L377"><span class="lineNum">     377</span>                 :<span class="tlaGNC">    14470753 :     virtual void partition(const Interval&lt;X&gt;&amp; i, const std::function&lt;void(const Interval&lt;X&gt;&amp;, const IFunction&lt;R, Domain&lt;X&gt;&gt; *)&gt; callback) const override {</span></span>
+<span id="L378"><span class="lineNum">     378</span>                 :<span class="tlaGNC">    14470753 :         const auto&amp; i1 = i.getIntersected(Interval&lt;X&gt;(getLowerBound&lt;X&gt;(), Point&lt;X&gt;(lower), 0b0, 0b0, 0b0));</span></span>
+<span id="L379"><span class="lineNum">     379</span> [<span class="tlaGBC" title="Branch 0 was taken 22 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 11024326 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 432410 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3013971 times"> + </span>]:<span class="tlaGNC">    14470753 :         if (!i1.isEmpty()) {</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 18 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 6 times"> + </span>]
+<span id="L380"><span class="lineNum">     380</span>                 :<span class="tlaGNC">      432450 :             ConstantFunction&lt;R, Domain&lt;X&gt;&gt; g(R(0));</span></span>
+<span id="L381"><span class="lineNum">     381</span>                 :<span class="tlaGNC">      432450 :             callback(i1, &amp;g);</span></span>
+<span id="L382"><span class="lineNum">     382</span>                 :<span class="tlaGNC">      432450 :         }</span></span>
+<span id="L383"><span class="lineNum">     383</span>                 :<span class="tlaGNC">    14470753 :         const auto&amp; i2 = i.getIntersected(Interval&lt;X&gt;(Point&lt;X&gt;(lower), Point&lt;X&gt;(upper), 0b1, 0b0, 0b0));</span></span>
+<span id="L384"><span class="lineNum">     384</span> [<span class="tlaGBC" title="Branch 0 was taken 11024324 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 24 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 3412898 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 33483 times"> + </span>]:<span class="tlaGNC">    14470753 :         if (!i2.isEmpty()) {</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 24 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span id="L385"><span class="lineNum">     385</span>                 :<span class="tlaGNC">    14437246 :             ConstantFunction&lt;R, Domain&lt;X&gt;&gt; g(value);</span></span>
+<span id="L386"><span class="lineNum">     386</span>                 :<span class="tlaGNC">    14437246 :             callback(i2, &amp;g);</span></span>
+<span id="L387"><span class="lineNum">     387</span>                 :<span class="tlaGNC">    14437246 :         }</span></span>
+<span id="L388"><span class="lineNum">     388</span>                 :<span class="tlaGNC">    14470753 :         const auto&amp; i3 = i.getIntersected(Interval&lt;X&gt;(Point&lt;X&gt;(upper), getUpperBound&lt;X&gt;(), 0b1, 0b0, 0b0));</span></span>
+<span id="L389"><span class="lineNum">     389</span> [<span class="tlaGBC" title="Branch 0 was taken 14 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 11024334 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 423219 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3023162 times"> + </span>]:<span class="tlaGNC">    14470753 :         if (!i3.isEmpty()) {</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 18 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 6 times"> + </span>]
+<span id="L390"><span class="lineNum">     390</span>                 :<span class="tlaGNC">      423251 :             ConstantFunction&lt;R, Domain&lt;X&gt;&gt; g(R(0));</span></span>
+<span id="L391"><span class="lineNum">     391</span>                 :<span class="tlaGNC">      423251 :             callback(i3, &amp;g);</span></span>
+<span id="L392"><span class="lineNum">     392</span>                 :<span class="tlaGNC">      423251 :         }</span></span>
+<span id="L393"><span class="lineNum">     393</span>                 :<span class="tlaGNC">    14470753 :     }</span></span>
+<span id="L394"><span class="lineNum">     394</span>                 :             : </span>
+<span id="L395"><span class="lineNum">     395</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     virtual bool isFinite(const Interval&lt;X&gt;&amp; i) const override { return std::isfinite(toDouble(value)); }</span></span>
+<span id="L396"><span class="lineNum">     396</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     virtual bool isNonZero(const Interval&lt;X&gt;&amp; i) const override { return value != R(0) &amp;&amp; lower &lt;= std::get&lt;0&gt;(i.getLower()) &amp;&amp; std::get&lt;0&gt;(i.getUpper()) &lt;= upper; }</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L397"><span class="lineNum">     397</span>                 :             : </span>
+<span id="L398"><span class="lineNum">     398</span>                 :<span class="tlaUNC">           0 :     virtual void printStructure(std::ostream&amp; os, int level = 0) const override {</span></span>
+<span id="L399"><span class="lineNum">     399</span>                 :<span class="tlaUNC">           0 :         os &lt;&lt; &quot;(Boxcar1D, [&quot; &lt;&lt; lower &lt;&lt; &quot; … &quot; &lt;&lt; upper &lt;&lt; &quot;] → &quot; &lt;&lt; value &lt;&lt; &quot;)&quot;;</span></span>
+<span id="L400"><span class="lineNum">     400</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L401"><span class="lineNum">     401</span>                 :             : };</span>
+<span id="L402"><span class="lineNum">     402</span>                 :             : </span>
+<span id="L403"><span class="lineNum">     403</span>                 :             : /**</span>
+<span id="L404"><span class="lineNum">     404</span>                 :             :  * Some constant value r between (lowerX, lowerY) and (upperX, upperY) and zero otherwise.</span>
+<span id="L405"><span class="lineNum">     405</span>                 :             :  */</span>
+<span id="L406"><span class="lineNum">     406</span>                 :             : template&lt;typename R, typename X, typename Y&gt;</span>
+<span id="L407"><span class="lineNum">     407</span>                 :             : class INET_API Boxcar2DFunction : public FunctionBase&lt;R, Domain&lt;X, Y&gt;&gt;</span>
+<span id="L408"><span class="lineNum">     408</span>                 :             : {</span>
+<span id="L409"><span class="lineNum">     409</span>                 :             :   protected:</span>
+<span id="L410"><span class="lineNum">     410</span>                 :             :     const X lowerX;</span>
+<span id="L411"><span class="lineNum">     411</span>                 :             :     const X upperX;</span>
+<span id="L412"><span class="lineNum">     412</span>                 :             :     const Y lowerY;</span>
+<span id="L413"><span class="lineNum">     413</span>                 :             :     const Y upperY;</span>
+<span id="L414"><span class="lineNum">     414</span>                 :             :     const R value;</span>
+<span id="L415"><span class="lineNum">     415</span>                 :             : </span>
+<span id="L416"><span class="lineNum">     416</span>                 :             :   protected:</span>
+<span id="L417"><span class="lineNum">     417</span>                 :<span class="tlaGNC tlaBgGNC">   229990950 :     void call(const Interval&lt;X, Y&gt;&amp; i, const std::function&lt;void(const Interval&lt;X, Y&gt;&amp;, const IFunction&lt;R, Domain&lt;X, Y&gt;&gt; *)&gt; callback, R r) const {</span></span>
+<span id="L418"><span class="lineNum">     418</span> [<span class="tlaGBC" title="Branch 0 was taken 14696584 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 44272982 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 26300976 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 144720408 times"> + </span>]:<span class="tlaGNC">   229990950 :         if (!i.isEmpty()) {</span></span>
+<span id="L419"><span class="lineNum">     419</span>                 :<span class="tlaGNC">    40997560 :             ConstantFunction&lt;R, Domain&lt;X, Y&gt;&gt; g(r);</span></span>
+<span id="L420"><span class="lineNum">     420</span>                 :<span class="tlaGNC">    40997560 :             callback(i, &amp;g);</span></span>
+<span id="L421"><span class="lineNum">     421</span>                 :<span class="tlaGNC">    40997560 :         }</span></span>
+<span id="L422"><span class="lineNum">     422</span>                 :<span class="tlaGNC">   229990950 :     }</span></span>
+<span id="L423"><span class="lineNum">     423</span>                 :             : </span>
+<span id="L424"><span class="lineNum">     424</span>                 :             :   public:</span>
+<span id="L425"><span class="lineNum">     425</span>                 :             :     Boxcar2DFunction(X lowerX, X upperX, Y lowerY, Y upperY, R value) :</span>
+<span id="L426"><span class="lineNum">     426</span>                 :<span class="tlaGNC">     2671526 :         lowerX(lowerX), upperX(upperX), lowerY(lowerY), upperY(upperY), value(value)</span></span>
+<span id="L427"><span class="lineNum">     427</span>                 :<span class="tlaGNC">     2671526 :     {</span></span>
+<span id="L428"><span class="lineNum">     428</span>                 :<span class="tlaGNC">     2671526 :         ASSERT(value &gt; R(0));</span></span>
+<span id="L429"><span class="lineNum">     429</span>                 :<span class="tlaGNC">     2671526 :     }</span></span>
+<span id="L430"><span class="lineNum">     430</span>                 :             : </span>
+<span id="L431"><span class="lineNum">     431</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     virtual Interval&lt;R&gt; getRange() const override { return Interval&lt;R&gt;(R(0), value, 0b1, 0b1, 0b0); }</span></span>
+<span id="L432"><span class="lineNum">     432</span>                 :             : </span>
+<span id="L433"><span class="lineNum">     433</span>                 :<span class="tlaGNC tlaBgGNC">         720 :     virtual R getValue(const Point&lt;X, Y&gt;&amp; p) const override {</span></span>
+<span id="L434"><span class="lineNum">     434</span> [<span class="tlaGBC" title="Branch 0 was taken 15 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 30 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 185 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 490 times"> + </span>]:<span class="tlaGNC">         720 :         return std::get&lt;0&gt;(p) &lt; lowerX || std::get&lt;0&gt;(p) &gt;= upperX || std::get&lt;1&gt;(p) &lt; lowerY || std::get&lt;1&gt;(p) &gt;= upperY ? R(0) : value;</span></span>
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 15 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 15 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 207 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 283 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 6 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 9 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 78 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 205 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 3 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 6 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 83 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 122 times"> + </span>]
+<span id="L435"><span class="lineNum">     435</span>                 :<span class="tlaGNC">         720 :     }</span></span>
+<span id="L436"><span class="lineNum">     436</span>                 :             : </span>
+<span id="L437"><span class="lineNum">     437</span>                 :<span class="tlaGNC">    25554550 :     virtual void partition(const Interval&lt;X, Y&gt;&amp; i, const std::function&lt;void(const Interval&lt;X, Y&gt;&amp;, const IFunction&lt;R, Domain&lt;X, Y&gt;&gt; *)&gt; callback) const override {</span></span>
+<span id="L438"><span class="lineNum">     438</span>                 :<span class="tlaGNC">    25554550 :         call(i.getIntersected(Interval&lt;X, Y&gt;(Point&lt;X, Y&gt;(getLowerBound&lt;X&gt;(), getLowerBound&lt;Y&gt;()), Point&lt;X, Y&gt;(X(lowerX), Y(lowerY)), 0b00, 0b00, 0b00)), callback, R(0));</span></span>
+<span id="L439"><span class="lineNum">     439</span>                 :<span class="tlaGNC">    25554550 :         call(i.getIntersected(Interval&lt;X, Y&gt;(Point&lt;X, Y&gt;(X(lowerX), getLowerBound&lt;Y&gt;()), Point&lt;X, Y&gt;(X(upperX), Y(lowerY)), 0b10, 0b00, 0b00)), callback, R(0));</span></span>
+<span id="L440"><span class="lineNum">     440</span>                 :<span class="tlaGNC">    25554550 :         call(i.getIntersected(Interval&lt;X, Y&gt;(Point&lt;X, Y&gt;(X(upperX), getLowerBound&lt;Y&gt;()), Point&lt;X, Y&gt;(getUpperBound&lt;X&gt;(), Y(lowerY)), 0b10, 0b00, 0b00)), callback, R(0));</span></span>
+<span id="L441"><span class="lineNum">     441</span>                 :             : </span>
+<span id="L442"><span class="lineNum">     442</span>                 :<span class="tlaGNC">    25554550 :         call(i.getIntersected(Interval&lt;X, Y&gt;(Point&lt;X, Y&gt;(getLowerBound&lt;X&gt;(), Y(lowerY)), Point&lt;X, Y&gt;(X(lowerX), Y(upperY)), 0b01, 0b00, 0b00)), callback, R(0));</span></span>
+<span id="L443"><span class="lineNum">     443</span>                 :<span class="tlaGNC">    25554550 :         call(i.getIntersected(Interval&lt;X, Y&gt;(Point&lt;X, Y&gt;(X(lowerX), Y(lowerY)), Point&lt;X, Y&gt;(X(upperX), Y(upperY)), 0b11, 0b00, 0b00)), callback, value);</span></span>
+<span id="L444"><span class="lineNum">     444</span>                 :<span class="tlaGNC">    25554550 :         call(i.getIntersected(Interval&lt;X, Y&gt;(Point&lt;X, Y&gt;(X(upperX), Y(lowerY)), Point&lt;X, Y&gt;(getUpperBound&lt;X&gt;(), Y(upperY)), 0b11, 0b00, 0b00)), callback, R(0));</span></span>
+<span id="L445"><span class="lineNum">     445</span>                 :             : </span>
+<span id="L446"><span class="lineNum">     446</span>                 :<span class="tlaGNC">    25554550 :         call(i.getIntersected(Interval&lt;X, Y&gt;(Point&lt;X, Y&gt;(getLowerBound&lt;X&gt;(), Y(upperY)), Point&lt;X, Y&gt;(X(lowerX), getUpperBound&lt;Y&gt;()), 0b01, 0b00, 0b00)), callback, R(0));</span></span>
+<span id="L447"><span class="lineNum">     447</span>                 :<span class="tlaGNC">    25554550 :         call(i.getIntersected(Interval&lt;X, Y&gt;(Point&lt;X, Y&gt;(X(lowerX), Y(upperY)), Point&lt;X, Y&gt;(X(upperX), getUpperBound&lt;Y&gt;()), 0b11, 0b00, 0b00)), callback, R(0));</span></span>
+<span id="L448"><span class="lineNum">     448</span>                 :<span class="tlaGNC">    25554550 :         call(i.getIntersected(Interval&lt;X, Y&gt;(Point&lt;X, Y&gt;(X(upperX), Y(upperY)), Point&lt;X, Y&gt;(getUpperBound&lt;X&gt;(), getUpperBound&lt;Y&gt;()), 0b11, 0b00, 0b00)), callback, R(0));</span></span>
+<span id="L449"><span class="lineNum">     449</span>                 :<span class="tlaGNC">    25554550 :     }</span></span>
+<span id="L450"><span class="lineNum">     450</span>                 :             : </span>
+<span id="L451"><span class="lineNum">     451</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     virtual bool isFinite(const Interval&lt;X, Y&gt;&amp; i) const override { return std::isfinite(toDouble(value)); }</span></span>
+<span id="L452"><span class="lineNum">     452</span>                 :<span class="tlaUNC">           0 :     virtual bool isNonZero(const Interval&lt;X, Y&gt;&amp; i) const override {</span></span>
+<span id="L453"><span class="lineNum">     453</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         return value != R(0) &amp;&amp;</span></span>
+<span id="L454"><span class="lineNum">     454</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                lowerX &lt;= std::get&lt;0&gt;(i.getLower()) &amp;&amp; std::get&lt;0&gt;(i.getUpper()) &lt;= upperX &amp;&amp;</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L455"><span class="lineNum">     455</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                lowerY &lt;= std::get&lt;1&gt;(i.getLower()) &amp;&amp; std::get&lt;1&gt;(i.getUpper()) &lt;= upperY;</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L456"><span class="lineNum">     456</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L457"><span class="lineNum">     457</span>                 :             : </span>
+<span id="L458"><span class="lineNum">     458</span>                 :<span class="tlaGNC tlaBgGNC">         555 :     virtual void printStructure(std::ostream&amp; os, int level = 0) const override {</span></span>
+<span id="L459"><span class="lineNum">     459</span>                 :<span class="tlaGNC">         555 :         os &lt;&lt; &quot;(Boxcar2D, [&quot; &lt;&lt; lowerX &lt;&lt; &quot; … &quot; &lt;&lt; upperX &lt;&lt; &quot;] x [&quot; &lt;&lt; lowerY &lt;&lt; &quot; … &quot; &lt;&lt; upperY &lt;&lt; &quot;] → &quot; &lt;&lt; value &lt;&lt; &quot;)&quot;;</span></span>
+<span id="L460"><span class="lineNum">     460</span>                 :<span class="tlaGNC">         555 :     }</span></span>
+<span id="L461"><span class="lineNum">     461</span>                 :             : };</span>
+<span id="L462"><span class="lineNum">     462</span>                 :             : </span>
+<span id="L463"><span class="lineNum">     463</span>                 :             : /**</span>
+<span id="L464"><span class="lineNum">     464</span>                 :             :  * The one-dimensional Gauss function.</span>
+<span id="L465"><span class="lineNum">     465</span>                 :             :  */</span>
+<span id="L466"><span class="lineNum">     466</span>                 :             : template&lt;typename R, typename X&gt;</span>
+<span id="L467"><span class="lineNum">     467</span>                 :             : class INET_API GaussFunction : public FunctionBase&lt;R, Domain&lt;X&gt;&gt;</span>
+<span id="L468"><span class="lineNum">     468</span>                 :             : {</span>
+<span id="L469"><span class="lineNum">     469</span>                 :             :   protected:</span>
+<span id="L470"><span class="lineNum">     470</span>                 :             :     const X mean;</span>
+<span id="L471"><span class="lineNum">     471</span>                 :             :     const X stddev;</span>
+<span id="L472"><span class="lineNum">     472</span>                 :             : </span>
+<span id="L473"><span class="lineNum">     473</span>                 :             :   public:</span>
+<span id="L474"><span class="lineNum">     474</span>                 :             :     GaussFunction(X mean, X stddev) : mean(mean), stddev(stddev) {}</span>
+<span id="L475"><span class="lineNum">     475</span>                 :             : </span>
+<span id="L476"><span class="lineNum">     476</span>                 :             :     virtual R getValue(const Point&lt;X&gt;&amp; p) const override {</span>
+<span id="L477"><span class="lineNum">     477</span>                 :             :         static const double c = 1 / sqrt(2 * M_PI);</span>
+<span id="L478"><span class="lineNum">     478</span>                 :             :         X x = std::get&lt;0&gt;(p);</span>
+<span id="L479"><span class="lineNum">     479</span>                 :             :         double a = toDouble((x - mean) / stddev);</span>
+<span id="L480"><span class="lineNum">     480</span>                 :             :         return R(c / toDouble(stddev) * std::exp(-0.5 * a * a));</span>
+<span id="L481"><span class="lineNum">     481</span>                 :             :     }</span>
+<span id="L482"><span class="lineNum">     482</span>                 :             : };</span>
+<span id="L483"><span class="lineNum">     483</span>                 :             : </span>
+<span id="L484"><span class="lineNum">     484</span>                 :             : /**</span>
+<span id="L485"><span class="lineNum">     485</span>                 :             :  * One-dimensional periodic function with a sawtooth shape.</span>
+<span id="L486"><span class="lineNum">     486</span>                 :             :  */</span>
+<span id="L487"><span class="lineNum">     487</span>                 :             : template&lt;typename R, typename X&gt;</span>
+<span id="L488"><span class="lineNum">     488</span>                 :             : class INET_API SawtoothFunction : public FunctionBase&lt;R, Domain&lt;X&gt;&gt;</span>
+<span id="L489"><span class="lineNum">     489</span>                 :             : {</span>
+<span id="L490"><span class="lineNum">     490</span>                 :             :   protected:</span>
+<span id="L491"><span class="lineNum">     491</span>                 :             :     const X start;</span>
+<span id="L492"><span class="lineNum">     492</span>                 :             :     const X end;</span>
+<span id="L493"><span class="lineNum">     493</span>                 :             :     const X period;</span>
+<span id="L494"><span class="lineNum">     494</span>                 :             :     const R value;</span>
+<span id="L495"><span class="lineNum">     495</span>                 :             : </span>
+<span id="L496"><span class="lineNum">     496</span>                 :             :   public:</span>
+<span id="L497"><span class="lineNum">     497</span>                 :             :     SawtoothFunction(X start, X end, X period, R value) :</span>
+<span id="L498"><span class="lineNum">     498</span>                 :             :         start(start), end(end), period(period), value(value)</span>
+<span id="L499"><span class="lineNum">     499</span>                 :             :     {}</span>
+<span id="L500"><span class="lineNum">     500</span>                 :             : </span>
+<span id="L501"><span class="lineNum">     501</span>                 :             :     virtual R getValue(const Point&lt;X&gt;&amp; p) const override {</span>
+<span id="L502"><span class="lineNum">     502</span>                 :             :         auto x = std::get&lt;0&gt;(p);</span>
+<span id="L503"><span class="lineNum">     503</span>                 :             :         if (x &lt; start)</span>
+<span id="L504"><span class="lineNum">     504</span>                 :             :             return R(0);</span>
+<span id="L505"><span class="lineNum">     505</span>                 :             :         else if (x &gt; end)</span>
+<span id="L506"><span class="lineNum">     506</span>                 :             :             return R(0);</span>
+<span id="L507"><span class="lineNum">     507</span>                 :             :         else</span>
+<span id="L508"><span class="lineNum">     508</span>                 :             :             return value * fmod(toDouble(x - start) / toDouble(period), 1);</span>
+<span id="L509"><span class="lineNum">     509</span>                 :             :     }</span>
+<span id="L510"><span class="lineNum">     510</span>                 :             : };</span>
+<span id="L511"><span class="lineNum">     511</span>                 :             : </span>
+<span id="L512"><span class="lineNum">     512</span>                 :             : /**</span>
+<span id="L513"><span class="lineNum">     513</span>                 :             :  * One-dimensional interpolated (e.g. constant, linear) function between intervals defined by points positioned periodically on the X axis.</span>
+<span id="L514"><span class="lineNum">     514</span>                 :             :  */</span>
+<span id="L515"><span class="lineNum">     515</span>                 :             : template&lt;typename R, typename X&gt;</span>
+<span id="L516"><span class="lineNum">     516</span>                 :             : class INET_API PeriodicallyInterpolated1DFunction : public FunctionBase&lt;R, Domain&lt;X&gt;&gt;</span>
+<span id="L517"><span class="lineNum">     517</span>                 :             : {</span>
+<span id="L518"><span class="lineNum">     518</span>                 :             :   protected:</span>
+<span id="L519"><span class="lineNum">     519</span>                 :             :     const X start;</span>
+<span id="L520"><span class="lineNum">     520</span>                 :             :     const X end;</span>
+<span id="L521"><span class="lineNum">     521</span>                 :             :     const X step;</span>
+<span id="L522"><span class="lineNum">     522</span>                 :             :     const IInterpolator&lt;X, R&gt;&amp; interpolator;</span>
+<span id="L523"><span class="lineNum">     523</span>                 :             :     const std::vector&lt;R&gt; rs;</span>
+<span id="L524"><span class="lineNum">     524</span>                 :             : </span>
+<span id="L525"><span class="lineNum">     525</span>                 :             :   public:</span>
+<span id="L526"><span class="lineNum">     526</span>                 :             :     PeriodicallyInterpolated1DFunction(X start, X end, const IInterpolator&lt;X, R&gt;&amp; interpolator, const std::vector&lt;R&gt;&amp; rs) :</span>
+<span id="L527"><span class="lineNum">     527</span>                 :             :         start(start), end(end), step((end - start) / (rs.size() - 1)), interpolator(interpolator), rs(rs) {}</span>
+<span id="L528"><span class="lineNum">     528</span>                 :             : </span>
+<span id="L529"><span class="lineNum">     529</span>                 :             :     virtual R getValue(const Point&lt;X&gt;&amp; p) const override {</span>
+<span id="L530"><span class="lineNum">     530</span>                 :             :         X x = std::get&lt;0&gt;(p);</span>
+<span id="L531"><span class="lineNum">     531</span>                 :             :         int index = std::floor(toDouble(x - start) / toDouble(step));</span>
+<span id="L532"><span class="lineNum">     532</span>                 :             :         if (index &lt; 0 || index &gt; rs.size() - 2)</span>
+<span id="L533"><span class="lineNum">     533</span>                 :             :             return R(0);</span>
+<span id="L534"><span class="lineNum">     534</span>                 :             :         else {</span>
+<span id="L535"><span class="lineNum">     535</span>                 :             :             R r1 = rs[index];</span>
+<span id="L536"><span class="lineNum">     536</span>                 :             :             R r2 = rs[index + 1];</span>
+<span id="L537"><span class="lineNum">     537</span>                 :             :             X x1 = start + step * index;</span>
+<span id="L538"><span class="lineNum">     538</span>                 :             :             X x2 = x1 + step;</span>
+<span id="L539"><span class="lineNum">     539</span>                 :             :             return interpolator.getValue(x1, r1, x2, r2, x);</span>
+<span id="L540"><span class="lineNum">     540</span>                 :             :         }</span>
+<span id="L541"><span class="lineNum">     541</span>                 :             :     }</span>
+<span id="L542"><span class="lineNum">     542</span>                 :             : </span>
+<span id="L543"><span class="lineNum">     543</span>                 :             :     virtual void partition(const Interval&lt;X&gt;&amp; i, const std::function&lt;void(const Interval&lt;X&gt;&amp;, const IFunction&lt;R, Domain&lt;X&gt;&gt; *)&gt; callback) const override {</span>
+<span id="L544"><span class="lineNum">     544</span>                 :             :         const auto&amp; i1 = i.getIntersected(Interval&lt;X&gt;(getLowerBound&lt;X&gt;(), Point&lt;X&gt;(start), 0b0, 0b0, 0b0));</span>
+<span id="L545"><span class="lineNum">     545</span>                 :             :         if (!i1.isEmpty()) {</span>
+<span id="L546"><span class="lineNum">     546</span>                 :             :             ConstantFunction&lt;R, Domain&lt;X&gt;&gt; g(R(0));</span>
+<span id="L547"><span class="lineNum">     547</span>                 :             :             callback(i1, &amp;g);</span>
+<span id="L548"><span class="lineNum">     548</span>                 :             :         }</span>
+<span id="L549"><span class="lineNum">     549</span>                 :             :         const auto&amp; i2 = i.getIntersected(Interval&lt;X&gt;(Point&lt;X&gt;(start), Point&lt;X&gt;(end), 0b1, 0b0, 0b0));</span>
+<span id="L550"><span class="lineNum">     550</span>                 :             :         if (!i2.isEmpty()) {</span>
+<span id="L551"><span class="lineNum">     551</span>                 :             :             int startIndex = std::max(0, (int)std::floor(toDouble(std::get&lt;0&gt;(i.getLower()) - start) / toDouble(step)));</span>
+<span id="L552"><span class="lineNum">     552</span>                 :             :             int endIndex = std::min((int)rs.size() - 1, (int)std::ceil(toDouble(std::get&lt;0&gt;(i.getUpper()) - start) / toDouble(step)));</span>
+<span id="L553"><span class="lineNum">     553</span>                 :             :             for (int index = startIndex; index &lt; endIndex; index++) {</span>
+<span id="L554"><span class="lineNum">     554</span>                 :             :                 Point&lt;X&gt; startPoint(start + step * index);</span>
+<span id="L555"><span class="lineNum">     555</span>                 :             :                 Point&lt;X&gt; endPoint(start + step * (index + 1));</span>
+<span id="L556"><span class="lineNum">     556</span>                 :             :                 const auto&amp; i3 = i.getIntersected(Interval&lt;X&gt;(startPoint, endPoint, 0b1, 0b0, 0b0));</span>
+<span id="L557"><span class="lineNum">     557</span>                 :             :                 if (!i3.isEmpty()) {</span>
+<span id="L558"><span class="lineNum">     558</span>                 :             :                     if (dynamic_cast&lt;const ConstantInterpolatorBase&lt;X, R&gt; *&gt;(&amp;interpolator)) {</span>
+<span id="L559"><span class="lineNum">     559</span>                 :             :                         R r = getValue((startPoint + endPoint) / 2);</span>
+<span id="L560"><span class="lineNum">     560</span>                 :             :                         ConstantFunction&lt;R, Domain&lt;X&gt;&gt; g(r);</span>
+<span id="L561"><span class="lineNum">     561</span>                 :             :                         callback(i3, &amp;g);</span>
+<span id="L562"><span class="lineNum">     562</span>                 :             :                     }</span>
+<span id="L563"><span class="lineNum">     563</span>                 :             :                     else</span>
+<span id="L564"><span class="lineNum">     564</span>                 :             :                         throw cRuntimeError(&quot;TODO&quot;);</span>
+<span id="L565"><span class="lineNum">     565</span>                 :             :                 }</span>
+<span id="L566"><span class="lineNum">     566</span>                 :             :             }</span>
+<span id="L567"><span class="lineNum">     567</span>                 :             :         }</span>
+<span id="L568"><span class="lineNum">     568</span>                 :             :         const auto&amp; i4 = i.getIntersected(Interval&lt;X&gt;(Point&lt;X&gt;(end), getUpperBound&lt;X&gt;(), 0b1, 0b0, 0b0));</span>
+<span id="L569"><span class="lineNum">     569</span>                 :             :         if (!i4.isEmpty()) {</span>
+<span id="L570"><span class="lineNum">     570</span>                 :             :             ConstantFunction&lt;R, Domain&lt;X&gt;&gt; g(R(0));</span>
+<span id="L571"><span class="lineNum">     571</span>                 :             :             callback(i4, &amp;g);</span>
+<span id="L572"><span class="lineNum">     572</span>                 :             :         }</span>
+<span id="L573"><span class="lineNum">     573</span>                 :             :     }</span>
+<span id="L574"><span class="lineNum">     574</span>                 :             : };</span>
+<span id="L575"><span class="lineNum">     575</span>                 :             : </span>
+<span id="L576"><span class="lineNum">     576</span>                 :             : template&lt;typename R, typename X, typename Y&gt;</span>
+<span id="L577"><span class="lineNum">     577</span>                 :             : class INET_API PeriodicallyInterpolated2DFunction : public FunctionBase&lt;R, Domain&lt;X, Y&gt;&gt;</span>
+<span id="L578"><span class="lineNum">     578</span>                 :             : {</span>
+<span id="L579"><span class="lineNum">     579</span>                 :             :   protected:</span>
+<span id="L580"><span class="lineNum">     580</span>                 :             :     const X startX;</span>
+<span id="L581"><span class="lineNum">     581</span>                 :             :     const X endX;</span>
+<span id="L582"><span class="lineNum">     582</span>                 :             :     const X stepX;</span>
+<span id="L583"><span class="lineNum">     583</span>                 :             :     int sizeX;</span>
+<span id="L584"><span class="lineNum">     584</span>                 :             :     const Y startY;</span>
+<span id="L585"><span class="lineNum">     585</span>                 :             :     const Y endY;</span>
+<span id="L586"><span class="lineNum">     586</span>                 :             :     const Y stepY;</span>
+<span id="L587"><span class="lineNum">     587</span>                 :             :     int sizeY;</span>
+<span id="L588"><span class="lineNum">     588</span>                 :             :     const IInterpolator&lt;X, R&gt;&amp; interpolatorX;</span>
+<span id="L589"><span class="lineNum">     589</span>                 :             :     const IInterpolator&lt;Y, R&gt;&amp; interpolatorY;</span>
+<span id="L590"><span class="lineNum">     590</span>                 :             :     const std::vector&lt;R&gt; rs;</span>
+<span id="L591"><span class="lineNum">     591</span>                 :             : </span>
+<span id="L592"><span class="lineNum">     592</span>                 :             :   protected:</span>
+<span id="L593"><span class="lineNum">     593</span>                 :             :     virtual R getValueInterpolatedAlongX(X x, int indexX, int indexY) const {</span>
+<span id="L594"><span class="lineNum">     594</span>                 :             :         R r1 = rs[sizeX * indexY + indexX];</span>
+<span id="L595"><span class="lineNum">     595</span>                 :             :         R r2 = rs[sizeX * indexY + indexX + 1];</span>
+<span id="L596"><span class="lineNum">     596</span>                 :             :         X x1 = startX + stepX * indexX;</span>
+<span id="L597"><span class="lineNum">     597</span>                 :             :         X x2 = x1 + stepX;</span>
+<span id="L598"><span class="lineNum">     598</span>                 :             :         return interpolatorX.getValue(x1, r1, x2, r2, x);</span>
+<span id="L599"><span class="lineNum">     599</span>                 :             :     }</span>
+<span id="L600"><span class="lineNum">     600</span>                 :             : </span>
+<span id="L601"><span class="lineNum">     601</span>                 :             :     void call(const Interval&lt;X, Y&gt;&amp; i, const std::function&lt;void(const Interval&lt;X, Y&gt;&amp;, const IFunction&lt;R, Domain&lt;X, Y&gt;&gt; *)&gt; callback) const {</span>
+<span id="L602"><span class="lineNum">     602</span>                 :             :         if (!i.isEmpty()) {</span>
+<span id="L603"><span class="lineNum">     603</span>                 :             :             ConstantFunction&lt;R, Domain&lt;X, Y&gt;&gt; g(R(0));</span>
+<span id="L604"><span class="lineNum">     604</span>                 :             :             callback(i, &amp;g);</span>
+<span id="L605"><span class="lineNum">     605</span>                 :             :         }</span>
+<span id="L606"><span class="lineNum">     606</span>                 :             :     }</span>
+<span id="L607"><span class="lineNum">     607</span>                 :             : </span>
+<span id="L608"><span class="lineNum">     608</span>                 :             :   public:</span>
+<span id="L609"><span class="lineNum">     609</span>                 :             :     PeriodicallyInterpolated2DFunction(X startX, X endX, int sizeX, Y startY, Y endY, int sizeY, const IInterpolator&lt;X, R&gt;&amp; interpolatorX, const IInterpolator&lt;Y, R&gt;&amp; interpolatorY, const std::vector&lt;R&gt;&amp; rs) :</span>
+<span id="L610"><span class="lineNum">     610</span>                 :             :         startX(startX), endX(endX), stepX((endX - startX) / (sizeX - 1)), sizeX(sizeX),</span>
+<span id="L611"><span class="lineNum">     611</span>                 :             :         startY(startY), endY(endY), stepY((endY - startY) / (sizeY - 1)), sizeY(sizeY),</span>
+<span id="L612"><span class="lineNum">     612</span>                 :             :         interpolatorX(interpolatorX), interpolatorY(interpolatorY), rs(rs)</span>
+<span id="L613"><span class="lineNum">     613</span>                 :             :     {</span>
+<span id="L614"><span class="lineNum">     614</span>                 :             :         ASSERT(rs.size() == sizeX * sizeY);</span>
+<span id="L615"><span class="lineNum">     615</span>                 :             :     }</span>
+<span id="L616"><span class="lineNum">     616</span>                 :             : </span>
+<span id="L617"><span class="lineNum">     617</span>                 :             :     virtual R getValue(const Point&lt;X, Y&gt;&amp; p) const override {</span>
+<span id="L618"><span class="lineNum">     618</span>                 :             :         X x = std::get&lt;0&gt;(p);</span>
+<span id="L619"><span class="lineNum">     619</span>                 :             :         Y y = std::get&lt;1&gt;(p);</span>
+<span id="L620"><span class="lineNum">     620</span>                 :             :         int indexX = std::floor(toDouble(x - startX) / toDouble(stepX));</span>
+<span id="L621"><span class="lineNum">     621</span>                 :             :         int indexY = std::floor(toDouble(y - startY) / toDouble(stepY));</span>
+<span id="L622"><span class="lineNum">     622</span>                 :             :         if (indexX &lt; 0 || indexX &gt; sizeX - 2 || indexY &lt; 0 || indexY &gt; sizeY - 2)</span>
+<span id="L623"><span class="lineNum">     623</span>                 :             :             return R(0);</span>
+<span id="L624"><span class="lineNum">     624</span>                 :             :         else {</span>
+<span id="L625"><span class="lineNum">     625</span>                 :             :             R r1 = getValueInterpolatedAlongX(x, indexX, indexY);</span>
+<span id="L626"><span class="lineNum">     626</span>                 :             :             R r2 = getValueInterpolatedAlongX(x, indexX, indexY + 1);</span>
+<span id="L627"><span class="lineNum">     627</span>                 :             :             Y y1 = startY + stepY * indexY;</span>
+<span id="L628"><span class="lineNum">     628</span>                 :             :             Y y2 = y1 + stepY;</span>
+<span id="L629"><span class="lineNum">     629</span>                 :             :             return interpolatorY.getValue(y1, r1, y2, r2, y);</span>
+<span id="L630"><span class="lineNum">     630</span>                 :             :         }</span>
+<span id="L631"><span class="lineNum">     631</span>                 :             :     }</span>
+<span id="L632"><span class="lineNum">     632</span>                 :             : </span>
+<span id="L633"><span class="lineNum">     633</span>                 :             :     virtual void partition(const Interval&lt;X, Y&gt;&amp; i, const std::function&lt;void(const Interval&lt;X, Y&gt;&amp;, const IFunction&lt;R, Domain&lt;X, Y&gt;&gt; *)&gt; callback) const override {</span>
+<span id="L634"><span class="lineNum">     634</span>                 :             :         call(i.getIntersected(Interval&lt;X, Y&gt;(Point&lt;X, Y&gt;(getLowerBound&lt;X&gt;(), getLowerBound&lt;Y&gt;()), Point&lt;X, Y&gt;(X(startX), Y(startY)), 0b00, 0b00, 0b00)), callback);</span>
+<span id="L635"><span class="lineNum">     635</span>                 :             :         call(i.getIntersected(Interval&lt;X, Y&gt;(Point&lt;X, Y&gt;(X(startX), getLowerBound&lt;Y&gt;()), Point&lt;X, Y&gt;(X(endX), Y(startY)), 0b10, 0b00, 0b00)), callback);</span>
+<span id="L636"><span class="lineNum">     636</span>                 :             :         call(i.getIntersected(Interval&lt;X, Y&gt;(Point&lt;X, Y&gt;(X(endX), getLowerBound&lt;Y&gt;()), Point&lt;X, Y&gt;(getUpperBound&lt;X&gt;(), Y(startY)), 0b10, 0b00, 0b00)), callback);</span>
+<span id="L637"><span class="lineNum">     637</span>                 :             : </span>
+<span id="L638"><span class="lineNum">     638</span>                 :             :         call(i.getIntersected(Interval&lt;X, Y&gt;(Point&lt;X, Y&gt;(getLowerBound&lt;X&gt;(), Y(startY)), Point&lt;X, Y&gt;(X(startX), Y(endY)), 0b01, 0b00, 0b00)), callback);</span>
+<span id="L639"><span class="lineNum">     639</span>                 :             :         const auto&amp; i1 = i.getIntersected(Interval&lt;X, Y&gt;(Point&lt;X, Y&gt;(X(startX), Y(startY)), Point&lt;X, Y&gt;(X(endX), Y(endY)), 0b11, 0b00, 0b00));</span>
+<span id="L640"><span class="lineNum">     640</span>                 :             :         if (!i1.isEmpty()) {</span>
+<span id="L641"><span class="lineNum">     641</span>                 :             :             int startIndexX = std::max(0, (int)std::floor(toDouble(std::get&lt;0&gt;(i.getLower()) - startX) / toDouble(stepX)));</span>
+<span id="L642"><span class="lineNum">     642</span>                 :             :             int endIndexX = std::min(sizeX - 1, (int)std::ceil(toDouble(std::get&lt;0&gt;(i.getUpper()) - startX) / toDouble(stepX)));</span>
+<span id="L643"><span class="lineNum">     643</span>                 :             :             for (int indexX = startIndexX; indexX &lt; endIndexX; indexX++) {</span>
+<span id="L644"><span class="lineNum">     644</span>                 :             :                 int startIndexY = std::max(0, (int)std::floor(toDouble(std::get&lt;1&gt;(i.getLower()) - startY) / toDouble(stepY)));</span>
+<span id="L645"><span class="lineNum">     645</span>                 :             :                 int endIndexY = std::min(sizeY - 1, (int)std::ceil(toDouble(std::get&lt;1&gt;(i.getUpper()) - startY) / toDouble(stepY)));</span>
+<span id="L646"><span class="lineNum">     646</span>                 :             :                 for (int indexY = startIndexY; indexY &lt; endIndexY; indexY++) {</span>
+<span id="L647"><span class="lineNum">     647</span>                 :             :                     Point&lt;X, Y&gt; startPoint(startX + stepX * indexX, startY + stepY * indexY);</span>
+<span id="L648"><span class="lineNum">     648</span>                 :             :                     Point&lt;X, Y&gt; endPoint(startX + stepX * (indexX + 1), startY + stepY * (indexY + 1));</span>
+<span id="L649"><span class="lineNum">     649</span>                 :             :                     const auto&amp; i3 = i.getIntersected(Interval&lt;X, Y&gt;(startPoint, endPoint, 0b11, 0b00, 0b00));</span>
+<span id="L650"><span class="lineNum">     650</span>                 :             :                     if (!i3.isEmpty()) {</span>
+<span id="L651"><span class="lineNum">     651</span>                 :             :                         if (dynamic_cast&lt;const ConstantInterpolatorBase&lt;X, R&gt; *&gt;(&amp;interpolatorX) &amp;&amp; dynamic_cast&lt;const ConstantInterpolatorBase&lt;Y, R&gt; *&gt;(&amp;interpolatorY)) {</span>
+<span id="L652"><span class="lineNum">     652</span>                 :             :                             R r = getValue((startPoint + endPoint) / 2);</span>
+<span id="L653"><span class="lineNum">     653</span>                 :             :                             ConstantFunction&lt;R, Domain&lt;X, Y&gt;&gt; g(r);</span>
+<span id="L654"><span class="lineNum">     654</span>                 :             :                             callback(i3, &amp;g);</span>
+<span id="L655"><span class="lineNum">     655</span>                 :             :                         }</span>
+<span id="L656"><span class="lineNum">     656</span>                 :             :                         else</span>
+<span id="L657"><span class="lineNum">     657</span>                 :             :                             throw cRuntimeError(&quot;TODO&quot;);</span>
+<span id="L658"><span class="lineNum">     658</span>                 :             :                     }</span>
+<span id="L659"><span class="lineNum">     659</span>                 :             :                 }</span>
+<span id="L660"><span class="lineNum">     660</span>                 :             :             }</span>
+<span id="L661"><span class="lineNum">     661</span>                 :             :         }</span>
+<span id="L662"><span class="lineNum">     662</span>                 :             :         call(i.getIntersected(Interval&lt;X, Y&gt;(Point&lt;X, Y&gt;(X(endX), Y(startY)), Point&lt;X, Y&gt;(getUpperBound&lt;X&gt;(), Y(endY)), 0b11, 0b00, 0b00)), callback);</span>
+<span id="L663"><span class="lineNum">     663</span>                 :             : </span>
+<span id="L664"><span class="lineNum">     664</span>                 :             :         call(i.getIntersected(Interval&lt;X, Y&gt;(Point&lt;X, Y&gt;(getLowerBound&lt;X&gt;(), Y(endY)), Point&lt;X, Y&gt;(X(startX), getUpperBound&lt;Y&gt;()), 0b01, 0b00, 0b00)), callback);</span>
+<span id="L665"><span class="lineNum">     665</span>                 :             :         call(i.getIntersected(Interval&lt;X, Y&gt;(Point&lt;X, Y&gt;(X(startX), Y(endY)), Point&lt;X, Y&gt;(X(endX), getUpperBound&lt;Y&gt;()), 0b11, 0b00, 0b00)), callback);</span>
+<span id="L666"><span class="lineNum">     666</span>                 :             :         call(i.getIntersected(Interval&lt;X, Y&gt;(Point&lt;X, Y&gt;(X(endX), Y(endY)), Point&lt;X, Y&gt;(getUpperBound&lt;X&gt;(), getUpperBound&lt;Y&gt;()), 0b11, 0b00, 0b00)), callback);</span>
+<span id="L667"><span class="lineNum">     667</span>                 :             :     }</span>
+<span id="L668"><span class="lineNum">     668</span>                 :             : };</span>
+<span id="L669"><span class="lineNum">     669</span>                 :             : </span>
+<span id="L670"><span class="lineNum">     670</span>                 :             : /**</span>
+<span id="L671"><span class="lineNum">     671</span>                 :             :  * One-dimensional interpolated (e.g. constant, linear) function between intervals defined by points on the X axis.</span>
+<span id="L672"><span class="lineNum">     672</span>                 :             :  */</span>
+<span id="L673"><span class="lineNum">     673</span>                 :             : template&lt;typename R, typename X&gt;</span>
+<span id="L674"><span class="lineNum">     674</span>                 :             : class INET_API Interpolated1DFunction : public FunctionBase&lt;R, Domain&lt;X&gt;&gt;</span>
+<span id="L675"><span class="lineNum">     675</span>                 :             : {</span>
+<span id="L676"><span class="lineNum">     676</span>                 :             :   protected:</span>
+<span id="L677"><span class="lineNum">     677</span>                 :             :     const std::map&lt;X, std::pair&lt;R, const IInterpolator&lt;X, R&gt; *&gt;&gt; rs;</span>
+<span id="L678"><span class="lineNum">     678</span>                 :             : </span>
+<span id="L679"><span class="lineNum">     679</span>                 :             :   public:</span>
+<span id="L680"><span class="lineNum">     680</span>                 :<span class="tlaGNC">    14143084 :     Interpolated1DFunction(const std::map&lt;X, R&gt;&amp; rs, const IInterpolator&lt;X, R&gt; *interpolator) : rs([&amp;] () {</span></span>
+<span id="L681"><span class="lineNum">     681</span>                 :<span class="tlaGNC">    14143084 :         std::map&lt;X, std::pair&lt;R, const IInterpolator&lt;X, R&gt; *&gt;&gt; result;</span></span>
+<span id="L682"><span class="lineNum">     682</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaGBC" title="Branch 0 was taken 62059850 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 14143084 times"> + </span>]:<span class="tlaGNC">    14143084 :         for (auto it : rs)</span></span>
+<span id="L683"><span class="lineNum">     683</span>                 :<span class="tlaGNC">    62059850 :             result[it.first] = { it.second, interpolator };</span></span>
+<span id="L684"><span class="lineNum">     684</span>                 :<span class="tlaGNC">    14143084 :         return result;</span></span>
+<span id="L685"><span class="lineNum">     685</span>                 :<span class="tlaGNC">    14143084 :     } ()) {}</span></span>
+<span id="L686"><span class="lineNum">     686</span>                 :             : </span>
+<span id="L687"><span class="lineNum">     687</span>                 :<span class="tlaGNC">      198141 :     Interpolated1DFunction(const std::map&lt;X, std::pair&lt;R, const IInterpolator&lt;X, R&gt; *&gt;&gt;&amp; rs) : rs(rs) {}</span></span>
+<span id="L688"><span class="lineNum">     688</span>                 :             : </span>
+<span id="L689"><span class="lineNum">     689</span>                 :<span class="tlaGNC">         102 :     virtual R getValue(const Point&lt;X&gt;&amp; p) const override {</span></span>
+<span id="L690"><span class="lineNum">     690</span>                 :<span class="tlaGNC">         102 :         X x = std::get&lt;0&gt;(p);</span></span>
+<span id="L691"><span class="lineNum">     691</span>                 :<span class="tlaGNC">         102 :         auto it = rs.equal_range(x);</span></span>
+<span id="L692"><span class="lineNum">     692</span>                 :<span class="tlaGNC">         102 :         auto&amp; lt = it.first;</span></span>
+<span id="L693"><span class="lineNum">     693</span>                 :<span class="tlaGNC">         102 :         auto&amp; ut = it.second;</span></span>
+<span id="L694"><span class="lineNum">     694</span>                 :             :         // TODO this nested if looks horrible</span>
+<span id="L695"><span class="lineNum">     695</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaGNC">         102 :         if (lt != rs.end() &amp;&amp; lt-&gt;first == x) {</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaGBC" title="Branch 0 was taken 6 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 96 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 102 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaGBC" title="Branch 0 was taken 6 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 96 times"> + </span>]
+<span id="L696"><span class="lineNum">     696</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaGNC">           6 :             if (ut == rs.end())</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 6 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L697"><span class="lineNum">     697</span>                 :<span class="tlaUNC tlaBgUNC">           0 :                 return lt-&gt;second.first;</span></span>
+<span id="L698"><span class="lineNum">     698</span>                 :<span class="tlaGNC tlaBgGNC">           6 :             else {</span></span>
+<span id="L699"><span class="lineNum">     699</span>                 :<span class="tlaGNC">           6 :                 const auto interpolator = lt-&gt;second.second;</span></span>
+<span id="L700"><span class="lineNum">     700</span>                 :<span class="tlaGNC">           6 :                 return interpolator-&gt;getValue(lt-&gt;first, lt-&gt;second.first, ut-&gt;first, ut-&gt;second.first, x);</span></span>
+<span id="L701"><span class="lineNum">     701</span>                 :<span class="tlaGNC">           6 :             }</span></span>
+<span id="L702"><span class="lineNum">     702</span>                 :<span class="tlaGNC">           6 :         }</span></span>
+<span id="L703"><span class="lineNum">     703</span>                 :<span class="tlaGNC">          96 :         else {</span></span>
+<span id="L704"><span class="lineNum">     704</span>                 :<span class="tlaGNC">          96 :             ASSERT(lt != rs.end() &amp;&amp; ut != rs.end());</span></span>
+<span id="L705"><span class="lineNum">     705</span>                 :<span class="tlaGNC">          96 :             lt--;</span></span>
+<span id="L706"><span class="lineNum">     706</span>                 :<span class="tlaGNC">          96 :             const auto interpolator = lt-&gt;second.second;</span></span>
+<span id="L707"><span class="lineNum">     707</span>                 :<span class="tlaGNC">          96 :             return interpolator-&gt;getValue(lt-&gt;first, lt-&gt;second.first, ut-&gt;first, ut-&gt;second.first, x);</span></span>
+<span id="L708"><span class="lineNum">     708</span>                 :<span class="tlaGNC">          96 :         }</span></span>
+<span id="L709"><span class="lineNum">     709</span>                 :<span class="tlaGNC">         102 :     }</span></span>
+<span id="L710"><span class="lineNum">     710</span>                 :             : </span>
+<span id="L711"><span class="lineNum">     711</span>                 :<span class="tlaGNC">    27967416 :     virtual void partition(const Interval&lt;X&gt;&amp; i, const std::function&lt;void(const Interval&lt;X&gt;&amp;, const IFunction&lt;R, Domain&lt;X&gt;&gt; *)&gt; callback) const override {</span></span>
+<span id="L712"><span class="lineNum">     712</span>                 :             :         // loop from less or equal than lower to greater or equal than upper inclusive both ends</span>
+<span id="L713"><span class="lineNum">     713</span>                 :<span class="tlaGNC">    27967416 :         auto lt = rs.lower_bound(std::get&lt;0&gt;(i.getLower()));</span></span>
+<span id="L714"><span class="lineNum">     714</span>                 :<span class="tlaGNC">    27967416 :         auto ut = rs.upper_bound(std::get&lt;0&gt;(i.getUpper()));</span></span>
+<span id="L715"><span class="lineNum">     715</span> [<span class="tlaGBC" title="Branch 0 was taken 4 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 6 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 4247619 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 219047 times"> + </span>]:<span class="tlaGNC">    27967416 :         if (lt-&gt;first &gt; std::get&lt;0&gt;(i.getLower()))</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 23500740 times"> + </span>]
+<span id="L716"><span class="lineNum">     716</span>                 :<span class="tlaGNC">     4247623 :             lt--;</span></span>
+<span id="L717"><span class="lineNum">     717</span> [<span class="tlaGBC" title="Branch 0 was taken 4 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 6 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaGNC">    27967416 :         if (ut == rs.end())</span></span>
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 3773725 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 692941 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 23500740 times"> + </span>]
+<span id="L718"><span class="lineNum">     718</span>                 :<span class="tlaGNC">     3773729 :             ut--;</span></span>
+<span id="L719"><span class="lineNum">     719</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaGBC" title="Branch 0 was taken 28 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 10 times"> + </span>]:<span class="tlaGNC">   111964450 :         for (auto it = lt; it != ut; it++) {</span></span>
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 35795504 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4466666 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 48201502 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 23500740 times"> + </span>]
+<span id="L720"><span class="lineNum">     720</span>                 :<span class="tlaGNC">    83997034 :             auto jt = it;</span></span>
+<span id="L721"><span class="lineNum">     721</span>                 :<span class="tlaGNC">    83997034 :             jt++;</span></span>
+<span id="L722"><span class="lineNum">     722</span>                 :<span class="tlaGNC">    83997034 :             auto kt = jt;</span></span>
+<span id="L723"><span class="lineNum">     723</span>                 :<span class="tlaGNC">    83997034 :             kt++;</span></span>
+<span id="L724"><span class="lineNum">     724</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaGBC" title="Branch 0 was taken 7 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 21 times"> + </span>]:<span class="tlaGNC">    83997034 :             auto i1 = i.getIntersected(Interval&lt;X&gt;(Point&lt;X&gt;(it-&gt;first), Point&lt;X&gt;(jt-&gt;first), 0b1, kt == rs.end() ? 0b1 : 0b0, 0b0));</span></span>
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 3792905 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 32002599 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 21953897 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 26247605 times"> + </span>]
+<span id="L725"><span class="lineNum">     725</span> [<span class="tlaGBC" title="Branch 0 was taken 24700762 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 23500740 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaGNC">    83997034 :             if (!i1.isEmpty()) {</span></span>
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 22 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 6 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 35774596 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 20908 times"> + </span>]
+<span id="L726"><span class="lineNum">     726</span>                 :<span class="tlaGNC">    60475380 :                 const auto interpolator = it-&gt;second.second;</span></span>
+<span id="L727"><span class="lineNum">     727</span>                 :<span class="tlaGNC">    60475380 :                 auto xLower = std::get&lt;0&gt;(i1.getLower());</span></span>
+<span id="L728"><span class="lineNum">     728</span>                 :<span class="tlaGNC">    60475380 :                 auto xUpper = std::get&lt;0&gt;(i1.getUpper());</span></span>
+<span id="L729"><span class="lineNum">     729</span> [<span class="tlaGBC" title="Branch 0 was taken 8 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 14 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 24700762 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">    60475380 :                 if (dynamic_cast&lt;const ConstantInterpolatorBase&lt;X, R&gt; *&gt;(interpolator)) {</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaGBC" title="Branch 0 was taken 7625239 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 28149357 times"> + </span>]
+<span id="L730"><span class="lineNum">     730</span>                 :<span class="tlaGNC">    32326009 :                     auto value = interpolator-&gt;getValue(it-&gt;first, it-&gt;second.first, jt-&gt;first, jt-&gt;second.first, (xLower + xUpper) / 2);</span></span>
+<span id="L731"><span class="lineNum">     731</span>                 :<span class="tlaGNC">    32326009 :                     ConstantFunction&lt;R, Domain&lt;X&gt;&gt; g(value);</span></span>
+<span id="L732"><span class="lineNum">     732</span>                 :<span class="tlaGNC">    32326009 :                     callback(i1, &amp;g);</span></span>
+<span id="L733"><span class="lineNum">     733</span>                 :<span class="tlaGNC">    32326009 :                 }</span></span>
+<span id="L734"><span class="lineNum">     734</span> [<span class="tlaGBC" title="Branch 0 was taken 28149357 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 14 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">    28149371 :                 else if (dynamic_cast&lt;const LinearInterpolator&lt;X, R&gt; *&gt;(interpolator)) {</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L735"><span class="lineNum">     735</span>                 :<span class="tlaGNC">    28149371 :                     auto yLower = interpolator-&gt;getValue(it-&gt;first, it-&gt;second.first, jt-&gt;first, jt-&gt;second.first, xLower);</span></span>
+<span id="L736"><span class="lineNum">     736</span>                 :<span class="tlaGNC">    28149371 :                     auto yUpper = interpolator-&gt;getValue(it-&gt;first, it-&gt;second.first, jt-&gt;first, jt-&gt;second.first, xUpper);</span></span>
+<span id="L737"><span class="lineNum">     737</span>                 :<span class="tlaGNC">    28149371 :                     UnilinearFunction&lt;R, Domain&lt;X&gt;&gt; g(xLower, xUpper, yLower, yUpper, 0);</span></span>
+<span id="L738"><span class="lineNum">     738</span>                 :<span class="tlaGNC">    28149371 :                     simplifyAndCall(i1, &amp;g, callback);</span></span>
+<span id="L739"><span class="lineNum">     739</span>                 :<span class="tlaGNC">    28149371 :                 }</span></span>
+<span id="L740"><span class="lineNum">     740</span>                 :<span class="tlaUNC tlaBgUNC">           0 :                 else</span></span>
+<span id="L741"><span class="lineNum">     741</span>                 :<span class="tlaUNC">           0 :                     throw cRuntimeError(&quot;TODO&quot;);</span></span>
+<span id="L742"><span class="lineNum">     742</span>                 :<span class="tlaGNC tlaBgGNC">    60475380 :             }</span></span>
+<span id="L743"><span class="lineNum">     743</span>                 :<span class="tlaGNC">    83997034 :         }</span></span>
+<span id="L744"><span class="lineNum">     744</span>                 :<span class="tlaGNC">    27967416 :     }</span></span>
+<span id="L745"><span class="lineNum">     745</span>                 :             : </span>
+<span id="L746"><span class="lineNum">     746</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     virtual bool isFinite(const Interval&lt;X&gt;&amp; i) const override { return true; }</span></span>
+<span id="L747"><span class="lineNum">     747</span>                 :             : </span>
+<span id="L748"><span class="lineNum">     748</span>                 :<span class="tlaUNC">           0 :     virtual void printStructure(std::ostream&amp; os, int level = 0) const override {</span></span>
+<span id="L749"><span class="lineNum">     749</span>                 :<span class="tlaUNC">           0 :         os &lt;&lt; &quot;(Interpolated1D&quot;;</span></span>
+<span id="L750"><span class="lineNum">     750</span>                 :<span class="tlaUNC">           0 :         auto size = rs.size();</span></span>
+<span id="L751"><span class="lineNum">     751</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         for (auto entry : rs) {</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L752"><span class="lineNum">     752</span>                 :<span class="tlaUNC">           0 :             const char *interpolatorClassName = nullptr;</span></span>
+<span id="L753"><span class="lineNum">     753</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             if (entry.second.second != nullptr) {</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L754"><span class="lineNum">     754</span>                 :<span class="tlaUNC">           0 :                 interpolatorClassName = entry.second.second-&gt;getClassName();</span></span>
+<span id="L755"><span class="lineNum">     755</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                 if (!strncmp(interpolatorClassName, &quot;inet::math::&quot;, 12))</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L756"><span class="lineNum">     756</span>                 :<span class="tlaUNC">           0 :                     interpolatorClassName += 12;</span></span>
+<span id="L757"><span class="lineNum">     757</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                 else if (!strncmp(interpolatorClassName, &quot;inet::&quot;, 6))</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L758"><span class="lineNum">     758</span>                 :<span class="tlaUNC">           0 :                     interpolatorClassName += 6;</span></span>
+<span id="L759"><span class="lineNum">     759</span>                 :<span class="tlaUNC">           0 :             }</span></span>
+<span id="L760"><span class="lineNum">     760</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             if (size &lt; 8) {</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L761"><span class="lineNum">     761</span>                 :<span class="tlaUNC">           0 :                 os &lt;&lt; &quot;, &quot; &lt;&lt; entry.first &lt;&lt; &quot; → &quot; &lt;&lt; entry.second.first;</span></span>
+<span id="L762"><span class="lineNum">     762</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                 if (interpolatorClassName != nullptr)</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L763"><span class="lineNum">     763</span>                 :<span class="tlaUNC">           0 :                     os &lt;&lt; &quot;, &quot; &lt;&lt; interpolatorClassName;</span></span>
+<span id="L764"><span class="lineNum">     764</span>                 :<span class="tlaUNC">           0 :             }</span></span>
+<span id="L765"><span class="lineNum">     765</span>                 :<span class="tlaUNC">           0 :             else {</span></span>
+<span id="L766"><span class="lineNum">     766</span>                 :<span class="tlaUNC">           0 :                 os &lt;&lt; &quot;\n&quot; &lt;&lt; std::string(level + 2, ' ') &lt;&lt; entry.first &lt;&lt; &quot; → &quot; &lt;&lt; entry.second.first;</span></span>
+<span id="L767"><span class="lineNum">     767</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                 if (interpolatorClassName != nullptr)</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L768"><span class="lineNum">     768</span>                 :<span class="tlaUNC">           0 :                     os &lt;&lt; &quot;\n&quot; &lt;&lt; std::string(level + 4, ' ') &lt;&lt; interpolatorClassName;</span></span>
+<span id="L769"><span class="lineNum">     769</span>                 :<span class="tlaUNC">           0 :             }</span></span>
+<span id="L770"><span class="lineNum">     770</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L771"><span class="lineNum">     771</span>                 :<span class="tlaUNC">           0 :         os &lt;&lt; &quot;)&quot;;</span></span>
+<span id="L772"><span class="lineNum">     772</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L773"><span class="lineNum">     773</span>                 :             : };</span>
+<span id="L774"><span class="lineNum">     774</span>                 :             : </span>
+<span id="L775"><span class="lineNum">     775</span>                 :             : template&lt;typename R, typename D&gt;</span>
+<span id="L776"><span class="lineNum">     776</span>                 :<span class="tlaGNC tlaBgGNC">    19013544 : void simplifyAndCall(const typename D::I&amp; i, const IFunction&lt;R, D&gt; *f, const std::function&lt;void(const typename D::I&amp;, const IFunction&lt;R, D&gt; *)&gt; callback) {</span></span>
+<span id="L777"><span class="lineNum">     777</span>                 :<span class="tlaGNC">    19013544 :     callback(i, f);</span></span>
+<span id="L778"><span class="lineNum">     778</span>                 :<span class="tlaGNC">    19013544 : }</span></span>
+<span id="L779"><span class="lineNum">     779</span>                 :             : </span>
+<span id="L780"><span class="lineNum">     780</span>                 :             : template&lt;typename R, typename D&gt;</span>
+<span id="L781"><span class="lineNum">     781</span>                 :<span class="tlaGNC">   130409125 : void simplifyAndCall(const typename D::I&amp; i, const UnilinearFunction&lt;R, D&gt; *f, const std::function&lt;void(const typename D::I&amp;, const IFunction&lt;R, D&gt; *)&gt; callback) {</span></span>
+<span id="L782"><span class="lineNum">     782</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 14 times"> + </span>]:<span class="tlaGNC">   130409125 :     if (f-&gt;getRLower() == f-&gt;getRUpper()) {</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaGBC" title="Branch 0 was taken 4713236 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 51167600 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaGBC" title="Branch 0 was taken 4772180 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 19016610 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 4373749 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 46365736 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L783"><span class="lineNum">     783</span>                 :<span class="tlaGNC">    13859165 :         ConstantFunction&lt;R, D&gt; g(f-&gt;getRLower());</span></span>
+<span id="L784"><span class="lineNum">     784</span>                 :<span class="tlaGNC">    13859165 :         callback(i, &amp;g);</span></span>
+<span id="L785"><span class="lineNum">     785</span>                 :<span class="tlaGNC">    13859165 :     }</span></span>
+<span id="L786"><span class="lineNum">     786</span>                 :<span class="tlaGNC">   116549960 :     else</span></span>
+<span id="L787"><span class="lineNum">     787</span>                 :<span class="tlaGNC">   116549960 :         callback(i, f);</span></span>
+<span id="L788"><span class="lineNum">     788</span>                 :<span class="tlaGNC">   130409125 : }</span></span>
+<span id="L789"><span class="lineNum">     789</span>                 :             : </span>
+<span id="L790"><span class="lineNum">     790</span>                 :             : template&lt;typename R, typename D&gt;</span>
+<span id="L791"><span class="lineNum">     791</span>                 :<span class="tlaUNC tlaBgUNC">           0 : void simplifyAndCall(const typename D::I&amp; i, const BilinearFunction&lt;R, D&gt; *f, const std::function&lt;void(const typename D::I&amp;, const IFunction&lt;R, D&gt; *)&gt; callback) {</span></span>
+<span id="L792"><span class="lineNum">     792</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (f-&gt;getRLowerLower() == f-&gt;getRLowerUpper() &amp;&amp; f-&gt;getRLowerLower() == f-&gt;getRUpperLower() &amp;&amp; f-&gt;getRLowerLower() == f-&gt;getRUpperUpper()) {</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L793"><span class="lineNum">     793</span>                 :<span class="tlaUNC">           0 :         ConstantFunction&lt;R, D&gt; g(f-&gt;getRLowerLower());</span></span>
+<span id="L794"><span class="lineNum">     794</span>                 :<span class="tlaUNC">           0 :         callback(i, &amp;g);</span></span>
+<span id="L795"><span class="lineNum">     795</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L796"><span class="lineNum">     796</span>                 :             :     // TODO simplify to one dimensional linear functions?</span>
+<span id="L797"><span class="lineNum">     797</span>                 :<span class="tlaUNC">           0 :     else</span></span>
+<span id="L798"><span class="lineNum">     798</span>                 :<span class="tlaUNC">           0 :         callback(i, f);</span></span>
+<span id="L799"><span class="lineNum">     799</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L800"><span class="lineNum">     800</span>                 :             : </span>
+<span id="L801"><span class="lineNum">     801</span>                 :             : } // namespace math</span>
+<span id="L802"><span class="lineNum">     802</span>                 :             : </span>
+<span id="L803"><span class="lineNum">     803</span>                 :             : } // namespace inet</span>
+<span id="L804"><span class="lineNum">     804</span>                 :             : </span>
+<span id="L805"><span class="lineNum">     805</span>                 :             : #endif</span>
+<span id="L806"><span class="lineNum">     806</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

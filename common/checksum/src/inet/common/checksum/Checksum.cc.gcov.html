@@ -1,0 +1,541 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - common/checksum/src/inet/common/checksum/Checksum.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">common/checksum/src/inet/common/checksum</a> - Checksum.cc<span style="font-size: 80%;"> (source / <a href="Checksum.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryMed">82.6&nbsp;%</td>
+            <td class="headerCovTableEntry">178</td>
+            <td class="headerCovTableEntry">147</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">15</td>
+            <td class="headerCovTableEntry">15</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryLo">70.5&nbsp;%</td>
+            <td class="headerCovTableEntry">78</td>
+            <td class="headerCovTableEntry">55</td>
+          </tr>
+                  <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2020 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #include &quot;inet/common/checksum/Checksum.h&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : </span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : namespace inet {</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : </span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : // CRC-32 lookup table, source: https://crccalc.com/</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : const uint32_t crc32_tab[] = {</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             :     0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f,</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             :     0xe963a535, 0x9e6495a3, 0x0edb8832, 0x79dcb8a4, 0xe0d5e91e, 0x97d2d988,</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             :     0x09b64c2b, 0x7eb17cbd, 0xe7b82d07, 0x90bf1d91, 0x1db71064, 0x6ab020f2,</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             :     0xf3b97148, 0x84be41de, 0x1adad47d, 0x6ddde4eb, 0xf4d4b551, 0x83d385c7,</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             :     0x136c9856, 0x646ba8c0, 0xfd62f97a, 0x8a65c9ec, 0x14015c4f, 0x63066cd9,</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             :     0xfa0f3d63, 0x8d080df5, 0x3b6e20c8, 0x4c69105e, 0xd56041e4, 0xa2677172,</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             :     0x3c03e4d1, 0x4b04d447, 0xd20d85fd, 0xa50ab56b, 0x35b5a8fa, 0x42b2986c,</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             :     0xdbbbc9d6, 0xacbcf940, 0x32d86ce3, 0x45df5c75, 0xdcd60dcf, 0xabd13d59,</span>
+<span id="L22"><span class="lineNum">      22</span>                 :             :     0x26d930ac, 0x51de003a, 0xc8d75180, 0xbfd06116, 0x21b4f4b5, 0x56b3c423,</span>
+<span id="L23"><span class="lineNum">      23</span>                 :             :     0xcfba9599, 0xb8bda50f, 0x2802b89e, 0x5f058808, 0xc60cd9b2, 0xb10be924,</span>
+<span id="L24"><span class="lineNum">      24</span>                 :             :     0x2f6f7c87, 0x58684c11, 0xc1611dab, 0xb6662d3d, 0x76dc4190, 0x01db7106,</span>
+<span id="L25"><span class="lineNum">      25</span>                 :             :     0x98d220bc, 0xefd5102a, 0x71b18589, 0x06b6b51f, 0x9fbfe4a5, 0xe8b8d433,</span>
+<span id="L26"><span class="lineNum">      26</span>                 :             :     0x7807c9a2, 0x0f00f934, 0x9609a88e, 0xe10e9818, 0x7f6a0dbb, 0x086d3d2d,</span>
+<span id="L27"><span class="lineNum">      27</span>                 :             :     0x91646c97, 0xe6635c01, 0x6b6b51f4, 0x1c6c6162, 0x856530d8, 0xf262004e,</span>
+<span id="L28"><span class="lineNum">      28</span>                 :             :     0x6c0695ed, 0x1b01a57b, 0x8208f4c1, 0xf50fc457, 0x65b0d9c6, 0x12b7e950,</span>
+<span id="L29"><span class="lineNum">      29</span>                 :             :     0x8bbeb8ea, 0xfcb9887c, 0x62dd1ddf, 0x15da2d49, 0x8cd37cf3, 0xfbd44c65,</span>
+<span id="L30"><span class="lineNum">      30</span>                 :             :     0x4db26158, 0x3ab551ce, 0xa3bc0074, 0xd4bb30e2, 0x4adfa541, 0x3dd895d7,</span>
+<span id="L31"><span class="lineNum">      31</span>                 :             :     0xa4d1c46d, 0xd3d6f4fb, 0x4369e96a, 0x346ed9fc, 0xad678846, 0xda60b8d0,</span>
+<span id="L32"><span class="lineNum">      32</span>                 :             :     0x44042d73, 0x33031de5, 0xaa0a4c5f, 0xdd0d7cc9, 0x5005713c, 0x270241aa,</span>
+<span id="L33"><span class="lineNum">      33</span>                 :             :     0xbe0b1010, 0xc90c2086, 0x5768b525, 0x206f85b3, 0xb966d409, 0xce61e49f,</span>
+<span id="L34"><span class="lineNum">      34</span>                 :             :     0x5edef90e, 0x29d9c998, 0xb0d09822, 0xc7d7a8b4, 0x59b33d17, 0x2eb40d81,</span>
+<span id="L35"><span class="lineNum">      35</span>                 :             :     0xb7bd5c3b, 0xc0ba6cad, 0xedb88320, 0x9abfb3b6, 0x03b6e20c, 0x74b1d29a,</span>
+<span id="L36"><span class="lineNum">      36</span>                 :             :     0xead54739, 0x9dd277af, 0x04db2615, 0x73dc1683, 0xe3630b12, 0x94643b84,</span>
+<span id="L37"><span class="lineNum">      37</span>                 :             :     0x0d6d6a3e, 0x7a6a5aa8, 0xe40ecf0b, 0x9309ff9d, 0x0a00ae27, 0x7d079eb1,</span>
+<span id="L38"><span class="lineNum">      38</span>                 :             :     0xf00f9344, 0x8708a3d2, 0x1e01f268, 0x6906c2fe, 0xf762575d, 0x806567cb,</span>
+<span id="L39"><span class="lineNum">      39</span>                 :             :     0x196c3671, 0x6e6b06e7, 0xfed41b76, 0x89d32be0, 0x10da7a5a, 0x67dd4acc,</span>
+<span id="L40"><span class="lineNum">      40</span>                 :             :     0xf9b9df6f, 0x8ebeeff9, 0x17b7be43, 0x60b08ed5, 0xd6d6a3e8, 0xa1d1937e,</span>
+<span id="L41"><span class="lineNum">      41</span>                 :             :     0x38d8c2c4, 0x4fdff252, 0xd1bb67f1, 0xa6bc5767, 0x3fb506dd, 0x48b2364b,</span>
+<span id="L42"><span class="lineNum">      42</span>                 :             :     0xd80d2bda, 0xaf0a1b4c, 0x36034af6, 0x41047a60, 0xdf60efc3, 0xa867df55,</span>
+<span id="L43"><span class="lineNum">      43</span>                 :             :     0x316e8eef, 0x4669be79, 0xcb61b38c, 0xbc66831a, 0x256fd2a0, 0x5268e236,</span>
+<span id="L44"><span class="lineNum">      44</span>                 :             :     0xcc0c7795, 0xbb0b4703, 0x220216b9, 0x5505262f, 0xc5ba3bbe, 0xb2bd0b28,</span>
+<span id="L45"><span class="lineNum">      45</span>                 :             :     0x2bb45a92, 0x5cb36a04, 0xc2d7ffa7, 0xb5d0cf31, 0x2cd99e8b, 0x5bdeae1d,</span>
+<span id="L46"><span class="lineNum">      46</span>                 :             :     0x9b64c2b0, 0xec63f226, 0x756aa39c, 0x026d930a, 0x9c0906a9, 0xeb0e363f,</span>
+<span id="L47"><span class="lineNum">      47</span>                 :             :     0x72076785, 0x05005713, 0x95bf4a82, 0xe2b87a14, 0x7bb12bae, 0x0cb61b38,</span>
+<span id="L48"><span class="lineNum">      48</span>                 :             :     0x92d28e9b, 0xe5d5be0d, 0x7cdcefb7, 0x0bdbdf21, 0x86d3d2d4, 0xf1d4e242,</span>
+<span id="L49"><span class="lineNum">      49</span>                 :             :     0x68ddb3f8, 0x1fda836e, 0x81be16cd, 0xf6b9265b, 0x6fb077e1, 0x18b74777,</span>
+<span id="L50"><span class="lineNum">      50</span>                 :             :     0x88085ae6, 0xff0f6a70, 0x66063bca, 0x11010b5c, 0x8f659eff, 0xf862ae69,</span>
+<span id="L51"><span class="lineNum">      51</span>                 :             :     0x616bffd3, 0x166ccf45, 0xa00ae278, 0xd70dd2ee, 0x4e048354, 0x3903b3c2,</span>
+<span id="L52"><span class="lineNum">      52</span>                 :             :     0xa7672661, 0xd06016f7, 0x4969474d, 0x3e6e77db, 0xaed16a4a, 0xd9d65adc,</span>
+<span id="L53"><span class="lineNum">      53</span>                 :             :     0x40df0b66, 0x37d83bf0, 0xa9bcae53, 0xdebb9ec5, 0x47b2cf7f, 0x30b5ffe9,</span>
+<span id="L54"><span class="lineNum">      54</span>                 :             :     0xbdbdf21c, 0xcabac28a, 0x53b39330, 0x24b4a3a6, 0xbad03605, 0xcdd70693,</span>
+<span id="L55"><span class="lineNum">      55</span>                 :             :     0x54de5729, 0x23d967bf, 0xb3667a2e, 0xc4614ab8, 0x5d681b02, 0x2a6f2b94,</span>
+<span id="L56"><span class="lineNum">      56</span>                 :             :     0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d</span>
+<span id="L57"><span class="lineNum">      57</span>                 :             : };</span>
+<span id="L58"><span class="lineNum">      58</span>                 :             : </span>
+<span id="L59"><span class="lineNum">      59</span>                 :             : // CRC-32/MPEG-2 lookup table. It uses the same polynomial as the table above, but since</span>
+<span id="L60"><span class="lineNum">      60</span>                 :             : // CRC-32/MPEG-2 is not reflected, the table is MSB-first (and so is the loop that uses it).</span>
+<span id="L61"><span class="lineNum">      61</span>                 :             : const uint32_t crc32_mpeg2_tab[] = {</span>
+<span id="L62"><span class="lineNum">      62</span>                 :             :     0x00000000, 0x04c11db7, 0x09823b6e, 0x0d4326d9, 0x130476dc, 0x17c56b6b,</span>
+<span id="L63"><span class="lineNum">      63</span>                 :             :     0x1a864db2, 0x1e475005, 0x2608edb8, 0x22c9f00f, 0x2f8ad6d6, 0x2b4bcb61,</span>
+<span id="L64"><span class="lineNum">      64</span>                 :             :     0x350c9b64, 0x31cd86d3, 0x3c8ea00a, 0x384fbdbd, 0x4c11db70, 0x48d0c6c7,</span>
+<span id="L65"><span class="lineNum">      65</span>                 :             :     0x4593e01e, 0x4152fda9, 0x5f15adac, 0x5bd4b01b, 0x569796c2, 0x52568b75,</span>
+<span id="L66"><span class="lineNum">      66</span>                 :             :     0x6a1936c8, 0x6ed82b7f, 0x639b0da6, 0x675a1011, 0x791d4014, 0x7ddc5da3,</span>
+<span id="L67"><span class="lineNum">      67</span>                 :             :     0x709f7b7a, 0x745e66cd, 0x9823b6e0, 0x9ce2ab57, 0x91a18d8e, 0x95609039,</span>
+<span id="L68"><span class="lineNum">      68</span>                 :             :     0x8b27c03c, 0x8fe6dd8b, 0x82a5fb52, 0x8664e6e5, 0xbe2b5b58, 0xbaea46ef,</span>
+<span id="L69"><span class="lineNum">      69</span>                 :             :     0xb7a96036, 0xb3687d81, 0xad2f2d84, 0xa9ee3033, 0xa4ad16ea, 0xa06c0b5d,</span>
+<span id="L70"><span class="lineNum">      70</span>                 :             :     0xd4326d90, 0xd0f37027, 0xddb056fe, 0xd9714b49, 0xc7361b4c, 0xc3f706fb,</span>
+<span id="L71"><span class="lineNum">      71</span>                 :             :     0xceb42022, 0xca753d95, 0xf23a8028, 0xf6fb9d9f, 0xfbb8bb46, 0xff79a6f1,</span>
+<span id="L72"><span class="lineNum">      72</span>                 :             :     0xe13ef6f4, 0xe5ffeb43, 0xe8bccd9a, 0xec7dd02d, 0x34867077, 0x30476dc0,</span>
+<span id="L73"><span class="lineNum">      73</span>                 :             :     0x3d044b19, 0x39c556ae, 0x278206ab, 0x23431b1c, 0x2e003dc5, 0x2ac12072,</span>
+<span id="L74"><span class="lineNum">      74</span>                 :             :     0x128e9dcf, 0x164f8078, 0x1b0ca6a1, 0x1fcdbb16, 0x018aeb13, 0x054bf6a4,</span>
+<span id="L75"><span class="lineNum">      75</span>                 :             :     0x0808d07d, 0x0cc9cdca, 0x7897ab07, 0x7c56b6b0, 0x71159069, 0x75d48dde,</span>
+<span id="L76"><span class="lineNum">      76</span>                 :             :     0x6b93dddb, 0x6f52c06c, 0x6211e6b5, 0x66d0fb02, 0x5e9f46bf, 0x5a5e5b08,</span>
+<span id="L77"><span class="lineNum">      77</span>                 :             :     0x571d7dd1, 0x53dc6066, 0x4d9b3063, 0x495a2dd4, 0x44190b0d, 0x40d816ba,</span>
+<span id="L78"><span class="lineNum">      78</span>                 :             :     0xaca5c697, 0xa864db20, 0xa527fdf9, 0xa1e6e04e, 0xbfa1b04b, 0xbb60adfc,</span>
+<span id="L79"><span class="lineNum">      79</span>                 :             :     0xb6238b25, 0xb2e29692, 0x8aad2b2f, 0x8e6c3698, 0x832f1041, 0x87ee0df6,</span>
+<span id="L80"><span class="lineNum">      80</span>                 :             :     0x99a95df3, 0x9d684044, 0x902b669d, 0x94ea7b2a, 0xe0b41de7, 0xe4750050,</span>
+<span id="L81"><span class="lineNum">      81</span>                 :             :     0xe9362689, 0xedf73b3e, 0xf3b06b3b, 0xf771768c, 0xfa325055, 0xfef34de2,</span>
+<span id="L82"><span class="lineNum">      82</span>                 :             :     0xc6bcf05f, 0xc27dede8, 0xcf3ecb31, 0xcbffd686, 0xd5b88683, 0xd1799b34,</span>
+<span id="L83"><span class="lineNum">      83</span>                 :             :     0xdc3abded, 0xd8fba05a, 0x690ce0ee, 0x6dcdfd59, 0x608edb80, 0x644fc637,</span>
+<span id="L84"><span class="lineNum">      84</span>                 :             :     0x7a089632, 0x7ec98b85, 0x738aad5c, 0x774bb0eb, 0x4f040d56, 0x4bc510e1,</span>
+<span id="L85"><span class="lineNum">      85</span>                 :             :     0x46863638, 0x42472b8f, 0x5c007b8a, 0x58c1663d, 0x558240e4, 0x51435d53,</span>
+<span id="L86"><span class="lineNum">      86</span>                 :             :     0x251d3b9e, 0x21dc2629, 0x2c9f00f0, 0x285e1d47, 0x36194d42, 0x32d850f5,</span>
+<span id="L87"><span class="lineNum">      87</span>                 :             :     0x3f9b762c, 0x3b5a6b9b, 0x0315d626, 0x07d4cb91, 0x0a97ed48, 0x0e56f0ff,</span>
+<span id="L88"><span class="lineNum">      88</span>                 :             :     0x1011a0fa, 0x14d0bd4d, 0x19939b94, 0x1d528623, 0xf12f560e, 0xf5ee4bb9,</span>
+<span id="L89"><span class="lineNum">      89</span>                 :             :     0xf8ad6d60, 0xfc6c70d7, 0xe22b20d2, 0xe6ea3d65, 0xeba91bbc, 0xef68060b,</span>
+<span id="L90"><span class="lineNum">      90</span>                 :             :     0xd727bbb6, 0xd3e6a601, 0xdea580d8, 0xda649d6f, 0xc423cd6a, 0xc0e2d0dd,</span>
+<span id="L91"><span class="lineNum">      91</span>                 :             :     0xcda1f604, 0xc960ebb3, 0xbd3e8d7e, 0xb9ff90c9, 0xb4bcb610, 0xb07daba7,</span>
+<span id="L92"><span class="lineNum">      92</span>                 :             :     0xae3afba2, 0xaafbe615, 0xa7b8c0cc, 0xa379dd7b, 0x9b3660c6, 0x9ff77d71,</span>
+<span id="L93"><span class="lineNum">      93</span>                 :             :     0x92b45ba8, 0x9675461f, 0x8832161a, 0x8cf30bad, 0x81b02d74, 0x857130c3,</span>
+<span id="L94"><span class="lineNum">      94</span>                 :             :     0x5d8a9099, 0x594b8d2e, 0x5408abf7, 0x50c9b640, 0x4e8ee645, 0x4a4ffbf2,</span>
+<span id="L95"><span class="lineNum">      95</span>                 :             :     0x470cdd2b, 0x43cdc09c, 0x7b827d21, 0x7f436096, 0x7200464f, 0x76c15bf8,</span>
+<span id="L96"><span class="lineNum">      96</span>                 :             :     0x68860bfd, 0x6c47164a, 0x61043093, 0x65c52d24, 0x119b4be9, 0x155a565e,</span>
+<span id="L97"><span class="lineNum">      97</span>                 :             :     0x18197087, 0x1cd86d30, 0x029f3d35, 0x065e2082, 0x0b1d065b, 0x0fdc1bec,</span>
+<span id="L98"><span class="lineNum">      98</span>                 :             :     0x3793a651, 0x3352bbe6, 0x3e119d3f, 0x3ad08088, 0x2497d08d, 0x2056cd3a,</span>
+<span id="L99"><span class="lineNum">      99</span>                 :             :     0x2d15ebe3, 0x29d4f654, 0xc5a92679, 0xc1683bce, 0xcc2b1d17, 0xc8ea00a0,</span>
+<span id="L100"><span class="lineNum">     100</span>                 :             :     0xd6ad50a5, 0xd26c4d12, 0xdf2f6bcb, 0xdbee767c, 0xe3a1cbc1, 0xe760d676,</span>
+<span id="L101"><span class="lineNum">     101</span>                 :             :     0xea23f0af, 0xeee2ed18, 0xf0a5bd1d, 0xf464a0aa, 0xf9278673, 0xfde69bc4,</span>
+<span id="L102"><span class="lineNum">     102</span>                 :             :     0x89b8fd09, 0x8d79e0be, 0x803ac667, 0x84fbdbd0, 0x9abc8bd5, 0x9e7d9662,</span>
+<span id="L103"><span class="lineNum">     103</span>                 :             :     0x933eb0bb, 0x97ffad0c, 0xafb010b1, 0xab710d06, 0xa6322bdf, 0xa2f33668,</span>
+<span id="L104"><span class="lineNum">     104</span>                 :             :     0xbcb4666d, 0xb8757bda, 0xb5365d03, 0xb1f740b4</span>
+<span id="L105"><span class="lineNum">     105</span>                 :             : };</span>
+<span id="L106"><span class="lineNum">     106</span>                 :             : </span>
+<span id="L107"><span class="lineNum">     107</span>                 :             : // CRC-32C (CRC-32/ISCSI) lookup table, source: https://crccalc.com/</span>
+<span id="L108"><span class="lineNum">     108</span>                 :             : const uint32_t crc32c_tab[] = {</span>
+<span id="L109"><span class="lineNum">     109</span>                 :             :     0x00000000, 0xF26B8303,  0xE13B70F7, 0x1350F3F4, 0xC79A971F, 0x35F1141C,  0x26A1E7E8, 0xD4CA64EB,</span>
+<span id="L110"><span class="lineNum">     110</span>                 :             :     0x8AD958CF, 0x78B2DBCC,  0x6BE22838, 0x9989AB3B, 0x4D43CFD0, 0xBF284CD3,  0xAC78BF27, 0x5E133C24,</span>
+<span id="L111"><span class="lineNum">     111</span>                 :             :     0x105EC76F, 0xE235446C,  0xF165B798, 0x030E349B, 0xD7C45070, 0x25AFD373,  0x36FF2087, 0xC494A384,</span>
+<span id="L112"><span class="lineNum">     112</span>                 :             :     0x9A879FA0, 0x68EC1CA3,  0x7BBCEF57, 0x89D76C54, 0x5D1D08BF, 0xAF768BBC,  0xBC267848, 0x4E4DFB4B,</span>
+<span id="L113"><span class="lineNum">     113</span>                 :             :     0x20BD8EDE, 0xD2D60DDD,  0xC186FE29, 0x33ED7D2A, 0xE72719C1, 0x154C9AC2,  0x061C6936, 0xF477EA35,</span>
+<span id="L114"><span class="lineNum">     114</span>                 :             :     0xAA64D611, 0x580F5512,  0x4B5FA6E6, 0xB93425E5, 0x6DFE410E, 0x9F95C20D,  0x8CC531F9, 0x7EAEB2FA,</span>
+<span id="L115"><span class="lineNum">     115</span>                 :             :     0x30E349B1, 0xC288CAB2,  0xD1D83946, 0x23B3BA45, 0xF779DEAE, 0x05125DAD,  0x1642AE59, 0xE4292D5A,</span>
+<span id="L116"><span class="lineNum">     116</span>                 :             :     0xBA3A117E, 0x4851927D,  0x5B016189, 0xA96AE28A, 0x7DA08661, 0x8FCB0562,  0x9C9BF696, 0x6EF07595,</span>
+<span id="L117"><span class="lineNum">     117</span>                 :             :     0x417B1DBC, 0xB3109EBF,  0xA0406D4B, 0x522BEE48, 0x86E18AA3, 0x748A09A0,  0x67DAFA54, 0x95B17957,</span>
+<span id="L118"><span class="lineNum">     118</span>                 :             :     0xCBA24573, 0x39C9C670,  0x2A993584, 0xD8F2B687, 0x0C38D26C, 0xFE53516F,  0xED03A29B, 0x1F682198,</span>
+<span id="L119"><span class="lineNum">     119</span>                 :             :     0x5125DAD3, 0xA34E59D0,  0xB01EAA24, 0x42752927, 0x96BF4DCC, 0x64D4CECF,  0x77843D3B, 0x85EFBE38,</span>
+<span id="L120"><span class="lineNum">     120</span>                 :             :     0xDBFC821C, 0x2997011F,  0x3AC7F2EB, 0xC8AC71E8, 0x1C661503, 0xEE0D9600,  0xFD5D65F4, 0x0F36E6F7,</span>
+<span id="L121"><span class="lineNum">     121</span>                 :             :     0x61C69362, 0x93AD1061,  0x80FDE395, 0x72966096, 0xA65C047D, 0x5437877E,  0x4767748A, 0xB50CF789,</span>
+<span id="L122"><span class="lineNum">     122</span>                 :             :     0xEB1FCBAD, 0x197448AE,  0x0A24BB5A, 0xF84F3859, 0x2C855CB2, 0xDEEEDFB1,  0xCDBE2C45, 0x3FD5AF46,</span>
+<span id="L123"><span class="lineNum">     123</span>                 :             :     0x7198540D, 0x83F3D70E,  0x90A324FA, 0x62C8A7F9, 0xB602C312, 0x44694011,  0x5739B3E5, 0xA55230E6,</span>
+<span id="L124"><span class="lineNum">     124</span>                 :             :     0xFB410CC2, 0x092A8FC1,  0x1A7A7C35, 0xE811FF36, 0x3CDB9BDD, 0xCEB018DE,  0xDDE0EB2A, 0x2F8B6829,</span>
+<span id="L125"><span class="lineNum">     125</span>                 :             :     0x82F63B78, 0x709DB87B,  0x63CD4B8F, 0x91A6C88C, 0x456CAC67, 0xB7072F64,  0xA457DC90, 0x563C5F93,</span>
+<span id="L126"><span class="lineNum">     126</span>                 :             :     0x082F63B7, 0xFA44E0B4,  0xE9141340, 0x1B7F9043, 0xCFB5F4A8, 0x3DDE77AB,  0x2E8E845F, 0xDCE5075C,</span>
+<span id="L127"><span class="lineNum">     127</span>                 :             :     0x92A8FC17, 0x60C37F14,  0x73938CE0, 0x81F80FE3, 0x55326B08, 0xA759E80B,  0xB4091BFF, 0x466298FC,</span>
+<span id="L128"><span class="lineNum">     128</span>                 :             :     0x1871A4D8, 0xEA1A27DB,  0xF94AD42F, 0x0B21572C, 0xDFEB33C7, 0x2D80B0C4,  0x3ED04330, 0xCCBBC033,</span>
+<span id="L129"><span class="lineNum">     129</span>                 :             :     0xA24BB5A6, 0x502036A5,  0x4370C551, 0xB11B4652, 0x65D122B9, 0x97BAA1BA,  0x84EA524E, 0x7681D14D,</span>
+<span id="L130"><span class="lineNum">     130</span>                 :             :     0x2892ED69, 0xDAF96E6A,  0xC9A99D9E, 0x3BC21E9D, 0xEF087A76, 0x1D63F975,  0x0E330A81, 0xFC588982,</span>
+<span id="L131"><span class="lineNum">     131</span>                 :             :     0xB21572C9, 0x407EF1CA,  0x532E023E, 0xA145813D, 0x758FE5D6, 0x87E466D5,  0x94B49521, 0x66DF1622,</span>
+<span id="L132"><span class="lineNum">     132</span>                 :             :     0x38CC2A06, 0xCAA7A905,  0xD9F75AF1, 0x2B9CD9F2, 0xFF56BD19, 0x0D3D3E1A,  0x1E6DCDEE, 0xEC064EED,</span>
+<span id="L133"><span class="lineNum">     133</span>                 :             :     0xC38D26C4, 0x31E6A5C7,  0x22B65633, 0xD0DDD530, 0x0417B1DB, 0xF67C32D8,  0xE52CC12C, 0x1747422F,</span>
+<span id="L134"><span class="lineNum">     134</span>                 :             :     0x49547E0B, 0xBB3FFD08,  0xA86F0EFC, 0x5A048DFF, 0x8ECEE914, 0x7CA56A17,  0x6FF599E3, 0x9D9E1AE0,</span>
+<span id="L135"><span class="lineNum">     135</span>                 :             :     0xD3D3E1AB, 0x21B862A8,  0x32E8915C, 0xC083125F, 0x144976B4, 0xE622F5B7,  0xF5720643, 0x07198540,</span>
+<span id="L136"><span class="lineNum">     136</span>                 :             :     0x590AB964, 0xAB613A67,  0xB831C993, 0x4A5A4A90, 0x9E902E7B, 0x6CFBAD78,  0x7FAB5E8C, 0x8DC0DD8F,</span>
+<span id="L137"><span class="lineNum">     137</span>                 :             :     0xE330A81A, 0x115B2B19,  0x020BD8ED, 0xF0605BEE, 0x24AA3F05, 0xD6C1BC06,  0xC5914FF2, 0x37FACCF1,</span>
+<span id="L138"><span class="lineNum">     138</span>                 :             :     0x69E9F0D5, 0x9B8273D6,  0x88D28022, 0x7AB90321, 0xAE7367CA, 0x5C18E4C9,  0x4F48173D, 0xBD23943E,</span>
+<span id="L139"><span class="lineNum">     139</span>                 :             :     0xF36E6F75, 0x0105EC76,  0x12551F82, 0xE03E9C81, 0x34F4F86A, 0xC69F7B69,  0xD5CF889D, 0x27A40B9E,</span>
+<span id="L140"><span class="lineNum">     140</span>                 :             :     0x79B737BA, 0x8BDCB4B9,  0x988C474D, 0x6AE7C44E, 0xBE2DA0A5, 0x4C4623A6,  0x5F16D052, 0xAD7D5351</span>
+<span id="L141"><span class="lineNum">     141</span>                 :             : };</span>
+<span id="L142"><span class="lineNum">     142</span>                 :             : </span>
+<span id="L143"><span class="lineNum">     143</span>                 :             : // CRC-16-IBM lookup table, source: https://crccalc.com/</span>
+<span id="L144"><span class="lineNum">     144</span>                 :             : const uint16_t crc16_ibm_tab[] = {</span>
+<span id="L145"><span class="lineNum">     145</span>                 :             :     0x0000, 0xc0c1, 0xc181, 0x0140, 0xc301, 0x03c0, 0x0280, 0xc241,</span>
+<span id="L146"><span class="lineNum">     146</span>                 :             :     0xc601, 0x06c0, 0x0780, 0xc741, 0x0500, 0xc5c1, 0xc481, 0x0440,</span>
+<span id="L147"><span class="lineNum">     147</span>                 :             :     0xcc01, 0x0cc0, 0x0d80, 0xcd41, 0x0f00, 0xcfc1, 0xce81, 0x0e40,</span>
+<span id="L148"><span class="lineNum">     148</span>                 :             :     0x0a00, 0xcac1, 0xcb81, 0x0b40, 0xc901, 0x09c0, 0x0880, 0xc841,</span>
+<span id="L149"><span class="lineNum">     149</span>                 :             :     0xd801, 0x18c0, 0x1980, 0xd941, 0x1b00, 0xdbc1, 0xda81, 0x1a40,</span>
+<span id="L150"><span class="lineNum">     150</span>                 :             :     0x1e00, 0xdec1, 0xdf81, 0x1f40, 0xdd01, 0x1dc0, 0x1c80, 0xdc41,</span>
+<span id="L151"><span class="lineNum">     151</span>                 :             :     0x1400, 0xd4c1, 0xd581, 0x1540, 0xd701, 0x17c0, 0x1680, 0xd641,</span>
+<span id="L152"><span class="lineNum">     152</span>                 :             :     0xd201, 0x12c0, 0x1380, 0xd341, 0x1100, 0xd1c1, 0xd081, 0x1040,</span>
+<span id="L153"><span class="lineNum">     153</span>                 :             :     0xf001, 0x30c0, 0x3180, 0xf141, 0x3300, 0xf3c1, 0xf281, 0x3240,</span>
+<span id="L154"><span class="lineNum">     154</span>                 :             :     0x3600, 0xf6c1, 0xf781, 0x3740, 0xf501, 0x35c0, 0x3480, 0xf441,</span>
+<span id="L155"><span class="lineNum">     155</span>                 :             :     0x3c00, 0xfcc1, 0xfd81, 0x3d40, 0xff01, 0x3fc0, 0x3e80, 0xfe41,</span>
+<span id="L156"><span class="lineNum">     156</span>                 :             :     0xfa01, 0x3ac0, 0x3b80, 0xfb41, 0x3900, 0xf9c1, 0xf881, 0x3840,</span>
+<span id="L157"><span class="lineNum">     157</span>                 :             :     0x2800, 0xe8c1, 0xe981, 0x2940, 0xeb01, 0x2bc0, 0x2a80, 0xea41,</span>
+<span id="L158"><span class="lineNum">     158</span>                 :             :     0xee01, 0x2ec0, 0x2f80, 0xef41, 0x2d00, 0xedc1, 0xec81, 0x2c40,</span>
+<span id="L159"><span class="lineNum">     159</span>                 :             :     0xe401, 0x24c0, 0x2580, 0xe541, 0x2700, 0xe7c1, 0xe681, 0x2640,</span>
+<span id="L160"><span class="lineNum">     160</span>                 :             :     0x2200, 0xe2c1, 0xe381, 0x2340, 0xe101, 0x21c0, 0x2080, 0xe041,</span>
+<span id="L161"><span class="lineNum">     161</span>                 :             :     0xa001, 0x60c0, 0x6180, 0xa141, 0x6300, 0xa3c1, 0xa281, 0x6240,</span>
+<span id="L162"><span class="lineNum">     162</span>                 :             :     0x6600, 0xa6c1, 0xa781, 0x6740, 0xa501, 0x65c0, 0x6480, 0xa441,</span>
+<span id="L163"><span class="lineNum">     163</span>                 :             :     0x6c00, 0xacc1, 0xad81, 0x6d40, 0xaf01, 0x6fc0, 0x6e80, 0xae41,</span>
+<span id="L164"><span class="lineNum">     164</span>                 :             :     0xaa01, 0x6ac0, 0x6b80, 0xab41, 0x6900, 0xa9c1, 0xa881, 0x6840,</span>
+<span id="L165"><span class="lineNum">     165</span>                 :             :     0x7800, 0xb8c1, 0xb981, 0x7940, 0xbb01, 0x7bc0, 0x7a80, 0xba41,</span>
+<span id="L166"><span class="lineNum">     166</span>                 :             :     0xbe01, 0x7ec0, 0x7f80, 0xbf41, 0x7d00, 0xbdc1, 0xbc81, 0x7c40,</span>
+<span id="L167"><span class="lineNum">     167</span>                 :             :     0xb401, 0x74c0, 0x7580, 0xb541, 0x7700, 0xb7c1, 0xb681, 0x7640,</span>
+<span id="L168"><span class="lineNum">     168</span>                 :             :     0x7200, 0xb2c1, 0xb381, 0x7340, 0xb101, 0x71c0, 0x7080, 0xb041,</span>
+<span id="L169"><span class="lineNum">     169</span>                 :             :     0x5000, 0x90c1, 0x9181, 0x5140, 0x9301, 0x53c0, 0x5280, 0x9241,</span>
+<span id="L170"><span class="lineNum">     170</span>                 :             :     0x9601, 0x56c0, 0x5780, 0x9741, 0x5500, 0x95c1, 0x9481, 0x5440,</span>
+<span id="L171"><span class="lineNum">     171</span>                 :             :     0x9c01, 0x5cc0, 0x5d80, 0x9d41, 0x5f00, 0x9fc1, 0x9e81, 0x5e40,</span>
+<span id="L172"><span class="lineNum">     172</span>                 :             :     0x5a00, 0x9ac1, 0x9b81, 0x5b40, 0x9901, 0x59c0, 0x5880, 0x9841,</span>
+<span id="L173"><span class="lineNum">     173</span>                 :             :     0x8801, 0x48c0, 0x4980, 0x8941, 0x4b00, 0x8bc1, 0x8a81, 0x4a40,</span>
+<span id="L174"><span class="lineNum">     174</span>                 :             :     0x4e00, 0x8ec1, 0x8f81, 0x4f40, 0x8d01, 0x4dc0, 0x4c80, 0x8c41,</span>
+<span id="L175"><span class="lineNum">     175</span>                 :             :     0x4400, 0x84c1, 0x8581, 0x4540, 0x8701, 0x47c0, 0x4680, 0x8641,</span>
+<span id="L176"><span class="lineNum">     176</span>                 :             :     0x8201, 0x42c0, 0x4380, 0x8341, 0x4100, 0x81c1, 0x8081, 0x4040</span>
+<span id="L177"><span class="lineNum">     177</span>                 :             : };</span>
+<span id="L178"><span class="lineNum">     178</span>                 :             : </span>
+<span id="L179"><span class="lineNum">     179</span>                 :             : // CRC-16-CCITT lookup table, source: https://crccalc.com/</span>
+<span id="L180"><span class="lineNum">     180</span>                 :             : const uint16_t crc16_ccitt_tab[] = {</span>
+<span id="L181"><span class="lineNum">     181</span>                 :             :     0x0000, 0x1189, 0x2312, 0x329B, 0x4624, 0x57AD, 0x6536, 0x74BF,</span>
+<span id="L182"><span class="lineNum">     182</span>                 :             :     0x8C48, 0x9DC1, 0xAF5A, 0xBED3, 0xCA6C, 0xDBE5, 0xE97E, 0xF8F7,</span>
+<span id="L183"><span class="lineNum">     183</span>                 :             :     0x1081, 0x0108, 0x3393, 0x221A, 0x56A5, 0x472C, 0x75B7, 0x643E,</span>
+<span id="L184"><span class="lineNum">     184</span>                 :             :     0x9CC9, 0x8D40, 0xBFDB, 0xAE52, 0xDAED, 0xCB64, 0xF9FF, 0xE876,</span>
+<span id="L185"><span class="lineNum">     185</span>                 :             :     0x2102, 0x308B, 0x0210, 0x1399, 0x6726, 0x76AF, 0x4434, 0x55BD,</span>
+<span id="L186"><span class="lineNum">     186</span>                 :             :     0xAD4A, 0xBCC3, 0x8E58, 0x9FD1, 0xEB6E, 0xFAE7, 0xC87C, 0xD9F5,</span>
+<span id="L187"><span class="lineNum">     187</span>                 :             :     0x3183, 0x200A, 0x1291, 0x0318, 0x77A7, 0x662E, 0x54B5, 0x453C,</span>
+<span id="L188"><span class="lineNum">     188</span>                 :             :     0xBDCB, 0xAC42, 0x9ED9, 0x8F50, 0xFBEF, 0xEA66, 0xD8FD, 0xC974,</span>
+<span id="L189"><span class="lineNum">     189</span>                 :             :     0x4204, 0x538D, 0x6116, 0x709F, 0x0420, 0x15A9, 0x2732, 0x36BB,</span>
+<span id="L190"><span class="lineNum">     190</span>                 :             :     0xCE4C, 0xDFC5, 0xED5E, 0xFCD7, 0x8868, 0x99E1, 0xAB7A, 0xBAF3,</span>
+<span id="L191"><span class="lineNum">     191</span>                 :             :     0x5285, 0x430C, 0x7197, 0x601E, 0x14A1, 0x0528, 0x37B3, 0x263A,</span>
+<span id="L192"><span class="lineNum">     192</span>                 :             :     0xDECD, 0xCF44, 0xFDDF, 0xEC56, 0x98E9, 0x8960, 0xBBFB, 0xAA72,</span>
+<span id="L193"><span class="lineNum">     193</span>                 :             :     0x6306, 0x728F, 0x4014, 0x519D, 0x2522, 0x34AB, 0x0630, 0x17B9,</span>
+<span id="L194"><span class="lineNum">     194</span>                 :             :     0xEF4E, 0xFEC7, 0xCC5C, 0xDDD5, 0xA96A, 0xB8E3, 0x8A78, 0x9BF1,</span>
+<span id="L195"><span class="lineNum">     195</span>                 :             :     0x7387, 0x620E, 0x5095, 0x411C, 0x35A3, 0x242A, 0x16B1, 0x0738,</span>
+<span id="L196"><span class="lineNum">     196</span>                 :             :     0xFFCF, 0xEE46, 0xDCDD, 0xCD54, 0xB9EB, 0xA862, 0x9AF9, 0x8B70,</span>
+<span id="L197"><span class="lineNum">     197</span>                 :             :     0x8408, 0x9581, 0xA71A, 0xB693, 0xC22C, 0xD3A5, 0xE13E, 0xF0B7,</span>
+<span id="L198"><span class="lineNum">     198</span>                 :             :     0x0840, 0x19C9, 0x2B52, 0x3ADB, 0x4E64, 0x5FED, 0x6D76, 0x7CFF,</span>
+<span id="L199"><span class="lineNum">     199</span>                 :             :     0x9489, 0x8500, 0xB79B, 0xA612, 0xD2AD, 0xC324, 0xF1BF, 0xE036,</span>
+<span id="L200"><span class="lineNum">     200</span>                 :             :     0x18C1, 0x0948, 0x3BD3, 0x2A5A, 0x5EE5, 0x4F6C, 0x7DF7, 0x6C7E,</span>
+<span id="L201"><span class="lineNum">     201</span>                 :             :     0xA50A, 0xB483, 0x8618, 0x9791, 0xE32E, 0xF2A7, 0xC03C, 0xD1B5,</span>
+<span id="L202"><span class="lineNum">     202</span>                 :             :     0x2942, 0x38CB, 0x0A50, 0x1BD9, 0x6F66, 0x7EEF, 0x4C74, 0x5DFD,</span>
+<span id="L203"><span class="lineNum">     203</span>                 :             :     0xB58B, 0xA402, 0x9699, 0x8710, 0xF3AF, 0xE226, 0xD0BD, 0xC134,</span>
+<span id="L204"><span class="lineNum">     204</span>                 :             :     0x39C3, 0x284A, 0x1AD1, 0x0B58, 0x7FE7, 0x6E6E, 0x5CF5, 0x4D7C,</span>
+<span id="L205"><span class="lineNum">     205</span>                 :             :     0xC60C, 0xD785, 0xE51E, 0xF497, 0x8028, 0x91A1, 0xA33A, 0xB2B3,</span>
+<span id="L206"><span class="lineNum">     206</span>                 :             :     0x4A44, 0x5BCD, 0x6956, 0x78DF, 0x0C60, 0x1DE9, 0x2F72, 0x3EFB,</span>
+<span id="L207"><span class="lineNum">     207</span>                 :             :     0xD68D, 0xC704, 0xF59F, 0xE416, 0x90A9, 0x8120, 0xB3BB, 0xA232,</span>
+<span id="L208"><span class="lineNum">     208</span>                 :             :     0x5AC5, 0x4B4C, 0x79D7, 0x685E, 0x1CE1, 0x0D68, 0x3FF3, 0x2E7A,</span>
+<span id="L209"><span class="lineNum">     209</span>                 :             :     0xE70E, 0xF687, 0xC41C, 0xD595, 0xA12A, 0xB0A3, 0x8238, 0x93B1,</span>
+<span id="L210"><span class="lineNum">     210</span>                 :             :     0x6B46, 0x7ACF, 0x4854, 0x59DD, 0x2D62, 0x3CEB, 0x0E70, 0x1FF9,</span>
+<span id="L211"><span class="lineNum">     211</span>                 :             :     0xF78F, 0xE606, 0xD49D, 0xC514, 0xB1AB, 0xA022, 0x92B9, 0x8330,</span>
+<span id="L212"><span class="lineNum">     212</span>                 :             :     0x7BC7, 0x6A4E, 0x58D5, 0x495C, 0x3DE3, 0x2C6A, 0x1EF1, 0x0F78</span>
+<span id="L213"><span class="lineNum">     213</span>                 :             : };</span>
+<span id="L214"><span class="lineNum">     214</span>                 :             : </span>
+<span id="L215"><span class="lineNum">     215</span>                 :             : uint16_t internetChecksum(const uint8_t *addr, size_t count, uint32_t sum)</span>
+<span id="L216"><span class="lineNum">     216</span>                 :<span class="tlaGNC tlaBgGNC">    21813766 : {</span></span>
+<span id="L217"><span class="lineNum">     217</span>         [<span class="tlaGBC" title="Branch 0 was taken 3095156567 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 21813766 times"> + </span>]:<span class="tlaGNC">  3116970333 :     while (count &gt; 1) {</span></span>
+<span id="L218"><span class="lineNum">     218</span>                 :<span class="tlaGNC">  3095156567 :         sum += (addr[0] &lt;&lt; 8) | addr[1];</span></span>
+<span id="L219"><span class="lineNum">     219</span>                 :<span class="tlaGNC">  3095156567 :         addr += 2;</span></span>
+<span id="L220"><span class="lineNum">     220</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 3095156567 times"> + </span>]:<span class="tlaGNC">  3095156567 :         if (sum &amp; 0x80000000)</span></span>
+<span id="L221"><span class="lineNum">     221</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             sum = (sum &amp; 0xFFFF) + (sum &gt;&gt; 16);</span></span>
+<span id="L222"><span class="lineNum">     222</span>                 :<span class="tlaGNC tlaBgGNC">  3095156567 :         count -= 2;</span></span>
+<span id="L223"><span class="lineNum">     223</span>                 :<span class="tlaGNC">  3095156567 :     }</span></span>
+<span id="L224"><span class="lineNum">     224</span>                 :             : </span>
+<span id="L225"><span class="lineNum">     225</span>         [<span class="tlaGBC" title="Branch 0 was taken 443242 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 21370524 times"> + </span>]:<span class="tlaGNC">    21813766 :     if (count)</span></span>
+<span id="L226"><span class="lineNum">     226</span>                 :<span class="tlaGNC">      443242 :         sum += addr[0] &lt;&lt; 8;</span></span>
+<span id="L227"><span class="lineNum">     227</span>                 :             : </span>
+<span id="L228"><span class="lineNum">     228</span>         [<span class="tlaGBC" title="Branch 0 was taken 12776564 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 21813766 times"> + </span>]:<span class="tlaGNC">    34590330 :     while (sum &gt;&gt; 16)</span></span>
+<span id="L229"><span class="lineNum">     229</span>                 :<span class="tlaGNC">    12776564 :         sum = (sum &amp; 0xFFFF) + (sum &gt;&gt; 16);</span></span>
+<span id="L230"><span class="lineNum">     230</span>                 :             : </span>
+<span id="L231"><span class="lineNum">     231</span>                 :<span class="tlaGNC">    21813766 :     uint16_t sum16 = (uint16_t)sum;</span></span>
+<span id="L232"><span class="lineNum">     232</span>                 :<span class="tlaGNC">    21813766 :     return ~sum16;</span></span>
+<span id="L233"><span class="lineNum">     233</span>                 :<span class="tlaGNC">    21813766 : }</span></span>
+<span id="L234"><span class="lineNum">     234</span>                 :             : </span>
+<span id="L235"><span class="lineNum">     235</span>                 :             : uint16_t fletcherChecksum(const uint8_t *buf, size_t length, size_t checksumPos)</span>
+<span id="L236"><span class="lineNum">     236</span>                 :<span class="tlaGNC">        1811 : {</span></span>
+<span id="L237"><span class="lineNum">     237</span>                 :             :     // Fletcher checksum over GF(255), per ISO 8473 / RFC 1008, as used for OSPF LS checksums.</span>
+<span id="L238"><span class="lineNum">     238</span>                 :             :     // The two check octets are chosen so that the running sums (c0, c1) come out to zero when</span>
+<span id="L239"><span class="lineNum">     239</span>                 :             :     // recomputed over the whole region including the checksum field.</span>
+<span id="L240"><span class="lineNum">     240</span>                 :<span class="tlaGNC">        1811 :     int32_t c0 = 0, c1 = 0;</span></span>
+<span id="L241"><span class="lineNum">     241</span>         [<span class="tlaGBC" title="Branch 0 was taken 70398 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1811 times"> + </span>]:<span class="tlaGNC">       72209 :     for (size_t i = 0; i &lt; length; i++) {</span></span>
+<span id="L242"><span class="lineNum">     242</span>                 :<span class="tlaGNC">       70398 :         c0 = (c0 + buf[i]) % 255;</span></span>
+<span id="L243"><span class="lineNum">     243</span>                 :<span class="tlaGNC">       70398 :         c1 = (c1 + c0) % 255;</span></span>
+<span id="L244"><span class="lineNum">     244</span>                 :<span class="tlaGNC">       70398 :     }</span></span>
+<span id="L245"><span class="lineNum">     245</span>                 :<span class="tlaGNC">        1811 :     int32_t x = ((int32_t)(length - checksumPos - 1) * c0 - c1) % 255;</span></span>
+<span id="L246"><span class="lineNum">     246</span>         [<span class="tlaGBC" title="Branch 0 was taken 73 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1738 times"> + </span>]:<span class="tlaGNC">        1811 :     if (x &lt;= 0)</span></span>
+<span id="L247"><span class="lineNum">     247</span>                 :<span class="tlaGNC">          73 :         x += 255;</span></span>
+<span id="L248"><span class="lineNum">     248</span>                 :<span class="tlaGNC">        1811 :     int32_t y = 510 - c0 - x;</span></span>
+<span id="L249"><span class="lineNum">     249</span>         [<span class="tlaGBC" title="Branch 0 was taken 788 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1023 times"> + </span>]:<span class="tlaGNC">        1811 :     if (y &gt; 255)</span></span>
+<span id="L250"><span class="lineNum">     250</span>                 :<span class="tlaGNC">         788 :         y -= 255;</span></span>
+<span id="L251"><span class="lineNum">     251</span>                 :<span class="tlaGNC">        1811 :     return (uint16_t)(((x &amp; 0xFF) &lt;&lt; 8) | (y &amp; 0xFF));</span></span>
+<span id="L252"><span class="lineNum">     252</span>                 :<span class="tlaGNC">        1811 : }</span></span>
+<span id="L253"><span class="lineNum">     253</span>                 :             : </span>
+<span id="L254"><span class="lineNum">     254</span>                 :             : inline uint32_t swapBytes(uint32_t crc)</span>
+<span id="L255"><span class="lineNum">     255</span>                 :<span class="tlaGNC">   136475842 : {</span></span>
+<span id="L256"><span class="lineNum">     256</span>                 :<span class="tlaGNC">   136475842 :     return (crc &gt;&gt; 24) | ((crc &gt;&gt; 8) &amp; 0x0000FF00) | ((crc &lt;&lt; 8) &amp; 0x00FF0000) | (crc &lt;&lt; 24);</span></span>
+<span id="L257"><span class="lineNum">     257</span>                 :<span class="tlaGNC">   136475842 : }</span></span>
+<span id="L258"><span class="lineNum">     258</span>                 :             : </span>
+<span id="L259"><span class="lineNum">     259</span>                 :             : uint32_t ethernetFcs(const uint8_t *buf, size_t bufsize, uint32_t crc)</span>
+<span id="L260"><span class="lineNum">     260</span>                 :<span class="tlaGNC">    68237921 : {</span></span>
+<span id="L261"><span class="lineNum">     261</span>                 :<span class="tlaGNC">    68237921 :     crc = swapBytes(crc);  // undo byte order reversal for previous, partial CRC</span></span>
+<span id="L262"><span class="lineNum">     262</span>                 :<span class="tlaGNC">    68237921 :     crc = crc32_iso_hdlc(buf, bufsize, crc);</span></span>
+<span id="L263"><span class="lineNum">     263</span>                 :<span class="tlaGNC">    68237921 :     return swapBytes(crc);</span></span>
+<span id="L264"><span class="lineNum">     264</span>                 :<span class="tlaGNC">    68237921 : }</span></span>
+<span id="L265"><span class="lineNum">     265</span>                 :             : </span>
+<span id="L266"><span class="lineNum">     266</span>                 :             : uint32_t crc32_iso_hdlc(const uint8_t *buf, size_t bufsize, uint32_t crc)</span>
+<span id="L267"><span class="lineNum">     267</span>                 :<span class="tlaGNC">    68238024 : {</span></span>
+<span id="L268"><span class="lineNum">     268</span>                 :<span class="tlaGNC">    68238024 :     crc = crc ^ ~0U;</span></span>
+<span id="L269"><span class="lineNum">     269</span>                 :<span class="tlaGNC">    68238024 :     const uint8_t *p = buf;</span></span>
+<span id="L270"><span class="lineNum">     270</span>         [<span class="tlaGBC" title="Branch 0 was taken 5957970066 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 68238024 times"> + </span>]:<span class="tlaGNC"> 18911109978 :     while (bufsize--)</span></span>
+<span id="L271"><span class="lineNum">     271</span>                 :<span class="tlaGNC"> 18842871954 :         crc = crc32_tab[(crc ^ *p++) &amp; 0xFF] ^ (crc &gt;&gt; 8);</span></span>
+<span id="L272"><span class="lineNum">     272</span>                 :<span class="tlaGNC">    68238024 :     crc = crc ^ ~0U;</span></span>
+<span id="L273"><span class="lineNum">     273</span>                 :<span class="tlaGNC">    68238024 :     return crc;</span></span>
+<span id="L274"><span class="lineNum">     274</span>                 :<span class="tlaGNC">    68238024 : }</span></span>
+<span id="L275"><span class="lineNum">     275</span>                 :             : </span>
+<span id="L276"><span class="lineNum">     276</span>                 :             : uint32_t crc32_mpeg2(const uint8_t *buf, size_t bufsize, uint32_t crc)</span>
+<span id="L277"><span class="lineNum">     277</span>                 :<span class="tlaGNC">         103 : {</span></span>
+<span id="L278"><span class="lineNum">     278</span>                 :             :     // Note: no XOR-ing with ~0U here, because the final XOR value is zero, so the</span>
+<span id="L279"><span class="lineNum">     279</span>                 :             :     // running CRC value and the returned one are the same; that is also why the</span>
+<span id="L280"><span class="lineNum">     280</span>                 :             :     // initial value 0xffffffff has to be supplied by the caller (as the default).</span>
+<span id="L281"><span class="lineNum">     281</span>                 :<span class="tlaGNC">         103 :     const uint8_t *p = buf;</span></span>
+<span id="L282"><span class="lineNum">     282</span>         [<span class="tlaGBC" title="Branch 0 was taken 97039 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 103 times"> + </span>]:<span class="tlaGNC">       97142 :     while (bufsize--)</span></span>
+<span id="L283"><span class="lineNum">     283</span>                 :<span class="tlaGNC">       97039 :         crc = crc32_mpeg2_tab[((crc &gt;&gt; 24) ^ *p++) &amp; 0xFF] ^ (crc &lt;&lt; 8);</span></span>
+<span id="L284"><span class="lineNum">     284</span>                 :<span class="tlaGNC">         103 :     return crc;</span></span>
+<span id="L285"><span class="lineNum">     285</span>                 :<span class="tlaGNC">         103 : }</span></span>
+<span id="L286"><span class="lineNum">     286</span>                 :             : </span>
+<span id="L287"><span class="lineNum">     287</span>                 :             : uint32_t crc32c(const uint8_t *buf, size_t bufsize, uint32_t crc)</span>
+<span id="L288"><span class="lineNum">     288</span>                 :<span class="tlaGNC">      194800 : {</span></span>
+<span id="L289"><span class="lineNum">     289</span>                 :<span class="tlaGNC">      194800 :     crc = crc ^ ~0U;</span></span>
+<span id="L290"><span class="lineNum">     290</span>                 :<span class="tlaGNC">      194800 :     const uint8_t *p = buf;</span></span>
+<span id="L291"><span class="lineNum">     291</span>         [<span class="tlaGBC" title="Branch 0 was taken 187190831 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 194800 times"> + </span>]:<span class="tlaGNC">   187385631 :     while (bufsize--)</span></span>
+<span id="L292"><span class="lineNum">     292</span>                 :<span class="tlaGNC">   187190831 :         crc = crc32c_tab[(crc ^ *p++) &amp; 0xFF] ^ (crc &gt;&gt; 8);</span></span>
+<span id="L293"><span class="lineNum">     293</span>                 :<span class="tlaGNC">      194800 :     crc = crc ^ ~0U;</span></span>
+<span id="L294"><span class="lineNum">     294</span>                 :<span class="tlaGNC">      194800 :     return crc;</span></span>
+<span id="L295"><span class="lineNum">     295</span>                 :<span class="tlaGNC">      194800 : }</span></span>
+<span id="L296"><span class="lineNum">     296</span>                 :             : </span>
+<span id="L297"><span class="lineNum">     297</span>                 :             : uint16_t crc16_ibm(const uint8_t *buf, size_t bufsize, uint16_t crc)</span>
+<span id="L298"><span class="lineNum">     298</span>                 :<span class="tlaGNC">         103 : {</span></span>
+<span id="L299"><span class="lineNum">     299</span>                 :<span class="tlaGNC">         103 :     const uint8_t *p = buf;</span></span>
+<span id="L300"><span class="lineNum">     300</span>         [<span class="tlaGBC" title="Branch 0 was taken 97039 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 103 times"> + </span>]:<span class="tlaGNC">       97142 :     while (bufsize--)</span></span>
+<span id="L301"><span class="lineNum">     301</span>                 :<span class="tlaGNC">       97039 :         crc = (crc &gt;&gt; 8) ^ crc16_ibm_tab[(crc ^ *p++) &amp; 0xFF];</span></span>
+<span id="L302"><span class="lineNum">     302</span>                 :<span class="tlaGNC">         103 :     return crc;</span></span>
+<span id="L303"><span class="lineNum">     303</span>                 :<span class="tlaGNC">         103 : }</span></span>
+<span id="L304"><span class="lineNum">     304</span>                 :             : </span>
+<span id="L305"><span class="lineNum">     305</span>                 :             : uint16_t crc16_ccitt(const uint8_t *buf, size_t bufsize, uint16_t crc)</span>
+<span id="L306"><span class="lineNum">     306</span>                 :<span class="tlaGNC">         103 : {</span></span>
+<span id="L307"><span class="lineNum">     307</span>                 :<span class="tlaGNC">         103 :     const uint8_t *p = buf;</span></span>
+<span id="L308"><span class="lineNum">     308</span>         [<span class="tlaGBC" title="Branch 0 was taken 97039 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 103 times"> + </span>]:<span class="tlaGNC">       97142 :     while (bufsize--)</span></span>
+<span id="L309"><span class="lineNum">     309</span>                 :<span class="tlaGNC">       97039 :         crc = (crc &gt;&gt; 8) ^ crc16_ccitt_tab[(crc ^ *p++) &amp; 0xFF];</span></span>
+<span id="L310"><span class="lineNum">     310</span>                 :<span class="tlaGNC">         103 :     return crc;</span></span>
+<span id="L311"><span class="lineNum">     311</span>                 :<span class="tlaGNC">         103 : }</span></span>
+<span id="L312"><span class="lineNum">     312</span>                 :             : </span>
+<span id="L313"><span class="lineNum">     313</span>                 :             : // generic CRC implementations</span>
+<span id="L314"><span class="lineNum">     314</span>                 :             : </span>
+<span id="L315"><span class="lineNum">     315</span>                 :             : static inline uint32_t reverse32(uint32_t x)</span>
+<span id="L316"><span class="lineNum">     316</span>                 :<span class="tlaGNC">         435 : {</span></span>
+<span id="L317"><span class="lineNum">     317</span>                 :<span class="tlaGNC">         435 :     x = ((x &amp; 0x55555555) &lt;&lt;  1) | ((x &amp; 0xAAAAAAAA) &gt;&gt;  1);</span></span>
+<span id="L318"><span class="lineNum">     318</span>                 :<span class="tlaGNC">         435 :     x = ((x &amp; 0x33333333) &lt;&lt;  2) | ((x &amp; 0xCCCCCCCC) &gt;&gt;  2);</span></span>
+<span id="L319"><span class="lineNum">     319</span>                 :<span class="tlaGNC">         435 :     x = ((x &amp; 0x0F0F0F0F) &lt;&lt;  4) | ((x &amp; 0xF0F0F0F0) &gt;&gt;  4);</span></span>
+<span id="L320"><span class="lineNum">     320</span>                 :<span class="tlaGNC">         435 :     x = ((x &amp; 0x00FF00FF) &lt;&lt;  8) | ((x &amp; 0xFF00FF00) &gt;&gt;  8);</span></span>
+<span id="L321"><span class="lineNum">     321</span>                 :<span class="tlaGNC">         435 :     x = ((x &amp; 0x0000FFFF) &lt;&lt; 16) | ((x &amp; 0xFFFF0000) &gt;&gt; 16);</span></span>
+<span id="L322"><span class="lineNum">     322</span>                 :<span class="tlaGNC">         435 :     return x;</span></span>
+<span id="L323"><span class="lineNum">     323</span>                 :<span class="tlaGNC">         435 : }</span></span>
+<span id="L324"><span class="lineNum">     324</span>                 :             : </span>
+<span id="L325"><span class="lineNum">     325</span>                 :             : static inline uint16_t reverse16(uint16_t x)</span>
+<span id="L326"><span class="lineNum">     326</span>                 :<span class="tlaGNC">         204 : {</span></span>
+<span id="L327"><span class="lineNum">     327</span>                 :<span class="tlaGNC">         204 :     return reverse32(x) &gt;&gt; 16;</span></span>
+<span id="L328"><span class="lineNum">     328</span>                 :<span class="tlaGNC">         204 : }</span></span>
+<span id="L329"><span class="lineNum">     329</span>                 :             : </span>
+<span id="L330"><span class="lineNum">     330</span>                 :             : static inline uint8_t reverse8(uint8_t x)</span>
+<span id="L331"><span class="lineNum">     331</span>                 :<span class="tlaGNC">          27 : {</span></span>
+<span id="L332"><span class="lineNum">     332</span>                 :<span class="tlaGNC">          27 :     return reverse32(x) &gt;&gt; 24;</span></span>
+<span id="L333"><span class="lineNum">     333</span>                 :<span class="tlaGNC">          27 : }</span></span>
+<span id="L334"><span class="lineNum">     334</span>                 :             : </span>
+<span id="L335"><span class="lineNum">     335</span>                 :             : uint32_t generic_crc32(const uint8_t *buf, size_t bufsize,</span>
+<span id="L336"><span class="lineNum">     336</span>                 :             :             uint32_t poly, uint32_t init, bool reflectIn, bool reflectOut, uint32_t xorOut)</span>
+<span id="L337"><span class="lineNum">     337</span>                 :<span class="tlaGNC">         306 : {</span></span>
+<span id="L338"><span class="lineNum">     338</span>                 :<span class="tlaGNC">         306 :     uint32_t crc = init;</span></span>
+<span id="L339"><span class="lineNum">     339</span>                 :             : </span>
+<span id="L340"><span class="lineNum">     340</span>         [<span class="tlaGBC" title="Branch 0 was taken 204 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 102 times"> + </span>]:<span class="tlaGNC">         306 :     if (reflectIn) {</span></span>
+<span id="L341"><span class="lineNum">     341</span>                 :             :         // In reflected mode, use the reversed polynomial.</span>
+<span id="L342"><span class="lineNum">     342</span>                 :<span class="tlaGNC">         204 :         uint32_t rpoly = reverse32(poly);</span></span>
+<span id="L343"><span class="lineNum">     343</span>         [<span class="tlaGBC" title="Branch 0 was taken 194060 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 204 times"> + </span>]:<span class="tlaGNC">      194264 :         for (unsigned int i = 0; i &lt; bufsize; ++i) {</span></span>
+<span id="L344"><span class="lineNum">     344</span>                 :             :             // For reflected algorithms, process the byte as is.</span>
+<span id="L345"><span class="lineNum">     345</span>                 :<span class="tlaGNC">      194060 :             crc ^= (uint32_t)buf[i];</span></span>
+<span id="L346"><span class="lineNum">     346</span>         [<span class="tlaGBC" title="Branch 0 was taken 1552480 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 194060 times"> + </span>]:<span class="tlaGNC">     1746540 :             for (int j = 0; j &lt; 8; ++j) {</span></span>
+<span id="L347"><span class="lineNum">     347</span>         [<span class="tlaGBC" title="Branch 0 was taken 776001 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 776479 times"> + </span>]:<span class="tlaGNC">     1552480 :                 if (crc &amp; 1)</span></span>
+<span id="L348"><span class="lineNum">     348</span>                 :<span class="tlaGNC">      776001 :                     crc = (crc &gt;&gt; 1) ^ rpoly;</span></span>
+<span id="L349"><span class="lineNum">     349</span>                 :<span class="tlaGNC">      776479 :                 else</span></span>
+<span id="L350"><span class="lineNum">     350</span>                 :<span class="tlaGNC">      776479 :                     crc &gt;&gt;= 1;</span></span>
+<span id="L351"><span class="lineNum">     351</span>                 :<span class="tlaGNC">     1552480 :             }</span></span>
+<span id="L352"><span class="lineNum">     352</span>                 :<span class="tlaGNC">      194060 :         }</span></span>
+<span id="L353"><span class="lineNum">     353</span>                 :             :         // In this common scenario, reflectOut=true means the final CRC is already</span>
+<span id="L354"><span class="lineNum">     354</span>                 :             :         // in the proper bit order.</span>
+<span id="L355"><span class="lineNum">     355</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 204 times"> + </span>]:<span class="tlaGNC">         204 :         if (!reflectOut)</span></span>
+<span id="L356"><span class="lineNum">     356</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             crc = reverse32(crc);</span></span>
+<span id="L357"><span class="lineNum">     357</span>                 :<span class="tlaGNC tlaBgGNC">         204 :     }</span></span>
+<span id="L358"><span class="lineNum">     358</span>                 :<span class="tlaGNC">         102 :     else {</span></span>
+<span id="L359"><span class="lineNum">     359</span>                 :             :         // Non-reflected mode: XOR the byte into the high 8 bits.</span>
+<span id="L360"><span class="lineNum">     360</span>         [<span class="tlaGBC" title="Branch 0 was taken 97030 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 102 times"> + </span>]:<span class="tlaGNC">       97132 :         for (unsigned int i = 0; i &lt; bufsize; ++i) {</span></span>
+<span id="L361"><span class="lineNum">     361</span>                 :<span class="tlaGNC">       97030 :             crc ^= ((uint32_t)buf[i]) &lt;&lt; 24;</span></span>
+<span id="L362"><span class="lineNum">     362</span>         [<span class="tlaGBC" title="Branch 0 was taken 776240 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 97030 times"> + </span>]:<span class="tlaGNC">      873270 :             for (int j = 0; j &lt; 8; ++j) {</span></span>
+<span id="L363"><span class="lineNum">     363</span>         [<span class="tlaGBC" title="Branch 0 was taken 388901 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 387339 times"> + </span>]:<span class="tlaGNC">      776240 :                 if (crc &amp; 0x80000000UL)</span></span>
+<span id="L364"><span class="lineNum">     364</span>                 :<span class="tlaGNC">      388901 :                     crc = (crc &lt;&lt; 1) ^ poly;</span></span>
+<span id="L365"><span class="lineNum">     365</span>                 :<span class="tlaGNC">      387339 :                 else</span></span>
+<span id="L366"><span class="lineNum">     366</span>                 :<span class="tlaGNC">      387339 :                     crc &lt;&lt;= 1;</span></span>
+<span id="L367"><span class="lineNum">     367</span>                 :<span class="tlaGNC">      776240 :             }</span></span>
+<span id="L368"><span class="lineNum">     368</span>                 :<span class="tlaGNC">       97030 :         }</span></span>
+<span id="L369"><span class="lineNum">     369</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 102 times"> + </span>]:<span class="tlaGNC">         102 :         if (reflectOut)</span></span>
+<span id="L370"><span class="lineNum">     370</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             crc = reverse32(crc);</span></span>
+<span id="L371"><span class="lineNum">     371</span>                 :<span class="tlaGNC tlaBgGNC">         102 :     }</span></span>
+<span id="L372"><span class="lineNum">     372</span>                 :<span class="tlaGNC">         306 :     return crc ^ xorOut;</span></span>
+<span id="L373"><span class="lineNum">     373</span>                 :<span class="tlaGNC">         306 : }</span></span>
+<span id="L374"><span class="lineNum">     374</span>                 :             : </span>
+<span id="L375"><span class="lineNum">     375</span>                 :             : uint16_t generic_crc16(const uint8_t *buf, size_t bufsize,</span>
+<span id="L376"><span class="lineNum">     376</span>                 :             :             uint16_t poly, uint16_t init, bool reflectIn, bool reflectOut, uint16_t xorOut)</span>
+<span id="L377"><span class="lineNum">     377</span>                 :<span class="tlaGNC">         204 : {</span></span>
+<span id="L378"><span class="lineNum">     378</span>                 :<span class="tlaGNC">         204 :     uint16_t crc = init;</span></span>
+<span id="L379"><span class="lineNum">     379</span>                 :             : </span>
+<span id="L380"><span class="lineNum">     380</span>         [<span class="tlaGBC" title="Branch 0 was taken 204 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">         204 :     if (reflectIn) {</span></span>
+<span id="L381"><span class="lineNum">     381</span>                 :             :         // For reflected mode, reverse the polynomial.</span>
+<span id="L382"><span class="lineNum">     382</span>                 :<span class="tlaGNC">         204 :         uint16_t rpoly = reverse16(poly);</span></span>
+<span id="L383"><span class="lineNum">     383</span>         [<span class="tlaGBC" title="Branch 0 was taken 194060 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 204 times"> + </span>]:<span class="tlaGNC">      194264 :         for (unsigned int i = 0; i &lt; bufsize; ++i) {</span></span>
+<span id="L384"><span class="lineNum">     384</span>                 :             :             // In reflected mode, process the input byte as is.</span>
+<span id="L385"><span class="lineNum">     385</span>                 :<span class="tlaGNC">      194060 :             crc ^= (uint16_t)buf[i];</span></span>
+<span id="L386"><span class="lineNum">     386</span>         [<span class="tlaGBC" title="Branch 0 was taken 1552480 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 194060 times"> + </span>]:<span class="tlaGNC">     1746540 :             for (int j = 0; j &lt; 8; ++j) {</span></span>
+<span id="L387"><span class="lineNum">     387</span>         [<span class="tlaGBC" title="Branch 0 was taken 775614 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 776866 times"> + </span>]:<span class="tlaGNC">     1552480 :                 if (crc &amp; 1)</span></span>
+<span id="L388"><span class="lineNum">     388</span>                 :<span class="tlaGNC">      775614 :                     crc = (crc &gt;&gt; 1) ^ rpoly;</span></span>
+<span id="L389"><span class="lineNum">     389</span>                 :<span class="tlaGNC">      776866 :                 else</span></span>
+<span id="L390"><span class="lineNum">     390</span>                 :<span class="tlaGNC">      776866 :                     crc &gt;&gt;= 1;</span></span>
+<span id="L391"><span class="lineNum">     391</span>                 :<span class="tlaGNC">     1552480 :             }</span></span>
+<span id="L392"><span class="lineNum">     392</span>                 :<span class="tlaGNC">      194060 :         }</span></span>
+<span id="L393"><span class="lineNum">     393</span>                 :             :         // When using reflected mode, if reflectOut is false then we reverse the final result.</span>
+<span id="L394"><span class="lineNum">     394</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 204 times"> + </span>]:<span class="tlaGNC">         204 :         if (!reflectOut)</span></span>
+<span id="L395"><span class="lineNum">     395</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             crc = reverse16(crc);</span></span>
+<span id="L396"><span class="lineNum">     396</span>                 :<span class="tlaGNC tlaBgGNC">         204 :     }</span></span>
+<span id="L397"><span class="lineNum">     397</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     else {</span></span>
+<span id="L398"><span class="lineNum">     398</span>                 :             :         // Non-reflected mode: XOR the input byte into the upper 8 bits.</span>
+<span id="L399"><span class="lineNum">     399</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         for (unsigned int i = 0; i &lt; bufsize; ++i) {</span></span>
+<span id="L400"><span class="lineNum">     400</span>                 :<span class="tlaUNC">           0 :             crc ^= ((uint16_t)buf[i]) &lt;&lt; 8;</span></span>
+<span id="L401"><span class="lineNum">     401</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             for (int j = 0; j &lt; 8; ++j) {</span></span>
+<span id="L402"><span class="lineNum">     402</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                 if (crc &amp; 0x8000U)</span></span>
+<span id="L403"><span class="lineNum">     403</span>                 :<span class="tlaUNC">           0 :                     crc = (crc &lt;&lt; 1) ^ poly;</span></span>
+<span id="L404"><span class="lineNum">     404</span>                 :<span class="tlaUNC">           0 :                 else</span></span>
+<span id="L405"><span class="lineNum">     405</span>                 :<span class="tlaUNC">           0 :                     crc &lt;&lt;= 1;</span></span>
+<span id="L406"><span class="lineNum">     406</span>                 :<span class="tlaUNC">           0 :             }</span></span>
+<span id="L407"><span class="lineNum">     407</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L408"><span class="lineNum">     408</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         if (reflectOut)</span></span>
+<span id="L409"><span class="lineNum">     409</span>                 :<span class="tlaUNC">           0 :             crc = reverse16(crc);</span></span>
+<span id="L410"><span class="lineNum">     410</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L411"><span class="lineNum">     411</span>                 :             : </span>
+<span id="L412"><span class="lineNum">     412</span>                 :<span class="tlaGNC tlaBgGNC">         204 :     return crc ^ xorOut;</span></span>
+<span id="L413"><span class="lineNum">     413</span>                 :<span class="tlaGNC">         204 : }</span></span>
+<span id="L414"><span class="lineNum">     414</span>                 :             : </span>
+<span id="L415"><span class="lineNum">     415</span>                 :             : uint8_t generic_crc8(const uint8_t *buf, size_t bufsize,</span>
+<span id="L416"><span class="lineNum">     416</span>                 :             :             uint8_t poly, uint8_t init, bool reflectIn, bool reflectOut, uint8_t xorOut)</span>
+<span id="L417"><span class="lineNum">     417</span>                 :<span class="tlaGNC">          27 : {</span></span>
+<span id="L418"><span class="lineNum">     418</span>                 :<span class="tlaGNC">          27 :     uint8_t crc = init;</span></span>
+<span id="L419"><span class="lineNum">     419</span>                 :             : </span>
+<span id="L420"><span class="lineNum">     420</span>         [<span class="tlaGBC" title="Branch 0 was taken 27 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">          27 :     if (reflectIn) {</span></span>
+<span id="L421"><span class="lineNum">     421</span>                 :             :         // Use the reversed polynomial for reflected mode.</span>
+<span id="L422"><span class="lineNum">     422</span>                 :<span class="tlaGNC">          27 :         uint8_t rpoly = reverse8(poly);</span></span>
+<span id="L423"><span class="lineNum">     423</span>         [<span class="tlaGBC" title="Branch 0 was taken 54 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 27 times"> + </span>]:<span class="tlaGNC">          81 :         for (unsigned int i = 0; i &lt; bufsize; ++i) {</span></span>
+<span id="L424"><span class="lineNum">     424</span>                 :             :             // In reflected mode, process the byte as is.</span>
+<span id="L425"><span class="lineNum">     425</span>                 :<span class="tlaGNC">          54 :             crc ^= buf[i];</span></span>
+<span id="L426"><span class="lineNum">     426</span>         [<span class="tlaGBC" title="Branch 0 was taken 432 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 54 times"> + </span>]:<span class="tlaGNC">         486 :             for (int j = 0; j &lt; 8; ++j) {</span></span>
+<span id="L427"><span class="lineNum">     427</span>         [<span class="tlaGBC" title="Branch 0 was taken 289 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 143 times"> + </span>]:<span class="tlaGNC">         432 :                 if (crc &amp; 1)</span></span>
+<span id="L428"><span class="lineNum">     428</span>                 :<span class="tlaGNC">         289 :                     crc = (crc &gt;&gt; 1) ^ rpoly;</span></span>
+<span id="L429"><span class="lineNum">     429</span>                 :<span class="tlaGNC">         143 :                 else</span></span>
+<span id="L430"><span class="lineNum">     430</span>                 :<span class="tlaGNC">         143 :                     crc &gt;&gt;= 1;</span></span>
+<span id="L431"><span class="lineNum">     431</span>                 :<span class="tlaGNC">         432 :             }</span></span>
+<span id="L432"><span class="lineNum">     432</span>                 :<span class="tlaGNC">          54 :         }</span></span>
+<span id="L433"><span class="lineNum">     433</span>                 :             :         // If reflectOut is false, reverse the final CRC.</span>
+<span id="L434"><span class="lineNum">     434</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 27 times"> + </span>]:<span class="tlaGNC">          27 :         if (!reflectOut)</span></span>
+<span id="L435"><span class="lineNum">     435</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             crc = reverse8(crc);</span></span>
+<span id="L436"><span class="lineNum">     436</span>                 :<span class="tlaGNC tlaBgGNC">          27 :     }</span></span>
+<span id="L437"><span class="lineNum">     437</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     else {</span></span>
+<span id="L438"><span class="lineNum">     438</span>                 :             :         // Non-reflected mode: The byte is XORed directly (shift by 0) and the CRC is shifted left.</span>
+<span id="L439"><span class="lineNum">     439</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         for (unsigned int i = 0; i &lt; bufsize; ++i) {</span></span>
+<span id="L440"><span class="lineNum">     440</span>                 :<span class="tlaUNC">           0 :             crc ^= buf[i];</span></span>
+<span id="L441"><span class="lineNum">     441</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             for (int j = 0; j &lt; 8; ++j) {</span></span>
+<span id="L442"><span class="lineNum">     442</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                 if (crc &amp; 0x80)  // Check the most-significant bit (0x80 for 8-bit).</span></span>
+<span id="L443"><span class="lineNum">     443</span>                 :<span class="tlaUNC">           0 :                     crc = (crc &lt;&lt; 1) ^ poly;</span></span>
+<span id="L444"><span class="lineNum">     444</span>                 :<span class="tlaUNC">           0 :                 else</span></span>
+<span id="L445"><span class="lineNum">     445</span>                 :<span class="tlaUNC">           0 :                     crc &lt;&lt;= 1;</span></span>
+<span id="L446"><span class="lineNum">     446</span>                 :<span class="tlaUNC">           0 :             }</span></span>
+<span id="L447"><span class="lineNum">     447</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L448"><span class="lineNum">     448</span>                 :             :         // If reflectOut is true, reverse the final CRC.</span>
+<span id="L449"><span class="lineNum">     449</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         if (reflectOut)</span></span>
+<span id="L450"><span class="lineNum">     450</span>                 :<span class="tlaUNC">           0 :             crc = reverse8(crc);</span></span>
+<span id="L451"><span class="lineNum">     451</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L452"><span class="lineNum">     452</span>                 :             : </span>
+<span id="L453"><span class="lineNum">     453</span>                 :<span class="tlaGNC tlaBgGNC">          27 :     return crc ^ xorOut;</span></span>
+<span id="L454"><span class="lineNum">     454</span>                 :<span class="tlaGNC">          27 : }</span></span>
+<span id="L455"><span class="lineNum">     455</span>                 :             : </span>
+<span id="L456"><span class="lineNum">     456</span>                 :             : } // namespace inet</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

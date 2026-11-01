@@ -1,0 +1,231 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - linklayer/ieee80211/mac/originator/src/inet/linklayer/ieee80211/mac/originator/NonQosRecoveryProcedure.cc - functions</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../../../index.html">top level</a> - <a href="index.html">linklayer/ieee80211/mac/originator/src/inet/linklayer/ieee80211/mac/originator</a> - NonQosRecoveryProcedure.cc<span style="font-size: 80%;"> (<a href="NonQosRecoveryProcedure.cc.gcov.html">source</a> / functions)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">96.2&nbsp;%</td>
+            <td class="headerCovTableEntry">133</td>
+            <td class="headerCovTableEntry">128</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">95.2&nbsp;%</td>
+            <td class="headerCovTableEntry">21</td>
+            <td class="headerCovTableEntry">20</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryHi">93.3&nbsp;%</td>
+            <td class="headerCovTableEntry">30</td>
+            <td class="headerCovTableEntry">28</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <center>
+          <table cellpadding=1 cellspacing=1 border=0>
+            <tr><td><br></td></tr>
+            <tr>
+              <td class="tableHead">Function Name <span  title="Click to sort table by function name" class="tableHeadSort"><img src="../../../../../../../../../../glass.png" width=10 height=14 alt="Sort by function name" title="Click to sort table by function name" border=0></span></td>
+              
+              <td class="tableHead">Hit count <span  title="Click to sort table by function hit count" class="tableHeadSort"><a href="NonQosRecoveryProcedure.cc.func-c.html"><img src="../../../../../../../../../../updown.png" width=10 height=14 alt="Sort by function hit count" title="Click to sort table by function hit count" border=0></a></span></td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="NonQosRecoveryProcedure.cc.gcov.html#L105">inet::ieee80211::NonQosRecoveryProcedure::ackFrameReceived(inet::Packet*, inet::IntrusivePtr&lt;inet::ieee80211::Ieee80211DataOrMgmtHeader const&gt; const&amp;, inet::ieee80211::StationRetryCounters*)</a></td>
+              
+              <td class="coverFnHi">495148</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="NonQosRecoveryProcedure.cc.gcov.html#L93">inet::ieee80211::NonQosRecoveryProcedure::ctsFrameReceived(inet::ieee80211::StationRetryCounters*)</a></td>
+              
+              <td class="coverFnHi">5711</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="NonQosRecoveryProcedure.cc.gcov.html#L163">inet::ieee80211::NonQosRecoveryProcedure::dataOrMgmtFrameTransmissionFailed(inet::Packet*, inet::IntrusivePtr&lt;inet::ieee80211::Ieee80211DataOrMgmtHeader const&gt; const&amp;, inet::ieee80211::StationRetryCounters*)</a></td>
+              
+              <td class="coverFnHi">93121</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="NonQosRecoveryProcedure.cc.gcov.html#L139">inet::ieee80211::NonQosRecoveryProcedure::dropFrame(inet::Packet*, inet::IntrusivePtr&lt;inet::ieee80211::Ieee80211DataOrMgmtHeader const&gt; const&amp;)</a></td>
+              
+              <td class="coverFnHi">9325</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="NonQosRecoveryProcedure.cc.gcov.html#L148">inet::ieee80211::NonQosRecoveryProcedure::dropRtsProtectedFrame(inet::IntrusivePtr&lt;inet::ieee80211::Ieee80211DataOrMgmtHeader const&gt; const&amp;)</a></td>
+              
+              <td class="coverFnHi">2</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="NonQosRecoveryProcedure.cc.gcov.html#L211">inet::ieee80211::NonQosRecoveryProcedure::getLongRetryCount(inet::Packet*, inet::IntrusivePtr&lt;inet::ieee80211::Ieee80211DataOrMgmtHeader const&gt; const&amp;)</a></td>
+              
+              <td class="coverFnHi">7304</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="NonQosRecoveryProcedure.cc.gcov.html#L239">inet::ieee80211::NonQosRecoveryProcedure::getRc(inet::Packet*, inet::IntrusivePtr&lt;inet::ieee80211::Ieee80211DataOrMgmtHeader const&gt; const&amp;, std::map&lt;inet::ieee80211::SequenceControlField, int, std::less&lt;inet::ieee80211::SequenceControlField&gt;, std::allocator&lt;std::pair&lt;inet::ieee80211::SequenceControlField const, int&gt; &gt; &gt;&amp;)</a></td>
+              
+              <td class="coverFnHi">110713</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="NonQosRecoveryProcedure.cc.gcov.html#L198">inet::ieee80211::NonQosRecoveryProcedure::getRetryCount(inet::Packet*, inet::IntrusivePtr&lt;inet::ieee80211::Ieee80211DataOrMgmtHeader const&gt; const&amp;)</a></td>
+              
+              <td class="coverFnHi">2794</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="NonQosRecoveryProcedure.cc.gcov.html#L206">inet::ieee80211::NonQosRecoveryProcedure::getShortRetryCount(inet::Packet*, inet::IntrusivePtr&lt;inet::ieee80211::Ieee80211DataOrMgmtHeader const&gt; const&amp;)</a></td>
+              
+              <td class="coverFnHi">7308</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="NonQosRecoveryProcedure.cc.gcov.html#L216">inet::ieee80211::NonQosRecoveryProcedure::incrementContentionWindow()</a></td>
+              
+              <td class="coverFnHi">92559</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="NonQosRecoveryProcedure.cc.gcov.html#L63">inet::ieee80211::NonQosRecoveryProcedure::incrementCounter(inet::IntrusivePtr&lt;inet::ieee80211::Ieee80211DataOrMgmtHeader const&gt; const&amp;, std::map&lt;inet::ieee80211::SequenceControlField, int, std::less&lt;inet::ieee80211::SequenceControlField&gt;, std::allocator&lt;std::pair&lt;inet::ieee80211::SequenceControlField const, int&gt; &gt; &gt;&amp;)</a></td>
+              
+              <td class="coverFnHi">93308</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="NonQosRecoveryProcedure.cc.gcov.html#L53">inet::ieee80211::NonQosRecoveryProcedure::incrementStationLrc(inet::ieee80211::StationRetryCounters*)</a></td>
+              
+              <td class="coverFnHi">25</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="NonQosRecoveryProcedure.cc.gcov.html#L43">inet::ieee80211::NonQosRecoveryProcedure::incrementStationSrc(inet::ieee80211::StationRetryCounters*)</a></td>
+              
+              <td class="coverFnHi">93283</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="NonQosRecoveryProcedure.cc.gcov.html#L28">inet::ieee80211::NonQosRecoveryProcedure::initialize(int)</a></td>
+              
+              <td class="coverFnHi">160091</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="NonQosRecoveryProcedure.cc.gcov.html#L245">inet::ieee80211::NonQosRecoveryProcedure::isMulticastFrame(inet::IntrusivePtr&lt;inet::ieee80211::Ieee80211MacHeader const&gt; const&amp;)</a></td>
+              
+              <td class="coverFnLo">0</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="NonQosRecoveryProcedure.cc.gcov.html#L190">inet::ieee80211::NonQosRecoveryProcedure::isRetryLimitReached(inet::Packet*, inet::IntrusivePtr&lt;inet::ieee80211::Ieee80211DataOrMgmtHeader const&gt; const&amp;)</a></td>
+              
+              <td class="coverFnHi">93120</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="NonQosRecoveryProcedure.cc.gcov.html#L234">inet::ieee80211::NonQosRecoveryProcedure::isRtsFrameRetryLimitReached(inet::Packet*, inet::IntrusivePtr&lt;inet::ieee80211::Ieee80211DataOrMgmtHeader const&gt; const&amp;)</a></td>
+              
+              <td class="coverFnHi">187</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="NonQosRecoveryProcedure.cc.gcov.html#L77">inet::ieee80211::NonQosRecoveryProcedure::multicastFrameTransmitted(inet::ieee80211::StationRetryCounters*)</a></td>
+              
+              <td class="coverFnHi">169634</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="NonQosRecoveryProcedure.cc.gcov.html#L225">inet::ieee80211::NonQosRecoveryProcedure::resetContentionWindow()</a></td>
+              
+              <td class="coverFnHi">495897</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="NonQosRecoveryProcedure.cc.gcov.html#L132">inet::ieee80211::NonQosRecoveryProcedure::retryLimitReached(inet::Packet*, inet::IntrusivePtr&lt;inet::ieee80211::Ieee80211DataOrMgmtHeader const&gt; const&amp;)</a></td>
+              
+              <td class="coverFnHi">9322</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="NonQosRecoveryProcedure.cc.gcov.html#L178">inet::ieee80211::NonQosRecoveryProcedure::rtsFrameTransmissionFailed(inet::IntrusivePtr&lt;inet::ieee80211::Ieee80211DataOrMgmtHeader const&gt; const&amp;, inet::ieee80211::StationRetryCounters*)</a></td>
+              
+              <td class="coverFnHi">187</td>
+              
+              
+            </tr>
+          </table>
+          <br>
+          </center>
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

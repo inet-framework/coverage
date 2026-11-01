@@ -1,0 +1,183 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - transportlayer/quic/src/inet/transportlayer/quic/ReceivedPacketsAccountant.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">transportlayer/quic/src/inet/transportlayer/quic</a> - ReceivedPacketsAccountant.h<span style="font-size: 80%;"> (source / <a href="ReceivedPacketsAccountant.h.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">9</td>
+            <td class="headerCovTableEntry">9</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">3</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2019-2024 Timo Völker, Ekaterina Volodina</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : // Copyright (C) 2025 OpenSim Ltd.</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : //</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : //</span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #ifndef INET_APPLICATIONS_QUIC_RECEIVEDPACKETSACCOUNTANT_H_</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : #define INET_APPLICATIONS_QUIC_RECEIVEDPACKETSACCOUNTANT_H_</span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : </span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &quot;packet/QuicPacket.h&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &quot;packet/FrameHeader_m.h&quot;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : #include &quot;Timer.h&quot;</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : </span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : namespace inet {</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : namespace quic {</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : </span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : class Timer;</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : class TransportParameters;</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : </span>
+<span id="L21"><span class="lineNum">      21</span>                 :             : class GapRange {</span>
+<span id="L22"><span class="lineNum">      22</span>                 :             : public:</span>
+<span id="L23"><span class="lineNum">      23</span>                 :             :     uint64_t firstMissing;</span>
+<span id="L24"><span class="lineNum">      24</span>                 :             :     uint64_t lastMissing;</span>
+<span id="L25"><span class="lineNum">      25</span>                 :             : };</span>
+<span id="L26"><span class="lineNum">      26</span>                 :             : </span>
+<span id="L27"><span class="lineNum">      27</span>                 :             : class ReceivedPacketsAccountant {</span>
+<span id="L28"><span class="lineNum">      28</span>                 :             : public:</span>
+<span id="L29"><span class="lineNum">      29</span>                 :             :     ReceivedPacketsAccountant(Timer *ackDelayTimer, TransportParameters *transportParameter);</span>
+<span id="L30"><span class="lineNum">      30</span>                 :             :     virtual ~ReceivedPacketsAccountant();</span>
+<span id="L31"><span class="lineNum">      31</span>                 :             : </span>
+<span id="L32"><span class="lineNum">      32</span>                 :             :     void readParameters(cModule *module);</span>
+<span id="L33"><span class="lineNum">      33</span>                 :             : </span>
+<span id="L34"><span class="lineNum">      34</span>                 :             :     /**</span>
+<span id="L35"><span class="lineNum">      35</span>                 :             :      * Account the received packet. Generate gap information, if the packet</span>
+<span id="L36"><span class="lineNum">      36</span>                 :             :      * received out of order.</span>
+<span id="L37"><span class="lineNum">      37</span>                 :             :      *</span>
+<span id="L38"><span class="lineNum">      38</span>                 :             :      * @param packetNumber The number of the received packet.</span>
+<span id="L39"><span class="lineNum">      39</span>                 :             :      * @param ackEliciting Indicates if the received packet is ack-eliciting or not.</span>
+<span id="L40"><span class="lineNum">      40</span>                 :             :      * @param isIBitSet Indicates if the I-Bit is set on the received packet.</span>
+<span id="L41"><span class="lineNum">      41</span>                 :             :      */</span>
+<span id="L42"><span class="lineNum">      42</span>                 :             :     void onPacketReceived(uint64_t packetNumber, bool ackEliciting, bool isIBitSet);</span>
+<span id="L43"><span class="lineNum">      43</span>                 :             : </span>
+<span id="L44"><span class="lineNum">      44</span>                 :             :     /**</span>
+<span id="L45"><span class="lineNum">      45</span>                 :             :      * Generates an Ack Frame Header.</span>
+<span id="L46"><span class="lineNum">      46</span>                 :             :      *</span>
+<span id="L47"><span class="lineNum">      47</span>                 :             :      * @param maxSize The maximum size in bytes for the ack frame.</span>
+<span id="L48"><span class="lineNum">      48</span>                 :             :      * @return QuicFrame containing the generated Ack Frame Header</span>
+<span id="L49"><span class="lineNum">      49</span>                 :             :      */</span>
+<span id="L50"><span class="lineNum">      50</span>                 :             :     QuicFrame *generateAckFrame(size_t maxSize);</span>
+<span id="L51"><span class="lineNum">      51</span>                 :             : </span>
+<span id="L52"><span class="lineNum">      52</span>                 :             :     /**</span>
+<span id="L53"><span class="lineNum">      53</span>                 :             :      * Informs that a sent packet was acked. If this packet contained an</span>
+<span id="L54"><span class="lineNum">      54</span>                 :             :      * ack frame, we can stop acking the packets that were acked in the</span>
+<span id="L55"><span class="lineNum">      55</span>                 :             :      * arrived ack frame.</span>
+<span id="L56"><span class="lineNum">      56</span>                 :             :      *</span>
+<span id="L57"><span class="lineNum">      57</span>                 :             :      * @param ackedPacket Packet we sent that were acked by the peer.</span>
+<span id="L58"><span class="lineNum">      58</span>                 :             :      */</span>
+<span id="L59"><span class="lineNum">      59</span>                 :             :     void onPacketAcked(QuicPacket *ackedPacket);</span>
+<span id="L60"><span class="lineNum">      60</span>                 :             : </span>
+<span id="L61"><span class="lineNum">      61</span>                 :             :     void onAckDelayTimeout();</span>
+<span id="L62"><span class="lineNum">      62</span>                 :             : </span>
+<span id="L63"><span class="lineNum">      63</span>                 :<span class="tlaGNC tlaBgGNC">      967903 :     bool hasNewAckInfo() {</span></span>
+<span id="L64"><span class="lineNum">      64</span>                 :<span class="tlaGNC">      967903 :         return newAckInfo;</span></span>
+<span id="L65"><span class="lineNum">      65</span>                 :<span class="tlaGNC">      967903 :     }</span></span>
+<span id="L66"><span class="lineNum">      66</span>                 :<span class="tlaGNC">     1090060 :     bool hasNewAckInfoAboutAckElicitings() {</span></span>
+<span id="L67"><span class="lineNum">      67</span>                 :<span class="tlaGNC">     1090060 :         return newAckInfoAboutAckElicitings;</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :<span class="tlaGNC">     1090060 :     }</span></span>
+<span id="L69"><span class="lineNum">      69</span>                 :<span class="tlaGNC">     1199765 :     bool wantsToSendAckImmediately() {</span></span>
+<span id="L70"><span class="lineNum">      70</span>                 :<span class="tlaGNC">     1199765 :         return sendAckImmediately;</span></span>
+<span id="L71"><span class="lineNum">      71</span>                 :<span class="tlaGNC">     1199765 :     }</span></span>
+<span id="L72"><span class="lineNum">      72</span>                 :             : </span>
+<span id="L73"><span class="lineNum">      73</span>                 :             : private:</span>
+<span id="L74"><span class="lineNum">      74</span>                 :             :     int kNumReceivedAckElicitingsBeforeAck = 2;</span>
+<span id="L75"><span class="lineNum">      75</span>                 :             : </span>
+<span id="L76"><span class="lineNum">      76</span>                 :             :     bool newAckInfo;</span>
+<span id="L77"><span class="lineNum">      77</span>                 :             :     bool newAckInfoAboutAckElicitings;</span>
+<span id="L78"><span class="lineNum">      78</span>                 :             :     bool sendAckImmediately;</span>
+<span id="L79"><span class="lineNum">      79</span>                 :             :     int numAckElicitingsReceivedSinceAck;</span>
+<span id="L80"><span class="lineNum">      80</span>                 :             :     uint64_t packetCounter;</span>
+<span id="L81"><span class="lineNum">      81</span>                 :             :     uint64_t largestAck;</span>
+<span id="L82"><span class="lineNum">      82</span>                 :             :     uint64_t smallestAck;</span>
+<span id="L83"><span class="lineNum">      83</span>                 :             :     uint64_t expectedPacketNumber;</span>
+<span id="L84"><span class="lineNum">      84</span>                 :             :     std::vector&lt;GapRange&gt; gapRanges;</span>
+<span id="L85"><span class="lineNum">      85</span>                 :             :     simtime_t timeLargestAckReceived;</span>
+<span id="L86"><span class="lineNum">      86</span>                 :             :     Timer *ackDelayTimer;</span>
+<span id="L87"><span class="lineNum">      87</span>                 :             :     TransportParameters *transportParameter;</span>
+<span id="L88"><span class="lineNum">      88</span>                 :             :     simtime_t timeLastAckElicitingReceivedOutOfOrder;</span>
+<span id="L89"><span class="lineNum">      89</span>                 :             :     bool useIBit = false;</span>
+<span id="L90"><span class="lineNum">      90</span>                 :             : </span>
+<span id="L91"><span class="lineNum">      91</span>                 :             :     void removeOldGapRanges();</span>
+<span id="L92"><span class="lineNum">      92</span>                 :             :     bool hasGapsSince(uint64_t packetNumber);</span>
+<span id="L93"><span class="lineNum">      93</span>                 :             : };</span>
+<span id="L94"><span class="lineNum">      94</span>                 :             : </span>
+<span id="L95"><span class="lineNum">      95</span>                 :             : } /* namespace quic */</span>
+<span id="L96"><span class="lineNum">      96</span>                 :             : } /* namespace inet */</span>
+<span id="L97"><span class="lineNum">      97</span>                 :             : </span>
+<span id="L98"><span class="lineNum">      98</span>                 :             : #endif /* INET_APPLICATIONS_QUIC_RECEIVEDPACKETSACCOUNTANT_H_ */</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - networklayer/ipsec/src/inet/networklayer/ipsec/PacketSelector.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">networklayer/ipsec/src/inet/networklayer/ipsec</a> - PacketSelector.cc<span style="font-size: 80%;"> (source / <a href="PacketSelector.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">48.7&nbsp;%</td>
+            <td class="headerCovTableEntry">39</td>
+            <td class="headerCovTableEntry">19</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryLo">50.0&nbsp;%</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">1</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryLo">73.8&nbsp;%</td>
+            <td class="headerCovTableEntry">42</td>
+            <td class="headerCovTableEntry">31</td>
+          </tr>
+                  <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2020 OpenSim Ltd and Marcel Marek</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // This program is free software: you can redistribute it and/or modify</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : // it under the terms of the GNU Lesser General Public License as published by</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : // the Free Software Foundation, either version 3 of the License, or</span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : // (at your option) any later version.</span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : //</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : // This program is distributed in the hope that it will be useful,</span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : // but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : // GNU Lesser General Public License for more details.</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : //</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : // You should have received a copy of the GNU Lesser General Public License</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : // along with this program.  If not, see http://www.gnu.org/licenses/.</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : //</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : </span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : #include &quot;PacketSelector.h&quot;</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : </span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : #include &quot;inet/networklayer/common/IpProtocolId_m.h&quot;</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             : </span>
+<span id="L22"><span class="lineNum">      22</span>                 :             : namespace inet {</span>
+<span id="L23"><span class="lineNum">      23</span>                 :             : namespace ipsec {</span>
+<span id="L24"><span class="lineNum">      24</span>                 :             : </span>
+<span id="L25"><span class="lineNum">      25</span>                 :             : bool PacketSelector::matches(const PacketInfo *packet) const</span>
+<span id="L26"><span class="lineNum">      26</span>                 :<span class="tlaGNC tlaBgGNC">       30773 : {</span></span>
+<span id="L27"><span class="lineNum">      27</span> [<span class="tlaGBC" title="Branch 0 was taken 29651 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1122 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 29651 times"> + </span>]:<span class="tlaGNC">       30773 :     if (!localAddress.empty() &amp;&amp; !localAddress.contains(packet-&gt;getLocalAddress()))</span></span>
+<span id="L28"><span class="lineNum">      28</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         return false;</span></span>
+<span id="L29"><span class="lineNum">      29</span> [<span class="tlaGBC" title="Branch 0 was taken 29651 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1122 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 5 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 29646 times"> + </span>]:<span class="tlaGNC tlaBgGNC">       30773 :     if (!remoteAddress.empty() &amp;&amp; !remoteAddress.contains(packet-&gt;getRemoteAddress()))</span></span>
+<span id="L30"><span class="lineNum">      30</span>                 :<span class="tlaGNC">           5 :         return false;</span></span>
+<span id="L31"><span class="lineNum">      31</span> [<span class="tlaGBC" title="Branch 0 was taken 30748 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 20 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 61 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 30687 times"> + </span>]:<span class="tlaGNC">       30768 :     if (!nextProtocol.empty() &amp;&amp; !nextProtocol.contains(packet-&gt;getNextProtocol()))</span></span>
+<span id="L32"><span class="lineNum">      32</span>                 :<span class="tlaGNC">          61 :         return false;</span></span>
+<span id="L33"><span class="lineNum">      33</span>                 :             : </span>
+<span id="L34"><span class="lineNum">      34</span>                 :<span class="tlaGNC">       30707 :     auto protocol = packet-&gt;getNextProtocol();</span></span>
+<span id="L35"><span class="lineNum">      35</span> [<span class="tlaGBC" title="Branch 0 was taken 1818 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 28889 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 28856 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 33 times"> + </span>]:<span class="tlaGNC">       30707 :     if (protocol == IP_PROT_UDP || protocol == IP_PROT_TCP) {</span></span>
+<span id="L36"><span class="lineNum">      36</span> [<span class="tlaGBC" title="Branch 0 was taken 30153 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 521 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 6220 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 23933 times"> + </span>]:<span class="tlaGNC">       30674 :         if (!localPort.empty() &amp;&amp; !localPort.contains(packet-&gt;getLocalPort()))</span></span>
+<span id="L37"><span class="lineNum">      37</span>                 :<span class="tlaGNC">        6220 :             return false;</span></span>
+<span id="L38"><span class="lineNum">      38</span> [<span class="tlaGBC" title="Branch 0 was taken 24182 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 272 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 97 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 24085 times"> + </span>]:<span class="tlaGNC">       24454 :         if (!remotePort.empty() &amp;&amp; !remotePort.contains(packet-&gt;getRemotePort()))</span></span>
+<span id="L39"><span class="lineNum">      39</span>                 :<span class="tlaGNC">          97 :             return false;</span></span>
+<span id="L40"><span class="lineNum">      40</span>                 :<span class="tlaGNC">       24454 :     }</span></span>
+<span id="L41"><span class="lineNum">      41</span>         [<span class="tlaGBC" title="Branch 0 was taken 20 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 13 times"> + </span>]:<span class="tlaGNC">          33 :     else if (protocol == IP_PROT_ICMP) {</span></span>
+<span id="L42"><span class="lineNum">      42</span> [<span class="tlaGBC" title="Branch 0 was taken 10 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 10 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 10 times"> + </span>]:<span class="tlaGNC">          20 :         if (!icmpType.empty() &amp;&amp; !icmpType.contains(packet-&gt;getIcmpType()))</span></span>
+<span id="L43"><span class="lineNum">      43</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             return false;</span></span>
+<span id="L44"><span class="lineNum">      44</span> [<span class="tlaGBC" title="Branch 0 was taken 5 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 15 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 5 times"> + </span>]:<span class="tlaGNC tlaBgGNC">          20 :         if (!icmpCode.empty() &amp;&amp; !icmpCode.contains(packet-&gt;getIcmpCode()))</span></span>
+<span id="L45"><span class="lineNum">      45</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             return false;</span></span>
+<span id="L46"><span class="lineNum">      46</span>                 :<span class="tlaGNC tlaBgGNC">          20 :     }</span></span>
+<span id="L47"><span class="lineNum">      47</span>                 :<span class="tlaGNC">       24390 :     return true;</span></span>
+<span id="L48"><span class="lineNum">      48</span>                 :<span class="tlaGNC">       30707 : }</span></span>
+<span id="L49"><span class="lineNum">      49</span>                 :             : </span>
+<span id="L50"><span class="lineNum">      50</span>                 :             : std::string PacketSelector::str() const</span>
+<span id="L51"><span class="lineNum">      51</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L52"><span class="lineNum">      52</span>                 :<span class="tlaUNC">           0 :     std::stringstream out;</span></span>
+<span id="L53"><span class="lineNum">      53</span>                 :<span class="tlaUNC">           0 :     out &lt;&lt; &quot;Protocol: &quot; &lt;&lt; nextProtocol.str();</span></span>
+<span id="L54"><span class="lineNum">      54</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (localPort.empty())</span></span>
+<span id="L55"><span class="lineNum">      55</span>                 :<span class="tlaUNC">           0 :         out &lt;&lt; &quot; Local: &quot; &lt;&lt; localAddress.str() &lt;&lt; &quot;;&quot;;</span></span>
+<span id="L56"><span class="lineNum">      56</span>                 :<span class="tlaUNC">           0 :     else</span></span>
+<span id="L57"><span class="lineNum">      57</span>                 :<span class="tlaUNC">           0 :         out &lt;&lt; &quot; Local: &quot; &lt;&lt; localAddress.str() &lt;&lt; &quot;:&quot; &lt;&lt; localPort.str() &lt;&lt; &quot;;&quot;;</span></span>
+<span id="L58"><span class="lineNum">      58</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (remotePort.empty())</span></span>
+<span id="L59"><span class="lineNum">      59</span>                 :<span class="tlaUNC">           0 :         out &lt;&lt; &quot; Remote: &quot; &lt;&lt; remoteAddress.str() &lt;&lt; &quot;;&quot;;</span></span>
+<span id="L60"><span class="lineNum">      60</span>                 :<span class="tlaUNC">           0 :     else</span></span>
+<span id="L61"><span class="lineNum">      61</span>                 :<span class="tlaUNC">           0 :         out &lt;&lt; &quot; Remote: &quot; &lt;&lt; remoteAddress.str() &lt;&lt; &quot;:&quot; &lt;&lt; remotePort.str() &lt;&lt; &quot;;&quot;;</span></span>
+<span id="L62"><span class="lineNum">      62</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (!icmpType.empty())</span></span>
+<span id="L63"><span class="lineNum">      63</span>                 :<span class="tlaUNC">           0 :         out &lt;&lt; &quot; ICMP type: &quot; &lt;&lt; icmpType.str() &lt;&lt; &quot;;&quot;;</span></span>
+<span id="L64"><span class="lineNum">      64</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (!icmpCode.empty())</span></span>
+<span id="L65"><span class="lineNum">      65</span>                 :<span class="tlaUNC">           0 :         out &lt;&lt; &quot; ICMP code: &quot; &lt;&lt; icmpCode.str() &lt;&lt; &quot;;&quot;;</span></span>
+<span id="L66"><span class="lineNum">      66</span>                 :<span class="tlaUNC">           0 :     return out.str();</span></span>
+<span id="L67"><span class="lineNum">      67</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :             : </span>
+<span id="L69"><span class="lineNum">      69</span>                 :             : }  // namespace ipsec</span>
+<span id="L70"><span class="lineNum">      70</span>                 :             : }  // namespace inet</span>
+<span id="L71"><span class="lineNum">      71</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

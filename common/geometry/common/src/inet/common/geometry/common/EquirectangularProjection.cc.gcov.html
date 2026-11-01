@@ -1,0 +1,252 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - common/geometry/common/src/inet/common/geometry/common/EquirectangularProjection.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../index.html">top level</a> - <a href="index.html">common/geometry/common/src/inet/common/geometry/common</a> - EquirectangularProjection.cc<span style="font-size: 80%;"> (source / <a href="EquirectangularProjection.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">51.0&nbsp;%</td>
+            <td class="headerCovTableEntry">104</td>
+            <td class="headerCovTableEntry">53</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryLo">33.3&nbsp;%</td>
+            <td class="headerCovTableEntry">9</td>
+            <td class="headerCovTableEntry">3</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryLo">26.5&nbsp;%</td>
+            <td class="headerCovTableEntry">34</td>
+            <td class="headerCovTableEntry">9</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2026 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #include &quot;inet/common/geometry/common/EquirectangularProjection.h&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : </span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &lt;cmath&gt;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : </span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &quot;inet/common/geometry/common/CanvasProjection.h&quot;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : #include &quot;inet/common/geometry/common/RotationMatrix.h&quot;</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : #include &quot;inet/common/geometry/common/Wgs84.h&quot;</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : </span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : namespace inet {</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : </span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : double EquirectangularProjection::normalizeRelativeLongitude(double relativeLongitudeDeg)</span>
+<span id="L19"><span class="lineNum">      19</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L20"><span class="lineNum">      20</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     while (relativeLongitudeDeg &lt; 0) relativeLongitudeDeg += 360;</span></span>
+<span id="L21"><span class="lineNum">      21</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     while (relativeLongitudeDeg &gt;= 360) relativeLongitudeDeg -= 360;</span></span>
+<span id="L22"><span class="lineNum">      22</span>                 :<span class="tlaUNC">           0 :     return relativeLongitudeDeg;</span></span>
+<span id="L23"><span class="lineNum">      23</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L24"><span class="lineNum">      24</span>                 :             : </span>
+<span id="L25"><span class="lineNum">      25</span>                 :             : void EquirectangularProjection::setWindow(double minLatitudeDeg, double maxLatitudeDeg, double minLongitudeDeg, double maxLongitudeDeg, double mapWidth, double mapHeight)</span>
+<span id="L26"><span class="lineNum">      26</span>                 :<span class="tlaGNC tlaBgGNC">           2 : {</span></span>
+<span id="L27"><span class="lineNum">      27</span>                 :<span class="tlaGNC">           2 :     this-&gt;minLatitude = minLatitudeDeg;</span></span>
+<span id="L28"><span class="lineNum">      28</span>                 :<span class="tlaGNC">           2 :     this-&gt;maxLatitude = maxLatitudeDeg;</span></span>
+<span id="L29"><span class="lineNum">      29</span>                 :<span class="tlaGNC">           2 :     this-&gt;minLongitude = minLongitudeDeg;</span></span>
+<span id="L30"><span class="lineNum">      30</span>                 :<span class="tlaGNC">           2 :     this-&gt;mapWidth = mapWidth;</span></span>
+<span id="L31"><span class="lineNum">      31</span>                 :<span class="tlaGNC">           2 :     this-&gt;mapHeight = mapHeight;</span></span>
+<span id="L32"><span class="lineNum">      32</span>                 :<span class="tlaGNC">           2 :     longitudeSpan = maxLongitudeDeg - minLongitudeDeg;</span></span>
+<span id="L33"><span class="lineNum">      33</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:<span class="tlaGNC">           2 :     while (longitudeSpan &lt;= 0) // an eastern edge at or west of the western edge means the window wraps across the antimeridian</span></span>
+<span id="L34"><span class="lineNum">      34</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         longitudeSpan += 360;</span></span>
+<span id="L35"><span class="lineNum">      35</span>                 :<span class="tlaGNC tlaBgGNC">           2 :     wrapsGlobe = std::fabs(longitudeSpan - 360) &lt; 1e-6;</span></span>
+<span id="L36"><span class="lineNum">      36</span>                 :             :     // put the antimeridian seam opposite the window center so a shifted or antimeridian-crossing window</span>
+<span id="L37"><span class="lineNum">      37</span>                 :             :     // lines up with where projected points (node markers, trails, footprints) land</span>
+<span id="L38"><span class="lineNum">      38</span>                 :<span class="tlaGNC">           2 :     referenceLongitude = minLongitude + longitudeSpan / 2 - 180;</span></span>
+<span id="L39"><span class="lineNum">      39</span>                 :<span class="tlaGNC">           2 : }</span></span>
+<span id="L40"><span class="lineNum">      40</span>                 :             : </span>
+<span id="L41"><span class="lineNum">      41</span>                 :             : Coord EquirectangularProjection::applyForward(const Coord&amp; scenePoint) const</span>
+<span id="L42"><span class="lineNum">      42</span>                 :<span class="tlaGNC">          50 : {</span></span>
+<span id="L43"><span class="lineNum">      43</span>                 :             :     // the scene coordinate is WGS84 ECEF; map it to (longitude, latitude, altitude)</span>
+<span id="L44"><span class="lineNum">      44</span>                 :<span class="tlaGNC">          50 :     GeoCoord geographicCoordinate = wgs84::ecefToGeodetic(scenePoint);</span></span>
+<span id="L45"><span class="lineNum">      45</span>                 :             :     // wrap longitude into [referenceLongitude, referenceLongitude+360) so a shifted or antimeridian-crossing</span>
+<span id="L46"><span class="lineNum">      46</span>                 :             :     // map window lines up with the projected points (ecefToGeodetic returns longitude in [-180, 180), which</span>
+<span id="L47"><span class="lineNum">      47</span>                 :             :     // would otherwise miss the wrapped-around strip)</span>
+<span id="L48"><span class="lineNum">      48</span>                 :<span class="tlaGNC">          50 :     double longitude = geographicCoordinate.longitude.get&lt;deg&gt;();</span></span>
+<span id="L49"><span class="lineNum">      49</span>                 :<span class="tlaGNC">          50 :     longitude -= 360.0 * std::floor((longitude - referenceLongitude) / 360.0);</span></span>
+<span id="L50"><span class="lineNum">      50</span>                 :<span class="tlaGNC">          50 :     return Coord(longitude, geographicCoordinate.latitude.get&lt;deg&gt;(), geographicCoordinate.altitude.get&lt;m&gt;());</span></span>
+<span id="L51"><span class="lineNum">      51</span>                 :<span class="tlaGNC">          50 : }</span></span>
+<span id="L52"><span class="lineNum">      52</span>                 :             : </span>
+<span id="L53"><span class="lineNum">      53</span>                 :             : Coord EquirectangularProjection::applyInverse(const Coord&amp; projectedPoint) const</span>
+<span id="L54"><span class="lineNum">      54</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L55"><span class="lineNum">      55</span>                 :             :     // (longitude, latitude, altitude) back to the WGS84 ECEF scene coordinate</span>
+<span id="L56"><span class="lineNum">      56</span>                 :<span class="tlaUNC">           0 :     return wgs84::geodeticToEcef(GeoCoord(deg(projectedPoint.y), deg(projectedPoint.x), m(projectedPoint.z)));</span></span>
+<span id="L57"><span class="lineNum">      57</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L58"><span class="lineNum">      58</span>                 :             : </span>
+<span id="L59"><span class="lineNum">      59</span>                 :             : cFigure::Point EquirectangularProjection::computeCanvasDirection(const Coord&amp; point, const Coord&amp; direction, double&amp; depth,</span>
+<span id="L60"><span class="lineNum">      60</span>                 :             :         DirectionProjection directionProjection, const RotationMatrix&amp; rotation, const cFigure::Point&amp; scale) const</span>
+<span id="L61"><span class="lineNum">      61</span>                 :<span class="tlaGNC tlaBgGNC">         284 : {</span></span>
+<span id="L62"><span class="lineNum">      62</span>                 :             :     // decompose the direction in the local geodetic East-North-Up frame at the point</span>
+<span id="L63"><span class="lineNum">      63</span>                 :<span class="tlaGNC">         284 :     GeoCoord geographicCoordinate = wgs84::ecefToGeodetic(point);</span></span>
+<span id="L64"><span class="lineNum">      64</span>                 :<span class="tlaGNC">         284 :     Coord east = wgs84::enuVectorToEcef(geographicCoordinate, Coord(1, 0, 0));</span></span>
+<span id="L65"><span class="lineNum">      65</span>                 :<span class="tlaGNC">         284 :     Coord north = wgs84::enuVectorToEcef(geographicCoordinate, Coord(0, 1, 0));</span></span>
+<span id="L66"><span class="lineNum">      66</span>                 :<span class="tlaGNC">         284 :     Coord up = wgs84::enuVectorToEcef(geographicCoordinate, Coord(0, 0, 1));</span></span>
+<span id="L67"><span class="lineNum">      67</span>                 :<span class="tlaGNC">         284 :     double eastComponent = direction * east, northComponent = direction * north;</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :<span class="tlaGNC">         284 :     depth = direction * up; // out-of-plane component: positive points up / toward the viewer</span></span>
+<span id="L69"><span class="lineNum">      69</span>                 :             :     // on-screen directions of +1 deg longitude (pre-projection x) and +1 deg latitude (pre-projection y)</span>
+<span id="L70"><span class="lineNum">      70</span>                 :<span class="tlaGNC">         284 :     Coord longitudeAxis = rotation.rotateVector(Coord(1, 0, 0));</span></span>
+<span id="L71"><span class="lineNum">      71</span>                 :<span class="tlaGNC">         284 :     Coord latitudeAxis = rotation.rotateVector(Coord(0, 1, 0));</span></span>
+<span id="L72"><span class="lineNum">      72</span>                 :<span class="tlaGNC">         284 :     cFigure::Point eastDir(longitudeAxis.x * scale.x, longitudeAxis.y * scale.y);</span></span>
+<span id="L73"><span class="lineNum">      73</span>                 :<span class="tlaGNC">         284 :     cFigure::Point northDir(latitudeAxis.x * scale.x, latitudeAxis.y * scale.y);</span></span>
+<span id="L74"><span class="lineNum">      74</span>                 :<span class="tlaGNC">         284 :     double northLength = northDir.getLength();</span></span>
+<span id="L75"><span class="lineNum">      75</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 284 times"> + </span>]:<span class="tlaGNC">         284 :     if (northLength == 0)</span></span>
+<span id="L76"><span class="lineNum">      76</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         return cFigure::Point(0, 0);</span></span>
+<span id="L77"><span class="lineNum">      77</span>                 :<span class="tlaGNC tlaBgGNC">         284 :     double eastLength = eastDir.getLength();</span></span>
+<span id="L78"><span class="lineNum">      78</span>                 :             :     // DIRECTION_ISOMETRIC: conformal + isometric. A single uniform scale (pixels per meter, from</span>
+<span id="L79"><span class="lineNum">      79</span>                 :             :     // the latitude axis) keeps the mapping isotropic; the vertical (up) component is dropped</span>
+<span id="L80"><span class="lineNum">      80</span>                 :             :     // (orthographic onto the horizontal plane), so 3D angles and lengths are preserved</span>
+<span id="L81"><span class="lineNum">      81</span>                 :<span class="tlaGNC">         284 :     double pixelPerMeter = northLength * (180.0 / M_PI) / wgs84::SEMI_MAJOR_AXIS;</span></span>
+<span id="L82"><span class="lineNum">      82</span>         [<span class="tlaGBC" title="Branch 0 was taken 284 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">         284 :     cFigure::Point eastUnit = eastLength &gt; 0 ? eastDir * (1 / eastLength) : cFigure::Point(0, 0);</span></span>
+<span id="L83"><span class="lineNum">      83</span>                 :<span class="tlaGNC">         284 :     cFigure::Point northUnit = northDir * (1 / northLength);</span></span>
+<span id="L84"><span class="lineNum">      84</span>                 :<span class="tlaGNC">         284 :     cFigure::Point isometric = (eastUnit * eastComponent + northUnit * northComponent) * pixelPerMeter;</span></span>
+<span id="L85"><span class="lineNum">      85</span>         [<span class="tlaGBC" title="Branch 0 was taken 5 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 279 times"> + </span>]:<span class="tlaGNC">         284 :     if (directionProjection == DIRECTION_ISOMETRIC)</span></span>
+<span id="L86"><span class="lineNum">      86</span>                 :<span class="tlaGNC">           5 :         return isometric;</span></span>
+<span id="L87"><span class="lineNum">      87</span>                 :             :     // DIRECTION_PROJECTED: non-conformal + non-isometric. The exact local Jacobian of the</span>
+<span id="L88"><span class="lineNum">      88</span>                 :             :     // equirectangular projection (WGS84 ellipsoid + altitude), so it matches how positions move</span>
+<span id="L89"><span class="lineNum">      89</span>                 :             :     // on the map via computeCanvasPoint(): a meter east changes longitude by 1/((N+h)cos(lat)) and</span>
+<span id="L90"><span class="lineNum">      90</span>                 :             :     // a meter north changes latitude by 1/(M+h), where N and M are the prime-vertical and meridian</span>
+<span id="L91"><span class="lineNum">      91</span>                 :             :     // radii of curvature and h is the altitude. This reproduces the map's longitude stretching</span>
+<span id="L92"><span class="lineNum">      92</span>                 :             :     // toward the poles (and the ground-track foreshortening of a high-altitude node's velocity).</span>
+<span id="L93"><span class="lineNum">      93</span>                 :<span class="tlaGNC">         279 :     double latitudeRad = geographicCoordinate.latitude.get&lt;deg&gt;() * M_PI / 180.0;</span></span>
+<span id="L94"><span class="lineNum">      94</span>                 :<span class="tlaGNC">         279 :     double sinLat = std::sin(latitudeRad), cosLat = std::cos(latitudeRad);</span></span>
+<span id="L95"><span class="lineNum">      95</span>                 :<span class="tlaGNC">         279 :     double altitude = geographicCoordinate.altitude.get&lt;m&gt;();</span></span>
+<span id="L96"><span class="lineNum">      96</span>                 :<span class="tlaGNC">         279 :     double t = 1.0 - wgs84::ECCENTRICITY_SQUARED * sinLat * sinLat;</span></span>
+<span id="L97"><span class="lineNum">      97</span>                 :<span class="tlaGNC">         279 :     double primeVerticalRadius = wgs84::SEMI_MAJOR_AXIS / std::sqrt(t); // N</span></span>
+<span id="L98"><span class="lineNum">      98</span>                 :<span class="tlaGNC">         279 :     double meridianRadius = wgs84::SEMI_MAJOR_AXIS * (1.0 - wgs84::ECCENTRICITY_SQUARED) / (t * std::sqrt(t)); // M</span></span>
+<span id="L99"><span class="lineNum">      99</span>                 :<span class="tlaGNC">         279 :     double radToDeg = 180.0 / M_PI;</span></span>
+<span id="L100"><span class="lineNum">     100</span>         [<span class="tlaGBC" title="Branch 0 was taken 279 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">         279 :     double deltaLongitude = cosLat != 0 ? eastComponent / ((primeVerticalRadius + altitude) * cosLat) * radToDeg : 0;</span></span>
+<span id="L101"><span class="lineNum">     101</span>                 :<span class="tlaGNC">         279 :     double deltaLatitude = northComponent / (meridianRadius + altitude) * radToDeg;</span></span>
+<span id="L102"><span class="lineNum">     102</span>                 :<span class="tlaGNC">         279 :     cFigure::Point projected = eastDir * deltaLongitude + northDir * deltaLatitude;</span></span>
+<span id="L103"><span class="lineNum">     103</span>         [<span class="tlaGBC" title="Branch 0 was taken 278 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:<span class="tlaGNC">         279 :     if (directionProjection == DIRECTION_PROJECTED)</span></span>
+<span id="L104"><span class="lineNum">     104</span>                 :<span class="tlaGNC">         278 :         return projected;</span></span>
+<span id="L105"><span class="lineNum">     105</span>                 :             :     // DIRECTION_TRUE_LENGTH: non-conformal + isometric. The map heading (sheared direction) but</span>
+<span id="L106"><span class="lineNum">     106</span>                 :             :     // rescaled to the isometric (true metric) length, so it doesn't blow up toward the poles</span>
+<span id="L107"><span class="lineNum">     107</span>                 :<span class="tlaGNC">           1 :     double projectedLength = projected.getLength();</span></span>
+<span id="L108"><span class="lineNum">     108</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:<span class="tlaGNC">           1 :     if (projectedLength == 0)</span></span>
+<span id="L109"><span class="lineNum">     109</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         return cFigure::Point(0, 0);</span></span>
+<span id="L110"><span class="lineNum">     110</span>                 :<span class="tlaGNC tlaBgGNC">           1 :     return projected * (isometric.getLength() / projectedLength);</span></span>
+<span id="L111"><span class="lineNum">     111</span>                 :<span class="tlaGNC">           1 : }</span></span>
+<span id="L112"><span class="lineNum">     112</span>                 :             : </span>
+<span id="L113"><span class="lineNum">     113</span>                 :             : cFigure::Point EquirectangularProjection::geoToCanvas(double latitudeDeg, double longitudeDeg, bool normalizeLongitude) const</span>
+<span id="L114"><span class="lineNum">     114</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L115"><span class="lineNum">     115</span>                 :<span class="tlaUNC">           0 :     double relativeLongitude = longitudeDeg - minLongitude; // degrees east of the window's western edge</span></span>
+<span id="L116"><span class="lineNum">     116</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (normalizeLongitude)</span></span>
+<span id="L117"><span class="lineNum">     117</span>                 :<span class="tlaUNC">           0 :         relativeLongitude = normalizeRelativeLongitude(relativeLongitude);</span></span>
+<span id="L118"><span class="lineNum">     118</span>                 :<span class="tlaUNC">           0 :     double x = relativeLongitude / longitudeSpan * mapWidth;</span></span>
+<span id="L119"><span class="lineNum">     119</span>                 :<span class="tlaUNC">           0 :     double y = mapHeight * (maxLatitude - latitudeDeg) / (maxLatitude - minLatitude);</span></span>
+<span id="L120"><span class="lineNum">     120</span>                 :<span class="tlaUNC">           0 :     return cFigure::Point(x, y);</span></span>
+<span id="L121"><span class="lineNum">     121</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L122"><span class="lineNum">     122</span>                 :             : </span>
+<span id="L123"><span class="lineNum">     123</span>                 :             : bool EquirectangularProjection::isInsideWindow(double latitudeDeg, double longitudeDeg) const</span>
+<span id="L124"><span class="lineNum">     124</span>                 :<span class="tlaUNC">           0 : {</span></span>
+<span id="L125"><span class="lineNum">     125</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (latitudeDeg &lt; minLatitude || latitudeDeg &gt; maxLatitude)</span></span>
+<span id="L126"><span class="lineNum">     126</span>                 :<span class="tlaUNC">           0 :         return false;</span></span>
+<span id="L127"><span class="lineNum">     127</span>                 :<span class="tlaUNC">           0 :     double relativeLongitude = normalizeRelativeLongitude(longitudeDeg - minLongitude);</span></span>
+<span id="L128"><span class="lineNum">     128</span>                 :<span class="tlaUNC">           0 :     return relativeLongitude &lt;= longitudeSpan + 1e-9; // always true when the window spans the full globe</span></span>
+<span id="L129"><span class="lineNum">     129</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L130"><span class="lineNum">     130</span>                 :             : </span>
+<span id="L131"><span class="lineNum">     131</span>                 :             : void EquirectangularProjection::configureCanvasProjection(cCanvas *canvas, bool clipFigures) const</span>
+<span id="L132"><span class="lineNum">     132</span>                 :<span class="tlaUNC">           0 : {</span></span>
+<span id="L133"><span class="lineNum">     133</span>                 :<span class="tlaUNC">           0 :     auto canvasProjection = CanvasProjection::getCanvasProjection(canvas);</span></span>
+<span id="L134"><span class="lineNum">     134</span>                 :             :     // attach this equirectangular projection as the canvas first stage (a copy, owned by the canvas projection)</span>
+<span id="L135"><span class="lineNum">     135</span>                 :<span class="tlaUNC">           0 :     canvasProjection-&gt;setMapProjection(new EquirectangularProjection(*this));</span></span>
+<span id="L136"><span class="lineNum">     136</span>                 :             :     // identity view rotation so the projected (longitude, latitude) maps straight onto the map axes</span>
+<span id="L137"><span class="lineNum">     137</span>                 :<span class="tlaUNC">           0 :     canvasProjection-&gt;setRotation(RotationMatrix());</span></span>
+<span id="L138"><span class="lineNum">     138</span>                 :             :     // these scale/translation values reproduce geoToCanvas() for the (unwrapped) window:</span>
+<span id="L139"><span class="lineNum">     139</span>                 :             :     //   x = (lon - minLongitude) / longitudeSpan * mapWidth</span>
+<span id="L140"><span class="lineNum">     140</span>                 :             :     //   y = (maxLatitude - lat) / (maxLatitude - minLatitude) * mapHeight</span>
+<span id="L141"><span class="lineNum">     141</span>                 :<span class="tlaUNC">           0 :     double latitudeSpan = maxLatitude - minLatitude;</span></span>
+<span id="L142"><span class="lineNum">     142</span>                 :<span class="tlaUNC">           0 :     canvasProjection-&gt;setScale(cFigure::Point(mapWidth / longitudeSpan, -mapHeight / latitudeSpan));</span></span>
+<span id="L143"><span class="lineNum">     143</span>                 :<span class="tlaUNC">           0 :     canvasProjection-&gt;setTranslation(cFigure::Point(-minLongitude * mapWidth / longitudeSpan, maxLatitude * mapHeight / latitudeSpan));</span></span>
+<span id="L144"><span class="lineNum">     144</span>                 :             :     // clip other visualizers' figures to the map area (a no-op on the helpers unless a clip rect is set)</span>
+<span id="L145"><span class="lineNum">     145</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (clipFigures)</span></span>
+<span id="L146"><span class="lineNum">     146</span>                 :<span class="tlaUNC">           0 :         canvasProjection-&gt;setClipRect(cFigure::Rectangle(0, 0, mapWidth, mapHeight));</span></span>
+<span id="L147"><span class="lineNum">     147</span>                 :<span class="tlaUNC">           0 :     else</span></span>
+<span id="L148"><span class="lineNum">     148</span>                 :<span class="tlaUNC">           0 :         canvasProjection-&gt;clearClipRect();</span></span>
+<span id="L149"><span class="lineNum">     149</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L150"><span class="lineNum">     150</span>                 :             : </span>
+<span id="L151"><span class="lineNum">     151</span>                 :             : std::vector&lt;std::vector&lt;cFigure::Point&gt;&gt; EquirectangularProjection::clipAndTilePolygon(const std::vector&lt;cFigure::Point&gt;&amp; continuousPoints) const</span>
+<span id="L152"><span class="lineNum">     152</span>                 :<span class="tlaUNC">           0 : {</span></span>
+<span id="L153"><span class="lineNum">     153</span>                 :<span class="tlaUNC">           0 :     std::vector&lt;std::vector&lt;cFigure::Point&gt;&gt; pieces;</span></span>
+<span id="L154"><span class="lineNum">     154</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     int shiftRange = wrapsGlobe ? 1 : 0;</span></span>
+<span id="L155"><span class="lineNum">     155</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     for (int shift = -shiftRange; shift &lt;= shiftRange; shift++) {</span></span>
+<span id="L156"><span class="lineNum">     156</span>                 :<span class="tlaUNC">           0 :         std::vector&lt;cFigure::Point&gt; shifted;</span></span>
+<span id="L157"><span class="lineNum">     157</span>                 :<span class="tlaUNC">           0 :         shifted.reserve(continuousPoints.size());</span></span>
+<span id="L158"><span class="lineNum">     158</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         for (auto&amp; p : continuousPoints)</span></span>
+<span id="L159"><span class="lineNum">     159</span>                 :<span class="tlaUNC">           0 :             shifted.push_back(cFigure::Point(p.x + shift * mapWidth, p.y));</span></span>
+<span id="L160"><span class="lineNum">     160</span>                 :<span class="tlaUNC">           0 :         auto clipped = CanvasProjection::clipPolygonToRect(shifted, 0, 0, mapWidth, mapHeight);</span></span>
+<span id="L161"><span class="lineNum">     161</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         if (clipped.size() &gt;= 3)</span></span>
+<span id="L162"><span class="lineNum">     162</span>                 :<span class="tlaUNC">           0 :             pieces.push_back(clipped);</span></span>
+<span id="L163"><span class="lineNum">     163</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L164"><span class="lineNum">     164</span>                 :<span class="tlaUNC">           0 :     return pieces;</span></span>
+<span id="L165"><span class="lineNum">     165</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L166"><span class="lineNum">     166</span>                 :             : </span>
+<span id="L167"><span class="lineNum">     167</span>                 :             : } // namespace inet</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

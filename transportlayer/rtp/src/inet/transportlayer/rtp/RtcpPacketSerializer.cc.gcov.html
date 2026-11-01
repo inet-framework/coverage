@@ -1,0 +1,331 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - transportlayer/rtp/src/inet/transportlayer/rtp/RtcpPacketSerializer.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">transportlayer/rtp/src/inet/transportlayer/rtp</a> - RtcpPacketSerializer.cc<span style="font-size: 80%;"> (source / <a href="RtcpPacketSerializer.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">41.0&nbsp;%</td>
+            <td class="headerCovTableEntry">200</td>
+            <td class="headerCovTableEntry">82</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryLo">50.0&nbsp;%</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntry">3</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryLo">44.6&nbsp;%</td>
+            <td class="headerCovTableEntry">56</td>
+            <td class="headerCovTableEntry">25</td>
+          </tr>
+                  <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : </span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : </span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : #include &quot;inet/transportlayer/rtp/RtcpPacketSerializer.h&quot;</span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #include &quot;inet/common/packet/serializer/ChunkSerializerRegistry.h&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : #include &quot;inet/transportlayer/rtp/RtcpPacket_m.h&quot;</span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : </span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : namespace inet {</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : namespace rtp {</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : </span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : Register_Serializer(RtcpPacket, RtcpPacketSerializer);</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : Register_Serializer(RtcpReceiverReportPacket, RtcpPacketSerializer);</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : Register_Serializer(RtcpSdesPacket, RtcpPacketSerializer);</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : Register_Serializer(RtcpByePacket, RtcpPacketSerializer);</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : Register_Serializer(RtcpSenderReportPacket, RtcpPacketSerializer);</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : </span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : namespace {</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             : </span>
+<span id="L22"><span class="lineNum">      22</span>                 :             : void serializeReceptionReport(MemoryOutputStream&amp; stream, const ReceptionReport *receptionReport)</span>
+<span id="L23"><span class="lineNum">      23</span>                 :<span class="tlaGNC tlaBgGNC">         123 : {</span></span>
+<span id="L24"><span class="lineNum">      24</span>         [<span class="tlaGBC" title="Branch 0 was taken 123 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">         123 :     if (receptionReport != nullptr) {</span></span>
+<span id="L25"><span class="lineNum">      25</span>                 :<span class="tlaGNC">         123 :         stream.writeUint32Be(receptionReport-&gt;getSsrc());</span></span>
+<span id="L26"><span class="lineNum">      26</span>                 :<span class="tlaGNC">         123 :         stream.writeByte(receptionReport-&gt;getFractionLost());</span></span>
+<span id="L27"><span class="lineNum">      27</span>                 :<span class="tlaGNC">         123 :         stream.writeUint24Be(receptionReport-&gt;getPacketsLostCumulative());</span></span>
+<span id="L28"><span class="lineNum">      28</span>                 :<span class="tlaGNC">         123 :         stream.writeUint32Be(receptionReport-&gt;getSequenceNumber());</span></span>
+<span id="L29"><span class="lineNum">      29</span>                 :<span class="tlaGNC">         123 :         stream.writeUint32Be(receptionReport-&gt;getJitter());</span></span>
+<span id="L30"><span class="lineNum">      30</span>                 :<span class="tlaGNC">         123 :         stream.writeUint32Be(receptionReport-&gt;getLastSR());</span></span>
+<span id="L31"><span class="lineNum">      31</span>                 :<span class="tlaGNC">         123 :         stream.writeUint32Be(receptionReport-&gt;getDelaySinceLastSR());</span></span>
+<span id="L32"><span class="lineNum">      32</span>                 :<span class="tlaGNC">         123 :     }</span></span>
+<span id="L33"><span class="lineNum">      33</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     else</span></span>
+<span id="L34"><span class="lineNum">      34</span>                 :<span class="tlaUNC">           0 :         throw cRuntimeError(&quot;Cannot serialize RTCP packet: receptionReport is a null pointer.&quot;);</span></span>
+<span id="L35"><span class="lineNum">      35</span>                 :<span class="tlaGNC tlaBgGNC">         123 : }</span></span>
+<span id="L36"><span class="lineNum">      36</span>                 :             : </span>
+<span id="L37"><span class="lineNum">      37</span>                 :             : void deserializeReceptionReport(MemoryInputStream&amp; stream, ReceptionReport&amp; receptionReport)</span>
+<span id="L38"><span class="lineNum">      38</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L39"><span class="lineNum">      39</span>                 :<span class="tlaUNC">           0 :     receptionReport.setSsrc(stream.readUint32Be());</span></span>
+<span id="L40"><span class="lineNum">      40</span>                 :<span class="tlaUNC">           0 :     receptionReport.setFractionLost(stream.readByte());</span></span>
+<span id="L41"><span class="lineNum">      41</span>                 :<span class="tlaUNC">           0 :     receptionReport.setPacketsLostCumulative(stream.readUint24Be());</span></span>
+<span id="L42"><span class="lineNum">      42</span>                 :<span class="tlaUNC">           0 :     receptionReport.setSequenceNumber(stream.readUint32Be());</span></span>
+<span id="L43"><span class="lineNum">      43</span>                 :<span class="tlaUNC">           0 :     receptionReport.setJitter(stream.readUint32Be());</span></span>
+<span id="L44"><span class="lineNum">      44</span>                 :<span class="tlaUNC">           0 :     receptionReport.setLastSR(stream.readUint32Be());</span></span>
+<span id="L45"><span class="lineNum">      45</span>                 :<span class="tlaUNC">           0 :     receptionReport.setDelaySinceLastSR(stream.readUint32Be());</span></span>
+<span id="L46"><span class="lineNum">      46</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L47"><span class="lineNum">      47</span>                 :             : </span>
+<span id="L48"><span class="lineNum">      48</span>                 :             : void serializeSdesChunk(MemoryOutputStream&amp; stream, const SdesChunk *sdesChunk)</span>
+<span id="L49"><span class="lineNum">      49</span>                 :<span class="tlaGNC tlaBgGNC">         372 : {</span></span>
+<span id="L50"><span class="lineNum">      50</span>                 :<span class="tlaGNC">         372 :     stream.writeUint32Be(sdesChunk-&gt;getSsrc());</span></span>
+<span id="L51"><span class="lineNum">      51</span>                 :<span class="tlaGNC">         372 :     uint64_t numBytes = 4;</span></span>
+<span id="L52"><span class="lineNum">      52</span>         [<span class="tlaGBC" title="Branch 0 was taken 372 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 372 times"> + </span>]:<span class="tlaGNC">         744 :     for (int e = 0; e &lt; sdesChunk-&gt;size(); ++e) {</span></span>
+<span id="L53"><span class="lineNum">      53</span>                 :<span class="tlaGNC">         372 :         const SdesItem *sdesItem = static_cast&lt;const SdesItem *&gt;(sdesChunk-&gt;get(e));</span></span>
+<span id="L54"><span class="lineNum">      54</span>         [<span class="tlaGBC" title="Branch 0 was taken 372 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">         372 :         if (sdesItem != nullptr) {</span></span>
+<span id="L55"><span class="lineNum">      55</span>                 :<span class="tlaGNC">         372 :             stream.writeByte(sdesItem-&gt;getType());</span></span>
+<span id="L56"><span class="lineNum">      56</span>                 :<span class="tlaGNC">         372 :             uint8_t length = sdesItem-&gt;getLengthField();</span></span>
+<span id="L57"><span class="lineNum">      57</span>                 :<span class="tlaGNC">         372 :             stream.writeByte(length);</span></span>
+<span id="L58"><span class="lineNum">      58</span>                 :<span class="tlaGNC">         372 :             stream.writeBytes((uint8_t *)sdesItem-&gt;getContent(), B(length));</span></span>
+<span id="L59"><span class="lineNum">      59</span>                 :<span class="tlaGNC">         372 :             numBytes += 2 + length;</span></span>
+<span id="L60"><span class="lineNum">      60</span>                 :<span class="tlaGNC">         372 :         }</span></span>
+<span id="L61"><span class="lineNum">      61</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         else</span></span>
+<span id="L62"><span class="lineNum">      62</span>                 :<span class="tlaUNC">           0 :             throw cRuntimeError(&quot;Cannot serialize RTCP packet: sdesItem is a null pointer.&quot;);</span></span>
+<span id="L63"><span class="lineNum">      63</span>                 :<span class="tlaGNC tlaBgGNC">         372 :     }</span></span>
+<span id="L64"><span class="lineNum">      64</span>                 :<span class="tlaGNC">         372 :     ASSERT(B(numBytes) == B(sdesChunk-&gt;getLength()));</span></span>
+<span id="L65"><span class="lineNum">      65</span>                 :<span class="tlaGNC">         372 :     stream.writeByte(0);</span></span>
+<span id="L66"><span class="lineNum">      66</span>                 :<span class="tlaGNC">         372 :     ++numBytes;</span></span>
+<span id="L67"><span class="lineNum">      67</span>         [<span class="tlaGBC" title="Branch 0 was taken 372 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">         372 :     if (numBytes % 4 != 0)</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :<span class="tlaGNC">         372 :         stream.writeByteRepeatedly(0, 4 - (numBytes % 4));</span></span>
+<span id="L69"><span class="lineNum">      69</span>                 :<span class="tlaGNC">         372 : }</span></span>
+<span id="L70"><span class="lineNum">      70</span>                 :             : </span>
+<span id="L71"><span class="lineNum">      71</span>                 :             : void deserializeSdesChunk(MemoryInputStream&amp; stream, const Ptr&lt;RtcpPacket&gt; rtcpPacket, SdesChunk&amp; sdesChunk)</span>
+<span id="L72"><span class="lineNum">      72</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L73"><span class="lineNum">      73</span>                 :<span class="tlaUNC">           0 :     sdesChunk.setName(&quot;SdesChunk&quot;);</span></span>
+<span id="L74"><span class="lineNum">      74</span>                 :<span class="tlaUNC">           0 :     sdesChunk.setSsrc(stream.readUint32Be());</span></span>
+<span id="L75"><span class="lineNum">      75</span>                 :<span class="tlaUNC">           0 :     uint8_t type = stream.readByte();</span></span>
+<span id="L76"><span class="lineNum">      76</span>                 :<span class="tlaUNC">           0 :     uint64_t numBytes = 1;</span></span>
+<span id="L77"><span class="lineNum">      77</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     while (type != 0) {</span></span>
+<span id="L78"><span class="lineNum">      78</span>                 :<span class="tlaUNC">           0 :         uint8_t count = stream.readByte();</span></span>
+<span id="L79"><span class="lineNum">      79</span>                 :             :         // NUL-terminate: SdesItem stores the content in a std::string (strlen), so an</span>
+<span id="L80"><span class="lineNum">      80</span>                 :             :         // unterminated buffer would over-read and give the item a wrong length, breaking</span>
+<span id="L81"><span class="lineNum">      81</span>                 :             :         // the re-serialization. The ctor copies the bytes, so the buffer is freed after.</span>
+<span id="L82"><span class="lineNum">      82</span>                 :<span class="tlaUNC">           0 :         char *content = new char[count + 1];</span></span>
+<span id="L83"><span class="lineNum">      83</span>                 :<span class="tlaUNC">           0 :         stream.readBytes((uint8_t *)content, B(count));</span></span>
+<span id="L84"><span class="lineNum">      84</span>                 :<span class="tlaUNC">           0 :         content[count] = '\0';</span></span>
+<span id="L85"><span class="lineNum">      85</span>                 :<span class="tlaUNC">           0 :         SdesItem *sdesItem = new SdesItem(static_cast&lt;SdesItem::SdesItemType&gt;(type), content);</span></span>
+<span id="L86"><span class="lineNum">      86</span>                 :<span class="tlaUNC">           0 :         delete[] content;</span></span>
+<span id="L87"><span class="lineNum">      87</span>                 :<span class="tlaUNC">           0 :         sdesChunk.addSDESItem(sdesItem);</span></span>
+<span id="L88"><span class="lineNum">      88</span>                 :<span class="tlaUNC">           0 :         type = stream.readByte();</span></span>
+<span id="L89"><span class="lineNum">      89</span>                 :<span class="tlaUNC">           0 :         numBytes += 2 + count;</span></span>
+<span id="L90"><span class="lineNum">      90</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L91"><span class="lineNum">      91</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (numBytes % 4 != 0)</span></span>
+<span id="L92"><span class="lineNum">      92</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         if (!stream.readByteRepeatedly(0, 4 - (numBytes % 4)))</span></span>
+<span id="L93"><span class="lineNum">      93</span>                 :<span class="tlaUNC">           0 :             rtcpPacket-&gt;markIncorrect();</span></span>
+<span id="L94"><span class="lineNum">      94</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L95"><span class="lineNum">      95</span>                 :             : </span>
+<span id="L96"><span class="lineNum">      96</span>                 :             : } // namespace</span>
+<span id="L97"><span class="lineNum">      97</span>                 :             : </span>
+<span id="L98"><span class="lineNum">      98</span>                 :             : void RtcpPacketSerializer::serializeFields(MemoryOutputStream&amp; stream, const Ptr&lt;const Chunk&gt;&amp; chunk) const</span>
+<span id="L99"><span class="lineNum">      99</span>                 :<span class="tlaGNC tlaBgGNC">         756 : {</span></span>
+<span id="L100"><span class="lineNum">     100</span>                 :<span class="tlaGNC">         756 :     const auto&amp; rtcpPacket = staticPtrCast&lt;const RtcpPacket&gt;(chunk);</span></span>
+<span id="L101"><span class="lineNum">     101</span>                 :<span class="tlaGNC">         756 :     B start_position = B(stream.getLength());</span></span>
+<span id="L102"><span class="lineNum">     102</span>                 :<span class="tlaGNC">         756 :     stream.writeUint2(rtcpPacket-&gt;getVersion());</span></span>
+<span id="L103"><span class="lineNum">     103</span>                 :<span class="tlaGNC">         756 :     stream.writeBit(rtcpPacket-&gt;getPadding());</span></span>
+<span id="L104"><span class="lineNum">     104</span>                 :<span class="tlaGNC">         756 :     short count = rtcpPacket-&gt;getCount();</span></span>
+<span id="L105"><span class="lineNum">     105</span>                 :<span class="tlaGNC">         756 :     stream.writeNBitsOfUint64Be(count, 5);</span></span>
+<span id="L106"><span class="lineNum">     106</span>                 :<span class="tlaGNC">         756 :     stream.writeByte(rtcpPacket-&gt;getPacketType());</span></span>
+<span id="L107"><span class="lineNum">     107</span>                 :<span class="tlaGNC">         756 :     stream.writeUint16Be(rtcpPacket-&gt;getRtcpLength());</span></span>
+<span id="L108"><span class="lineNum">     108</span>                 :<span class="tlaGNC">         756 :     switch (rtcpPacket-&gt;getPacketType()) {</span></span>
+<span id="L109"><span class="lineNum">     109</span>         [<span class="tlaGBC" title="Branch 0 was taken 98 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 658 times"> + </span>]:<span class="tlaGNC">          98 :         case RTCP_PT_SR: {</span></span>
+<span id="L110"><span class="lineNum">     110</span>                 :<span class="tlaGNC">          98 :             const auto&amp; rtcpSenderReportPacket = staticPtrCast&lt;const RtcpSenderReportPacket&gt;(chunk);</span></span>
+<span id="L111"><span class="lineNum">     111</span>                 :<span class="tlaGNC">          98 :             stream.writeUint32Be(rtcpSenderReportPacket-&gt;getSsrc());</span></span>
+<span id="L112"><span class="lineNum">     112</span>                 :<span class="tlaGNC">          98 :             auto&amp; senderReport = rtcpSenderReportPacket-&gt;getSenderReport();</span></span>
+<span id="L113"><span class="lineNum">     113</span>                 :<span class="tlaGNC">          98 :             stream.writeUint64Be(senderReport.getNTPTimeStamp());</span></span>
+<span id="L114"><span class="lineNum">     114</span>                 :<span class="tlaGNC">          98 :             stream.writeUint32Be(senderReport.getRTPTimeStamp());</span></span>
+<span id="L115"><span class="lineNum">     115</span>                 :<span class="tlaGNC">          98 :             stream.writeUint32Be(senderReport.getPacketCount());</span></span>
+<span id="L116"><span class="lineNum">     116</span>                 :<span class="tlaGNC">          98 :             stream.writeUint32Be(senderReport.getByteCount());</span></span>
+<span id="L117"><span class="lineNum">     117</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 98 times"> + </span>]:<span class="tlaGNC">          98 :             if (count != rtcpSenderReportPacket-&gt;getReceptionReports().size())</span></span>
+<span id="L118"><span class="lineNum">     118</span>                 :<span class="tlaUNC tlaBgUNC">           0 :                 throw cRuntimeError(&quot;Cannot serialize RTCP SR packet: count field (%d) does not match the number of reception reports (%d)&quot;, count, rtcpSenderReportPacket-&gt;getReceptionReports().size());</span></span>
+<span id="L119"><span class="lineNum">     119</span>         [<span class="tlaGBC" title="Branch 0 was taken 69 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 98 times"> + </span>]:<span class="tlaGNC tlaBgGNC">         167 :             for (short i = 0; i &lt; count; ++i) {</span></span>
+<span id="L120"><span class="lineNum">     120</span>                 :<span class="tlaGNC">          69 :                 serializeReceptionReport(stream, static_cast&lt;const ReceptionReport *&gt;(rtcpSenderReportPacket-&gt;getReceptionReports()[i]));</span></span>
+<span id="L121"><span class="lineNum">     121</span>                 :<span class="tlaGNC">          69 :             }</span></span>
+<span id="L122"><span class="lineNum">     122</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 98 times"> + </span>]:<span class="tlaGNC">          98 :             if (rtcpSenderReportPacket-&gt;getChunkLength() != B(4) + B(24) + B(count * 24))</span></span>
+<span id="L123"><span class="lineNum">     123</span>                 :<span class="tlaUNC tlaBgUNC">           0 :                 throw cRuntimeError(&quot;Cannot serialize RTCP SR packet: chunkLength (%s) does not match the length implied by count=%d reception reports (%s)&quot;,</span></span>
+<span id="L124"><span class="lineNum">     124</span>                 :<span class="tlaUNC">           0 :                         rtcpSenderReportPacket-&gt;getChunkLength().str().c_str(), count, (B(4) + B(24) + B(count * 24)).str().c_str());</span></span>
+<span id="L125"><span class="lineNum">     125</span>                 :<span class="tlaGNC tlaBgGNC">          98 :             break;</span></span>
+<span id="L126"><span class="lineNum">     126</span>                 :<span class="tlaGNC">          98 :         }</span></span>
+<span id="L127"><span class="lineNum">     127</span>         [<span class="tlaGBC" title="Branch 0 was taken 274 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 482 times"> + </span>]:<span class="tlaGNC">         274 :         case RTCP_PT_RR: {</span></span>
+<span id="L128"><span class="lineNum">     128</span>                 :<span class="tlaGNC">         274 :             const auto&amp; rtcpReceiverReportPacket = staticPtrCast&lt;const RtcpReceiverReportPacket&gt;(chunk);</span></span>
+<span id="L129"><span class="lineNum">     129</span>                 :<span class="tlaGNC">         274 :             stream.writeUint32Be(rtcpReceiverReportPacket-&gt;getSsrc());</span></span>
+<span id="L130"><span class="lineNum">     130</span>         [<span class="tlaGBC" title="Branch 0 was taken 54 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 274 times"> + </span>]:<span class="tlaGNC">         328 :             for (short i = 0; i &lt; count; ++i) {</span></span>
+<span id="L131"><span class="lineNum">     131</span>                 :<span class="tlaGNC">          54 :                 serializeReceptionReport(stream, static_cast&lt;const ReceptionReport *&gt;(rtcpReceiverReportPacket-&gt;getReceptionReports()[i]));</span></span>
+<span id="L132"><span class="lineNum">     132</span>                 :<span class="tlaGNC">          54 :             }</span></span>
+<span id="L133"><span class="lineNum">     133</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 274 times"> + </span>]:<span class="tlaGNC">         274 :             if (rtcpReceiverReportPacket-&gt;getChunkLength() != B(4) + B(4) + B(count * 24))</span></span>
+<span id="L134"><span class="lineNum">     134</span>                 :<span class="tlaUNC tlaBgUNC">           0 :                 throw cRuntimeError(&quot;Cannot serialize RTCP RR packet: chunkLength (%s) does not match the length implied by count=%d reception reports (%s)&quot;,</span></span>
+<span id="L135"><span class="lineNum">     135</span>                 :<span class="tlaUNC">           0 :                         rtcpReceiverReportPacket-&gt;getChunkLength().str().c_str(), count, (B(4) + B(4) + B(count * 24)).str().c_str());</span></span>
+<span id="L136"><span class="lineNum">     136</span>                 :<span class="tlaGNC tlaBgGNC">         274 :             break;</span></span>
+<span id="L137"><span class="lineNum">     137</span>                 :<span class="tlaGNC">         274 :         }</span></span>
+<span id="L138"><span class="lineNum">     138</span>         [<span class="tlaGBC" title="Branch 0 was taken 372 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 384 times"> + </span>]:<span class="tlaGNC">         372 :         case RTCP_PT_SDES: {</span></span>
+<span id="L139"><span class="lineNum">     139</span>                 :<span class="tlaGNC">         372 :             const auto&amp; rtcpSdesPacket = staticPtrCast&lt;const RtcpSdesPacket&gt;(chunk);</span></span>
+<span id="L140"><span class="lineNum">     140</span>         [<span class="tlaGBC" title="Branch 0 was taken 372 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 372 times"> + </span>]:<span class="tlaGNC">         744 :             for (short i = 0; i &lt; count; ++i) {</span></span>
+<span id="L141"><span class="lineNum">     141</span>                 :<span class="tlaGNC">         372 :                 serializeSdesChunk(stream, static_cast&lt;const SdesChunk *&gt;(rtcpSdesPacket-&gt;getSdesChunks()[i]));</span></span>
+<span id="L142"><span class="lineNum">     142</span>                 :<span class="tlaGNC">         372 :             }</span></span>
+<span id="L143"><span class="lineNum">     143</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 372 times"> + </span>]:<span class="tlaGNC">         372 :             if (rtcpSdesPacket-&gt;getChunkLength() != (stream.getLength() - start_position))</span></span>
+<span id="L144"><span class="lineNum">     144</span>                 :<span class="tlaUNC tlaBgUNC">           0 :                 throw cRuntimeError(&quot;Cannot serialize RTCP SDES packet: chunkLength (%s) does not match the number of bytes actually written (%s)&quot;,</span></span>
+<span id="L145"><span class="lineNum">     145</span>                 :<span class="tlaUNC">           0 :                         rtcpSdesPacket-&gt;getChunkLength().str().c_str(), (stream.getLength() - start_position).str().c_str());</span></span>
+<span id="L146"><span class="lineNum">     146</span>                 :<span class="tlaGNC tlaBgGNC">         372 :             break;</span></span>
+<span id="L147"><span class="lineNum">     147</span>                 :<span class="tlaGNC">         372 :         }</span></span>
+<span id="L148"><span class="lineNum">     148</span>         [<span class="tlaGBC" title="Branch 0 was taken 12 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 744 times"> + </span>]:<span class="tlaGNC">         372 :         case RTCP_PT_BYE: {</span></span>
+<span id="L149"><span class="lineNum">     149</span>                 :<span class="tlaGNC">          12 :             const auto&amp; rtcpByePacket = staticPtrCast&lt;const RtcpByePacket&gt;(chunk);</span></span>
+<span id="L150"><span class="lineNum">     150</span>                 :<span class="tlaGNC">          12 :             stream.writeUint32Be(rtcpByePacket-&gt;getSsrc());</span></span>
+<span id="L151"><span class="lineNum">     151</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 12 times"> + </span>]:<span class="tlaGNC">          12 :             if (rtcpByePacket-&gt;getChunkLength() != (stream.getLength() - start_position))</span></span>
+<span id="L152"><span class="lineNum">     152</span>                 :<span class="tlaUNC tlaBgUNC">           0 :                 throw cRuntimeError(&quot;Cannot serialize RTCP BYE packet: chunkLength (%s) does not match the number of bytes actually written (%s)&quot;,</span></span>
+<span id="L153"><span class="lineNum">     153</span>                 :<span class="tlaUNC">           0 :                         rtcpByePacket-&gt;getChunkLength().str().c_str(), (stream.getLength() - start_position).str().c_str());</span></span>
+<span id="L154"><span class="lineNum">     154</span>                 :<span class="tlaGNC tlaBgGNC">          12 :             break;</span></span>
+<span id="L155"><span class="lineNum">     155</span>                 :<span class="tlaGNC">          12 :         }</span></span>
+<span id="L156"><span class="lineNum">     156</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 756 times"> + </span>]:<span class="tlaGNC">          12 :         default: {</span></span>
+<span id="L157"><span class="lineNum">     157</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             throw cRuntimeError(&quot;Can not serialize RTCP packet: type %d not supported.&quot;, rtcpPacket-&gt;getPacketType());</span></span>
+<span id="L158"><span class="lineNum">     158</span>                 :<span class="tlaUNC">           0 :             break;</span></span>
+<span id="L159"><span class="lineNum">     159</span>                 :<span class="tlaGNC tlaBgGNC">          12 :         }</span></span>
+<span id="L160"><span class="lineNum">     160</span>                 :<span class="tlaGNC">         756 :     }</span></span>
+<span id="L161"><span class="lineNum">     161</span>                 :<span class="tlaGNC">         756 : }</span></span>
+<span id="L162"><span class="lineNum">     162</span>                 :             : </span>
+<span id="L163"><span class="lineNum">     163</span>                 :             : const Ptr&lt;Chunk&gt; RtcpPacketSerializer::deserializeFields(MemoryInputStream&amp; stream, const std::type_info&amp;) const</span>
+<span id="L164"><span class="lineNum">     164</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L165"><span class="lineNum">     165</span>                 :<span class="tlaUNC">           0 :     auto rtcpPacket = makeShared&lt;RtcpPacket&gt;();</span></span>
+<span id="L166"><span class="lineNum">     166</span>                 :<span class="tlaUNC">           0 :     rtcpPacket-&gt;setVersion(stream.readUint2());</span></span>
+<span id="L167"><span class="lineNum">     167</span>                 :<span class="tlaUNC">           0 :     rtcpPacket-&gt;setPadding(stream.readBit());</span></span>
+<span id="L168"><span class="lineNum">     168</span>                 :<span class="tlaUNC">           0 :     short count = stream.readNBitsToUint64Be(5);</span></span>
+<span id="L169"><span class="lineNum">     169</span>                 :<span class="tlaUNC">           0 :     rtcpPacket-&gt;setCount(count);</span></span>
+<span id="L170"><span class="lineNum">     170</span>                 :<span class="tlaUNC">           0 :     rtcpPacket-&gt;setPacketType((RtcpPacketType)stream.readByte());</span></span>
+<span id="L171"><span class="lineNum">     171</span>                 :<span class="tlaUNC">           0 :     rtcpPacket-&gt;setRtcpLength(stream.readUint16Be());</span></span>
+<span id="L172"><span class="lineNum">     172</span>                 :<span class="tlaUNC">           0 :     switch (rtcpPacket-&gt;getPacketType()) {</span></span>
+<span id="L173"><span class="lineNum">     173</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         case RTCP_PT_SR: {</span></span>
+<span id="L174"><span class="lineNum">     174</span>                 :<span class="tlaUNC">           0 :             auto rtcpSenderReportPacket = makeShared&lt;RtcpSenderReportPacket&gt;();</span></span>
+<span id="L175"><span class="lineNum">     175</span>                 :<span class="tlaUNC">           0 :             rtcpSenderReportPacket-&gt;setVersion(rtcpPacket-&gt;getVersion());</span></span>
+<span id="L176"><span class="lineNum">     176</span>                 :<span class="tlaUNC">           0 :             rtcpSenderReportPacket-&gt;setPadding(rtcpPacket-&gt;getPadding());</span></span>
+<span id="L177"><span class="lineNum">     177</span>                 :<span class="tlaUNC">           0 :             rtcpSenderReportPacket-&gt;setCount(0);</span></span>
+<span id="L178"><span class="lineNum">     178</span>                 :<span class="tlaUNC">           0 :             rtcpSenderReportPacket-&gt;setPacketType(rtcpPacket-&gt;getPacketType());</span></span>
+<span id="L179"><span class="lineNum">     179</span>                 :<span class="tlaUNC">           0 :             rtcpSenderReportPacket-&gt;setRtcpLength(rtcpPacket-&gt;getRtcpLength());</span></span>
+<span id="L180"><span class="lineNum">     180</span>                 :<span class="tlaUNC">           0 :             rtcpSenderReportPacket-&gt;setSsrc(stream.readUint32Be());</span></span>
+<span id="L181"><span class="lineNum">     181</span>                 :<span class="tlaUNC">           0 :             auto&amp; senderReport = rtcpSenderReportPacket-&gt;getSenderReportForUpdate();</span></span>
+<span id="L182"><span class="lineNum">     182</span>                 :<span class="tlaUNC">           0 :             senderReport.setNTPTimeStamp(stream.readUint64Be());</span></span>
+<span id="L183"><span class="lineNum">     183</span>                 :<span class="tlaUNC">           0 :             senderReport.setRTPTimeStamp(stream.readUint32Be());</span></span>
+<span id="L184"><span class="lineNum">     184</span>                 :<span class="tlaUNC">           0 :             senderReport.setPacketCount(stream.readUint32Be());</span></span>
+<span id="L185"><span class="lineNum">     185</span>                 :<span class="tlaUNC">           0 :             senderReport.setByteCount(stream.readUint32Be());</span></span>
+<span id="L186"><span class="lineNum">     186</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             for (short i = 0; i &lt; count; ++i) {</span></span>
+<span id="L187"><span class="lineNum">     187</span>                 :<span class="tlaUNC">           0 :                 ReceptionReport *receptionReport = new ReceptionReport();</span></span>
+<span id="L188"><span class="lineNum">     188</span>                 :<span class="tlaUNC">           0 :                 deserializeReceptionReport(stream, *receptionReport);</span></span>
+<span id="L189"><span class="lineNum">     189</span>                 :<span class="tlaUNC">           0 :                 rtcpSenderReportPacket-&gt;addReceptionReport(receptionReport);</span></span>
+<span id="L190"><span class="lineNum">     190</span>                 :<span class="tlaUNC">           0 :             }</span></span>
+<span id="L191"><span class="lineNum">     191</span>                 :<span class="tlaUNC">           0 :             return rtcpSenderReportPacket;</span></span>
+<span id="L192"><span class="lineNum">     192</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L193"><span class="lineNum">     193</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         case RTCP_PT_RR: {</span></span>
+<span id="L194"><span class="lineNum">     194</span>                 :<span class="tlaUNC">           0 :             auto rtcpReceiverReportPacket = makeShared&lt;RtcpReceiverReportPacket&gt;();</span></span>
+<span id="L195"><span class="lineNum">     195</span>                 :<span class="tlaUNC">           0 :             rtcpReceiverReportPacket-&gt;setVersion(rtcpPacket-&gt;getVersion());</span></span>
+<span id="L196"><span class="lineNum">     196</span>                 :<span class="tlaUNC">           0 :             rtcpReceiverReportPacket-&gt;setPadding(rtcpPacket-&gt;getPadding());</span></span>
+<span id="L197"><span class="lineNum">     197</span>                 :<span class="tlaUNC">           0 :             rtcpReceiverReportPacket-&gt;setCount(0);</span></span>
+<span id="L198"><span class="lineNum">     198</span>                 :<span class="tlaUNC">           0 :             rtcpReceiverReportPacket-&gt;setPacketType(rtcpPacket-&gt;getPacketType());</span></span>
+<span id="L199"><span class="lineNum">     199</span>                 :<span class="tlaUNC">           0 :             rtcpReceiverReportPacket-&gt;setRtcpLength(rtcpPacket-&gt;getRtcpLength());</span></span>
+<span id="L200"><span class="lineNum">     200</span>                 :<span class="tlaUNC">           0 :             rtcpReceiverReportPacket-&gt;setSsrc(stream.readUint32Be());</span></span>
+<span id="L201"><span class="lineNum">     201</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             for (short i = 0; i &lt; count; ++i) {</span></span>
+<span id="L202"><span class="lineNum">     202</span>                 :<span class="tlaUNC">           0 :                 ReceptionReport *receptionReport = new ReceptionReport();</span></span>
+<span id="L203"><span class="lineNum">     203</span>                 :<span class="tlaUNC">           0 :                 deserializeReceptionReport(stream, *receptionReport);</span></span>
+<span id="L204"><span class="lineNum">     204</span>                 :<span class="tlaUNC">           0 :                 rtcpReceiverReportPacket-&gt;addReceptionReport(receptionReport);</span></span>
+<span id="L205"><span class="lineNum">     205</span>                 :<span class="tlaUNC">           0 :             }</span></span>
+<span id="L206"><span class="lineNum">     206</span>                 :<span class="tlaUNC">           0 :             return rtcpReceiverReportPacket;</span></span>
+<span id="L207"><span class="lineNum">     207</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L208"><span class="lineNum">     208</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         case RTCP_PT_SDES: {</span></span>
+<span id="L209"><span class="lineNum">     209</span>                 :<span class="tlaUNC">           0 :             auto rtcpSdesPacket = makeShared&lt;RtcpSdesPacket&gt;();</span></span>
+<span id="L210"><span class="lineNum">     210</span>                 :<span class="tlaUNC">           0 :             rtcpSdesPacket-&gt;setVersion(rtcpPacket-&gt;getVersion());</span></span>
+<span id="L211"><span class="lineNum">     211</span>                 :<span class="tlaUNC">           0 :             rtcpSdesPacket-&gt;setPadding(rtcpPacket-&gt;getPadding());</span></span>
+<span id="L212"><span class="lineNum">     212</span>                 :<span class="tlaUNC">           0 :             rtcpSdesPacket-&gt;setCount(0);</span></span>
+<span id="L213"><span class="lineNum">     213</span>                 :<span class="tlaUNC">           0 :             rtcpSdesPacket-&gt;setPacketType(rtcpPacket-&gt;getPacketType());</span></span>
+<span id="L214"><span class="lineNum">     214</span>                 :<span class="tlaUNC">           0 :             rtcpSdesPacket-&gt;setRtcpLength(rtcpPacket-&gt;getRtcpLength());</span></span>
+<span id="L215"><span class="lineNum">     215</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             for (short i = 0; i &lt; count; ++i) {</span></span>
+<span id="L216"><span class="lineNum">     216</span>                 :<span class="tlaUNC">           0 :                 SdesChunk *sdesChunk = new SdesChunk();</span></span>
+<span id="L217"><span class="lineNum">     217</span>                 :<span class="tlaUNC">           0 :                 deserializeSdesChunk(stream, rtcpSdesPacket, *sdesChunk);</span></span>
+<span id="L218"><span class="lineNum">     218</span>                 :<span class="tlaUNC">           0 :                 rtcpSdesPacket-&gt;addSDESChunk(sdesChunk);</span></span>
+<span id="L219"><span class="lineNum">     219</span>                 :<span class="tlaUNC">           0 :             }</span></span>
+<span id="L220"><span class="lineNum">     220</span>                 :<span class="tlaUNC">           0 :             return rtcpSdesPacket;</span></span>
+<span id="L221"><span class="lineNum">     221</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L222"><span class="lineNum">     222</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         case RTCP_PT_BYE: {</span></span>
+<span id="L223"><span class="lineNum">     223</span>                 :<span class="tlaUNC">           0 :             auto rtcpByePacket = makeShared&lt;RtcpByePacket&gt;();</span></span>
+<span id="L224"><span class="lineNum">     224</span>                 :<span class="tlaUNC">           0 :             rtcpByePacket-&gt;setVersion(rtcpPacket-&gt;getVersion());</span></span>
+<span id="L225"><span class="lineNum">     225</span>                 :<span class="tlaUNC">           0 :             rtcpByePacket-&gt;setPadding(rtcpPacket-&gt;getPadding());</span></span>
+<span id="L226"><span class="lineNum">     226</span>                 :<span class="tlaUNC">           0 :             rtcpByePacket-&gt;setCount(1);</span></span>
+<span id="L227"><span class="lineNum">     227</span>                 :<span class="tlaUNC">           0 :             rtcpByePacket-&gt;setPacketType(rtcpPacket-&gt;getPacketType());</span></span>
+<span id="L228"><span class="lineNum">     228</span>                 :<span class="tlaUNC">           0 :             rtcpByePacket-&gt;setRtcpLength(rtcpPacket-&gt;getRtcpLength());</span></span>
+<span id="L229"><span class="lineNum">     229</span>                 :<span class="tlaUNC">           0 :             rtcpByePacket-&gt;setSsrc(stream.readUint32Be());</span></span>
+<span id="L230"><span class="lineNum">     230</span>                 :             :             // A BYE packet may carry further SSRC/CSRC identifiers and an optional reason</span>
+<span id="L231"><span class="lineNum">     231</span>                 :             :             // for leaving; neither is modelled. Stop at the first SSRC instead of reading</span>
+<span id="L232"><span class="lineNum">     232</span>                 :             :             // the rest away: what is consumed here becomes the length of the chunk, so</span>
+<span id="L233"><span class="lineNum">     233</span>                 :             :             // swallowing octets the fields do not hold would make the packet</span>
+<span id="L234"><span class="lineNum">     234</span>                 :             :             // unserializable. The caller keeps them as raw bytes.</span>
+<span id="L235"><span class="lineNum">     235</span>                 :<span class="tlaUNC">           0 :             return rtcpByePacket;</span></span>
+<span id="L236"><span class="lineNum">     236</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L237"><span class="lineNum">     237</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         default: {</span></span>
+<span id="L238"><span class="lineNum">     238</span>                 :<span class="tlaUNC">           0 :             rtcpPacket-&gt;markIncorrect();</span></span>
+<span id="L239"><span class="lineNum">     239</span>                 :<span class="tlaUNC">           0 :             return rtcpPacket;</span></span>
+<span id="L240"><span class="lineNum">     240</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L241"><span class="lineNum">     241</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L242"><span class="lineNum">     242</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L243"><span class="lineNum">     243</span>                 :             : </span>
+<span id="L244"><span class="lineNum">     244</span>                 :             : } // namespace rtp</span>
+<span id="L245"><span class="lineNum">     245</span>                 :             : } // namespace inet</span>
+<span id="L246"><span class="lineNum">     246</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

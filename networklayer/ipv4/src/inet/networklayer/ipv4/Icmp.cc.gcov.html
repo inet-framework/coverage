@@ -1,0 +1,551 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - networklayer/ipv4/src/inet/networklayer/ipv4/Icmp.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">networklayer/ipv4/src/inet/networklayer/ipv4</a> - Icmp.cc<span style="font-size: 80%;"> (source / <a href="Icmp.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryMed">85.7&nbsp;%</td>
+            <td class="headerCovTableEntry">307</td>
+            <td class="headerCovTableEntry">263</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">94.4&nbsp;%</td>
+            <td class="headerCovTableEntry">18</td>
+            <td class="headerCovTableEntry">17</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryMed">75.4&nbsp;%</td>
+            <td class="headerCovTableEntry">122</td>
+            <td class="headerCovTableEntry">92</td>
+          </tr>
+                  <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2000 Institut fuer Telematik, Universitaet Karlsruhe</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : // Copyright (C) 2004 OpenSim Ltd.</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : //</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : //</span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : // Cleanup and rewrite: Andras Varga, 2004</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : </span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &quot;inet/networklayer/ipv4/Icmp.h&quot;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : </span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &lt;string.h&gt;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : </span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : #include &quot;inet/common/IProtocolRegistrationListener.h&quot;</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : #include &quot;inet/common/ModuleAccess.h&quot;</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : #include &quot;inet/common/ProtocolGroup.h&quot;</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : #include &quot;inet/common/ProtocolTag_m.h&quot;</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : #include &quot;inet/common/packet/Message.h&quot;</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : #include &quot;inet/networklayer/common/Icmpv4ErrorTag_m.h&quot;</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : #include &quot;inet/common/checksum/Checksum.h&quot;</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             : #include &quot;inet/common/packet/dissector/ProtocolDissector.h&quot;</span>
+<span id="L22"><span class="lineNum">      22</span>                 :             : #include &quot;inet/common/packet/dissector/ProtocolDissectorRegistry.h&quot;</span>
+<span id="L23"><span class="lineNum">      23</span>                 :             : #include &quot;inet/common/stlutils.h&quot;</span>
+<span id="L24"><span class="lineNum">      24</span>                 :             : #include &quot;inet/linklayer/common/MacAddressTag_m.h&quot;</span>
+<span id="L25"><span class="lineNum">      25</span>                 :             : #include &quot;inet/linklayer/common/InterfaceTag_m.h&quot;</span>
+<span id="L26"><span class="lineNum">      26</span>                 :             : #include &quot;inet/networklayer/common/L3AddressTag_m.h&quot;</span>
+<span id="L27"><span class="lineNum">      27</span>                 :             : #include &quot;inet/networklayer/contract/IInterfaceTable.h&quot;</span>
+<span id="L28"><span class="lineNum">      28</span>                 :             : #include &quot;inet/networklayer/ipv4/Ipv4Header_m.h&quot;</span>
+<span id="L29"><span class="lineNum">      29</span>                 :             : #include &quot;inet/networklayer/ipv4/Ipv4InterfaceData.h&quot;</span>
+<span id="L30"><span class="lineNum">      30</span>                 :             : </span>
+<span id="L31"><span class="lineNum">      31</span>                 :             : namespace inet {</span>
+<span id="L32"><span class="lineNum">      32</span>                 :             : </span>
+<span id="L33"><span class="lineNum">      33</span>                 :             : Define_Module(Icmp);</span>
+<span id="L34"><span class="lineNum">      34</span>                 :             : </span>
+<span id="L35"><span class="lineNum">      35</span>                 :             : void Icmp::handleParameterChange(const char *name)</span>
+<span id="L36"><span class="lineNum">      36</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L37"><span class="lineNum">      37</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (!strcmp(name, &quot;checksumMode&quot;))</span></span>
+<span id="L38"><span class="lineNum">      38</span>                 :<span class="tlaUNC">           0 :         checksumMode = parseChecksumMode(par(&quot;checksumMode&quot;), false);</span></span>
+<span id="L39"><span class="lineNum">      39</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     else if (!strcmp(name, &quot;quoteLength&quot;))</span></span>
+<span id="L40"><span class="lineNum">      40</span>                 :<span class="tlaUNC">           0 :         parseQuoteLengthParameter();</span></span>
+<span id="L41"><span class="lineNum">      41</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L42"><span class="lineNum">      42</span>                 :             : </span>
+<span id="L43"><span class="lineNum">      43</span>                 :             : void Icmp::parseQuoteLengthParameter()</span>
+<span id="L44"><span class="lineNum">      44</span>                 :<span class="tlaGNC tlaBgGNC">       12350 : {</span></span>
+<span id="L45"><span class="lineNum">      45</span>                 :<span class="tlaGNC">       12350 :     quoteLength = B(par(&quot;quoteLength&quot;));</span></span>
+<span id="L46"><span class="lineNum">      46</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 12350 times"> + </span>]:<span class="tlaGNC">       12350 :     if (quoteLength &lt; B(8))</span></span>
+<span id="L47"><span class="lineNum">      47</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         throw cRuntimeError(&quot;The quoteLength must be 8 bytes or larger&quot;);</span></span>
+<span id="L48"><span class="lineNum">      48</span>                 :<span class="tlaGNC tlaBgGNC">       12350 : }</span></span>
+<span id="L49"><span class="lineNum">      49</span>                 :             : </span>
+<span id="L50"><span class="lineNum">      50</span>                 :             : void Icmp::initialize(int stage)</span>
+<span id="L51"><span class="lineNum">      51</span>                 :<span class="tlaGNC">      295623 : {</span></span>
+<span id="L52"><span class="lineNum">      52</span>                 :<span class="tlaGNC">      295623 :     SimpleModule::initialize(stage);</span></span>
+<span id="L53"><span class="lineNum">      53</span>                 :             : </span>
+<span id="L54"><span class="lineNum">      54</span>         [<span class="tlaGBC" title="Branch 0 was taken 12350 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 283273 times"> + </span>]:<span class="tlaGNC">      295623 :     if (stage == INITSTAGE_LOCAL) {</span></span>
+<span id="L55"><span class="lineNum">      55</span>                 :<span class="tlaGNC">       12350 :         ift.reference(this, &quot;interfaceTableModule&quot;, true);</span></span>
+<span id="L56"><span class="lineNum">      56</span>                 :<span class="tlaGNC">       12350 :         rt.reference(this, &quot;routingTableModule&quot;, true);</span></span>
+<span id="L57"><span class="lineNum">      57</span>                 :<span class="tlaGNC">       12350 :         checksumMode = parseChecksumMode(par(&quot;checksumMode&quot;), false);</span></span>
+<span id="L58"><span class="lineNum">      58</span>                 :<span class="tlaGNC">       12350 :         parseQuoteLengthParameter();</span></span>
+<span id="L59"><span class="lineNum">      59</span>                 :             : </span>
+<span id="L60"><span class="lineNum">      60</span>                 :<span class="tlaGNC">       12350 :         WATCH(checksumMode);</span></span>
+<span id="L61"><span class="lineNum">      61</span>                 :<span class="tlaGNC">       12350 :         WATCH(quoteLength);</span></span>
+<span id="L62"><span class="lineNum">      62</span>                 :<span class="tlaGNC">       12350 :         WATCH(transportProtocols);</span></span>
+<span id="L63"><span class="lineNum">      63</span>                 :<span class="tlaGNC">       12350 :         WATCH(numEchoReplied);</span></span>
+<span id="L64"><span class="lineNum">      64</span>                 :<span class="tlaGNC">       12350 :         WATCH(numErrorsSent);</span></span>
+<span id="L65"><span class="lineNum">      65</span>                 :<span class="tlaGNC">       12350 :         WATCH(numErrorsReceived);</span></span>
+<span id="L66"><span class="lineNum">      66</span>                 :<span class="tlaGNC">       12350 :     }</span></span>
+<span id="L67"><span class="lineNum">      67</span>         [<span class="tlaGBC" title="Branch 0 was taken 12313 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 283310 times"> + </span>]:<span class="tlaGNC">      295623 :     if (stage == INITSTAGE_NETWORK_LAYER_PROTOCOLS) {</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :<span class="tlaGNC">       12313 :         registerService(Protocol::icmpv4, gate(&quot;transportIn&quot;), gate(&quot;transportOut&quot;));</span></span>
+<span id="L69"><span class="lineNum">      69</span>                 :<span class="tlaGNC">       12313 :         registerProtocol(Protocol::icmpv4, gate(&quot;ipOut&quot;), gate(&quot;ipIn&quot;));</span></span>
+<span id="L70"><span class="lineNum">      70</span>                 :<span class="tlaGNC">       12313 :     }</span></span>
+<span id="L71"><span class="lineNum">      71</span>                 :<span class="tlaGNC">      295623 : }</span></span>
+<span id="L72"><span class="lineNum">      72</span>                 :             : </span>
+<span id="L73"><span class="lineNum">      73</span>                 :             : void Icmp::handleMessage(cMessage *msg)</span>
+<span id="L74"><span class="lineNum">      74</span>                 :<span class="tlaGNC">      557587 : {</span></span>
+<span id="L75"><span class="lineNum">      75</span>                 :<span class="tlaGNC">      557587 :     cGate *arrivalGate = msg-&gt;getArrivalGate();</span></span>
+<span id="L76"><span class="lineNum">      76</span>                 :             : </span>
+<span id="L77"><span class="lineNum">      77</span>                 :             :     // process arriving ICMP message</span>
+<span id="L78"><span class="lineNum">      78</span>         [<span class="tlaGBC" title="Branch 0 was taken 534240 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 23347 times"> + </span>]:<span class="tlaGNC">      557587 :     if (arrivalGate-&gt;isName(&quot;ipIn&quot;)) {</span></span>
+<span id="L79"><span class="lineNum">      79</span>                 :<span class="tlaGNC">      534240 :         EV_INFO &lt;&lt; &quot;Received &quot; &lt;&lt; msg &lt;&lt; &quot; from network protocol.\n&quot;;</span></span>
+<span id="L80"><span class="lineNum">      80</span>                 :<span class="tlaGNC">      534240 :         processIcmpMessage(check_and_cast&lt;Packet *&gt;(msg));</span></span>
+<span id="L81"><span class="lineNum">      81</span>                 :<span class="tlaGNC">      534240 :         return;</span></span>
+<span id="L82"><span class="lineNum">      82</span>                 :<span class="tlaGNC">      534240 :     }</span></span>
+<span id="L83"><span class="lineNum">      83</span>         [<span class="tlaGBC" title="Branch 0 was taken 23347 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">       23347 :     else if (arrivalGate-&gt;isName(&quot;transportIn&quot;)) {</span></span>
+<span id="L84"><span class="lineNum">      84</span>                 :             :         // Handle send-error requests from transport layers (e.g. UDP)</span>
+<span id="L85"><span class="lineNum">      85</span>                 :<span class="tlaGNC">       23347 :         auto request = check_and_cast&lt;Request *&gt;(msg);</span></span>
+<span id="L86"><span class="lineNum">      86</span>         [<span class="tlaGBC" title="Branch 0 was taken 23347 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">       23347 :         if (auto tag = request-&gt;findTagForUpdate&lt;Icmpv4SendErrorReq&gt;()) {</span></span>
+<span id="L87"><span class="lineNum">      87</span>                 :<span class="tlaGNC">       23347 :             auto origPacket = tag-&gt;getOriginalPacketForUpdate();</span></span>
+<span id="L88"><span class="lineNum">      88</span>                 :             :             // restore the original network datagram (IP header + transport payload)</span>
+<span id="L89"><span class="lineNum">      89</span>                 :<span class="tlaGNC">       23347 :             origPacket-&gt;setFrontOffset(origPacket-&gt;getTag&lt;NetworkProtocolInd&gt;()-&gt;getNetworkHeaderFrontOffset());</span></span>
+<span id="L90"><span class="lineNum">      90</span>                 :<span class="tlaGNC">       23347 :             sendErrorMessage(origPacket, tag-&gt;getType(), static_cast&lt;IcmpCode&gt;(tag-&gt;getCode()));</span></span>
+<span id="L91"><span class="lineNum">      91</span>                 :<span class="tlaGNC">       23347 :         }</span></span>
+<span id="L92"><span class="lineNum">      92</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         else {</span></span>
+<span id="L93"><span class="lineNum">      93</span>                 :<span class="tlaUNC">           0 :             throw cRuntimeError(&quot;Unknown Request arrived on transportIn: %s&quot;, request-&gt;getName());</span></span>
+<span id="L94"><span class="lineNum">      94</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L95"><span class="lineNum">      95</span>                 :<span class="tlaGNC tlaBgGNC">       23347 :         delete request;</span></span>
+<span id="L96"><span class="lineNum">      96</span>                 :<span class="tlaGNC">       23347 :         return;</span></span>
+<span id="L97"><span class="lineNum">      97</span>                 :<span class="tlaGNC">       23347 :     }</span></span>
+<span id="L98"><span class="lineNum">      98</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     else</span></span>
+<span id="L99"><span class="lineNum">      99</span>                 :<span class="tlaUNC">           0 :         throw cRuntimeError(&quot;Message %s(%s) arrived in unknown '%s' gate&quot;, msg-&gt;getName(), msg-&gt;getClassName(), msg-&gt;getArrivalGate()-&gt;getName());</span></span>
+<span id="L100"><span class="lineNum">     100</span>                 :<span class="tlaGNC tlaBgGNC">      557587 : }</span></span>
+<span id="L101"><span class="lineNum">     101</span>                 :             : </span>
+<span id="L102"><span class="lineNum">     102</span>                 :             : bool Icmp::maySendErrorMessage(Packet *packet)</span>
+<span id="L103"><span class="lineNum">     103</span>                 :<span class="tlaGNC">       77840 : {</span></span>
+<span id="L104"><span class="lineNum">     104</span>                 :<span class="tlaGNC">       77840 :     const auto&amp; ipv4Header = packet-&gt;peekAtFront&lt;Ipv4Header&gt;();</span></span>
+<span id="L105"><span class="lineNum">     105</span>                 :<span class="tlaGNC">       77840 :     Ipv4Address origSrcAddr = ipv4Header-&gt;getSrcAddress();</span></span>
+<span id="L106"><span class="lineNum">     106</span>                 :<span class="tlaGNC">       77840 :     Ipv4Address origDestAddr = ipv4Header-&gt;getDestAddress();</span></span>
+<span id="L107"><span class="lineNum">     107</span>                 :             : </span>
+<span id="L108"><span class="lineNum">     108</span>                 :<span class="tlaGNC">       77840 :     auto&amp; interfaceInd = packet-&gt;findTag&lt;InterfaceInd&gt;();</span></span>
+<span id="L109"><span class="lineNum">     109</span>         [<span class="tlaGBC" title="Branch 0 was taken 51760 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 26080 times"> + </span>]:<span class="tlaGNC">       77840 :     int inputInterfaceId = interfaceInd ? interfaceInd-&gt;getInterfaceId() : -1;</span></span>
+<span id="L110"><span class="lineNum">     110</span>                 :             : </span>
+<span id="L111"><span class="lineNum">     111</span>                 :             :     // don't send ICMP error messages in response to broadcast or multicast messages</span>
+<span id="L112"><span class="lineNum">     112</span> [<span class="tlaGBC" title="Branch 0 was taken 12829 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 65011 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 508 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 64503 times"> + </span>]:<span class="tlaGNC">       77840 :     if (origDestAddr.isMulticast() || origDestAddr.isLimitedBroadcastAddress() || possiblyLocalBroadcast(origDestAddr, inputInterfaceId)) {</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 10 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 64493 times"> + </span>]
+<span id="L113"><span class="lineNum">     113</span>                 :<span class="tlaGNC">       13347 :         EV_DETAIL &lt;&lt; &quot;won't send ICMP error messages for broadcast/multicast message &quot; &lt;&lt; ipv4Header &lt;&lt; endl;</span></span>
+<span id="L114"><span class="lineNum">     114</span>                 :<span class="tlaGNC">       13347 :         return false;</span></span>
+<span id="L115"><span class="lineNum">     115</span>                 :<span class="tlaGNC">       13347 :     }</span></span>
+<span id="L116"><span class="lineNum">     116</span>                 :             : </span>
+<span id="L117"><span class="lineNum">     117</span>                 :             :     // don't send ICMP error messages response to unspecified, broadcast or multicast addresses</span>
+<span id="L118"><span class="lineNum">     118</span> [<span class="tlaGBC" title="Branch 0 was taken 38413 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 26080 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 38413 times"> + </span>]:<span class="tlaGNC">       64493 :     if ((inputInterfaceId != -1 &amp;&amp; origSrcAddr.isUnspecified())</span></span>
+<span id="L119"><span class="lineNum">     119</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 64493 times"> + </span>]:<span class="tlaGNC">       64493 :             || origSrcAddr.isMulticast()</span></span>
+<span id="L120"><span class="lineNum">     120</span>         [<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaGBC" title="Branch 1 was taken 64492 times"> + </span>]:<span class="tlaGNC">       64493 :             || origSrcAddr.isLimitedBroadcastAddress()</span></span>
+<span id="L121"><span class="lineNum">     121</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 64492 times"> + </span>]:<span class="tlaGNC">       64493 :             || possiblyLocalBroadcast(origSrcAddr, inputInterfaceId)) {</span></span>
+<span id="L122"><span class="lineNum">     122</span>                 :<span class="tlaGNC">           1 :         EV_DETAIL &lt;&lt; &quot;won't send ICMP error messages to broadcast/multicast address, message &quot; &lt;&lt; ipv4Header &lt;&lt; endl;</span></span>
+<span id="L123"><span class="lineNum">     123</span>                 :<span class="tlaGNC">           1 :         return false;</span></span>
+<span id="L124"><span class="lineNum">     124</span>                 :<span class="tlaGNC">           1 :     }</span></span>
+<span id="L125"><span class="lineNum">     125</span>                 :             : </span>
+<span id="L126"><span class="lineNum">     126</span>                 :             :     // RFC 1122 section 3.2.2: no ICMP error message about a datagram that arrived as a</span>
+<span id="L127"><span class="lineNum">     127</span>                 :             :     // link-layer broadcast or multicast. The conditions above read the IP addresses; this</span>
+<span id="L128"><span class="lineNum">     128</span>                 :             :     // one reads the frame the datagram arrived in, whose destination the IP header does not</span>
+<span id="L129"><span class="lineNum">     129</span>                 :             :     // record.</span>
+<span id="L130"><span class="lineNum">     130</span>         [<span class="tlaGBC" title="Branch 0 was taken 8104 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 56388 times"> + </span>]:<span class="tlaGNC">       64492 :     if (auto&amp; macAddressInd = packet-&gt;findTag&lt;MacAddressInd&gt;()) {</span></span>
+<span id="L131"><span class="lineNum">     131</span>                 :<span class="tlaGNC">        8104 :         const MacAddress&amp; destMacAddress = macAddressInd-&gt;getDestAddress();</span></span>
+<span id="L132"><span class="lineNum">     132</span> [<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaGBC" title="Branch 1 was taken 8103 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 8103 times"> + </span>]:<span class="tlaGNC">        8104 :         if (destMacAddress.isBroadcast() || destMacAddress.isMulticast()) {</span></span>
+<span id="L133"><span class="lineNum">     133</span>                 :<span class="tlaGNC">           1 :             EV_DETAIL &lt;&lt; &quot;won't send ICMP error messages for a link-layer broadcast or multicast, message &quot; &lt;&lt; ipv4Header &lt;&lt; endl;</span></span>
+<span id="L134"><span class="lineNum">     134</span>                 :<span class="tlaGNC">           1 :             return false;</span></span>
+<span id="L135"><span class="lineNum">     135</span>                 :<span class="tlaGNC">           1 :         }</span></span>
+<span id="L136"><span class="lineNum">     136</span>                 :<span class="tlaGNC">        8104 :     }</span></span>
+<span id="L137"><span class="lineNum">     137</span>                 :             : </span>
+<span id="L138"><span class="lineNum">     138</span>                 :             :     // ICMP messages are only sent about errors in handling fragment zero of fragmented datagrams</span>
+<span id="L139"><span class="lineNum">     139</span>         [<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaGBC" title="Branch 1 was taken 64490 times"> + </span>]:<span class="tlaGNC">       64491 :     if (ipv4Header-&gt;getFragmentOffset() != 0) {</span></span>
+<span id="L140"><span class="lineNum">     140</span>                 :<span class="tlaGNC">           1 :         EV_DETAIL &lt;&lt; &quot;won't send ICMP error messages about errors in non-first fragments&quot; &lt;&lt; endl;</span></span>
+<span id="L141"><span class="lineNum">     141</span>                 :<span class="tlaGNC">           1 :         return false;</span></span>
+<span id="L142"><span class="lineNum">     142</span>                 :<span class="tlaGNC">           1 :     }</span></span>
+<span id="L143"><span class="lineNum">     143</span>                 :             : </span>
+<span id="L144"><span class="lineNum">     144</span>                 :             :     // do not reply with error message to error message</span>
+<span id="L145"><span class="lineNum">     145</span>         [<span class="tlaGBC" title="Branch 0 was taken 28593 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 35897 times"> + </span>]:<span class="tlaGNC">       64490 :     if (ipv4Header-&gt;getProtocolId() == IP_PROT_ICMP) {</span></span>
+<span id="L146"><span class="lineNum">     146</span>                 :<span class="tlaGNC">       28593 :         const auto&amp; recICMPMsg = packet-&gt;peekDataAt&lt;IcmpHeader&gt;(B(ipv4Header-&gt;getHeaderLength()));</span></span>
+<span id="L147"><span class="lineNum">     147</span>         [<span class="tlaGBC" title="Branch 0 was taken 23875 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4718 times"> + </span>]:<span class="tlaGNC">       28593 :         if (!isIcmpInfoType(recICMPMsg-&gt;getType())) {</span></span>
+<span id="L148"><span class="lineNum">     148</span>                 :<span class="tlaGNC">       23875 :             EV_DETAIL &lt;&lt; &quot;ICMP error received -- do not reply to it&quot; &lt;&lt; endl;</span></span>
+<span id="L149"><span class="lineNum">     149</span>                 :<span class="tlaGNC">       23875 :             return false;</span></span>
+<span id="L150"><span class="lineNum">     150</span>                 :<span class="tlaGNC">       23875 :         }</span></span>
+<span id="L151"><span class="lineNum">     151</span>                 :<span class="tlaGNC">       28593 :     }</span></span>
+<span id="L152"><span class="lineNum">     152</span>                 :             : </span>
+<span id="L153"><span class="lineNum">     153</span>                 :<span class="tlaGNC">       40615 :     return true;</span></span>
+<span id="L154"><span class="lineNum">     154</span>                 :<span class="tlaGNC">       64490 : }</span></span>
+<span id="L155"><span class="lineNum">     155</span>                 :             : </span>
+<span id="L156"><span class="lineNum">     156</span>                 :             : void Icmp::sendOrProcessIcmpPacket(Packet *packet, Ipv4Address origSrcAddr)</span>
+<span id="L157"><span class="lineNum">     157</span>                 :<span class="tlaGNC">       40615 : {</span></span>
+<span id="L158"><span class="lineNum">     158</span>                 :<span class="tlaGNC">       40615 :     packet-&gt;addTag&lt;PacketProtocolTag&gt;()-&gt;setProtocol(&amp;Protocol::icmpv4);</span></span>
+<span id="L159"><span class="lineNum">     159</span>                 :             : </span>
+<span id="L160"><span class="lineNum">     160</span>                 :             :     // if srcAddr is not filled in, we're still in the src node, so we just</span>
+<span id="L161"><span class="lineNum">     161</span>                 :             :     // process the ICMP message locally, right away</span>
+<span id="L162"><span class="lineNum">     162</span>         [<span class="tlaGBC" title="Branch 0 was taken 1203 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 39412 times"> + </span>]:<span class="tlaGNC">       40615 :     if (origSrcAddr.isUnspecified()) {</span></span>
+<span id="L163"><span class="lineNum">     163</span>                 :             :         // pretend it came from the Ipv4 layer</span>
+<span id="L164"><span class="lineNum">     164</span>                 :<span class="tlaGNC">        1203 :         packet-&gt;addTag&lt;L3AddressInd&gt;()-&gt;setDestAddress(Ipv4Address::LOOPBACK_ADDRESS);    // FIXME maybe use configured loopback address</span></span>
+<span id="L165"><span class="lineNum">     165</span>                 :             : </span>
+<span id="L166"><span class="lineNum">     166</span>                 :             :         // then process it locally</span>
+<span id="L167"><span class="lineNum">     167</span>                 :<span class="tlaGNC">        1203 :         processIcmpMessage(packet);</span></span>
+<span id="L168"><span class="lineNum">     168</span>                 :<span class="tlaGNC">        1203 :     }</span></span>
+<span id="L169"><span class="lineNum">     169</span>                 :<span class="tlaGNC">       39412 :     else {</span></span>
+<span id="L170"><span class="lineNum">     170</span>                 :<span class="tlaGNC">       39412 :         sendToIP(packet, origSrcAddr);</span></span>
+<span id="L171"><span class="lineNum">     171</span>                 :<span class="tlaGNC">       39412 :     }</span></span>
+<span id="L172"><span class="lineNum">     172</span>                 :<span class="tlaGNC">       40615 : }</span></span>
+<span id="L173"><span class="lineNum">     173</span>                 :             : </span>
+<span id="L174"><span class="lineNum">     174</span>                 :             : void Icmp::sendPtbMessage(Packet *packet, int mtu)</span>
+<span id="L175"><span class="lineNum">     175</span>                 :<span class="tlaGNC">         102 : {</span></span>
+<span id="L176"><span class="lineNum">     176</span>                 :<span class="tlaGNC">         102 :     Enter_Method(&quot;sendPtbMessage(datagram, mtu=%d)&quot;, mtu);</span></span>
+<span id="L177"><span class="lineNum">     177</span>                 :             : </span>
+<span id="L178"><span class="lineNum">     178</span>         [<span class="tlaGBC" title="Branch 0 was taken 102 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">         102 :     if (maySendErrorMessage(packet)) {</span></span>
+<span id="L179"><span class="lineNum">     179</span>                 :             :         // assemble a message name</span>
+<span id="L180"><span class="lineNum">     180</span>                 :<span class="tlaGNC">         102 :         char msgname[80];</span></span>
+<span id="L181"><span class="lineNum">     181</span>                 :<span class="tlaGNC">         102 :         snprintf(msgname, sizeof(msgname), &quot;ICMP-PTB-#%&quot; PRIu64 &quot;-mtu%d&quot;, ++ctr, mtu);</span></span>
+<span id="L182"><span class="lineNum">     182</span>                 :             : </span>
+<span id="L183"><span class="lineNum">     183</span>                 :             :         // debugging information</span>
+<span id="L184"><span class="lineNum">     184</span>                 :<span class="tlaGNC">         102 :         EV_DETAIL &lt;&lt; &quot;sending ICMP PTB &quot; &lt;&lt; msgname &lt;&lt; endl;</span></span>
+<span id="L185"><span class="lineNum">     185</span>                 :             : </span>
+<span id="L186"><span class="lineNum">     186</span>                 :             :         // create and send ICMP packet</span>
+<span id="L187"><span class="lineNum">     187</span>                 :<span class="tlaGNC">         102 :         Packet *errorPacket = new Packet(msgname);</span></span>
+<span id="L188"><span class="lineNum">     188</span>                 :<span class="tlaGNC">         102 :         const auto&amp; icmpPtb = makeShared&lt;IcmpPtb&gt;();</span></span>
+<span id="L189"><span class="lineNum">     189</span>                 :<span class="tlaGNC">         102 :         icmpPtb-&gt;setMtu(mtu);</span></span>
+<span id="L190"><span class="lineNum">     190</span>                 :             :         // ICMP message length: the internet header plus the first quoteLength bytes of</span>
+<span id="L191"><span class="lineNum">     191</span>                 :             :         // the original datagram's data is returned to the sender.</span>
+<span id="L192"><span class="lineNum">     192</span>                 :<span class="tlaGNC">         102 :         const auto&amp; ipv4Header = packet-&gt;peekAtFront&lt;Ipv4Header&gt;();</span></span>
+<span id="L193"><span class="lineNum">     193</span>                 :<span class="tlaGNC">         102 :         B curQuoteLength = std::min(B(packet-&gt;getDataLength()), ipv4Header-&gt;getHeaderLength() + quoteLength);</span></span>
+<span id="L194"><span class="lineNum">     194</span>                 :<span class="tlaGNC">         102 :         errorPacket-&gt;insertAtBack(packet-&gt;peekDataAt(b(0), curQuoteLength));</span></span>
+<span id="L195"><span class="lineNum">     195</span>                 :<span class="tlaGNC">         102 :         insertChecksum(icmpPtb, errorPacket);</span></span>
+<span id="L196"><span class="lineNum">     196</span>                 :<span class="tlaGNC">         102 :         errorPacket-&gt;insertAtFront(icmpPtb);</span></span>
+<span id="L197"><span class="lineNum">     197</span>                 :             : </span>
+<span id="L198"><span class="lineNum">     198</span>                 :<span class="tlaGNC">         102 :         sendOrProcessIcmpPacket(errorPacket, ipv4Header-&gt;getSrcAddress());</span></span>
+<span id="L199"><span class="lineNum">     199</span>                 :<span class="tlaGNC">         102 :     }</span></span>
+<span id="L200"><span class="lineNum">     200</span>                 :<span class="tlaGNC">         102 : }</span></span>
+<span id="L201"><span class="lineNum">     201</span>                 :             : </span>
+<span id="L202"><span class="lineNum">     202</span>                 :             : void Icmp::sendErrorMessage(Packet *packet, IcmpType type, IcmpCode code)</span>
+<span id="L203"><span class="lineNum">     203</span>                 :<span class="tlaGNC">       77738 : {</span></span>
+<span id="L204"><span class="lineNum">     204</span>                 :<span class="tlaGNC">       77738 :     Enter_Method(&quot;sendErrorMessage(datagram, type=%d, code=%d)&quot;, type, code);</span></span>
+<span id="L205"><span class="lineNum">     205</span>                 :             : </span>
+<span id="L206"><span class="lineNum">     206</span>         [<span class="tlaGBC" title="Branch 0 was taken 40513 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 37225 times"> + </span>]:<span class="tlaGNC">       77738 :     if (maySendErrorMessage(packet)) {</span></span>
+<span id="L207"><span class="lineNum">     207</span>                 :             :         // assemble a message name</span>
+<span id="L208"><span class="lineNum">     208</span>                 :<span class="tlaGNC">       40513 :         char msgname[80];</span></span>
+<span id="L209"><span class="lineNum">     209</span>                 :<span class="tlaGNC">       40513 :         snprintf(msgname, sizeof(msgname), &quot;ICMP-error-#%&quot; PRIu64 &quot;-type%d-code%d&quot;, ++ctr, type, code);</span></span>
+<span id="L210"><span class="lineNum">     210</span>                 :             : </span>
+<span id="L211"><span class="lineNum">     211</span>                 :             :         // debugging information</span>
+<span id="L212"><span class="lineNum">     212</span>                 :<span class="tlaGNC">       40513 :         EV_DETAIL &lt;&lt; &quot;sending ICMP error &quot; &lt;&lt; msgname &lt;&lt; endl;</span></span>
+<span id="L213"><span class="lineNum">     213</span>                 :             : </span>
+<span id="L214"><span class="lineNum">     214</span>                 :             :         // create and send ICMP packet</span>
+<span id="L215"><span class="lineNum">     215</span>                 :<span class="tlaGNC">       40513 :         Packet *errorPacket = new Packet(msgname);</span></span>
+<span id="L216"><span class="lineNum">     216</span>                 :<span class="tlaGNC">       40513 :         const auto&amp; icmpHeader = makeShared&lt;IcmpHeader&gt;();</span></span>
+<span id="L217"><span class="lineNum">     217</span>                 :<span class="tlaGNC">       40513 :         icmpHeader-&gt;setType(type);</span></span>
+<span id="L218"><span class="lineNum">     218</span>                 :<span class="tlaGNC">       40513 :         icmpHeader-&gt;setCode(code);</span></span>
+<span id="L219"><span class="lineNum">     219</span>                 :             :         // ICMP message length: the internet header plus the first quoteLength bytes of</span>
+<span id="L220"><span class="lineNum">     220</span>                 :             :         // the original datagram's data is returned to the sender.</span>
+<span id="L221"><span class="lineNum">     221</span>                 :<span class="tlaGNC">       40513 :         const auto&amp; ipv4Header = packet-&gt;peekAtFront&lt;Ipv4Header&gt;();</span></span>
+<span id="L222"><span class="lineNum">     222</span>                 :<span class="tlaGNC">       40513 :         B curQuoteLength = std::min(B(packet-&gt;getDataLength()), ipv4Header-&gt;getHeaderLength() + quoteLength);</span></span>
+<span id="L223"><span class="lineNum">     223</span>                 :<span class="tlaGNC">       40513 :         errorPacket-&gt;insertAtBack(packet-&gt;peekDataAt(B(0), curQuoteLength));</span></span>
+<span id="L224"><span class="lineNum">     224</span>                 :<span class="tlaGNC">       40513 :         insertChecksum(icmpHeader, errorPacket);</span></span>
+<span id="L225"><span class="lineNum">     225</span>                 :<span class="tlaGNC">       40513 :         errorPacket-&gt;insertAtFront(icmpHeader);</span></span>
+<span id="L226"><span class="lineNum">     226</span>                 :             : </span>
+<span id="L227"><span class="lineNum">     227</span>                 :<span class="tlaGNC">       40513 :         numErrorsSent++;</span></span>
+<span id="L228"><span class="lineNum">     228</span>                 :<span class="tlaGNC">       40513 :         sendOrProcessIcmpPacket(errorPacket, ipv4Header-&gt;getSrcAddress());</span></span>
+<span id="L229"><span class="lineNum">     229</span>                 :<span class="tlaGNC">       40513 :     }</span></span>
+<span id="L230"><span class="lineNum">     230</span>                 :<span class="tlaGNC">       77738 : }</span></span>
+<span id="L231"><span class="lineNum">     231</span>                 :             : </span>
+<span id="L232"><span class="lineNum">     232</span>                 :             : bool Icmp::possiblyLocalBroadcast(const Ipv4Address&amp; addr, int interfaceId)</span>
+<span id="L233"><span class="lineNum">     233</span>                 :<span class="tlaGNC">      128995 : {</span></span>
+<span id="L234"><span class="lineNum">     234</span>         [<span class="tlaGBC" title="Branch 0 was taken 89907 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 39088 times"> + </span>]:<span class="tlaGNC">      128995 :     if ((addr.getInt() &amp; 1) == 0)</span></span>
+<span id="L235"><span class="lineNum">     235</span>                 :<span class="tlaGNC">       89907 :         return false;</span></span>
+<span id="L236"><span class="lineNum">     236</span>                 :             : </span>
+<span id="L237"><span class="lineNum">     237</span>         [<span class="tlaGBC" title="Branch 0 was taken 10 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 39078 times"> + </span>]:<span class="tlaGNC">       39088 :     if (rt-&gt;isLocalBroadcastAddress(addr))</span></span>
+<span id="L238"><span class="lineNum">     238</span>                 :<span class="tlaGNC">          10 :         return true;</span></span>
+<span id="L239"><span class="lineNum">     239</span>                 :             : </span>
+<span id="L240"><span class="lineNum">     240</span>                 :             :     // if the input interface is unconfigured, we won't recognize network-directed broadcasts because we don't what network we are on</span>
+<span id="L241"><span class="lineNum">     241</span>         [<span class="tlaGBC" title="Branch 0 was taken 25679 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 13399 times"> + </span>]:<span class="tlaGNC">       39078 :     if (interfaceId != -1) {</span></span>
+<span id="L242"><span class="lineNum">     242</span>                 :<span class="tlaGNC">       25679 :         NetworkInterface *ie = ift-&gt;getInterfaceById(interfaceId);</span></span>
+<span id="L243"><span class="lineNum">     243</span>                 :<span class="tlaGNC">       25679 :         auto ipv4Data = ie-&gt;findProtocolData&lt;Ipv4InterfaceData&gt;();</span></span>
+<span id="L244"><span class="lineNum">     244</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 25679 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 25679 times"> + </span>]:<span class="tlaGNC">       25679 :         bool interfaceUnconfigured = (ipv4Data == nullptr) || ipv4Data-&gt;getIPAddress().isUnspecified();</span></span>
+<span id="L245"><span class="lineNum">     245</span>                 :<span class="tlaGNC">       25679 :         return interfaceUnconfigured;</span></span>
+<span id="L246"><span class="lineNum">     246</span>                 :<span class="tlaGNC">       25679 :     }</span></span>
+<span id="L247"><span class="lineNum">     247</span>                 :<span class="tlaGNC">       13399 :     else {</span></span>
+<span id="L248"><span class="lineNum">     248</span>                 :             :         // if all interfaces are configured, we are OK</span>
+<span id="L249"><span class="lineNum">     249</span>                 :<span class="tlaGNC">       13399 :         bool allInterfacesConfigured = true;</span></span>
+<span id="L250"><span class="lineNum">     250</span>         [<span class="tlaGBC" title="Branch 0 was taken 56830 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 13399 times"> + </span>]:<span class="tlaGNC">       70229 :         for (int i = 0; i &lt; ift-&gt;getNumInterfaces(); i++) {</span></span>
+<span id="L251"><span class="lineNum">     251</span>                 :<span class="tlaGNC">       56830 :             auto ipv4Data = ift-&gt;getInterface(i)-&gt;findProtocolData&lt;Ipv4InterfaceData&gt;();</span></span>
+<span id="L252"><span class="lineNum">     252</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 56830 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 56830 times"> + </span>]:<span class="tlaGNC">       56830 :             if ((ipv4Data == nullptr) || ipv4Data-&gt;getIPAddress().isUnspecified())</span></span>
+<span class="lineNum">        </span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 56830 times"> + </span>]
+<span id="L253"><span class="lineNum">     253</span>                 :<span class="tlaUNC tlaBgUNC">           0 :                 allInterfacesConfigured = false;</span></span>
+<span id="L254"><span class="lineNum">     254</span>                 :<span class="tlaGNC tlaBgGNC">       56830 :         }</span></span>
+<span id="L255"><span class="lineNum">     255</span>                 :             : </span>
+<span id="L256"><span class="lineNum">     256</span>                 :<span class="tlaGNC">       13399 :         return !allInterfacesConfigured;</span></span>
+<span id="L257"><span class="lineNum">     257</span>                 :<span class="tlaGNC">       13399 :     }</span></span>
+<span id="L258"><span class="lineNum">     258</span>                 :<span class="tlaGNC">       39078 : }</span></span>
+<span id="L259"><span class="lineNum">     259</span>                 :             : </span>
+<span id="L260"><span class="lineNum">     260</span>                 :             : void Icmp::processIcmpMessage(Packet *packet)</span>
+<span id="L261"><span class="lineNum">     261</span>                 :<span class="tlaGNC">      535443 : {</span></span>
+<span id="L262"><span class="lineNum">     262</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 535443 times"> + </span>]:<span class="tlaGNC">      535443 :     if (!verifyChecksum(packet)) {</span></span>
+<span id="L263"><span class="lineNum">     263</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         EV_WARN &lt;&lt; &quot;incoming ICMP packet has wrong checksum, dropped\n&quot;;</span></span>
+<span id="L264"><span class="lineNum">     264</span>                 :             :         // drop packet</span>
+<span id="L265"><span class="lineNum">     265</span>                 :<span class="tlaUNC">           0 :         PacketDropDetails details;</span></span>
+<span id="L266"><span class="lineNum">     266</span>                 :<span class="tlaUNC">           0 :         details.setReason(INCORRECTLY_RECEIVED);</span></span>
+<span id="L267"><span class="lineNum">     267</span>                 :<span class="tlaUNC">           0 :         emit(packetDroppedSignal, packet, &amp;details);</span></span>
+<span id="L268"><span class="lineNum">     268</span>                 :<span class="tlaUNC">           0 :         delete packet;</span></span>
+<span id="L269"><span class="lineNum">     269</span>                 :<span class="tlaUNC">           0 :         return;</span></span>
+<span id="L270"><span class="lineNum">     270</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L271"><span class="lineNum">     271</span>                 :             : </span>
+<span id="L272"><span class="lineNum">     272</span>                 :<span class="tlaGNC tlaBgGNC">      535443 :     const auto&amp; icmpmsg = packet-&gt;peekAtFront&lt;IcmpHeader&gt;();</span></span>
+<span id="L273"><span class="lineNum">     273</span>                 :<span class="tlaGNC">      535443 :     switch (icmpmsg-&gt;getType()) {</span></span>
+<span id="L274"><span class="lineNum">     274</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 535443 times"> + </span>]:<span class="tlaUNC tlaBgUNC">           0 :         case ICMP_REDIRECT:</span></span>
+<span id="L275"><span class="lineNum">     275</span>                 :             :             // TODO implement redirect handling</span>
+<span id="L276"><span class="lineNum">     276</span>                 :<span class="tlaUNC">           0 :             EV_ERROR &lt;&lt; &quot;ICMP_REDIRECT not implemented yet, packet &quot; &lt;&lt; EV_FORMAT_OBJECT(packet) &lt;&lt; &quot; dropped.\n&quot;;</span></span>
+<span id="L277"><span class="lineNum">     277</span>                 :<span class="tlaUNC">           0 :             delete packet;</span></span>
+<span id="L278"><span class="lineNum">     278</span>                 :<span class="tlaUNC">           0 :             break;</span></span>
+<span id="L279"><span class="lineNum">     279</span>                 :             : </span>
+<span id="L280"><span class="lineNum">     280</span>         [<span class="tlaGBC" title="Branch 0 was taken 16724 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 518719 times"> + </span>]:<span class="tlaGNC tlaBgGNC">       16724 :         case ICMP_DESTINATION_UNREACHABLE:</span></span>
+<span id="L281"><span class="lineNum">     281</span>         [<span class="tlaGBC" title="Branch 0 was taken 7 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 535436 times"> + </span>]:<span class="tlaGNC">       16731 :         case ICMP_TIME_EXCEEDED:</span></span>
+<span id="L282"><span class="lineNum">     282</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 535443 times"> + </span>]:<span class="tlaGNC">       16731 :         case ICMP_PARAMETER_PROBLEM: {</span></span>
+<span id="L283"><span class="lineNum">     283</span>                 :<span class="tlaGNC">       16731 :             numErrorsReceived++;</span></span>
+<span id="L284"><span class="lineNum">     284</span>                 :             :             // Pop the ICMP header and create an Indication with Icmpv4ErrorInd tag.</span>
+<span id="L285"><span class="lineNum">     285</span>                 :             :             // The remaining packet content (quoted IPv4 + transport + payload) becomes</span>
+<span id="L286"><span class="lineNum">     286</span>                 :             :             // the originalPacket, which will be progressively unwrapped by upper layers.</span>
+<span id="L287"><span class="lineNum">     287</span>                 :<span class="tlaGNC">       16731 :             const auto&amp; icmpHeader = packet-&gt;popAtFront&lt;IcmpHeader&gt;();</span></span>
+<span id="L288"><span class="lineNum">     288</span>                 :             : </span>
+<span id="L289"><span class="lineNum">     289</span>                 :<span class="tlaGNC">       16731 :             auto *indication = new Indication(&quot;ICMP-error&quot;);</span></span>
+<span id="L290"><span class="lineNum">     290</span>                 :<span class="tlaGNC">       16731 :             auto&amp; errorInd = indication-&gt;addTag&lt;Icmpv4ErrorInd&gt;();</span></span>
+<span id="L291"><span class="lineNum">     291</span>                 :<span class="tlaGNC">       16731 :             errorInd-&gt;setType(icmpHeader-&gt;getType());</span></span>
+<span id="L292"><span class="lineNum">     292</span>                 :<span class="tlaGNC">       16731 :             errorInd-&gt;setCode(icmpHeader-&gt;getCode());</span></span>
+<span id="L293"><span class="lineNum">     293</span>         [<span class="tlaGBC" title="Branch 0 was taken 103 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 16628 times"> + </span>]:<span class="tlaGNC">       16731 :             if (auto ptb = dynamicPtrCast&lt;const IcmpPtb&gt;(icmpHeader))</span></span>
+<span id="L294"><span class="lineNum">     294</span>                 :<span class="tlaGNC">         103 :                 errorInd-&gt;setMtu(ptb-&gt;getMtu());</span></span>
+<span id="L295"><span class="lineNum">     295</span>                 :<span class="tlaGNC">       16731 :             packet-&gt;trim();</span></span>
+<span id="L296"><span class="lineNum">     296</span>                 :<span class="tlaGNC">       16731 :             packet-&gt;addTagIfAbsent&lt;PacketProtocolTag&gt;()-&gt;setProtocol(&amp;Protocol::ipv4);</span></span>
+<span id="L297"><span class="lineNum">     297</span>                 :<span class="tlaGNC">       16731 :             errorInd-&gt;setOriginalPacket(packet); // ownership transfer, no dup needed</span></span>
+<span id="L298"><span class="lineNum">     298</span>                 :             : </span>
+<span id="L299"><span class="lineNum">     299</span>                 :             :             // Peek at the quoted IPv4 header to determine the transport protocol</span>
+<span id="L300"><span class="lineNum">     300</span>                 :<span class="tlaGNC">       16731 :             const auto&amp; bogusIpv4Header = packet-&gt;peekAtFront&lt;Ipv4Header&gt;();</span></span>
+<span id="L301"><span class="lineNum">     301</span>                 :<span class="tlaGNC">       16731 :             int transportProtocol = bogusIpv4Header-&gt;getProtocolId();</span></span>
+<span id="L302"><span class="lineNum">     302</span>         [<span class="tlaGBC" title="Branch 0 was taken 2914 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 13817 times"> + </span>]:<span class="tlaGNC">       16731 :             if (transportProtocol == IP_PROT_ICMP) {</span></span>
+<span id="L303"><span class="lineNum">     303</span>                 :             :                 // received ICMP error answer to an ICMP packet:</span>
+<span id="L304"><span class="lineNum">     304</span>                 :             :                 // FIXME should send up dest unreachable answers to pingapps</span>
+<span id="L305"><span class="lineNum">     305</span>                 :<span class="tlaGNC">        2914 :                 errorOut(indication);</span></span>
+<span id="L306"><span class="lineNum">     306</span>                 :<span class="tlaGNC">        2914 :             }</span></span>
+<span id="L307"><span class="lineNum">     307</span>                 :<span class="tlaGNC">       13817 :             else {</span></span>
+<span id="L308"><span class="lineNum">     308</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 13817 times"> + </span>]:<span class="tlaGNC">       13817 :                 if (!contains(transportProtocols, transportProtocol)) {</span></span>
+<span id="L309"><span class="lineNum">     309</span>                 :<span class="tlaUNC tlaBgUNC">           0 :                     EV_ERROR &lt;&lt; &quot;Transport protocol &quot; &lt;&lt; transportProtocol &lt;&lt; &quot; not registered, packet dropped\n&quot;;</span></span>
+<span id="L310"><span class="lineNum">     310</span>                 :<span class="tlaUNC">           0 :                     delete indication;</span></span>
+<span id="L311"><span class="lineNum">     311</span>                 :<span class="tlaUNC">           0 :                 }</span></span>
+<span id="L312"><span class="lineNum">     312</span>                 :<span class="tlaGNC tlaBgGNC">       13817 :                 else {</span></span>
+<span id="L313"><span class="lineNum">     313</span>                 :             :                     // Send the Indication to IPv4 via ipOut; IPv4 will pop the quoted</span>
+<span id="L314"><span class="lineNum">     314</span>                 :             :                     // IPv4 header and forward the indication to the transport protocol.</span>
+<span id="L315"><span class="lineNum">     315</span>                 :<span class="tlaGNC">       13817 :                     indication-&gt;addTagIfAbsent&lt;DispatchProtocolReq&gt;()-&gt;setProtocol(&amp;Protocol::ipv4);</span></span>
+<span id="L316"><span class="lineNum">     316</span>                 :<span class="tlaGNC">       13817 :                     send(indication, &quot;ipOut&quot;);</span></span>
+<span id="L317"><span class="lineNum">     317</span>                 :<span class="tlaGNC">       13817 :                 }</span></span>
+<span id="L318"><span class="lineNum">     318</span>                 :<span class="tlaGNC">       13817 :             }</span></span>
+<span id="L319"><span class="lineNum">     319</span>                 :<span class="tlaGNC">       16731 :             break;</span></span>
+<span id="L320"><span class="lineNum">     320</span>                 :<span class="tlaGNC">       16731 :         }</span></span>
+<span id="L321"><span class="lineNum">     321</span>                 :             : </span>
+<span id="L322"><span class="lineNum">     322</span>         [<span class="tlaGBC" title="Branch 0 was taken 252395 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 283048 times"> + </span>]:<span class="tlaGNC">      252395 :         case ICMP_ECHO_REQUEST:</span></span>
+<span id="L323"><span class="lineNum">     323</span>                 :<span class="tlaGNC">      252395 :             processEchoRequest(packet);</span></span>
+<span id="L324"><span class="lineNum">     324</span>                 :<span class="tlaGNC">      252395 :             break;</span></span>
+<span id="L325"><span class="lineNum">     325</span>                 :             : </span>
+<span id="L326"><span class="lineNum">     326</span>         [<span class="tlaGBC" title="Branch 0 was taken 266315 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 269128 times"> + </span>]:<span class="tlaGNC">      266315 :         case ICMP_ECHO_REPLY:</span></span>
+<span id="L327"><span class="lineNum">     327</span>                 :<span class="tlaGNC">      266315 :             delete packet;</span></span>
+<span id="L328"><span class="lineNum">     328</span>                 :<span class="tlaGNC">      266315 :             break;</span></span>
+<span id="L329"><span class="lineNum">     329</span>                 :             : </span>
+<span id="L330"><span class="lineNum">     330</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 535443 times"> + </span>]:<span class="tlaUNC tlaBgUNC">           0 :         case ICMP_TIMESTAMP_REQUEST:</span></span>
+<span id="L331"><span class="lineNum">     331</span>                 :<span class="tlaUNC">           0 :             processEchoRequest(packet);</span></span>
+<span id="L332"><span class="lineNum">     332</span>                 :<span class="tlaUNC">           0 :             break;</span></span>
+<span id="L333"><span class="lineNum">     333</span>                 :             : </span>
+<span id="L334"><span class="lineNum">     334</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 535443 times"> + </span>]:<span class="tlaUNC">           0 :         case ICMP_TIMESTAMP_REPLY:</span></span>
+<span id="L335"><span class="lineNum">     335</span>                 :<span class="tlaUNC">           0 :             delete packet;</span></span>
+<span id="L336"><span class="lineNum">     336</span>                 :<span class="tlaUNC">           0 :             break;</span></span>
+<span id="L337"><span class="lineNum">     337</span>                 :             : </span>
+<span id="L338"><span class="lineNum">     338</span>         [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 535441 times"> + </span>]:<span class="tlaGNC tlaBgGNC">           2 :         default: {</span></span>
+<span id="L339"><span class="lineNum">     339</span>                 :             :             // RFC 1122 section 3.2.2: a host MUST silently discard an ICMP message of a</span>
+<span id="L340"><span class="lineNum">     340</span>                 :             :             // type it does not recognize. Stopping the simulation let any peer end the run</span>
+<span id="L341"><span class="lineNum">     341</span>                 :             :             // with one packet.</span>
+<span id="L342"><span class="lineNum">     342</span>                 :<span class="tlaGNC">           2 :             EV_WARN &lt;&lt; &quot;Unknown ICMP type &quot; &lt;&lt; icmpmsg-&gt;getType() &lt;&lt; &quot;, packet dropped\n&quot;;</span></span>
+<span id="L343"><span class="lineNum">     343</span>                 :<span class="tlaGNC">           2 :             PacketDropDetails details;</span></span>
+<span id="L344"><span class="lineNum">     344</span>                 :<span class="tlaGNC">           2 :             details.setReason(OTHER_PACKET_DROP);</span></span>
+<span id="L345"><span class="lineNum">     345</span>                 :<span class="tlaGNC">           2 :             emit(packetDroppedSignal, packet, &amp;details);</span></span>
+<span id="L346"><span class="lineNum">     346</span>                 :<span class="tlaGNC">           2 :             delete packet;</span></span>
+<span id="L347"><span class="lineNum">     347</span>                 :<span class="tlaGNC">           2 :             break;</span></span>
+<span id="L348"><span class="lineNum">     348</span>                 :<span class="tlaGNC">       16731 :         }</span></span>
+<span id="L349"><span class="lineNum">     349</span>                 :<span class="tlaGNC">      535443 :     }</span></span>
+<span id="L350"><span class="lineNum">     350</span>                 :<span class="tlaGNC">      535443 : }</span></span>
+<span id="L351"><span class="lineNum">     351</span>                 :             : </span>
+<span id="L352"><span class="lineNum">     352</span>                 :             : void Icmp::errorOut(Indication *indication)</span>
+<span id="L353"><span class="lineNum">     353</span>                 :<span class="tlaGNC">        2914 : {</span></span>
+<span id="L354"><span class="lineNum">     354</span>                 :<span class="tlaGNC">        2914 :     delete indication;</span></span>
+<span id="L355"><span class="lineNum">     355</span>                 :<span class="tlaGNC">        2914 : }</span></span>
+<span id="L356"><span class="lineNum">     356</span>                 :             : </span>
+<span id="L357"><span class="lineNum">     357</span>                 :             : void Icmp::processEchoRequest(Packet *request)</span>
+<span id="L358"><span class="lineNum">     358</span>                 :<span class="tlaGNC">      252395 : {</span></span>
+<span id="L359"><span class="lineNum">     359</span>                 :             :     // turn request into a reply</span>
+<span id="L360"><span class="lineNum">     360</span>                 :<span class="tlaGNC">      252395 :     const auto&amp; icmpReq = request-&gt;popAtFront&lt;IcmpEchoRequest&gt;();</span></span>
+<span id="L361"><span class="lineNum">     361</span>                 :<span class="tlaGNC">      252395 :     Packet *reply = new Packet((std::string(request-&gt;getName()) + &quot;-reply&quot;).c_str());</span></span>
+<span id="L362"><span class="lineNum">     362</span>                 :<span class="tlaGNC">      252395 :     const auto&amp; icmpReply = makeShared&lt;IcmpEchoReply&gt;();</span></span>
+<span id="L363"><span class="lineNum">     363</span>                 :<span class="tlaGNC">      252395 :     icmpReply-&gt;setIdentifier(icmpReq-&gt;getIdentifier());</span></span>
+<span id="L364"><span class="lineNum">     364</span>                 :<span class="tlaGNC">      252395 :     icmpReply-&gt;setSeqNumber(icmpReq-&gt;getSeqNumber());</span></span>
+<span id="L365"><span class="lineNum">     365</span>                 :<span class="tlaGNC">      252395 :     auto addressInd = request-&gt;getTag&lt;L3AddressInd&gt;();</span></span>
+<span id="L366"><span class="lineNum">     366</span>                 :<span class="tlaGNC">      252395 :     Ipv4Address src = addressInd-&gt;getSrcAddress().toIpv4();</span></span>
+<span id="L367"><span class="lineNum">     367</span>                 :<span class="tlaGNC">      252395 :     Ipv4Address dest = addressInd-&gt;getDestAddress().toIpv4();</span></span>
+<span id="L368"><span class="lineNum">     368</span>                 :<span class="tlaGNC">      252395 :     reply-&gt;insertAtBack(request-&gt;peekData());</span></span>
+<span id="L369"><span class="lineNum">     369</span>                 :<span class="tlaGNC">      252395 :     insertChecksum(icmpReply, reply);</span></span>
+<span id="L370"><span class="lineNum">     370</span>                 :<span class="tlaGNC">      252395 :     reply-&gt;insertAtFront(icmpReply);</span></span>
+<span id="L371"><span class="lineNum">     371</span>                 :             : </span>
+<span id="L372"><span class="lineNum">     372</span>                 :             :     // swap src and dest</span>
+<span id="L373"><span class="lineNum">     373</span>                 :             :     // TODO check what to do if dest was multicast etc?</span>
+<span id="L374"><span class="lineNum">     374</span>                 :             :     // A. Ariza Modification 5/1/2011 clean the interface id, this forces the use of routing table in the Ipv4 layer</span>
+<span id="L375"><span class="lineNum">     375</span>                 :<span class="tlaGNC">      252395 :     auto addressReq = reply-&gt;addTag&lt;L3AddressReq&gt;();</span></span>
+<span id="L376"><span class="lineNum">     376</span>                 :<span class="tlaGNC">      252395 :     addressReq-&gt;setSrcAddress(addressInd-&gt;getDestAddress().toIpv4());</span></span>
+<span id="L377"><span class="lineNum">     377</span>                 :<span class="tlaGNC">      252395 :     addressReq-&gt;setDestAddress(addressInd-&gt;getSrcAddress().toIpv4());</span></span>
+<span id="L378"><span class="lineNum">     378</span>                 :             : </span>
+<span id="L379"><span class="lineNum">     379</span>                 :<span class="tlaGNC">      252395 :     numEchoReplied++;</span></span>
+<span id="L380"><span class="lineNum">     380</span>                 :<span class="tlaGNC">      252395 :     sendToIP(reply);</span></span>
+<span id="L381"><span class="lineNum">     381</span>                 :<span class="tlaGNC">      252395 :     delete request;</span></span>
+<span id="L382"><span class="lineNum">     382</span>                 :<span class="tlaGNC">      252395 : }</span></span>
+<span id="L383"><span class="lineNum">     383</span>                 :             : </span>
+<span id="L384"><span class="lineNum">     384</span>                 :             : void Icmp::sendToIP(Packet *msg, const Ipv4Address&amp; dest)</span>
+<span id="L385"><span class="lineNum">     385</span>                 :<span class="tlaGNC">       39412 : {</span></span>
+<span id="L386"><span class="lineNum">     386</span>                 :<span class="tlaGNC">       39412 :     msg-&gt;addTagIfAbsent&lt;L3AddressReq&gt;()-&gt;setDestAddress(dest);</span></span>
+<span id="L387"><span class="lineNum">     387</span>                 :<span class="tlaGNC">       39412 :     sendToIP(msg);</span></span>
+<span id="L388"><span class="lineNum">     388</span>                 :<span class="tlaGNC">       39412 : }</span></span>
+<span id="L389"><span class="lineNum">     389</span>                 :             : </span>
+<span id="L390"><span class="lineNum">     390</span>                 :             : void Icmp::sendToIP(Packet *msg)</span>
+<span id="L391"><span class="lineNum">     391</span>                 :<span class="tlaGNC">      291807 : {</span></span>
+<span id="L392"><span class="lineNum">     392</span>                 :<span class="tlaGNC">      291807 :     EV_INFO &lt;&lt; &quot;Sending &quot; &lt;&lt; msg &lt;&lt; &quot; to lower layer.\n&quot;;</span></span>
+<span id="L393"><span class="lineNum">     393</span>                 :<span class="tlaGNC">      291807 :     msg-&gt;addTagIfAbsent&lt;DispatchProtocolReq&gt;()-&gt;setProtocol(&amp;Protocol::ipv4);</span></span>
+<span id="L394"><span class="lineNum">     394</span>                 :<span class="tlaGNC">      291807 :     msg-&gt;addTagIfAbsent&lt;PacketProtocolTag&gt;()-&gt;setProtocol(&amp;Protocol::icmpv4);</span></span>
+<span id="L395"><span class="lineNum">     395</span>                 :<span class="tlaGNC">      291807 :     send(msg, &quot;ipOut&quot;);</span></span>
+<span id="L396"><span class="lineNum">     396</span>                 :<span class="tlaGNC">      291807 : }</span></span>
+<span id="L397"><span class="lineNum">     397</span>                 :             : </span>
+<span id="L398"><span class="lineNum">     398</span>                 :             : void Icmp::handleRegisterService(const Protocol&amp; protocol, cGate *gate, ServicePrimitive servicePrimitive)</span>
+<span id="L399"><span class="lineNum">     399</span>                 :<span class="tlaGNC">      207374 : {</span></span>
+<span id="L400"><span class="lineNum">     400</span>                 :<span class="tlaGNC">      207374 :     Enter_Method(&quot;handleRegisterService&quot;);</span></span>
+<span id="L401"><span class="lineNum">     401</span>                 :<span class="tlaGNC">      207374 : }</span></span>
+<span id="L402"><span class="lineNum">     402</span>                 :             : </span>
+<span id="L403"><span class="lineNum">     403</span>                 :             : void Icmp::handleRegisterProtocol(const Protocol&amp; protocol, cGate *gate, ServicePrimitive servicePrimitive)</span>
+<span id="L404"><span class="lineNum">     404</span>                 :<span class="tlaGNC">      301386 : {</span></span>
+<span id="L405"><span class="lineNum">     405</span>                 :<span class="tlaGNC">      301386 :     Enter_Method(&quot;handleRegisterProtocol&quot;);</span></span>
+<span id="L406"><span class="lineNum">     406</span>         [<span class="tlaGBC" title="Branch 0 was taken 75264 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 226122 times"> + </span>]:<span class="tlaGNC">      301386 :     if (!strcmp(&quot;transportOut&quot;, gate-&gt;getBaseName())) {</span></span>
+<span id="L407"><span class="lineNum">     407</span>                 :<span class="tlaGNC">       75264 :         int protocolNumber = ProtocolGroup::getIpProtocolGroup()-&gt;findProtocolNumber(&amp;protocol);</span></span>
+<span id="L408"><span class="lineNum">     408</span>         [<span class="tlaGBC" title="Branch 0 was taken 59238 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 16026 times"> + </span>]:<span class="tlaGNC">       75264 :         if (protocolNumber != -1)</span></span>
+<span id="L409"><span class="lineNum">     409</span>                 :<span class="tlaGNC">       59238 :             transportProtocols.insert(protocolNumber);</span></span>
+<span id="L410"><span class="lineNum">     410</span>                 :<span class="tlaGNC">       75264 :     }</span></span>
+<span id="L411"><span class="lineNum">     411</span>                 :<span class="tlaGNC">      301386 : }</span></span>
+<span id="L412"><span class="lineNum">     412</span>                 :             : </span>
+<span id="L413"><span class="lineNum">     413</span>                 :             : void Icmp::insertChecksum(ChecksumMode checksumMode, const Ptr&lt;IcmpHeader&gt;&amp; icmpHeader, Packet *packet)</span>
+<span id="L414"><span class="lineNum">     414</span>                 :<span class="tlaGNC">      823075 : {</span></span>
+<span id="L415"><span class="lineNum">     415</span>                 :<span class="tlaGNC">      823075 :     icmpHeader-&gt;setChecksumMode(checksumMode);</span></span>
+<span id="L416"><span class="lineNum">     416</span>                 :<span class="tlaGNC">      823075 :     switch (checksumMode) {</span></span>
+<span id="L417"><span class="lineNum">     417</span>         [<span class="tlaGBC" title="Branch 0 was taken 49326 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 773749 times"> + </span>]:<span class="tlaGNC">       49326 :         case CHECKSUM_DECLARED_CORRECT:</span></span>
+<span id="L418"><span class="lineNum">     418</span>                 :             :             // if the checksum mode is declared to be correct, then set the checksum to an easily recognizable value</span>
+<span id="L419"><span class="lineNum">     419</span>                 :<span class="tlaGNC">       49326 :             icmpHeader-&gt;setChksum(0xC00D);</span></span>
+<span id="L420"><span class="lineNum">     420</span>                 :<span class="tlaGNC">       49326 :             break;</span></span>
+<span id="L421"><span class="lineNum">     421</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 823075 times"> + </span>]:<span class="tlaUNC tlaBgUNC">           0 :         case CHECKSUM_DECLARED_INCORRECT:</span></span>
+<span id="L422"><span class="lineNum">     422</span>                 :             :             // if the checksum mode is declared to be incorrect, then set the checksum to an easily recognizable value</span>
+<span id="L423"><span class="lineNum">     423</span>                 :<span class="tlaUNC">           0 :             icmpHeader-&gt;setChksum(0xBAAD);</span></span>
+<span id="L424"><span class="lineNum">     424</span>                 :<span class="tlaUNC">           0 :             break;</span></span>
+<span id="L425"><span class="lineNum">     425</span>         [<span class="tlaGBC" title="Branch 0 was taken 773749 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 49326 times"> + </span>]:<span class="tlaGNC tlaBgGNC">      773749 :         case CHECKSUM_COMPUTED: {</span></span>
+<span id="L426"><span class="lineNum">     426</span>                 :             :             // if the checksum mode is computed, then compute the checksum and set it</span>
+<span id="L427"><span class="lineNum">     427</span>                 :<span class="tlaGNC">      773749 :             icmpHeader-&gt;setChksum(0x0000); // make sure that the checksum is 0 in the header before computing the checksum</span></span>
+<span id="L428"><span class="lineNum">     428</span>                 :<span class="tlaGNC">      773749 :             MemoryOutputStream icmpStream;</span></span>
+<span id="L429"><span class="lineNum">     429</span>                 :<span class="tlaGNC">      773749 :             Chunk::serialize(icmpStream, icmpHeader);</span></span>
+<span id="L430"><span class="lineNum">     430</span>         [<span class="tlaGBC" title="Branch 0 was taken 773749 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">      773749 :             if (packet-&gt;getByteLength() &gt; 0)</span></span>
+<span id="L431"><span class="lineNum">     431</span>                 :<span class="tlaGNC">      773749 :                 Chunk::serialize(icmpStream, packet-&gt;peekDataAsBytes());</span></span>
+<span id="L432"><span class="lineNum">     432</span>                 :<span class="tlaGNC">      773749 :             uint16_t checksum = internetChecksum(icmpStream.getData());</span></span>
+<span id="L433"><span class="lineNum">     433</span>                 :<span class="tlaGNC">      773749 :             icmpHeader-&gt;setChksum(checksum);</span></span>
+<span id="L434"><span class="lineNum">     434</span>                 :<span class="tlaGNC">      773749 :             break;</span></span>
+<span id="L435"><span class="lineNum">     435</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         }</span></span>
+<span id="L436"><span class="lineNum">     436</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 823075 times"> + </span>]:<span class="tlaUNC">           0 :         default:</span></span>
+<span id="L437"><span class="lineNum">     437</span>                 :<span class="tlaUNC">           0 :             throw cRuntimeError(&quot;Unknown checksum mode&quot;);</span></span>
+<span id="L438"><span class="lineNum">     438</span>                 :<span class="tlaGNC tlaBgGNC">      823075 :     }</span></span>
+<span id="L439"><span class="lineNum">     439</span>                 :<span class="tlaGNC">      823075 : }</span></span>
+<span id="L440"><span class="lineNum">     440</span>                 :             : </span>
+<span id="L441"><span class="lineNum">     441</span>                 :             : bool Icmp::verifyChecksum(const Packet *packet)</span>
+<span id="L442"><span class="lineNum">     442</span>                 :<span class="tlaGNC">      535443 : {</span></span>
+<span id="L443"><span class="lineNum">     443</span>                 :<span class="tlaGNC">      535443 :     const auto&amp; icmpHeader = packet-&gt;peekAtFront&lt;IcmpHeader&gt;(b(-1), Chunk::PF_ALLOW_INCORRECT);</span></span>
+<span id="L444"><span class="lineNum">     444</span>                 :<span class="tlaGNC">      535443 :     switch (icmpHeader-&gt;getChecksumMode()) {</span></span>
+<span id="L445"><span class="lineNum">     445</span>         [<span class="tlaGBC" title="Branch 0 was taken 31391 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 504052 times"> + </span>]:<span class="tlaGNC">       31391 :         case CHECKSUM_DECLARED_CORRECT:</span></span>
+<span id="L446"><span class="lineNum">     446</span>                 :             :             // if the checksum mode is declared to be correct, then the check passes if and only if the chunks are correct</span>
+<span id="L447"><span class="lineNum">     447</span>                 :<span class="tlaGNC">       31391 :             return icmpHeader-&gt;isCorrect();</span></span>
+<span id="L448"><span class="lineNum">     448</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 535443 times"> + </span>]:<span class="tlaUNC tlaBgUNC">           0 :         case CHECKSUM_DECLARED_INCORRECT:</span></span>
+<span id="L449"><span class="lineNum">     449</span>                 :             :             // if the checksum mode is declared to be incorrect, then the check fails</span>
+<span id="L450"><span class="lineNum">     450</span>                 :<span class="tlaUNC">           0 :             return false;</span></span>
+<span id="L451"><span class="lineNum">     451</span>         [<span class="tlaGBC" title="Branch 0 was taken 504052 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 31391 times"> + </span>]:<span class="tlaGNC tlaBgGNC">      504052 :         case CHECKSUM_COMPUTED: {</span></span>
+<span id="L452"><span class="lineNum">     452</span>                 :             :             // otherwise compute the checksum, the check passes if the result is 0xFFFF (includes the received checksum)</span>
+<span id="L453"><span class="lineNum">     453</span>                 :<span class="tlaGNC">      504052 :             auto dataBytes = packet-&gt;peekDataAsBytes(Chunk::PF_ALLOW_INCORRECT);</span></span>
+<span id="L454"><span class="lineNum">     454</span>                 :<span class="tlaGNC">      504052 :             uint16_t checksum = internetChecksum(dataBytes-&gt;getBytes());</span></span>
+<span id="L455"><span class="lineNum">     455</span>                 :             :             // TODO delete these isCorrect calls, rely on checksum only</span>
+<span id="L456"><span class="lineNum">     456</span> [<span class="tlaGBC" title="Branch 0 was taken 504052 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 504052 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">      504052 :             return checksum == 0 &amp;&amp; icmpHeader-&gt;isCorrect();</span></span>
+<span id="L457"><span class="lineNum">     457</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         }</span></span>
+<span id="L458"><span class="lineNum">     458</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 535443 times"> + </span>]:<span class="tlaUNC">           0 :         default:</span></span>
+<span id="L459"><span class="lineNum">     459</span>                 :<span class="tlaUNC">           0 :             throw cRuntimeError(&quot;Unknown checksum mode&quot;);</span></span>
+<span id="L460"><span class="lineNum">     460</span>                 :<span class="tlaGNC tlaBgGNC">      535443 :     }</span></span>
+<span id="L461"><span class="lineNum">     461</span>                 :<span class="tlaGNC">      535443 : }</span></span>
+<span id="L462"><span class="lineNum">     462</span>                 :             : </span>
+<span id="L463"><span class="lineNum">     463</span>                 :             : } // namespace inet</span>
+<span id="L464"><span class="lineNum">     464</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

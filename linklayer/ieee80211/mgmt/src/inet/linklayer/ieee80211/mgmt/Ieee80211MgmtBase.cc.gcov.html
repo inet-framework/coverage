@@ -1,0 +1,338 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - linklayer/ieee80211/mgmt/src/inet/linklayer/ieee80211/mgmt/Ieee80211MgmtBase.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../index.html">top level</a> - <a href="index.html">linklayer/ieee80211/mgmt/src/inet/linklayer/ieee80211/mgmt</a> - Ieee80211MgmtBase.cc<span style="font-size: 80%;"> (source / <a href="Ieee80211MgmtBase.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">91.1&nbsp;%</td>
+            <td class="headerCovTableEntry">168</td>
+            <td class="headerCovTableEntry">153</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">92.9&nbsp;%</td>
+            <td class="headerCovTableEntry">14</td>
+            <td class="headerCovTableEntry">13</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryMed">85.1&nbsp;%</td>
+            <td class="headerCovTableEntry">74</td>
+            <td class="headerCovTableEntry">63</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2006 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #include &quot;inet/linklayer/ieee80211/mgmt/Ieee80211MgmtBase.h&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : </span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &lt;cmath&gt;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : </span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &quot;inet/common/INETUtils.h&quot;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : #include &quot;inet/common/ModuleAccess.h&quot;</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : #include &quot;inet/common/ProtocolTag_m.h&quot;</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : #include &quot;inet/common/lifecycle/LifecycleOperation.h&quot;</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : #include &quot;inet/common/lifecycle/ModuleOperations.h&quot;</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : #include &quot;inet/common/lifecycle/NodeStatus.h&quot;</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : #include &quot;inet/linklayer/common/InterfaceTag_m.h&quot;</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : #include &quot;inet/linklayer/ieee80211/mgmt/Ieee80211HtMgmtElements.h&quot;</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : #include &quot;inet/linklayer/ieee80211/IIeee80211Mac.h&quot;</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             : #include &quot;inet/networklayer/common/NetworkInterface.h&quot;</span>
+<span id="L22"><span class="lineNum">      22</span>                 :             : #include &quot;inet/physicallayer/wireless/ieee80211/packetlevel/Ieee80211Tag_m.h&quot;</span>
+<span id="L23"><span class="lineNum">      23</span>                 :             : </span>
+<span id="L24"><span class="lineNum">      24</span>                 :             : namespace inet {</span>
+<span id="L25"><span class="lineNum">      25</span>                 :             : </span>
+<span id="L26"><span class="lineNum">      26</span>                 :             : namespace ieee80211 {</span>
+<span id="L27"><span class="lineNum">      27</span>                 :             : </span>
+<span id="L28"><span class="lineNum">      28</span>                 :             : using namespace inet::physicallayer;</span>
+<span id="L29"><span class="lineNum">      29</span>                 :             : </span>
+<span id="L30"><span class="lineNum">      30</span>                 :             : void Ieee80211MgmtBase::resetPeerAssociationContext(const MacAddress&amp; peer)</span>
+<span id="L31"><span class="lineNum">      31</span>                 :<span class="tlaGNC tlaBgGNC">         218 : {</span></span>
+<span id="L32"><span class="lineNum">      32</span>                 :<span class="tlaGNC">         218 :     auto mac = getModuleFromPar&lt;IIeee80211Mac&gt;(par(&quot;macModule&quot;), this);</span></span>
+<span id="L33"><span class="lineNum">      33</span>                 :<span class="tlaGNC">         218 :     mac-&gt;resetPeerAssociationContext(peer);</span></span>
+<span id="L34"><span class="lineNum">      34</span>                 :<span class="tlaGNC">         218 : }</span></span>
+<span id="L35"><span class="lineNum">      35</span>                 :             : </span>
+<span id="L36"><span class="lineNum">      36</span>                 :             : void Ieee80211MgmtBase::initialize(int stage)</span>
+<span id="L37"><span class="lineNum">      37</span>                 :<span class="tlaGNC">       64412 : {</span></span>
+<span id="L38"><span class="lineNum">      38</span>                 :<span class="tlaGNC">       64412 :     OperationalBase::initialize(stage);</span></span>
+<span id="L39"><span class="lineNum">      39</span>                 :             : </span>
+<span id="L40"><span class="lineNum">      40</span>         [<span class="tlaGBC" title="Branch 0 was taken 2686 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 61726 times"> + </span>]:<span class="tlaGNC">       64412 :     if (stage == INITSTAGE_LOCAL) {</span></span>
+<span id="L41"><span class="lineNum">      41</span>                 :<span class="tlaGNC">        2686 :         mib.reference(this, &quot;mibModule&quot;, true);</span></span>
+<span id="L42"><span class="lineNum">      42</span>                 :<span class="tlaGNC">        2686 :         interfaceTable.reference(this, &quot;interfaceTableModule&quot;, true);</span></span>
+<span id="L43"><span class="lineNum">      43</span>                 :<span class="tlaGNC">        2686 :         myIface = getContainingNicModule(this);</span></span>
+<span id="L44"><span class="lineNum">      44</span>                 :<span class="tlaGNC">        2686 :         numMgmtFramesReceived = 0;</span></span>
+<span id="L45"><span class="lineNum">      45</span>                 :<span class="tlaGNC">        2686 :         numMgmtFramesDropped = 0;</span></span>
+<span id="L46"><span class="lineNum">      46</span>                 :<span class="tlaGNC">        2686 :         getContainingNicModule(this)-&gt;subscribe(modesetChangedSignal, this);</span></span>
+<span id="L47"><span class="lineNum">      47</span>                 :<span class="tlaGNC">        2686 :         WATCH(numMgmtFramesReceived);</span></span>
+<span id="L48"><span class="lineNum">      48</span>                 :<span class="tlaGNC">        2686 :         WATCH(numMgmtFramesDropped);</span></span>
+<span id="L49"><span class="lineNum">      49</span>                 :<span class="tlaGNC">        2686 :     }</span></span>
+<span id="L50"><span class="lineNum">      50</span>                 :<span class="tlaGNC">       64412 : }</span></span>
+<span id="L51"><span class="lineNum">      51</span>                 :             : </span>
+<span id="L52"><span class="lineNum">      52</span>                 :             : void Ieee80211MgmtBase::receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj, cObject *details)</span>
+<span id="L53"><span class="lineNum">      53</span>                 :<span class="tlaGNC">        2688 : {</span></span>
+<span id="L54"><span class="lineNum">      54</span>                 :<span class="tlaGNC">        2688 :     Enter_Method(&quot;%s&quot;, cComponent::getSignalName(signalID));</span></span>
+<span id="L55"><span class="lineNum">      55</span>                 :             : </span>
+<span id="L56"><span class="lineNum">      56</span>         [<span class="tlaGBC" title="Branch 0 was taken 2688 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        2688 :     if (signalID == modesetChangedSignal) {</span></span>
+<span id="L57"><span class="lineNum">      57</span>                 :<span class="tlaGNC">        2688 :         modeSet = check_and_cast&lt;physicallayer::Ieee80211ModeSet *&gt;(obj);</span></span>
+<span id="L58"><span class="lineNum">      58</span>                 :<span class="tlaGNC">        2688 :         supportedRates = Ieee80211SupportedRatesElement();</span></span>
+<span id="L59"><span class="lineNum">      59</span>                 :<span class="tlaGNC">        2688 :         extendedSupportedRates = Ieee80211ExtendedSupportedRatesElement();</span></span>
+<span id="L60"><span class="lineNum">      60</span>                 :<span class="tlaGNC">        2688 :         int rateIndex = 0;</span></span>
+<span id="L61"><span class="lineNum">      61</span>                 :<span class="tlaGNC">        2688 :         int extendedRateIndex = 0;</span></span>
+<span id="L62"><span class="lineNum">      62</span>                 :             :         // Supported Rates carries the legacy OperationalRateSet only. HT/VHT</span>
+<span id="L63"><span class="lineNum">      63</span>                 :             :         // MCS support is advertised through the corresponding capabilities</span>
+<span id="L64"><span class="lineNum">      64</span>                 :             :         // elements (IEEE Std 802.11-2024, 9.4.2.3, 9.4.2.54.4, 11.1.4.6).</span>
+<span id="L65"><span class="lineNum">      65</span>         [<span class="tlaGBC" title="Branch 0 was taken 26660 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2688 times"> + </span>]:<span class="tlaGNC">       26660 :         for (const auto *mode : modeSet-&gt;getLegacyOperationalModes()) {</span></span>
+<span id="L66"><span class="lineNum">      66</span>                 :<span class="tlaGNC">       26660 :             bool isBasicRate = modeSet-&gt;getIsMandatory(mode);</span></span>
+<span id="L67"><span class="lineNum">      67</span>                 :<span class="tlaGNC">       26660 :             double rate = mode-&gt;getDataMode()-&gt;getNetBitrate().get&lt;Mbps&gt;();</span></span>
+<span id="L68"><span class="lineNum">      68</span>         [<span class="tlaGBC" title="Branch 0 was taken 20332 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 6328 times"> + </span>]:<span class="tlaGNC">       26660 :             if (rateIndex &lt; 8) {</span></span>
+<span id="L69"><span class="lineNum">      69</span>                 :<span class="tlaGNC">       20332 :                 supportedRates.rate[rateIndex] = rate;</span></span>
+<span id="L70"><span class="lineNum">      70</span>                 :<span class="tlaGNC">       20332 :                 supportedRates.basicRate[rateIndex] = isBasicRate;</span></span>
+<span id="L71"><span class="lineNum">      71</span>                 :<span class="tlaGNC">       20332 :                 rateIndex++;</span></span>
+<span id="L72"><span class="lineNum">      72</span>                 :<span class="tlaGNC">       20332 :             }</span></span>
+<span id="L73"><span class="lineNum">      73</span>         [<span class="tlaGBC" title="Branch 0 was taken 6328 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        6328 :             else if (extendedRateIndex &lt; 255) {</span></span>
+<span id="L74"><span class="lineNum">      74</span>                 :<span class="tlaGNC">        6328 :                 extendedSupportedRates.rate[extendedRateIndex] = rate;</span></span>
+<span id="L75"><span class="lineNum">      75</span>                 :<span class="tlaGNC">        6328 :                 extendedSupportedRates.basicRate[extendedRateIndex] = isBasicRate;</span></span>
+<span id="L76"><span class="lineNum">      76</span>                 :<span class="tlaGNC">        6328 :                 extendedRateIndex++;</span></span>
+<span id="L77"><span class="lineNum">      77</span>                 :<span class="tlaGNC">        6328 :             }</span></span>
+<span id="L78"><span class="lineNum">      78</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             else</span></span>
+<span id="L79"><span class="lineNum">      79</span>                 :<span class="tlaUNC">           0 :                 throw cRuntimeError(&quot;Mode set '%s' contains more than 263 legacy operational rates&quot;, modeSet-&gt;getName());</span></span>
+<span id="L80"><span class="lineNum">      80</span>                 :<span class="tlaGNC tlaBgGNC">       26660 :         }</span></span>
+<span id="L81"><span class="lineNum">      81</span>                 :<span class="tlaGNC">        2688 :         supportedRates.numRates = rateIndex;</span></span>
+<span id="L82"><span class="lineNum">      82</span>                 :<span class="tlaGNC">        2688 :         extendedSupportedRates.numRates = extendedRateIndex;</span></span>
+<span id="L83"><span class="lineNum">      83</span>                 :<span class="tlaGNC">        2688 :         mib-&gt;setLocalRateSet(makeRateSet(supportedRates, extendedRateIndex &gt; 0, extendedSupportedRates));</span></span>
+<span id="L84"><span class="lineNum">      84</span>                 :<span class="tlaGNC">        2688 :     }</span></span>
+<span id="L85"><span class="lineNum">      85</span>                 :<span class="tlaGNC">        2688 : }</span></span>
+<span id="L86"><span class="lineNum">      86</span>                 :             : </span>
+<span id="L87"><span class="lineNum">      87</span>                 :             : Ieee80211RateSetState Ieee80211MgmtBase::makeRateSet(const Ieee80211SupportedRatesElement&amp; rates,</span>
+<span id="L88"><span class="lineNum">      88</span>                 :             :         bool extendedPresent, const Ieee80211ExtendedSupportedRatesElement&amp; extendedRates, bool basicKnown)</span>
+<span id="L89"><span class="lineNum">      89</span>                 :<span class="tlaGNC">       93233 : {</span></span>
+<span id="L90"><span class="lineNum">      90</span>                 :<span class="tlaGNC">       93233 :     Ieee80211RateSetState state;</span></span>
+<span id="L91"><span class="lineNum">      91</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 93233 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 93233 times"> + </span>]:<span class="tlaGNC">       93233 :     if (rates.numRates &lt; 0 || rates.numRates &gt; 8 ||</span></span>
+<span id="L92"><span class="lineNum">      92</span> [<span class="tlaGBC" title="Branch 0 was taken 87625 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5608 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 87625 times"> + </span>]:<span class="tlaGNC">       93233 :             (extendedPresent &amp;&amp; (extendedRates.numRates &lt; 1 || extendedRates.numRates &gt; 255)))</span></span>
+<span class="lineNum">        </span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 87625 times"> + </span>]
+<span id="L93"><span class="lineNum">      93</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         throw cRuntimeError(&quot;Invalid management rate element count&quot;);</span></span>
+<span id="L94"><span class="lineNum">      94</span>                 :             :     // Zero rates preserve absent information in abstract management inputs.</span>
+<span id="L95"><span class="lineNum">      95</span>                 :             :     // The serializer requires a nonempty Supported Rates element on the wire.</span>
+<span id="L96"><span class="lineNum">      96</span>         [<span class="tlaGBC" title="Branch 0 was taken 4 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 93229 times"> + </span>]:<span class="tlaGNC tlaBgGNC">       93233 :     if (rates.numRates == 0)</span></span>
+<span id="L97"><span class="lineNum">      97</span>                 :<span class="tlaGNC">           4 :         return state;</span></span>
+<span id="L98"><span class="lineNum">      98</span>                 :<span class="tlaGNC">       93229 :     state.supported.known = state.operational.known = true;</span></span>
+<span id="L99"><span class="lineNum">      99</span>                 :<span class="tlaGNC">       93229 :     state.basic.known = basicKnown;</span></span>
+<span id="L100"><span class="lineNum">     100</span>                 :<span class="tlaGNC">      180854 :     auto addRates = [&amp;state, basicKnown](const auto&amp; element) {</span></span>
+<span id="L101"><span class="lineNum">     101</span> [<span class="tlaGBC" title="Branch 0 was taken 350403 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 87619 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 733798 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 93223 times"> + </span>]:<span class="tlaGNC">     1265043 :         for (int i = 0; i &lt; element.numRates; i++) {</span></span>
+<span id="L102"><span class="lineNum">     102</span>                 :             :             // Reject nonfinite values before ordered-set comparison can discard them.</span>
+<span id="L103"><span class="lineNum">     103</span> [<span class="tlaGBC" title="Branch 0 was taken 6 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 350397 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 6 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 733792 times"> + </span>]:<span class="tlaGNC">     1084201 :             if (!std::isfinite(element.rate[i]))</span></span>
+<span id="L104"><span class="lineNum">     104</span>                 :<span class="tlaGNC">          12 :                 throw cRuntimeError(&quot;Invalid nonfinite management rate&quot;);</span></span>
+<span id="L105"><span class="lineNum">     105</span>                 :<span class="tlaGNC">     1084189 :             auto rate = Mbps(element.rate[i]);</span></span>
+<span id="L106"><span class="lineNum">     106</span>                 :<span class="tlaGNC">     1084189 :             state.supported.legacyRates.insert(rate);</span></span>
+<span id="L107"><span class="lineNum">     107</span>                 :<span class="tlaGNC">     1084189 :             state.operational.legacyRates.insert(rate);</span></span>
+<span id="L108"><span class="lineNum">     108</span> [<span class="tlaGBC" title="Branch 0 was taken 349637 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 760 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 730674 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3118 times"> + </span>]:<span class="tlaGNC">     1084189 :             if (basicKnown &amp;&amp; element.basicRate[i])</span></span>
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 12 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 349625 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 636619 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 94055 times"> + </span>]
+<span id="L109"><span class="lineNum">     109</span>                 :<span class="tlaGNC">      636631 :                 state.basic.legacyRates.insert(rate);</span></span>
+<span id="L110"><span class="lineNum">     110</span>                 :<span class="tlaGNC">     1084189 :         }</span></span>
+<span id="L111"><span class="lineNum">     111</span>                 :<span class="tlaGNC">      180854 :     };</span></span>
+<span id="L112"><span class="lineNum">     112</span>                 :             :     // IEEE Std 802.11-2024, 9.4.2.3 and 9.4.2.11: both elements</span>
+<span id="L113"><span class="lineNum">     113</span>                 :             :     // describe operational rates. Request frames do not supply BSS basic rates.</span>
+<span id="L114"><span class="lineNum">     114</span>                 :<span class="tlaGNC">       93229 :     addRates(rates);</span></span>
+<span id="L115"><span class="lineNum">     115</span>         [<span class="tlaGBC" title="Branch 0 was taken 87625 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5604 times"> + </span>]:<span class="tlaGNC">       93229 :     if (extendedPresent)</span></span>
+<span id="L116"><span class="lineNum">     116</span>                 :<span class="tlaGNC">       87625 :         addRates(extendedRates);</span></span>
+<span id="L117"><span class="lineNum">     117</span>                 :<span class="tlaGNC">       93229 :     validateIeee80211RateSetState(state, &quot;management rate state&quot;);</span></span>
+<span id="L118"><span class="lineNum">     118</span>                 :             :     // IEEE Std 802.11-2024, Table 9-131: values 122..127 are BSS membership</span>
+<span id="L119"><span class="lineNum">     119</span>                 :             :     // selectors, not legacy rates. Selector-based join checks remain unmodeled.</span>
+<span id="L120"><span class="lineNum">     120</span>         [<span class="tlaGBC" title="Branch 0 was taken 559296 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 93229 times"> + </span>]:<span class="tlaGNC">      652525 :     for (int selector = 122; selector &lt;= 127; selector++) {</span></span>
+<span id="L121"><span class="lineNum">     121</span>                 :<span class="tlaGNC">      559296 :         auto rate = Mbps(selector * 0.5);</span></span>
+<span id="L122"><span class="lineNum">     122</span>                 :<span class="tlaGNC">      559296 :         state.supported.legacyRates.erase(rate);</span></span>
+<span id="L123"><span class="lineNum">     123</span>                 :<span class="tlaGNC">      559296 :         state.operational.legacyRates.erase(rate);</span></span>
+<span id="L124"><span class="lineNum">     124</span>                 :<span class="tlaGNC">      559296 :         state.basic.legacyRates.erase(rate);</span></span>
+<span id="L125"><span class="lineNum">     125</span>                 :<span class="tlaGNC">      559296 :     }</span></span>
+<span id="L126"><span class="lineNum">     126</span>                 :<span class="tlaGNC">       93229 :     return state;</span></span>
+<span id="L127"><span class="lineNum">     127</span>                 :<span class="tlaGNC">       93233 : }</span></span>
+<span id="L128"><span class="lineNum">     128</span>                 :             : </span>
+<span id="L129"><span class="lineNum">     129</span>                 :             : void Ieee80211MgmtBase::addHtCapabilities(const Ptr&lt;Ieee80211MgmtFrame&gt;&amp; frame) const</span>
+<span id="L130"><span class="lineNum">     130</span>                 :<span class="tlaGNC">      103608 : {</span></span>
+<span id="L131"><span class="lineNum">     131</span>         [<span class="tlaGBC" title="Branch 0 was taken 2103 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 101505 times"> + </span>]:<span class="tlaGNC">      103608 :     if (mib-&gt;isHtOperationSupported())</span></span>
+<span id="L132"><span class="lineNum">     132</span>                 :<span class="tlaGNC">        2103 :         setHtCapabilities(frame, mib-&gt;localHtCapabilities);</span></span>
+<span id="L133"><span class="lineNum">     133</span>                 :<span class="tlaGNC">      103608 : }</span></span>
+<span id="L134"><span class="lineNum">     134</span>                 :             : </span>
+<span id="L135"><span class="lineNum">     135</span>                 :             : void Ieee80211MgmtBase::addHtOperation(const Ptr&lt;Ieee80211MgmtFrame&gt;&amp; frame, const physicallayer::IIeee80211Band *band) const</span>
+<span id="L136"><span class="lineNum">     136</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L137"><span class="lineNum">     137</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (mib-&gt;isHtOperationSupported())</span></span>
+<span id="L138"><span class="lineNum">     138</span>                 :<span class="tlaUNC">           0 :         setHtOperation(frame, band, mib-&gt;getHtOperation());</span></span>
+<span id="L139"><span class="lineNum">     139</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L140"><span class="lineNum">     140</span>                 :             : </span>
+<span id="L141"><span class="lineNum">     141</span>                 :             : void Ieee80211MgmtBase::handleMessageWhenUp(cMessage *msg)</span>
+<span id="L142"><span class="lineNum">     142</span>                 :<span class="tlaGNC tlaBgGNC">      202863 : {</span></span>
+<span id="L143"><span class="lineNum">     143</span>         [<span class="tlaGBC" title="Branch 0 was taken 103987 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 98876 times"> + </span>]:<span class="tlaGNC">      202863 :     if (msg-&gt;isSelfMessage()) {</span></span>
+<span id="L144"><span class="lineNum">     144</span>                 :             :         // process timers</span>
+<span id="L145"><span class="lineNum">     145</span>                 :<span class="tlaGNC">      103987 :         EV &lt;&lt; &quot;Timer expired: &quot; &lt;&lt; msg &lt;&lt; &quot;\n&quot;;</span></span>
+<span id="L146"><span class="lineNum">     146</span>                 :<span class="tlaGNC">      103987 :         handleTimer(msg);</span></span>
+<span id="L147"><span class="lineNum">     147</span>                 :<span class="tlaGNC">      103987 :     }</span></span>
+<span id="L148"><span class="lineNum">     148</span>         [<span class="tlaGBC" title="Branch 0 was taken 96871 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2005 times"> + </span>]:<span class="tlaGNC">       98876 :     else if (msg-&gt;arrivedOn(&quot;macIn&quot;)) {</span></span>
+<span id="L149"><span class="lineNum">     149</span>                 :             :         // process incoming frame</span>
+<span id="L150"><span class="lineNum">     150</span>                 :<span class="tlaGNC">       96871 :         EV &lt;&lt; &quot;Frame arrived from MAC: &quot; &lt;&lt; msg &lt;&lt; &quot;\n&quot;;</span></span>
+<span id="L151"><span class="lineNum">     151</span>                 :<span class="tlaGNC">       96871 :         auto packet = check_and_cast&lt;Packet *&gt;(msg);</span></span>
+<span id="L152"><span class="lineNum">     152</span>                 :<span class="tlaGNC">       96871 :         const Ptr&lt;const Ieee80211DataOrMgmtHeader&gt;&amp; header = packet-&gt;peekAt&lt;Ieee80211DataOrMgmtHeader&gt;(packet-&gt;getFrontOffset() - B(24));</span></span>
+<span id="L153"><span class="lineNum">     153</span>                 :<span class="tlaGNC">       96871 :         processFrame(packet, header);</span></span>
+<span id="L154"><span class="lineNum">     154</span>                 :<span class="tlaGNC">       96871 :     }</span></span>
+<span id="L155"><span class="lineNum">     155</span>         [<span class="tlaGBC" title="Branch 0 was taken 2005 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        2005 :     else if (msg-&gt;arrivedOn(&quot;agentIn&quot;)) {</span></span>
+<span id="L156"><span class="lineNum">     156</span>                 :             :         // process command from agent</span>
+<span id="L157"><span class="lineNum">     157</span>                 :<span class="tlaGNC">        2005 :         EV &lt;&lt; &quot;Command arrived from agent: &quot; &lt;&lt; msg &lt;&lt; &quot;\n&quot;;</span></span>
+<span id="L158"><span class="lineNum">     158</span>                 :<span class="tlaGNC">        2005 :         int msgkind = msg-&gt;getKind();</span></span>
+<span id="L159"><span class="lineNum">     159</span>                 :<span class="tlaGNC">        2005 :         cObject *ctrl = msg-&gt;removeControlInfo();</span></span>
+<span id="L160"><span class="lineNum">     160</span>                 :<span class="tlaGNC">        2005 :         delete msg;</span></span>
+<span id="L161"><span class="lineNum">     161</span>                 :             : </span>
+<span id="L162"><span class="lineNum">     162</span>                 :<span class="tlaGNC">        2005 :         handleCommand(msgkind, ctrl);</span></span>
+<span id="L163"><span class="lineNum">     163</span>                 :<span class="tlaGNC">        2005 :     }</span></span>
+<span id="L164"><span class="lineNum">     164</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     else</span></span>
+<span id="L165"><span class="lineNum">     165</span>                 :<span class="tlaUNC">           0 :         throw cRuntimeError(&quot;Unknown message&quot;);</span></span>
+<span id="L166"><span class="lineNum">     166</span>                 :<span class="tlaGNC tlaBgGNC">      202863 : }</span></span>
+<span id="L167"><span class="lineNum">     167</span>                 :             : </span>
+<span id="L168"><span class="lineNum">     168</span>                 :             : void Ieee80211MgmtBase::sendDown(Packet *frame)</span>
+<span id="L169"><span class="lineNum">     169</span>                 :<span class="tlaGNC">      105307 : {</span></span>
+<span id="L170"><span class="lineNum">     170</span>                 :<span class="tlaGNC">      105307 :     ASSERT(isUp());</span></span>
+<span id="L171"><span class="lineNum">     171</span>                 :<span class="tlaGNC">      105307 :     frame-&gt;addTagIfAbsent&lt;PacketProtocolTag&gt;()-&gt;setProtocol(&amp;Protocol::ieee80211Mgmt);</span></span>
+<span id="L172"><span class="lineNum">     172</span>                 :<span class="tlaGNC">      105307 :     send(frame, &quot;macOut&quot;);</span></span>
+<span id="L173"><span class="lineNum">     173</span>                 :<span class="tlaGNC">      105307 : }</span></span>
+<span id="L174"><span class="lineNum">     174</span>                 :             : </span>
+<span id="L175"><span class="lineNum">     175</span>                 :             : void Ieee80211MgmtBase::dropManagementFrame(Packet *frame)</span>
+<span id="L176"><span class="lineNum">     176</span>                 :<span class="tlaGNC">        4195 : {</span></span>
+<span id="L177"><span class="lineNum">     177</span>                 :<span class="tlaGNC">        4195 :     EV &lt;&lt; &quot;ignoring management frame: &quot; &lt;&lt; (cMessage *)frame &lt;&lt; &quot;\n&quot;;</span></span>
+<span id="L178"><span class="lineNum">     178</span>                 :<span class="tlaGNC">        4195 :     delete frame;</span></span>
+<span id="L179"><span class="lineNum">     179</span>                 :<span class="tlaGNC">        4195 :     numMgmtFramesDropped++;</span></span>
+<span id="L180"><span class="lineNum">     180</span>                 :<span class="tlaGNC">        4195 : }</span></span>
+<span id="L181"><span class="lineNum">     181</span>                 :             : </span>
+<span id="L182"><span class="lineNum">     182</span>                 :             : void Ieee80211MgmtBase::processFrame(Packet *packet, const Ptr&lt;const Ieee80211DataOrMgmtHeader&gt;&amp; header)</span>
+<span id="L183"><span class="lineNum">     183</span>                 :<span class="tlaGNC">       96872 : {</span></span>
+<span id="L184"><span class="lineNum">     184</span>                 :<span class="tlaGNC">       96872 :     switch (header-&gt;getType()) {</span></span>
+<span id="L185"><span class="lineNum">     185</span>         [<span class="tlaGBC" title="Branch 0 was taken 1744 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 95128 times"> + </span>]:<span class="tlaGNC">        1744 :         case ST_AUTHENTICATION:</span></span>
+<span id="L186"><span class="lineNum">     186</span>                 :<span class="tlaGNC">        1744 :             numMgmtFramesReceived++;</span></span>
+<span id="L187"><span class="lineNum">     187</span>                 :<span class="tlaGNC">        1744 :             handleAuthenticationFrame(packet, dynamicPtrCast&lt;const Ieee80211MgmtHeader&gt;(header));</span></span>
+<span id="L188"><span class="lineNum">     188</span>                 :<span class="tlaGNC">        1744 :             break;</span></span>
+<span id="L189"><span class="lineNum">     189</span>                 :             : </span>
+<span id="L190"><span class="lineNum">     190</span>         [<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaGBC" title="Branch 1 was taken 96871 times"> + </span>]:<span class="tlaGNC">           1 :         case ST_DEAUTHENTICATION:</span></span>
+<span id="L191"><span class="lineNum">     191</span>                 :<span class="tlaGNC">           1 :             numMgmtFramesReceived++;</span></span>
+<span id="L192"><span class="lineNum">     192</span>                 :<span class="tlaGNC">           1 :             handleDeauthenticationFrame(packet, dynamicPtrCast&lt;const Ieee80211MgmtHeader&gt;(header));</span></span>
+<span id="L193"><span class="lineNum">     193</span>                 :<span class="tlaGNC">           1 :             break;</span></span>
+<span id="L194"><span class="lineNum">     194</span>                 :             : </span>
+<span id="L195"><span class="lineNum">     195</span>         [<span class="tlaGBC" title="Branch 0 was taken 433 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 96439 times"> + </span>]:<span class="tlaGNC">         433 :         case ST_ASSOCIATIONREQUEST:</span></span>
+<span id="L196"><span class="lineNum">     196</span>                 :<span class="tlaGNC">         433 :             numMgmtFramesReceived++;</span></span>
+<span id="L197"><span class="lineNum">     197</span>                 :<span class="tlaGNC">         433 :             handleAssociationRequestFrame(packet, dynamicPtrCast&lt;const Ieee80211MgmtHeader&gt;(header));</span></span>
+<span id="L198"><span class="lineNum">     198</span>                 :<span class="tlaGNC">         433 :             break;</span></span>
+<span id="L199"><span class="lineNum">     199</span>                 :             : </span>
+<span id="L200"><span class="lineNum">     200</span>         [<span class="tlaGBC" title="Branch 0 was taken 471 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 96401 times"> + </span>]:<span class="tlaGNC">         471 :         case ST_ASSOCIATIONRESPONSE:</span></span>
+<span id="L201"><span class="lineNum">     201</span>                 :<span class="tlaGNC">         471 :             numMgmtFramesReceived++;</span></span>
+<span id="L202"><span class="lineNum">     202</span>                 :<span class="tlaGNC">         471 :             handleAssociationResponseFrame(packet, dynamicPtrCast&lt;const Ieee80211MgmtHeader&gt;(header));</span></span>
+<span id="L203"><span class="lineNum">     203</span>                 :<span class="tlaGNC">         471 :             break;</span></span>
+<span id="L204"><span class="lineNum">     204</span>                 :             : </span>
+<span id="L205"><span class="lineNum">     205</span>         [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 96870 times"> + </span>]:<span class="tlaGNC">           2 :         case ST_REASSOCIATIONREQUEST:</span></span>
+<span id="L206"><span class="lineNum">     206</span>                 :<span class="tlaGNC">           2 :             numMgmtFramesReceived++;</span></span>
+<span id="L207"><span class="lineNum">     207</span>                 :<span class="tlaGNC">           2 :             handleReassociationRequestFrame(packet, dynamicPtrCast&lt;const Ieee80211MgmtHeader&gt;(header));</span></span>
+<span id="L208"><span class="lineNum">     208</span>                 :<span class="tlaGNC">           2 :             break;</span></span>
+<span id="L209"><span class="lineNum">     209</span>                 :             : </span>
+<span id="L210"><span class="lineNum">     210</span>         [<span class="tlaGBC" title="Branch 0 was taken 3 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 96869 times"> + </span>]:<span class="tlaGNC">           3 :         case ST_REASSOCIATIONRESPONSE:</span></span>
+<span id="L211"><span class="lineNum">     211</span>                 :<span class="tlaGNC">           3 :             numMgmtFramesReceived++;</span></span>
+<span id="L212"><span class="lineNum">     212</span>                 :<span class="tlaGNC">           3 :             handleReassociationResponseFrame(packet, dynamicPtrCast&lt;const Ieee80211MgmtHeader&gt;(header));</span></span>
+<span id="L213"><span class="lineNum">     213</span>                 :<span class="tlaGNC">           3 :             break;</span></span>
+<span id="L214"><span class="lineNum">     214</span>                 :             : </span>
+<span id="L215"><span class="lineNum">     215</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 96872 times"> + </span>]:<span class="tlaUNC tlaBgUNC">           0 :         case ST_DISASSOCIATION:</span></span>
+<span id="L216"><span class="lineNum">     216</span>                 :<span class="tlaUNC">           0 :             numMgmtFramesReceived++;</span></span>
+<span id="L217"><span class="lineNum">     217</span>                 :<span class="tlaUNC">           0 :             handleDisassociationFrame(packet, dynamicPtrCast&lt;const Ieee80211MgmtHeader&gt;(header));</span></span>
+<span id="L218"><span class="lineNum">     218</span>                 :<span class="tlaUNC">           0 :             break;</span></span>
+<span id="L219"><span class="lineNum">     219</span>                 :             : </span>
+<span id="L220"><span class="lineNum">     220</span>         [<span class="tlaGBC" title="Branch 0 was taken 90455 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 6417 times"> + </span>]:<span class="tlaGNC tlaBgGNC">       90455 :         case ST_BEACON:</span></span>
+<span id="L221"><span class="lineNum">     221</span>                 :<span class="tlaGNC">       90455 :             numMgmtFramesReceived++;</span></span>
+<span id="L222"><span class="lineNum">     222</span>                 :<span class="tlaGNC">       90455 :             handleBeaconFrame(packet, dynamicPtrCast&lt;const Ieee80211MgmtHeader&gt;(header));</span></span>
+<span id="L223"><span class="lineNum">     223</span>                 :<span class="tlaGNC">       90455 :             break;</span></span>
+<span id="L224"><span class="lineNum">     224</span>                 :             : </span>
+<span id="L225"><span class="lineNum">     225</span>         [<span class="tlaGBC" title="Branch 0 was taken 2826 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 94046 times"> + </span>]:<span class="tlaGNC">        2826 :         case ST_PROBEREQUEST:</span></span>
+<span id="L226"><span class="lineNum">     226</span>                 :<span class="tlaGNC">        2826 :             numMgmtFramesReceived++;</span></span>
+<span id="L227"><span class="lineNum">     227</span>                 :<span class="tlaGNC">        2826 :             handleProbeRequestFrame(packet, dynamicPtrCast&lt;const Ieee80211MgmtHeader&gt;(header));</span></span>
+<span id="L228"><span class="lineNum">     228</span>                 :<span class="tlaGNC">        2826 :             break;</span></span>
+<span id="L229"><span class="lineNum">     229</span>                 :             : </span>
+<span id="L230"><span class="lineNum">     230</span>         [<span class="tlaGBC" title="Branch 0 was taken 937 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 95935 times"> + </span>]:<span class="tlaGNC">         937 :         case ST_PROBERESPONSE:</span></span>
+<span id="L231"><span class="lineNum">     231</span>                 :<span class="tlaGNC">         937 :             numMgmtFramesReceived++;</span></span>
+<span id="L232"><span class="lineNum">     232</span>                 :<span class="tlaGNC">         937 :             handleProbeResponseFrame(packet, dynamicPtrCast&lt;const Ieee80211MgmtHeader&gt;(header));</span></span>
+<span id="L233"><span class="lineNum">     233</span>                 :<span class="tlaGNC">         937 :             break;</span></span>
+<span id="L234"><span class="lineNum">     234</span>                 :             : </span>
+<span id="L235"><span class="lineNum">     235</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 96872 times"> + </span>]:<span class="tlaUNC tlaBgUNC">           0 :         default:</span></span>
+<span id="L236"><span class="lineNum">     236</span>                 :<span class="tlaUNC">           0 :             throw cRuntimeError(&quot;Unexpected frame type (%s)%s&quot;, packet-&gt;getClassName(), packet-&gt;getName());</span></span>
+<span id="L237"><span class="lineNum">     237</span>                 :<span class="tlaGNC tlaBgGNC">       96872 :     }</span></span>
+<span id="L238"><span class="lineNum">     238</span>                 :<span class="tlaGNC">       96872 : }</span></span>
+<span id="L239"><span class="lineNum">     239</span>                 :             : </span>
+<span id="L240"><span class="lineNum">     240</span>                 :             : void Ieee80211MgmtBase::start()</span>
+<span id="L241"><span class="lineNum">     241</span>                 :<span class="tlaGNC">        2717 : {</span></span>
+<span id="L242"><span class="lineNum">     242</span>                 :<span class="tlaGNC">        2717 : }</span></span>
+<span id="L243"><span class="lineNum">     243</span>                 :             : </span>
+<span id="L244"><span class="lineNum">     244</span>                 :             : void Ieee80211MgmtBase::stop()</span>
+<span id="L245"><span class="lineNum">     245</span>                 :<span class="tlaGNC">          85 : {</span></span>
+<span id="L246"><span class="lineNum">     246</span>                 :<span class="tlaGNC">          85 :     mib-&gt;clearBssAndAllPeerStates();</span></span>
+<span id="L247"><span class="lineNum">     247</span>                 :<span class="tlaGNC">          85 : }</span></span>
+<span id="L248"><span class="lineNum">     248</span>                 :             : </span>
+<span id="L249"><span class="lineNum">     249</span>                 :             : } // namespace ieee80211</span>
+<span id="L250"><span class="lineNum">     250</span>                 :             : </span>
+<span id="L251"><span class="lineNum">     251</span>                 :             : } // namespace inet</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

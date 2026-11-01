@@ -1,0 +1,664 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - common/src/inet/common/MessageDispatcher.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">common/src/inet/common</a> - MessageDispatcher.cc<span style="font-size: 80%;"> (source / <a href="MessageDispatcher.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">66.3&nbsp;%</td>
+            <td class="headerCovTableEntry">457</td>
+            <td class="headerCovTableEntry">303</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryMed">77.8&nbsp;%</td>
+            <td class="headerCovTableEntry">18</td>
+            <td class="headerCovTableEntry">14</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryLo">49.8&nbsp;%</td>
+            <td class="headerCovTableEntry">486</td>
+            <td class="headerCovTableEntry">242</td>
+          </tr>
+                  <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2013 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #include &quot;inet/common/MessageDispatcher.h&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : </span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &quot;inet/common/ModuleAccess.h&quot;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &quot;inet/common/ProtocolTag_m.h&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &quot;inet/common/socket/SocketTag_m.h&quot;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : #include &quot;inet/linklayer/common/InterfaceTag_m.h&quot;</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : #include &quot;inet/queueing/common/PassivePacketSinkRef.h&quot;</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : </span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : namespace inet {</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : </span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : Define_Module(MessageDispatcher);</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : </span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : // TODO optimize gate access throughout this class</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             : // TODO factoring out some methods could also help</span>
+<span id="L22"><span class="lineNum">      22</span>                 :             : </span>
+<span id="L23"><span class="lineNum">      23</span>                 :             : void MessageDispatcher::initialize(int stage)</span>
+<span id="L24"><span class="lineNum">      24</span>                 :<span class="tlaGNC tlaBgGNC">     3818369 : {</span></span>
+<span id="L25"><span class="lineNum">      25</span>                 :<span class="tlaGNC">     3818369 : #ifdef INET_WITH_QUEUEING</span></span>
+<span id="L26"><span class="lineNum">      26</span>                 :<span class="tlaGNC">     3818369 :     PacketProcessorBase::initialize(stage);</span></span>
+<span id="L27"><span class="lineNum">      27</span>                 :<span class="tlaGNC">     3818369 : #endif // #ifdef INET_WITH_QUEUEING</span></span>
+<span id="L28"><span class="lineNum">      28</span>         [<span class="tlaGBC" title="Branch 0 was taken 159415 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3658954 times"> + </span>]:<span class="tlaGNC">     3818369 :     if (stage == INITSTAGE_LOCAL) {</span></span>
+<span id="L29"><span class="lineNum">      29</span>                 :<span class="tlaGNC">      159415 :         forwardServiceRegistration = par(&quot;forwardServiceRegistration&quot;);</span></span>
+<span id="L30"><span class="lineNum">      30</span>                 :<span class="tlaGNC">      159415 :         forwardProtocolRegistration = par(&quot;forwardProtocolRegistration&quot;);</span></span>
+<span id="L31"><span class="lineNum">      31</span>                 :<span class="tlaGNC">      159415 :         interfaceTable.reference(this, &quot;interfaceTableModule&quot;, true);</span></span>
+<span id="L32"><span class="lineNum">      32</span>                 :<span class="tlaGNC">      159415 :         WATCH(registeringAny);</span></span>
+<span id="L33"><span class="lineNum">      33</span>                 :<span class="tlaGNC">      159415 :         WATCH(socketIdToGateIndex);</span></span>
+<span id="L34"><span class="lineNum">      34</span>                 :<span class="tlaGNC">      159415 :         WATCH(interfaceIdToGateIndex);</span></span>
+<span id="L35"><span class="lineNum">      35</span>                 :<span class="tlaGNC">      159415 :         WATCH(serviceToGateIndex);</span></span>
+<span id="L36"><span class="lineNum">      36</span>                 :<span class="tlaGNC">      159415 :         WATCH(protocolToGateIndex);</span></span>
+<span id="L37"><span class="lineNum">      37</span>                 :<span class="tlaGNC">      159415 :     }</span></span>
+<span id="L38"><span class="lineNum">      38</span>         [<span class="tlaGBC" title="Branch 0 was taken 159035 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3499919 times"> + </span>]:<span class="tlaGNC">     3658954 :     else if (stage == INITSTAGE_LAST) {</span></span>
+<span id="L39"><span class="lineNum">      39</span>                 :<span class="tlaGNC">      159035 :         cValueMap *interfaceMapping = check_and_cast&lt;cValueMap *&gt;(par(&quot;interfaceMapping&quot;).objectValue());</span></span>
+<span id="L40"><span class="lineNum">      40</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 159035 times"> + </span>]:<span class="tlaGNC">      159035 :         for (int i = 0; i &lt; interfaceMapping-&gt;size(); i++) {</span></span>
+<span id="L41"><span class="lineNum">      41</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             auto&amp; entry = interfaceMapping-&gt;getEntry(i);</span></span>
+<span id="L42"><span class="lineNum">      42</span>                 :<span class="tlaUNC">           0 :             auto moduleName = entry.second.stringValue();</span></span>
+<span id="L43"><span class="lineNum">      43</span>                 :<span class="tlaUNC">           0 :             auto gateIndex = getGateIndexToConnectedModule(moduleName);</span></span>
+<span id="L44"><span class="lineNum">      44</span>                 :<span class="tlaUNC">           0 :             auto interfaceName = entry.first;</span></span>
+<span id="L45"><span class="lineNum">      45</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             if (interfaceName == &quot;*&quot;) {</span></span>
+<span id="L46"><span class="lineNum">      46</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                 for (auto&amp; entry : interfaceIdToGateIndex)</span></span>
+<span id="L47"><span class="lineNum">      47</span>                 :<span class="tlaUNC">           0 :                     entry.second = gateIndex;</span></span>
+<span id="L48"><span class="lineNum">      48</span>                 :<span class="tlaUNC">           0 :             }</span></span>
+<span id="L49"><span class="lineNum">      49</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             else if (interfaceName == &quot;?&quot;)</span></span>
+<span id="L50"><span class="lineNum">      50</span>                 :<span class="tlaUNC">           0 :                 interfaceIdToGateIndex[-1] = gateIndex;</span></span>
+<span id="L51"><span class="lineNum">      51</span>                 :<span class="tlaUNC">           0 :             else {</span></span>
+<span id="L52"><span class="lineNum">      52</span>                 :<span class="tlaUNC">           0 :                 auto networkInterface = interfaceTable-&gt;findInterfaceByName(interfaceName.c_str());</span></span>
+<span id="L53"><span class="lineNum">      53</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                 if (networkInterface == nullptr)</span></span>
+<span id="L54"><span class="lineNum">      54</span>                 :<span class="tlaUNC">           0 :                     throw cRuntimeError(&quot;Cannot find network interface: %s&quot;, interfaceName.c_str());</span></span>
+<span id="L55"><span class="lineNum">      55</span>                 :<span class="tlaUNC">           0 :                 interfaceIdToGateIndex[networkInterface-&gt;getInterfaceId()] = gateIndex;</span></span>
+<span id="L56"><span class="lineNum">      56</span>                 :<span class="tlaUNC">           0 :             }</span></span>
+<span id="L57"><span class="lineNum">      57</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L58"><span class="lineNum">      58</span>                 :<span class="tlaGNC tlaBgGNC">      159035 :         cValueMap *serviceMapping = check_and_cast&lt;cValueMap *&gt;(par(&quot;serviceMapping&quot;).objectValue());</span></span>
+<span id="L59"><span class="lineNum">      59</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 159035 times"> + </span>]:<span class="tlaGNC">      159035 :         for (int i = 0; i &lt; serviceMapping-&gt;size(); i++) {</span></span>
+<span id="L60"><span class="lineNum">      60</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             auto&amp; entry = serviceMapping-&gt;getEntry(i);</span></span>
+<span id="L61"><span class="lineNum">      61</span>                 :<span class="tlaUNC">           0 :             auto moduleName = entry.second.stringValue();</span></span>
+<span id="L62"><span class="lineNum">      62</span>                 :<span class="tlaUNC">           0 :             auto gateIndex = getGateIndexToConnectedModule(moduleName);</span></span>
+<span id="L63"><span class="lineNum">      63</span>                 :<span class="tlaUNC">           0 :             auto protocolName = entry.first;</span></span>
+<span id="L64"><span class="lineNum">      64</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             if (protocolName == &quot;*&quot;) {</span></span>
+<span id="L65"><span class="lineNum">      65</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                 for (auto&amp; entry : serviceToGateIndex)</span></span>
+<span id="L66"><span class="lineNum">      66</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                     if (entry.first.servicePrimitive == SP_REQUEST)</span></span>
+<span id="L67"><span class="lineNum">      67</span>                 :<span class="tlaUNC">           0 :                         entry.second = gateIndex;</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :<span class="tlaUNC">           0 :             }</span></span>
+<span id="L69"><span class="lineNum">      69</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             else if (protocolName == &quot;?&quot;) {</span></span>
+<span id="L70"><span class="lineNum">      70</span>                 :<span class="tlaUNC">           0 :                 Key key(-1, SP_REQUEST);</span></span>
+<span id="L71"><span class="lineNum">      71</span>                 :<span class="tlaUNC">           0 :                 serviceToGateIndex[key] = gateIndex;</span></span>
+<span id="L72"><span class="lineNum">      72</span>                 :<span class="tlaUNC">           0 :             }</span></span>
+<span id="L73"><span class="lineNum">      73</span>                 :<span class="tlaUNC">           0 :             else {</span></span>
+<span id="L74"><span class="lineNum">      74</span>                 :<span class="tlaUNC">           0 :                 Key key(Protocol::getProtocol(protocolName.c_str())-&gt;getId(), SP_REQUEST);</span></span>
+<span id="L75"><span class="lineNum">      75</span>                 :<span class="tlaUNC">           0 :                 serviceToGateIndex[key] = gateIndex;</span></span>
+<span id="L76"><span class="lineNum">      76</span>                 :<span class="tlaUNC">           0 :             }</span></span>
+<span id="L77"><span class="lineNum">      77</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L78"><span class="lineNum">      78</span>                 :<span class="tlaGNC tlaBgGNC">      159035 :         cValueMap *protocolMapping = check_and_cast&lt;cValueMap *&gt;(par(&quot;protocolMapping&quot;).objectValue());</span></span>
+<span id="L79"><span class="lineNum">      79</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 159035 times"> + </span>]:<span class="tlaGNC">      159035 :         for (int i = 0; i &lt; protocolMapping-&gt;size(); i++) {</span></span>
+<span id="L80"><span class="lineNum">      80</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             auto&amp; entry = protocolMapping-&gt;getEntry(i);</span></span>
+<span id="L81"><span class="lineNum">      81</span>                 :<span class="tlaUNC">           0 :             auto moduleName = entry.second.stringValue();</span></span>
+<span id="L82"><span class="lineNum">      82</span>                 :<span class="tlaUNC">           0 :             auto gateIndex = getGateIndexToConnectedModule(moduleName);</span></span>
+<span id="L83"><span class="lineNum">      83</span>                 :<span class="tlaUNC">           0 :             auto protocolName = entry.first;</span></span>
+<span id="L84"><span class="lineNum">      84</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             if (protocolName == &quot;*&quot;) {</span></span>
+<span id="L85"><span class="lineNum">      85</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                 for (auto&amp; entry : protocolToGateIndex)</span></span>
+<span id="L86"><span class="lineNum">      86</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                     if (entry.first.servicePrimitive == SP_INDICATION)</span></span>
+<span id="L87"><span class="lineNum">      87</span>                 :<span class="tlaUNC">           0 :                         entry.second = gateIndex;</span></span>
+<span id="L88"><span class="lineNum">      88</span>                 :<span class="tlaUNC">           0 :             }</span></span>
+<span id="L89"><span class="lineNum">      89</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             else if (protocolName == &quot;?&quot;) {</span></span>
+<span id="L90"><span class="lineNum">      90</span>                 :<span class="tlaUNC">           0 :                 Key key(-1, SP_INDICATION);</span></span>
+<span id="L91"><span class="lineNum">      91</span>                 :<span class="tlaUNC">           0 :                 protocolToGateIndex[key] = gateIndex;</span></span>
+<span id="L92"><span class="lineNum">      92</span>                 :<span class="tlaUNC">           0 :             }</span></span>
+<span id="L93"><span class="lineNum">      93</span>                 :<span class="tlaUNC">           0 :             else {</span></span>
+<span id="L94"><span class="lineNum">      94</span>                 :<span class="tlaUNC">           0 :                 Key key(Protocol::getProtocol(protocolName.c_str())-&gt;getId(), SP_INDICATION);</span></span>
+<span id="L95"><span class="lineNum">      95</span>                 :<span class="tlaUNC">           0 :                 protocolToGateIndex[key] = gateIndex;</span></span>
+<span id="L96"><span class="lineNum">      96</span>                 :<span class="tlaUNC">           0 :             }</span></span>
+<span id="L97"><span class="lineNum">      97</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L98"><span class="lineNum">      98</span>                 :<span class="tlaGNC tlaBgGNC">      159035 :     }</span></span>
+<span id="L99"><span class="lineNum">      99</span>                 :<span class="tlaGNC">     3818369 : }</span></span>
+<span id="L100"><span class="lineNum">     100</span>                 :             : </span>
+<span id="L101"><span class="lineNum">     101</span>                 :             : void MessageDispatcher::arrived(cMessage *message, cGate *inGate, const SendOptions&amp; options, simtime_t time)</span>
+<span id="L102"><span class="lineNum">     102</span>                 :<span class="tlaGNC">   208377772 : {</span></span>
+<span id="L103"><span class="lineNum">     103</span>                 :<span class="tlaGNC">   208377772 :     Enter_Method(&quot;arrived&quot;);</span></span>
+<span id="L104"><span class="lineNum">     104</span>                 :<span class="tlaGNC">   208377772 :     cGate *outGate = nullptr;</span></span>
+<span id="L105"><span class="lineNum">     105</span>         [<span class="tlaGBC" title="Branch 0 was taken 207265591 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1112181 times"> + </span>]:<span class="tlaGNC">   208377772 :     if (message-&gt;isPacket()) {</span></span>
+<span id="L106"><span class="lineNum">     106</span>                 :<span class="tlaGNC">   207265591 :         auto packet = check_and_cast&lt;Packet *&gt;(message);</span></span>
+<span id="L107"><span class="lineNum">     107</span>                 :<span class="tlaGNC">   207265591 :         outGate = handlePacket(packet, inGate);</span></span>
+<span id="L108"><span class="lineNum">     108</span>                 :<span class="tlaGNC">   207265591 : #ifdef INET_WITH_QUEUEING</span></span>
+<span id="L109"><span class="lineNum">     109</span>                 :<span class="tlaGNC">   207265591 :         handlePacketProcessed(packet);</span></span>
+<span id="L110"><span class="lineNum">     110</span>                 :<span class="tlaGNC">   207265591 : #endif // #ifdef INET_WITH_QUEUEING</span></span>
+<span id="L111"><span class="lineNum">     111</span>                 :<span class="tlaGNC">   207265591 :     }</span></span>
+<span id="L112"><span class="lineNum">     112</span>                 :<span class="tlaGNC">     1112181 :     else</span></span>
+<span id="L113"><span class="lineNum">     113</span>                 :<span class="tlaGNC">     1112181 :         outGate = handleMessage(check_and_cast&lt;Message *&gt;(message), inGate);</span></span>
+<span id="L114"><span class="lineNum">     114</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 208377772 times"> + </span>]:<span class="tlaGNC">   208377772 :     if (outGate-&gt;getNextGate() == nullptr)</span></span>
+<span id="L115"><span class="lineNum">     115</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         throw cRuntimeError(&quot;Output gate '%s' is not connected while dispatching message '%s' (%s) which arrived on gate '%s'&quot;,</span></span>
+<span id="L116"><span class="lineNum">     116</span>                 :<span class="tlaUNC">           0 :             outGate-&gt;getFullName(), message-&gt;getName(), message-&gt;getClassName(), inGate-&gt;getFullName());</span></span>
+<span id="L117"><span class="lineNum">     117</span>                 :<span class="tlaGNC tlaBgGNC">   208377772 :     bool keepMsg = outGate-&gt;deliver(message, options, time);</span></span>
+<span id="L118"><span class="lineNum">     118</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 208377772 times"> + </span>]:<span class="tlaGNC">   208377772 :     if (!keepMsg) {</span></span>
+<span id="L119"><span class="lineNum">     119</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         take(message);</span></span>
+<span id="L120"><span class="lineNum">     120</span>                 :<span class="tlaUNC">           0 :         delete message;</span></span>
+<span id="L121"><span class="lineNum">     121</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L122"><span class="lineNum">     122</span>                 :<span class="tlaGNC tlaBgGNC">   208377772 : #ifdef INET_WITH_QUEUEING</span></span>
+<span id="L123"><span class="lineNum">     123</span>                 :<span class="tlaGNC">   208377772 : #endif // #ifdef INET_WITH_QUEUEING</span></span>
+<span id="L124"><span class="lineNum">     124</span>                 :<span class="tlaGNC">   208377772 : }</span></span>
+<span id="L125"><span class="lineNum">     125</span>                 :             : </span>
+<span id="L126"><span class="lineNum">     126</span>                 :             : #ifdef INET_WITH_QUEUEING</span>
+<span id="L127"><span class="lineNum">     127</span>                 :             : bool MessageDispatcher::canPushSomePacket(const cGate *inGate) const</span>
+<span id="L128"><span class="lineNum">     128</span>                 :<span class="tlaGNC">          13 : {</span></span>
+<span id="L129"><span class="lineNum">     129</span>                 :<span class="tlaGNC">          13 :     int size = gateSize(&quot;out&quot;);</span></span>
+<span id="L130"><span class="lineNum">     130</span>         [<span class="tlaGBC" title="Branch 0 was taken 26 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 13 times"> + </span>]:<span class="tlaGNC">          39 :     for (int i = 0; i &lt; size; i++) {</span></span>
+<span id="L131"><span class="lineNum">     131</span>                 :<span class="tlaGNC">          26 :         auto outGate = const_cast&lt;MessageDispatcher *&gt;(this)-&gt;gate(&quot;out&quot;, i);</span></span>
+<span id="L132"><span class="lineNum">     132</span>                 :<span class="tlaGNC">          26 :         auto consumer = findConnectedModule&lt;queueing::IPassivePacketSink&gt;(outGate);</span></span>
+<span id="L133"><span class="lineNum">     133</span> [<span class="tlaGBC" title="Branch 0 was taken 13 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 13 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 13 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">          26 :         if (consumer != nullptr &amp;&amp; !dynamic_cast&lt;MessageDispatcher *&gt;(consumer) &amp;&amp; !consumer-&gt;canPushSomePacket(outGate-&gt;getPathEndGate()))</span></span>
+<span class="lineNum">        </span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 13 times"> + </span>]
+<span id="L134"><span class="lineNum">     134</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             return false;</span></span>
+<span id="L135"><span class="lineNum">     135</span>                 :<span class="tlaGNC tlaBgGNC">          26 :     }</span></span>
+<span id="L136"><span class="lineNum">     136</span>                 :<span class="tlaGNC">          13 :     return true;</span></span>
+<span id="L137"><span class="lineNum">     137</span>                 :<span class="tlaGNC">          13 : }</span></span>
+<span id="L138"><span class="lineNum">     138</span>                 :             : </span>
+<span id="L139"><span class="lineNum">     139</span>                 :             : bool MessageDispatcher::canPushPacket(Packet *packet, const cGate *inGate) const</span>
+<span id="L140"><span class="lineNum">     140</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L141"><span class="lineNum">     141</span>                 :<span class="tlaUNC">           0 :     auto outGate = const_cast&lt;MessageDispatcher *&gt;(this)-&gt;handlePacket(packet, inGate);</span></span>
+<span id="L142"><span class="lineNum">     142</span>                 :<span class="tlaUNC">           0 :     auto consumer = findConnectedModule&lt;queueing::IPassivePacketSink&gt;(outGate);</span></span>
+<span id="L143"><span class="lineNum">     143</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     return consumer != nullptr &amp;&amp; !dynamic_cast&lt;MessageDispatcher *&gt;(consumer) &amp;&amp; consumer-&gt;canPushPacket(packet, outGate-&gt;getPathEndGate());</span></span>
+<span class="lineNum">        </span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L144"><span class="lineNum">     144</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L145"><span class="lineNum">     145</span>                 :             : </span>
+<span id="L146"><span class="lineNum">     146</span>                 :             : void MessageDispatcher::pushPacket(Packet *packet, const cGate *inGate)</span>
+<span id="L147"><span class="lineNum">     147</span>                 :<span class="tlaGNC tlaBgGNC">    10729116 : {</span></span>
+<span id="L148"><span class="lineNum">     148</span>                 :<span class="tlaGNC">    10729116 :     Enter_Method(&quot;pushPacket&quot;);</span></span>
+<span id="L149"><span class="lineNum">     149</span>                 :<span class="tlaGNC">    10729116 :     take(packet);</span></span>
+<span id="L150"><span class="lineNum">     150</span>                 :<span class="tlaGNC">    10729116 :     auto outGate = handlePacket(packet, inGate);</span></span>
+<span id="L151"><span class="lineNum">     151</span>                 :<span class="tlaGNC">    10729116 :     queueing::PassivePacketSinkRef consumer;</span></span>
+<span id="L152"><span class="lineNum">     152</span>                 :<span class="tlaGNC">    10729116 :     consumer.reference(outGate, false);</span></span>
+<span id="L153"><span class="lineNum">     153</span>                 :<span class="tlaGNC">    10729116 :     handlePacketProcessed(packet);</span></span>
+<span id="L154"><span class="lineNum">     154</span>                 :<span class="tlaGNC">    10729116 :     pushOrSendPacket(packet, outGate, consumer);</span></span>
+<span id="L155"><span class="lineNum">     155</span>                 :<span class="tlaGNC">    10729116 : }</span></span>
+<span id="L156"><span class="lineNum">     156</span>                 :             : </span>
+<span id="L157"><span class="lineNum">     157</span>                 :             : void MessageDispatcher::pushPacketStart(Packet *packet, const cGate *inGate, bps datarate)</span>
+<span id="L158"><span class="lineNum">     158</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L159"><span class="lineNum">     159</span>                 :<span class="tlaUNC">           0 :     Enter_Method(&quot;pushPacketStart&quot;);</span></span>
+<span id="L160"><span class="lineNum">     160</span>                 :<span class="tlaUNC">           0 :     take(packet);</span></span>
+<span id="L161"><span class="lineNum">     161</span>                 :<span class="tlaUNC">           0 :     auto outGate = handlePacket(packet, inGate);</span></span>
+<span id="L162"><span class="lineNum">     162</span>                 :<span class="tlaUNC">           0 :     queueing::PassivePacketSinkRef consumer;</span></span>
+<span id="L163"><span class="lineNum">     163</span>                 :<span class="tlaUNC">           0 :     consumer.reference(outGate, false);</span></span>
+<span id="L164"><span class="lineNum">     164</span>                 :<span class="tlaUNC">           0 :     pushOrSendPacketStart(packet, outGate, consumer, datarate, packet-&gt;getTransmissionId());</span></span>
+<span id="L165"><span class="lineNum">     165</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L166"><span class="lineNum">     166</span>                 :             : </span>
+<span id="L167"><span class="lineNum">     167</span>                 :             : void MessageDispatcher::pushPacketEnd(Packet *packet, const cGate *inGate)</span>
+<span id="L168"><span class="lineNum">     168</span>                 :<span class="tlaUNC">           0 : {</span></span>
+<span id="L169"><span class="lineNum">     169</span>                 :<span class="tlaUNC">           0 :     Enter_Method(&quot;pushPacketEnd&quot;);</span></span>
+<span id="L170"><span class="lineNum">     170</span>                 :<span class="tlaUNC">           0 :     take(packet);</span></span>
+<span id="L171"><span class="lineNum">     171</span>                 :<span class="tlaUNC">           0 :     auto outGate = handlePacket(packet, inGate);</span></span>
+<span id="L172"><span class="lineNum">     172</span>                 :<span class="tlaUNC">           0 :     queueing::PassivePacketSinkRef consumer;</span></span>
+<span id="L173"><span class="lineNum">     173</span>                 :<span class="tlaUNC">           0 :     consumer.reference(outGate, false);</span></span>
+<span id="L174"><span class="lineNum">     174</span>                 :<span class="tlaUNC">           0 :     handlePacketProcessed(packet);</span></span>
+<span id="L175"><span class="lineNum">     175</span>                 :<span class="tlaUNC">           0 :     pushOrSendPacketEnd(packet, outGate, consumer, packet-&gt;getTransmissionId());</span></span>
+<span id="L176"><span class="lineNum">     176</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L177"><span class="lineNum">     177</span>                 :             : </span>
+<span id="L178"><span class="lineNum">     178</span>                 :             : void MessageDispatcher::handleCanPushPacketChanged(const cGate *outGate)</span>
+<span id="L179"><span class="lineNum">     179</span>                 :<span class="tlaGNC tlaBgGNC">       37191 : {</span></span>
+<span id="L180"><span class="lineNum">     180</span>                 :<span class="tlaGNC">       37191 :     int size = gateSize(&quot;in&quot;);</span></span>
+<span id="L181"><span class="lineNum">     181</span>         [<span class="tlaGBC" title="Branch 0 was taken 194203 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 37191 times"> + </span>]:<span class="tlaGNC">      231394 :     for (int i = 0; i &lt; size; i++) {</span></span>
+<span id="L182"><span class="lineNum">     182</span>                 :<span class="tlaGNC">      194203 :         auto inGate = gate(&quot;in&quot;, i);</span></span>
+<span id="L183"><span class="lineNum">     183</span>                 :<span class="tlaGNC">      194203 :         auto producer = findConnectedModule&lt;queueing::IActivePacketSource&gt;(inGate);</span></span>
+<span id="L184"><span class="lineNum">     184</span> [<span class="tlaGBC" title="Branch 0 was taken 49394 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 144809 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 15090 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 34304 times"> + </span>]:<span class="tlaGNC">      194203 :         if (producer != nullptr &amp;&amp; !dynamic_cast&lt;MessageDispatcher *&gt;(producer) &amp;&amp; outGate-&gt;getOwnerModule() != inGate-&gt;getOwnerModule())</span></span>
+<span class="lineNum">        </span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 15090 times"> + </span>]
+<span id="L185"><span class="lineNum">     185</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             producer-&gt;handleCanPushPacketChanged(inGate-&gt;getPathStartGate());</span></span>
+<span id="L186"><span class="lineNum">     186</span>                 :<span class="tlaGNC tlaBgGNC">      194203 :     }</span></span>
+<span id="L187"><span class="lineNum">     187</span>                 :<span class="tlaGNC">       37191 : }</span></span>
+<span id="L188"><span class="lineNum">     188</span>                 :             : </span>
+<span id="L189"><span class="lineNum">     189</span>                 :             : void MessageDispatcher::handlePushPacketProcessed(Packet *packet, const cGate *gate, bool successful)</span>
+<span id="L190"><span class="lineNum">     190</span>                 :<span class="tlaGNC">           2 : {</span></span>
+<span id="L191"><span class="lineNum">     191</span>                 :<span class="tlaGNC">           2 : }</span></span>
+<span id="L192"><span class="lineNum">     192</span>                 :             : </span>
+<span id="L193"><span class="lineNum">     193</span>                 :             : #endif // #ifdef INET_WITH_QUEUEING</span>
+<span id="L194"><span class="lineNum">     194</span>                 :             : </span>
+<span id="L195"><span class="lineNum">     195</span>                 :             : cGate *MessageDispatcher::handlePacket(Packet *packet, const cGate *inGate)</span>
+<span id="L196"><span class="lineNum">     196</span>                 :<span class="tlaGNC">   217994707 : {</span></span>
+<span id="L197"><span class="lineNum">     197</span>                 :<span class="tlaGNC">   217994707 :     const auto&amp; socketInd = packet-&gt;findTag&lt;SocketInd&gt;();</span></span>
+<span id="L198"><span class="lineNum">     198</span>         [<span class="tlaGBC" title="Branch 0 was taken 6069975 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 211924732 times"> + </span>]:<span class="tlaGNC">   217994707 :     if (socketInd != nullptr) {</span></span>
+<span id="L199"><span class="lineNum">     199</span>                 :<span class="tlaGNC">     6069975 :         int socketId = socketInd-&gt;getSocketId();</span></span>
+<span id="L200"><span class="lineNum">     200</span>                 :<span class="tlaGNC">     6069975 :         auto it = socketIdToGateIndex.find(socketId);</span></span>
+<span id="L201"><span class="lineNum">     201</span>         [<span class="tlaGBC" title="Branch 0 was taken 6069975 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">     6069975 :         if (it != socketIdToGateIndex.end()) {</span></span>
+<span id="L202"><span class="lineNum">     202</span>                 :<span class="tlaGNC">     6069975 :             auto outGate = gate(&quot;out&quot;, it-&gt;second);</span></span>
+<span id="L203"><span class="lineNum">     203</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 49500 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 49500 times"> + </span>]:<span class="tlaGNC">     6069975 :             EV_INFO &lt;&lt; &quot;Dispatching packet to socket&quot; &lt;&lt; EV_FIELD(socketId) &lt;&lt; EV_FIELD(inGate) &lt;&lt; EV_FIELD(outGate) &lt;&lt; EV_FIELD(packet) &lt;&lt; EV_ENDL;</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 49500 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 49500 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 49500 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 49500 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 49500 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 49500 times"> + </span>]
+<span id="L204"><span class="lineNum">     204</span>                 :<span class="tlaGNC">     6069975 :             return outGate;</span></span>
+<span id="L205"><span class="lineNum">     205</span>                 :<span class="tlaGNC">     6069975 :         }</span></span>
+<span id="L206"><span class="lineNum">     206</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         else</span></span>
+<span id="L207"><span class="lineNum">     207</span>                 :<span class="tlaUNC">           0 :             throw cRuntimeError(&quot;handlePacket(): Unknown socket: socketId = %d, pathStartGate = %s, pathEndGate = %s&quot;, socketId, inGate-&gt;getPathStartGate()-&gt;getFullPath().c_str(), inGate-&gt;getPathEndGate()-&gt;getFullPath().c_str());</span></span>
+<span id="L208"><span class="lineNum">     208</span>                 :<span class="tlaGNC tlaBgGNC">     6069975 :     }</span></span>
+<span id="L209"><span class="lineNum">     209</span>                 :<span class="tlaGNC">   211924732 :     const auto&amp; dispatchProtocolReq = packet-&gt;findTag&lt;DispatchProtocolReq&gt;();</span></span>
+<span id="L210"><span class="lineNum">     210</span>         [<span class="tlaGBC" title="Branch 0 was taken 156020253 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 55904479 times"> + </span>]:<span class="tlaGNC">   211924732 :     if (dispatchProtocolReq != nullptr) {</span></span>
+<span id="L211"><span class="lineNum">     211</span>                 :<span class="tlaGNC">   156020253 :         const auto&amp; packetProtocolTag = packet-&gt;findTag&lt;PacketProtocolTag&gt;();</span></span>
+<span id="L212"><span class="lineNum">     212</span>                 :<span class="tlaGNC">   156020253 :         auto servicePrimitive = dispatchProtocolReq-&gt;getServicePrimitive();</span></span>
+<span id="L213"><span class="lineNum">     213</span>                 :             :         // KLUDGE eliminate this by adding ServicePrimitive to every DispatchProtocolReq</span>
+<span id="L214"><span class="lineNum">     214</span>         [<span class="tlaGBC" title="Branch 0 was taken 147493126 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 8527127 times"> + </span>]:<span class="tlaGNC">   156020253 :         if (servicePrimitive == static_cast&lt;ServicePrimitive&gt;(-1)) {</span></span>
+<span id="L215"><span class="lineNum">     215</span> [<span class="tlaGBC" title="Branch 0 was taken 142494533 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4998593 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 87856800 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 54637733 times"> + </span>]:<span class="tlaGNC">   147493126 :             if (packetProtocolTag != nullptr &amp;&amp; dispatchProtocolReq-&gt;getProtocol() == packetProtocolTag-&gt;getProtocol())</span></span>
+<span id="L216"><span class="lineNum">     216</span>                 :<span class="tlaGNC">    87856800 :                 servicePrimitive = SP_INDICATION;</span></span>
+<span id="L217"><span class="lineNum">     217</span>                 :<span class="tlaGNC">    59636326 :             else</span></span>
+<span id="L218"><span class="lineNum">     218</span>                 :<span class="tlaGNC">    59636326 :                 servicePrimitive = SP_REQUEST;</span></span>
+<span id="L219"><span class="lineNum">     219</span>                 :<span class="tlaGNC">   147493126 :         }</span></span>
+<span id="L220"><span class="lineNum">     220</span>                 :<span class="tlaGNC">   156020253 :         auto protocol = dispatchProtocolReq-&gt;getProtocol();</span></span>
+<span id="L221"><span class="lineNum">     221</span>         [<span class="tlaGBC" title="Branch 0 was taken 59639650 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 96380603 times"> + </span>]:<span class="tlaGNC">   156020253 :         if (servicePrimitive == SP_REQUEST) {</span></span>
+<span id="L222"><span class="lineNum">     222</span>                 :<span class="tlaGNC">    59639650 :             auto it = serviceToGateIndex.find(Key(protocol-&gt;getId(), servicePrimitive));</span></span>
+<span id="L223"><span class="lineNum">     223</span>         [<span class="tlaGBC" title="Branch 0 was taken 59639650 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">    59639650 :             if (it != serviceToGateIndex.end()) {</span></span>
+<span id="L224"><span class="lineNum">     224</span>                 :<span class="tlaGNC">    59639650 :                 auto outGate = gate(&quot;out&quot;, it-&gt;second);</span></span>
+<span id="L225"><span class="lineNum">     225</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 329090 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 329090 times"> + </span>]:<span class="tlaGNC">    59639650 :                 EV_INFO &lt;&lt; &quot;Dispatching packet to service&quot; &lt;&lt; EV_FIELD(protocol, *protocol) &lt;&lt; EV_FIELD(servicePrimitive) &lt;&lt; EV_FIELD(inGate) &lt;&lt; EV_FIELD(outGate) &lt;&lt; EV_FIELD(packet) &lt;&lt; EV_ENDL;</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 329090 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 329090 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 329090 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 329090 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 329090 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 329090 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 329090 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 329090 times"> + </span>]
+<span id="L226"><span class="lineNum">     226</span>                 :<span class="tlaGNC">    59639650 :                 return outGate;</span></span>
+<span id="L227"><span class="lineNum">     227</span>                 :<span class="tlaGNC">    59639650 :             }</span></span>
+<span id="L228"><span class="lineNum">     228</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             else {</span></span>
+<span id="L229"><span class="lineNum">     229</span>                 :<span class="tlaUNC">           0 :                 auto it = serviceToGateIndex.find(Key(-1, servicePrimitive));</span></span>
+<span id="L230"><span class="lineNum">     230</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                 if (it != serviceToGateIndex.end()) {</span></span>
+<span id="L231"><span class="lineNum">     231</span>                 :<span class="tlaUNC">           0 :                     auto outGate = gate(&quot;out&quot;, it-&gt;second);</span></span>
+<span id="L232"><span class="lineNum">     232</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                     EV_INFO &lt;&lt; &quot;Dispatching packet to any service&quot; &lt;&lt; EV_FIELD(servicePrimitive) &lt;&lt; EV_FIELD(inGate) &lt;&lt; EV_FIELD(outGate) &lt;&lt; EV_FIELD(packet) &lt;&lt; EV_ENDL;</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L233"><span class="lineNum">     233</span>                 :<span class="tlaUNC">           0 :                     return outGate;</span></span>
+<span id="L234"><span class="lineNum">     234</span>                 :<span class="tlaUNC">           0 :                 }</span></span>
+<span id="L235"><span class="lineNum">     235</span>                 :<span class="tlaUNC">           0 :                 else</span></span>
+<span id="L236"><span class="lineNum">     236</span>                 :<span class="tlaUNC">           0 :                     throw cRuntimeError(&quot;handlePacket(): Unknown service: protocolId = %d, protocolName = %s, servicePrimitive = REQUEST, pathStartGate = %s, pathEndGate = %s\nConnected protocols can register using registerService() or the serviceMapping parameter can be used to specify the output gate&quot;, protocol-&gt;getId(), protocol-&gt;getName(), inGate-&gt;getPathStartGate()-&gt;getFullPath().c_str(), inGate-&gt;getPathEndGate()-&gt;getFullPath().c_str());</span></span>
+<span id="L237"><span class="lineNum">     237</span>                 :<span class="tlaUNC">           0 :             }</span></span>
+<span id="L238"><span class="lineNum">     238</span>                 :<span class="tlaGNC tlaBgGNC">    59639650 :         }</span></span>
+<span id="L239"><span class="lineNum">     239</span>         [<span class="tlaGBC" title="Branch 0 was taken 96380603 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">    96380603 :         else if (servicePrimitive == SP_INDICATION) {</span></span>
+<span id="L240"><span class="lineNum">     240</span>                 :<span class="tlaGNC">    96380603 :             auto it = protocolToGateIndex.find(Key(protocol-&gt;getId(), servicePrimitive));</span></span>
+<span id="L241"><span class="lineNum">     241</span>         [<span class="tlaGBC" title="Branch 0 was taken 79594397 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 16786206 times"> + </span>]:<span class="tlaGNC">    96380603 :             if (it != protocolToGateIndex.end()) {</span></span>
+<span id="L242"><span class="lineNum">     242</span>                 :<span class="tlaGNC">    79594397 :                 auto outGate = gate(&quot;out&quot;, it-&gt;second);</span></span>
+<span id="L243"><span class="lineNum">     243</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 424255 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 424255 times"> + </span>]:<span class="tlaGNC">    79594397 :                 EV_INFO &lt;&lt; &quot;Dispatching packet to protocol&quot; &lt;&lt; EV_FIELD(protocol, *protocol) &lt;&lt; EV_FIELD(servicePrimitive) &lt;&lt; EV_FIELD(inGate) &lt;&lt; EV_FIELD(outGate) &lt;&lt; EV_FIELD(packet) &lt;&lt; EV_ENDL;</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 424255 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 424255 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 424255 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 424255 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 424255 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 424255 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 424255 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 424255 times"> + </span>]
+<span id="L244"><span class="lineNum">     244</span>                 :<span class="tlaGNC">    79594397 :                 return outGate;</span></span>
+<span id="L245"><span class="lineNum">     245</span>                 :<span class="tlaGNC">    79594397 :             }</span></span>
+<span id="L246"><span class="lineNum">     246</span>                 :<span class="tlaGNC">    16786206 :             else {</span></span>
+<span id="L247"><span class="lineNum">     247</span>                 :<span class="tlaGNC">    16786206 :                 auto it = protocolToGateIndex.find(Key(-1, servicePrimitive));</span></span>
+<span id="L248"><span class="lineNum">     248</span>         [<span class="tlaGBC" title="Branch 0 was taken 16786206 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">    16786206 :                 if (it != protocolToGateIndex.end()) {</span></span>
+<span id="L249"><span class="lineNum">     249</span>                 :<span class="tlaGNC">    16786206 :                     auto outGate = gate(&quot;out&quot;, it-&gt;second);</span></span>
+<span id="L250"><span class="lineNum">     250</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 15851 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 15851 times"> + </span>]:<span class="tlaGNC">    16786206 :                     EV_INFO &lt;&lt; &quot;Dispatching packet to any protocol&quot; &lt;&lt; EV_FIELD(servicePrimitive) &lt;&lt; EV_FIELD(inGate) &lt;&lt; EV_FIELD(outGate) &lt;&lt; EV_FIELD(packet) &lt;&lt; EV_ENDL;</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 15851 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 15851 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 15851 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 15851 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 15851 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 15851 times"> + </span>]
+<span id="L251"><span class="lineNum">     251</span>                 :<span class="tlaGNC">    16786206 :                     return outGate;</span></span>
+<span id="L252"><span class="lineNum">     252</span>                 :<span class="tlaGNC">    16786206 :                 }</span></span>
+<span id="L253"><span class="lineNum">     253</span>                 :<span class="tlaUNC tlaBgUNC">           0 :                 else</span></span>
+<span id="L254"><span class="lineNum">     254</span>                 :<span class="tlaUNC">           0 :                     throw cRuntimeError(&quot;handlePacket(): Unknown protocol: protocolId = %d, protocolName = %s, servicePrimitive = INDICATION, pathStartGate = %s, pathEndGate = %s\nConnected protocols can register using registerProtocol() or the protocolMapping parameter can be used to specify the output gate&quot;, protocol-&gt;getId(), protocol-&gt;getName(), inGate-&gt;getPathStartGate()-&gt;getFullPath().c_str(), inGate-&gt;getPathEndGate()-&gt;getFullPath().c_str());</span></span>
+<span id="L255"><span class="lineNum">     255</span>                 :<span class="tlaGNC tlaBgGNC">    16786206 :             }</span></span>
+<span id="L256"><span class="lineNum">     256</span>                 :<span class="tlaGNC">    96380603 :         }</span></span>
+<span id="L257"><span class="lineNum">     257</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         else</span></span>
+<span id="L258"><span class="lineNum">     258</span>                 :<span class="tlaUNC">           0 :             throw cRuntimeError(&quot;handlePacket(): Unknown service primitive: servicePrimitive = %d, pathStartGate = %s, pathEndGate = %s&quot;, static_cast&lt;int&gt;(servicePrimitive), inGate-&gt;getPathStartGate()-&gt;getFullPath().c_str(), inGate-&gt;getPathEndGate()-&gt;getFullPath().c_str());</span></span>
+<span id="L259"><span class="lineNum">     259</span>                 :<span class="tlaGNC tlaBgGNC">   156020253 :     }</span></span>
+<span id="L260"><span class="lineNum">     260</span>                 :<span class="tlaGNC">    55904479 :     const auto&amp; interfaceReq = packet-&gt;findTag&lt;InterfaceReq&gt;();</span></span>
+<span id="L261"><span class="lineNum">     261</span>         [<span class="tlaGBC" title="Branch 0 was taken 55904479 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">    55904479 :     if (interfaceReq != nullptr) {</span></span>
+<span id="L262"><span class="lineNum">     262</span>                 :<span class="tlaGNC">    55904479 :         int interfaceId = interfaceReq-&gt;getInterfaceId();</span></span>
+<span id="L263"><span class="lineNum">     263</span>                 :<span class="tlaGNC">    55904479 :         auto it = interfaceIdToGateIndex.find(interfaceId);</span></span>
+<span id="L264"><span class="lineNum">     264</span>         [<span class="tlaGBC" title="Branch 0 was taken 55904478 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:<span class="tlaGNC">    55904479 :         if (it != interfaceIdToGateIndex.end()) {</span></span>
+<span id="L265"><span class="lineNum">     265</span>                 :<span class="tlaGNC">    55904478 :             auto outGate = gate(&quot;out&quot;, it-&gt;second);</span></span>
+<span id="L266"><span class="lineNum">     266</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 312977 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 312977 times"> + </span>]:<span class="tlaGNC">    55904478 :             EV_INFO &lt;&lt; &quot;Dispatching packet to network interface&quot; &lt;&lt; EV_FIELD(interfaceId) &lt;&lt; EV_FIELD(inGate) &lt;&lt; EV_FIELD(outGate) &lt;&lt; EV_FIELD(packet) &lt;&lt; EV_ENDL;</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 312977 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 312977 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 312977 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 312977 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 312977 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 312977 times"> + </span>]
+<span id="L267"><span class="lineNum">     267</span>                 :<span class="tlaGNC">    55904478 :             return outGate;</span></span>
+<span id="L268"><span class="lineNum">     268</span>                 :<span class="tlaGNC">    55904478 :         }</span></span>
+<span id="L269"><span class="lineNum">     269</span>                 :<span class="tlaGNC">           1 :         else {</span></span>
+<span id="L270"><span class="lineNum">     270</span>                 :<span class="tlaGNC">           1 :             auto it = interfaceIdToGateIndex.find(-1);</span></span>
+<span id="L271"><span class="lineNum">     271</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:<span class="tlaGNC">           1 :             if (it != interfaceIdToGateIndex.end()) {</span></span>
+<span id="L272"><span class="lineNum">     272</span>                 :<span class="tlaUNC tlaBgUNC">           0 :                 auto outGate = gate(&quot;out&quot;, it-&gt;second);</span></span>
+<span id="L273"><span class="lineNum">     273</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                 EV_INFO &lt;&lt; &quot;Dispatching packet to network interface&quot; &lt;&lt; EV_FIELD(interfaceId) &lt;&lt; EV_FIELD(inGate) &lt;&lt; EV_FIELD(outGate) &lt;&lt; EV_FIELD(packet) &lt;&lt; EV_ENDL;</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L274"><span class="lineNum">     274</span>                 :<span class="tlaUNC">           0 :                 return outGate;</span></span>
+<span id="L275"><span class="lineNum">     275</span>                 :<span class="tlaUNC">           0 :             }</span></span>
+<span id="L276"><span class="lineNum">     276</span>                 :<span class="tlaGNC tlaBgGNC">           1 :             else</span></span>
+<span id="L277"><span class="lineNum">     277</span>                 :<span class="tlaGNC">           1 :                 throw cRuntimeError(&quot;handlePacket(): Unknown network interface: interfaceId = %d, pathStartGate = %s, pathEndGate = %s\nConnected network interfaces can register using registerInterface() or the interfaceMapping parameter can be used to specify the output gate&quot;, interfaceId, inGate-&gt;getPathStartGate()-&gt;getFullPath().c_str(), inGate-&gt;getPathEndGate()-&gt;getFullPath().c_str());</span></span>
+<span id="L278"><span class="lineNum">     278</span>                 :<span class="tlaGNC">           1 :         }</span></span>
+<span id="L279"><span class="lineNum">     279</span>                 :<span class="tlaGNC">    55904479 :     }</span></span>
+<span id="L280"><span class="lineNum">     280</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     throw cRuntimeError(&quot;handlePacket(): Unknown packet: %s(%s), pathStartGate = %s, pathEndGate = %s&quot;, packet-&gt;getName(), packet-&gt;getClassName(), inGate-&gt;getPathStartGate()-&gt;getFullPath().c_str(), inGate-&gt;getPathEndGate()-&gt;getFullPath().c_str());</span></span>
+<span id="L281"><span class="lineNum">     281</span>                 :<span class="tlaGNC tlaBgGNC">    55904479 : }</span></span>
+<span id="L282"><span class="lineNum">     282</span>                 :             : </span>
+<span id="L283"><span class="lineNum">     283</span>                 :             : cGate *MessageDispatcher::handleMessage(Message *message, cGate *inGate)</span>
+<span id="L284"><span class="lineNum">     284</span>                 :<span class="tlaGNC">     1112181 : {</span></span>
+<span id="L285"><span class="lineNum">     285</span>                 :<span class="tlaGNC">     1112181 :     const auto&amp; socketReq = message-&gt;findTag&lt;SocketReq&gt;();</span></span>
+<span id="L286"><span class="lineNum">     286</span>         [<span class="tlaGBC" title="Branch 0 was taken 528286 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 583895 times"> + </span>]:<span class="tlaGNC">     1112181 :     if (socketReq != nullptr) {</span></span>
+<span id="L287"><span class="lineNum">     287</span>                 :<span class="tlaGNC">      528286 :         int socketReqId = socketReq-&gt;getSocketId();</span></span>
+<span id="L288"><span class="lineNum">     288</span>                 :<span class="tlaGNC">      528286 :         auto it = socketIdToGateIndex.find(socketReqId);</span></span>
+<span id="L289"><span class="lineNum">     289</span>         [<span class="tlaGBC" title="Branch 0 was taken 127001 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 401285 times"> + </span>]:<span class="tlaGNC">      528286 :         if (it == socketIdToGateIndex.end())</span></span>
+<span id="L290"><span class="lineNum">     290</span>                 :<span class="tlaGNC">      127001 :             socketIdToGateIndex[socketReqId] = inGate-&gt;getIndex();</span></span>
+<span id="L291"><span class="lineNum">     291</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 401285 times"> + </span>]:<span class="tlaGNC">      401285 :         else if (it-&gt;first != socketReqId)</span></span>
+<span id="L292"><span class="lineNum">     292</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             throw cRuntimeError(&quot;handleMessage(): Socket is already registered: socketId = %d, current gateIndex = %d, new gateIndex = %d, pathStartGate = %s, pathEndGate = %s&quot;, socketReqId, it-&gt;second, inGate-&gt;getIndex(), inGate-&gt;getPathStartGate()-&gt;getFullPath().c_str(), inGate-&gt;getPathEndGate()-&gt;getFullPath().c_str());</span></span>
+<span id="L293"><span class="lineNum">     293</span>                 :<span class="tlaGNC tlaBgGNC">      528286 :     }</span></span>
+<span id="L294"><span class="lineNum">     294</span>                 :<span class="tlaGNC">     1112181 :     const auto&amp; socketInd = message-&gt;findTag&lt;SocketInd&gt;();</span></span>
+<span id="L295"><span class="lineNum">     295</span>         [<span class="tlaGBC" title="Branch 0 was taken 478555 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 633626 times"> + </span>]:<span class="tlaGNC">     1112181 :     if (socketInd != nullptr) {</span></span>
+<span id="L296"><span class="lineNum">     296</span>                 :<span class="tlaGNC">      478555 :         int socketId = socketInd-&gt;getSocketId();</span></span>
+<span id="L297"><span class="lineNum">     297</span>                 :<span class="tlaGNC">      478555 :         auto it = socketIdToGateIndex.find(socketId);</span></span>
+<span id="L298"><span class="lineNum">     298</span>         [<span class="tlaGBC" title="Branch 0 was taken 478555 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">      478555 :         if (it != socketIdToGateIndex.end()) {</span></span>
+<span id="L299"><span class="lineNum">     299</span>                 :<span class="tlaGNC">      478555 :             auto outGate = gate(&quot;out&quot;, it-&gt;second);</span></span>
+<span id="L300"><span class="lineNum">     300</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1460 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1460 times"> + </span>]:<span class="tlaGNC">      478555 :             EV_INFO &lt;&lt; &quot;Dispatching message to socket&quot; &lt;&lt; EV_FIELD(socketId) &lt;&lt; EV_FIELD(inGate) &lt;&lt; EV_FIELD(outGate) &lt;&lt; EV_FIELD(message) &lt;&lt; EV_ENDL;</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1460 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1460 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1460 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1460 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1460 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1460 times"> + </span>]
+<span id="L301"><span class="lineNum">     301</span>                 :<span class="tlaGNC">      478555 :             return outGate;</span></span>
+<span id="L302"><span class="lineNum">     302</span>                 :<span class="tlaGNC">      478555 :         }</span></span>
+<span id="L303"><span class="lineNum">     303</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         else</span></span>
+<span id="L304"><span class="lineNum">     304</span>                 :<span class="tlaUNC">           0 :             throw cRuntimeError(&quot;handleMessage(): Unknown socket: socketId = %d, pathStartGate = %s, pathEndGate = %s&quot;, socketId, inGate-&gt;getPathStartGate()-&gt;getFullPath().c_str(), inGate-&gt;getPathEndGate()-&gt;getFullPath().c_str());</span></span>
+<span id="L305"><span class="lineNum">     305</span>                 :<span class="tlaGNC tlaBgGNC">      478555 :     }</span></span>
+<span id="L306"><span class="lineNum">     306</span>                 :<span class="tlaGNC">      633626 :     const auto&amp; dispatchProtocolReq = message-&gt;findTag&lt;DispatchProtocolReq&gt;();</span></span>
+<span id="L307"><span class="lineNum">     307</span>         [<span class="tlaGBC" title="Branch 0 was taken 631778 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1848 times"> + </span>]:<span class="tlaGNC">      633626 :     if (dispatchProtocolReq != nullptr) {</span></span>
+<span id="L308"><span class="lineNum">     308</span>                 :<span class="tlaGNC">      631778 :         auto servicePrimitive = dispatchProtocolReq-&gt;getServicePrimitive();</span></span>
+<span id="L309"><span class="lineNum">     309</span>                 :             :         // KLUDGE eliminate this by adding ServicePrimitive to every DispatchProtocolReq</span>
+<span id="L310"><span class="lineNum">     310</span>         [<span class="tlaGBC" title="Branch 0 was taken 590116 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 41662 times"> + </span>]:<span class="tlaGNC">      631778 :         if (servicePrimitive == static_cast&lt;ServicePrimitive&gt;(-1))</span></span>
+<span id="L311"><span class="lineNum">     311</span>                 :<span class="tlaGNC">      590116 :             servicePrimitive = SP_REQUEST;</span></span>
+<span id="L312"><span class="lineNum">     312</span>                 :<span class="tlaGNC">      631778 :         auto protocol = dispatchProtocolReq-&gt;getProtocol();</span></span>
+<span id="L313"><span class="lineNum">     313</span>         [<span class="tlaGBC" title="Branch 0 was taken 590116 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 41662 times"> + </span>]:<span class="tlaGNC">      631778 :         if (servicePrimitive == SP_REQUEST) {</span></span>
+<span id="L314"><span class="lineNum">     314</span>                 :<span class="tlaGNC">      590116 :             auto it = serviceToGateIndex.find(Key(protocol-&gt;getId(), servicePrimitive));</span></span>
+<span id="L315"><span class="lineNum">     315</span>         [<span class="tlaGBC" title="Branch 0 was taken 590116 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">      590116 :             if (it != serviceToGateIndex.end()) {</span></span>
+<span id="L316"><span class="lineNum">     316</span>                 :<span class="tlaGNC">      590116 :                 auto outGate = gate(&quot;out&quot;, it-&gt;second);</span></span>
+<span id="L317"><span class="lineNum">     317</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 22312 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 22312 times"> + </span>]:<span class="tlaGNC">      590116 :                 EV_INFO &lt;&lt; &quot;Dispatching message to service&quot; &lt;&lt; EV_FIELD(protocol, *protocol) &lt;&lt; EV_FIELD(servicePrimitive) &lt;&lt; EV_FIELD(inGate) &lt;&lt; EV_FIELD(outGate) &lt;&lt; EV_FIELD(message) &lt;&lt; EV_ENDL;</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 22312 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 22312 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 22312 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 22312 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 22312 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 22312 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 22312 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 22312 times"> + </span>]
+<span id="L318"><span class="lineNum">     318</span>                 :<span class="tlaGNC">      590116 :                 return outGate;</span></span>
+<span id="L319"><span class="lineNum">     319</span>                 :<span class="tlaGNC">      590116 :             }</span></span>
+<span id="L320"><span class="lineNum">     320</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             else {</span></span>
+<span id="L321"><span class="lineNum">     321</span>                 :<span class="tlaUNC">           0 :                 auto it = serviceToGateIndex.find(Key(-1, servicePrimitive));</span></span>
+<span id="L322"><span class="lineNum">     322</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                 if (it != serviceToGateIndex.end()) {</span></span>
+<span id="L323"><span class="lineNum">     323</span>                 :<span class="tlaUNC">           0 :                     auto outGate = gate(&quot;out&quot;, it-&gt;second);</span></span>
+<span id="L324"><span class="lineNum">     324</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                     EV_INFO &lt;&lt; &quot;Dispatching message to any service&quot; &lt;&lt; EV_FIELD(servicePrimitive) &lt;&lt; EV_FIELD(inGate) &lt;&lt; EV_FIELD(outGate) &lt;&lt; EV_FIELD(message) &lt;&lt; EV_ENDL;</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L325"><span class="lineNum">     325</span>                 :<span class="tlaUNC">           0 :                     return outGate;</span></span>
+<span id="L326"><span class="lineNum">     326</span>                 :<span class="tlaUNC">           0 :                 }</span></span>
+<span id="L327"><span class="lineNum">     327</span>                 :<span class="tlaUNC">           0 :                 else</span></span>
+<span id="L328"><span class="lineNum">     328</span>                 :<span class="tlaUNC">           0 :                     throw cRuntimeError(&quot;handleMessage(): Unknown service: protocolId = %d, protocolName = %s, servicePrimitive = REQUEST, pathStartGate = %s, pathEndGate = %s\nConnected protocols can register using registerService() or the serviceMapping parameter can be used to specify the output gate&quot;, protocol-&gt;getId(), protocol-&gt;getName(), inGate-&gt;getPathStartGate()-&gt;getFullPath().c_str(), inGate-&gt;getPathEndGate()-&gt;getFullPath().c_str());</span></span>
+<span id="L329"><span class="lineNum">     329</span>                 :<span class="tlaUNC">           0 :             }</span></span>
+<span id="L330"><span class="lineNum">     330</span>                 :<span class="tlaGNC tlaBgGNC">      590116 :         }</span></span>
+<span id="L331"><span class="lineNum">     331</span>         [<span class="tlaGBC" title="Branch 0 was taken 41662 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">       41662 :         else if (servicePrimitive == SP_INDICATION) {</span></span>
+<span id="L332"><span class="lineNum">     332</span>                 :<span class="tlaGNC">       41662 :             auto it = protocolToGateIndex.find(Key(protocol-&gt;getId(), servicePrimitive));</span></span>
+<span id="L333"><span class="lineNum">     333</span>         [<span class="tlaGBC" title="Branch 0 was taken 41662 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">       41662 :             if (it != protocolToGateIndex.end()) {</span></span>
+<span id="L334"><span class="lineNum">     334</span>                 :<span class="tlaGNC">       41662 :                 auto outGate = gate(&quot;out&quot;, it-&gt;second);</span></span>
+<span id="L335"><span class="lineNum">     335</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 166 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 166 times"> + </span>]:<span class="tlaGNC">       41662 :                 EV_INFO &lt;&lt; &quot;Dispatching message to protocol&quot; &lt;&lt; EV_FIELD(protocol, *protocol) &lt;&lt; EV_FIELD(servicePrimitive) &lt;&lt; EV_FIELD(inGate) &lt;&lt; EV_FIELD(outGate) &lt;&lt; EV_FIELD(message) &lt;&lt; EV_ENDL;</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 166 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 166 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 166 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 166 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 166 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 166 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 166 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 166 times"> + </span>]
+<span id="L336"><span class="lineNum">     336</span>                 :<span class="tlaGNC">       41662 :                 return outGate;</span></span>
+<span id="L337"><span class="lineNum">     337</span>                 :<span class="tlaGNC">       41662 :             }</span></span>
+<span id="L338"><span class="lineNum">     338</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             else {</span></span>
+<span id="L339"><span class="lineNum">     339</span>                 :<span class="tlaUNC">           0 :                 auto it = protocolToGateIndex.find(Key(-1, servicePrimitive));</span></span>
+<span id="L340"><span class="lineNum">     340</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                 if (it != protocolToGateIndex.end()) {</span></span>
+<span id="L341"><span class="lineNum">     341</span>                 :<span class="tlaUNC">           0 :                     auto outGate = gate(&quot;out&quot;, it-&gt;second);</span></span>
+<span id="L342"><span class="lineNum">     342</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                     EV_INFO &lt;&lt; &quot;Dispatching message to any protocol&quot; &lt;&lt; EV_FIELD(servicePrimitive) &lt;&lt; EV_FIELD(inGate) &lt;&lt; EV_FIELD(outGate) &lt;&lt; EV_FIELD(message) &lt;&lt; EV_ENDL;</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L343"><span class="lineNum">     343</span>                 :<span class="tlaUNC">           0 :                     return outGate;</span></span>
+<span id="L344"><span class="lineNum">     344</span>                 :<span class="tlaUNC">           0 :                 }</span></span>
+<span id="L345"><span class="lineNum">     345</span>                 :<span class="tlaUNC">           0 :                 else</span></span>
+<span id="L346"><span class="lineNum">     346</span>                 :<span class="tlaUNC">           0 :                     throw cRuntimeError(&quot;handleMessage(): Unknown protocol: protocolId = %d, protocolName = %s, servicePrimitive = INDICATION, pathStartGate = %s, pathEndGate = %s\nConnected protocols can register using registerProtocol() or the protocolMapping parameter can be used to specify the output gate&quot;, protocol-&gt;getId(), protocol-&gt;getName(), inGate-&gt;getPathStartGate()-&gt;getFullPath().c_str(), inGate-&gt;getPathEndGate()-&gt;getFullPath().c_str());</span></span>
+<span id="L347"><span class="lineNum">     347</span>                 :<span class="tlaUNC">           0 :             }</span></span>
+<span id="L348"><span class="lineNum">     348</span>                 :<span class="tlaGNC tlaBgGNC">       41662 :         }</span></span>
+<span id="L349"><span class="lineNum">     349</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         else</span></span>
+<span id="L350"><span class="lineNum">     350</span>                 :<span class="tlaUNC">           0 :             throw cRuntimeError(&quot;handleMessage(): Unknown service primitive: servicePrimitive = %d, pathStartGate = %s, pathEndGate = %s&quot;, static_cast&lt;int&gt;(servicePrimitive), inGate-&gt;getPathStartGate()-&gt;getFullPath().c_str(), inGate-&gt;getPathEndGate()-&gt;getFullPath().c_str());</span></span>
+<span id="L351"><span class="lineNum">     351</span>                 :<span class="tlaGNC tlaBgGNC">      631778 :     }</span></span>
+<span id="L352"><span class="lineNum">     352</span>                 :<span class="tlaGNC">        1848 :     const auto&amp; interfaceReq = message-&gt;findTag&lt;InterfaceReq&gt;();</span></span>
+<span id="L353"><span class="lineNum">     353</span>         [<span class="tlaGBC" title="Branch 0 was taken 1848 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        1848 :     if (interfaceReq != nullptr) {</span></span>
+<span id="L354"><span class="lineNum">     354</span>                 :<span class="tlaGNC">        1848 :         int interfaceId = interfaceReq-&gt;getInterfaceId();</span></span>
+<span id="L355"><span class="lineNum">     355</span>                 :<span class="tlaGNC">        1848 :         auto it = interfaceIdToGateIndex.find(interfaceId);</span></span>
+<span id="L356"><span class="lineNum">     356</span>         [<span class="tlaGBC" title="Branch 0 was taken 1848 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        1848 :         if (it != interfaceIdToGateIndex.end()) {</span></span>
+<span id="L357"><span class="lineNum">     357</span>                 :<span class="tlaGNC">        1848 :             auto outGate = gate(&quot;out&quot;, it-&gt;second);</span></span>
+<span id="L358"><span class="lineNum">     358</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1824 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1824 times"> + </span>]:<span class="tlaGNC">        1848 :             EV_INFO &lt;&lt; &quot;Dispatching message to network interface&quot; &lt;&lt; EV_FIELD(interfaceId) &lt;&lt; EV_FIELD(inGate) &lt;&lt; EV_FIELD(outGate) &lt;&lt; EV_FIELD(message) &lt;&lt; EV_ENDL;</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1824 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1824 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1824 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1824 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1824 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1824 times"> + </span>]
+<span id="L359"><span class="lineNum">     359</span>                 :<span class="tlaGNC">        1848 :             return outGate;</span></span>
+<span id="L360"><span class="lineNum">     360</span>                 :<span class="tlaGNC">        1848 :         }</span></span>
+<span id="L361"><span class="lineNum">     361</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         else</span></span>
+<span id="L362"><span class="lineNum">     362</span>                 :<span class="tlaUNC">           0 :             throw cRuntimeError(&quot;handleMessage(): Unknown network interface: interfaceId = %d, pathStartGate = %s, pathEndGate = %s\nConnected network interfaces can register using registerInterface() or the interfaceMapping parameter can be used to specify the output gate&quot;, interfaceId, inGate-&gt;getPathStartGate()-&gt;getFullPath().c_str(), inGate-&gt;getPathEndGate()-&gt;getFullPath().c_str());</span></span>
+<span id="L363"><span class="lineNum">     363</span>                 :<span class="tlaGNC tlaBgGNC">        1848 :     }</span></span>
+<span id="L364"><span class="lineNum">     364</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     throw cRuntimeError(&quot;handleMessage(): Unknown message: %s(%s), pathStartGate = %s, pathEndGate = %s&quot;, message-&gt;getName(), message-&gt;getClassName(), inGate-&gt;getPathStartGate()-&gt;getFullPath().c_str(), inGate-&gt;getPathEndGate()-&gt;getFullPath().c_str());</span></span>
+<span id="L365"><span class="lineNum">     365</span>                 :<span class="tlaGNC tlaBgGNC">        1848 : }</span></span>
+<span id="L366"><span class="lineNum">     366</span>                 :             : </span>
+<span id="L367"><span class="lineNum">     367</span>                 :             : void MessageDispatcher::handleRegisterService(const Protocol&amp; protocol, cGate *g, ServicePrimitive servicePrimitive)</span>
+<span id="L368"><span class="lineNum">     368</span>                 :<span class="tlaGNC">     2083326 : {</span></span>
+<span id="L369"><span class="lineNum">     369</span>                 :<span class="tlaGNC">     2083326 :     Enter_Method(&quot;handleRegisterService&quot;);</span></span>
+<span id="L370"><span class="lineNum">     370</span>         [<span class="tlaGBC" title="Branch 0 was taken 965720 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1117606 times"> + </span>]:<span class="tlaGNC">     2083326 :     if (registeringProtocol != nullptr) {</span></span>
+<span id="L371"><span class="lineNum">     371</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 965720 times"> + </span>]:<span class="tlaGNC">      965720 :         if (registeringProtocol != &amp;protocol)</span></span>
+<span id="L372"><span class="lineNum">     372</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             throw cRuntimeError(&quot;handleRegisterService(): cannot register protocol while another registration is being done&quot;);</span></span>
+<span id="L373"><span class="lineNum">     373</span>                 :<span class="tlaGNC tlaBgGNC">      965720 :     }</span></span>
+<span id="L374"><span class="lineNum">     374</span>                 :<span class="tlaGNC">     1117606 :     else {</span></span>
+<span id="L375"><span class="lineNum">     375</span>                 :<span class="tlaGNC">     1117606 :         registeringProtocol = &amp;protocol;</span></span>
+<span id="L376"><span class="lineNum">     376</span> [<span class="tlaGBC" title="Branch 0 was taken 144 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 173241 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 144 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 173241 times"> + </span>]:<span class="tlaGNC">     1117606 :         EV_INFO &lt;&lt; &quot;Handling service registration from &quot; &lt;&lt; printRegistrationPath() &lt;&lt; EV_FIELD(protocol) &lt;&lt; EV_FIELD(servicePrimitive) &lt;&lt; EV_FIELD(gate, g) &lt;&lt; EV_ENDL;</span></span>
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 144 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 173241 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 144 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 173241 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 144 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 173241 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 144 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 173241 times"> + </span>]
+<span id="L377"><span class="lineNum">     377</span>                 :<span class="tlaGNC">     1117606 :         auto key = Key(protocol.getId(), servicePrimitive);</span></span>
+<span id="L378"><span class="lineNum">     378</span>                 :<span class="tlaGNC">     1117606 :         auto it = serviceToGateIndex.find(key);</span></span>
+<span id="L379"><span class="lineNum">     379</span>         [<span class="tlaGBC" title="Branch 0 was taken 4342 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1113264 times"> + </span>]:<span class="tlaGNC">     1117606 :         if (it != serviceToGateIndex.end()) {</span></span>
+<span id="L380"><span class="lineNum">     380</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 4342 times"> + </span>]:<span class="tlaGNC">        4342 :             if (it-&gt;second != g-&gt;getIndex())</span></span>
+<span id="L381"><span class="lineNum">     381</span>                 :<span class="tlaUNC tlaBgUNC">           0 :                 throw cRuntimeError(&quot;handleRegisterService(): service is already registered: protocolId = %d, protocolName = %s, servicePrimitive = %d, pathStartGate = %s, pathEndGate = %s&quot;, protocol.getId(), protocol.str().c_str(), static_cast&lt;int&gt;(servicePrimitive), g-&gt;getPathStartGate()-&gt;getFullPath().c_str(), g-&gt;getPathEndGate()-&gt;getFullPath().c_str());</span></span>
+<span id="L382"><span class="lineNum">     382</span>                 :<span class="tlaGNC tlaBgGNC">        4342 :         }</span></span>
+<span id="L383"><span class="lineNum">     383</span>                 :<span class="tlaGNC">     1113264 :         else {</span></span>
+<span id="L384"><span class="lineNum">     384</span>                 :<span class="tlaGNC">     1113264 :             serviceToGateIndex[key] = g-&gt;getIndex();</span></span>
+<span id="L385"><span class="lineNum">     385</span>         [<span class="tlaGBC" title="Branch 0 was taken 1112034 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1230 times"> + </span>]:<span class="tlaGNC">     1113264 :             if (forwardServiceRegistration) {</span></span>
+<span id="L386"><span class="lineNum">     386</span>         [<span class="tlaGBC" title="Branch 0 was taken 551357 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 560677 times"> + </span>]:<span class="tlaGNC">     1112034 :                 auto gateName = g-&gt;getType() == cGate::INPUT ? &quot;out&quot; : &quot;in&quot;;</span></span>
+<span id="L387"><span class="lineNum">     387</span>                 :<span class="tlaGNC">     1112034 :                 int size = gateSize(gateName);</span></span>
+<span id="L388"><span class="lineNum">     388</span>         [<span class="tlaGBC" title="Branch 0 was taken 3749727 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1112034 times"> + </span>]:<span class="tlaGNC">     4861761 :                 for (int i = 0; i &lt; size; i++)</span></span>
+<span id="L389"><span class="lineNum">     389</span>                 :<span class="tlaGNC">     3749727 :                     registerService(protocol, gate(gateName, i), servicePrimitive);</span></span>
+<span id="L390"><span class="lineNum">     390</span>                 :<span class="tlaGNC">     1112034 :             }</span></span>
+<span id="L391"><span class="lineNum">     391</span>                 :<span class="tlaGNC">     1113264 :         }</span></span>
+<span id="L392"><span class="lineNum">     392</span>                 :<span class="tlaGNC">     1117606 :         registeringProtocol = nullptr;</span></span>
+<span id="L393"><span class="lineNum">     393</span>                 :<span class="tlaGNC">     1117606 :     }</span></span>
+<span id="L394"><span class="lineNum">     394</span>                 :<span class="tlaGNC">     2083326 : }</span></span>
+<span id="L395"><span class="lineNum">     395</span>                 :             : </span>
+<span id="L396"><span class="lineNum">     396</span>                 :             : void MessageDispatcher::handleRegisterAnyService(cGate *g, ServicePrimitive servicePrimitive)</span>
+<span id="L397"><span class="lineNum">     397</span>                 :<span class="tlaGNC">       22182 : {</span></span>
+<span id="L398"><span class="lineNum">     398</span>                 :<span class="tlaGNC">       22182 :     Enter_Method(&quot;handleRegisterAnyService&quot;);</span></span>
+<span id="L399"><span class="lineNum">     399</span>         [<span class="tlaGBC" title="Branch 0 was taken 14788 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 7394 times"> + </span>]:<span class="tlaGNC">       22182 :     if (!registeringAny) {</span></span>
+<span id="L400"><span class="lineNum">     400</span>                 :<span class="tlaGNC">       14788 :         registeringAny = true;</span></span>
+<span id="L401"><span class="lineNum">     401</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 900 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 900 times"> + </span>]:<span class="tlaGNC">       14788 :         EV_INFO &lt;&lt; &quot;Handling any service registration from &quot; &lt;&lt; printRegistrationPath() &lt;&lt; EV_FIELD(servicePrimitive) &lt;&lt; EV_FIELD(gate, g) &lt;&lt; EV_ENDL;</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 900 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 900 times"> + </span>]
+<span id="L402"><span class="lineNum">     402</span>                 :<span class="tlaGNC">       14788 :         auto key = Key(-1, servicePrimitive);</span></span>
+<span id="L403"><span class="lineNum">     403</span>                 :<span class="tlaGNC">       14788 :         auto it = serviceToGateIndex.find(key);</span></span>
+<span id="L404"><span class="lineNum">     404</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 14788 times"> + </span>]:<span class="tlaGNC">       14788 :         if (it != serviceToGateIndex.end()) {</span></span>
+<span id="L405"><span class="lineNum">     405</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC tlaBgUNC">           0 :             if (it-&gt;second != g-&gt;getIndex())</span></span>
+<span id="L406"><span class="lineNum">     406</span>                 :<span class="tlaUNC">           0 :                 throw cRuntimeError(&quot;handleRegisterAnyService(): any service is already registered: servicePrimitive = %d, pathStartGate = %s, pathEndGate = %s&quot;, static_cast&lt;int&gt;(servicePrimitive), g-&gt;getPathStartGate()-&gt;getFullPath().c_str(), g-&gt;getPathEndGate()-&gt;getFullPath().c_str());</span></span>
+<span id="L407"><span class="lineNum">     407</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L408"><span class="lineNum">     408</span>                 :<span class="tlaGNC tlaBgGNC">       14788 :         else {</span></span>
+<span id="L409"><span class="lineNum">     409</span>                 :<span class="tlaGNC">       14788 :             serviceToGateIndex[key] = g-&gt;getIndex();</span></span>
+<span id="L410"><span class="lineNum">     410</span>         [<span class="tlaGBC" title="Branch 0 was taken 14788 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">       14788 :             if (forwardServiceRegistration) {</span></span>
+<span id="L411"><span class="lineNum">     411</span>         [<span class="tlaGBC" title="Branch 0 was taken 7394 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 7394 times"> + </span>]:<span class="tlaGNC">       14788 :                 auto gateName = g-&gt;getType() == cGate::INPUT ? &quot;out&quot; : &quot;in&quot;;</span></span>
+<span id="L412"><span class="lineNum">     412</span>                 :<span class="tlaGNC">       14788 :                 int size = gateSize(gateName);</span></span>
+<span id="L413"><span class="lineNum">     413</span>         [<span class="tlaGBC" title="Branch 0 was taken 35446 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 14788 times"> + </span>]:<span class="tlaGNC">       50234 :                 for (int i = 0; i &lt; size; i++)</span></span>
+<span id="L414"><span class="lineNum">     414</span>                 :<span class="tlaGNC">       35446 :                     registerAnyService(gate(gateName, i), servicePrimitive);</span></span>
+<span id="L415"><span class="lineNum">     415</span>                 :<span class="tlaGNC">       14788 :             }</span></span>
+<span id="L416"><span class="lineNum">     416</span>                 :<span class="tlaGNC">       14788 :         }</span></span>
+<span id="L417"><span class="lineNum">     417</span>                 :<span class="tlaGNC">       14788 :         registeringAny = false;</span></span>
+<span id="L418"><span class="lineNum">     418</span>                 :<span class="tlaGNC">       14788 :     }</span></span>
+<span id="L419"><span class="lineNum">     419</span>                 :<span class="tlaGNC">       22182 : }</span></span>
+<span id="L420"><span class="lineNum">     420</span>                 :             : </span>
+<span id="L421"><span class="lineNum">     421</span>                 :             : void MessageDispatcher::handleRegisterProtocol(const Protocol&amp; protocol, cGate *g, ServicePrimitive servicePrimitive)</span>
+<span id="L422"><span class="lineNum">     422</span>                 :<span class="tlaGNC">     2923623 : {</span></span>
+<span id="L423"><span class="lineNum">     423</span>                 :<span class="tlaGNC">     2923623 :     Enter_Method(&quot;handleRegisterProtocol&quot;);</span></span>
+<span id="L424"><span class="lineNum">     424</span>         [<span class="tlaGBC" title="Branch 0 was taken 1362885 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1560738 times"> + </span>]:<span class="tlaGNC">     2923623 :     if (registeringProtocol != nullptr) {</span></span>
+<span id="L425"><span class="lineNum">     425</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1362885 times"> + </span>]:<span class="tlaGNC">     1362885 :         if (registeringProtocol != &amp;protocol)</span></span>
+<span id="L426"><span class="lineNum">     426</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             throw cRuntimeError(&quot;handleRegisterProtocol(): cannot register protocol while another registration is being done&quot;);</span></span>
+<span id="L427"><span class="lineNum">     427</span>                 :<span class="tlaGNC tlaBgGNC">     1362885 :     }</span></span>
+<span id="L428"><span class="lineNum">     428</span>                 :<span class="tlaGNC">     1560738 :     else {</span></span>
+<span id="L429"><span class="lineNum">     429</span>                 :<span class="tlaGNC">     1560738 :         registeringProtocol = &amp;protocol;</span></span>
+<span id="L430"><span class="lineNum">     430</span> [<span class="tlaGBC" title="Branch 0 was taken 216 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 227792 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 216 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 227792 times"> + </span>]:<span class="tlaGNC">     1560738 :         EV_INFO &lt;&lt; &quot;Handling protocol registration from &quot; &lt;&lt; printRegistrationPath() &lt;&lt; EV_FIELD(protocol) &lt;&lt; EV_FIELD(servicePrimitive) &lt;&lt; EV_FIELD(gate, g) &lt;&lt; EV_ENDL;</span></span>
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 216 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 227792 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 216 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 227792 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 216 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 227792 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 216 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 227792 times"> + </span>]
+<span id="L431"><span class="lineNum">     431</span>                 :<span class="tlaGNC">     1560738 :         auto key = Key(protocol.getId(), servicePrimitive);</span></span>
+<span id="L432"><span class="lineNum">     432</span>                 :<span class="tlaGNC">     1560738 :         auto it = protocolToGateIndex.find(key);</span></span>
+<span id="L433"><span class="lineNum">     433</span>         [<span class="tlaGBC" title="Branch 0 was taken 414 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1560324 times"> + </span>]:<span class="tlaGNC">     1560738 :         if (it != protocolToGateIndex.end()) {</span></span>
+<span id="L434"><span class="lineNum">     434</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 414 times"> + </span>]:<span class="tlaGNC">         414 :             if (it-&gt;second != g-&gt;getIndex())</span></span>
+<span id="L435"><span class="lineNum">     435</span>                 :<span class="tlaUNC tlaBgUNC">           0 :                 throw cRuntimeError(&quot;handleRegisterProtocol(): protocol is already registered: protocolId = %d, protocolName = %s, servicePrimitive = %d, pathStartGate = %s, pathEndGate = %s&quot;, protocol.getId(), protocol.str().c_str(), static_cast&lt;int&gt;(servicePrimitive), g-&gt;getPathStartGate()-&gt;getFullPath().c_str(), g-&gt;getPathEndGate()-&gt;getFullPath().c_str());</span></span>
+<span id="L436"><span class="lineNum">     436</span>                 :<span class="tlaGNC tlaBgGNC">         414 :         }</span></span>
+<span id="L437"><span class="lineNum">     437</span>                 :<span class="tlaGNC">     1560324 :         else {</span></span>
+<span id="L438"><span class="lineNum">     438</span>                 :<span class="tlaGNC">     1560324 :             protocolToGateIndex[key] = g-&gt;getIndex();</span></span>
+<span id="L439"><span class="lineNum">     439</span>         [<span class="tlaGBC" title="Branch 0 was taken 1560324 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">     1560324 :             if (forwardProtocolRegistration) {</span></span>
+<span id="L440"><span class="lineNum">     440</span>         [<span class="tlaGBC" title="Branch 0 was taken 776995 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 783329 times"> + </span>]:<span class="tlaGNC">     1560324 :                 auto gateName = g-&gt;getType() == cGate::INPUT ? &quot;out&quot; : &quot;in&quot;;</span></span>
+<span id="L441"><span class="lineNum">     441</span>                 :<span class="tlaGNC">     1560324 :                 int size = gateSize(gateName);</span></span>
+<span id="L442"><span class="lineNum">     442</span>         [<span class="tlaGBC" title="Branch 0 was taken 5268313 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1560324 times"> + </span>]:<span class="tlaGNC">     6828637 :                 for (int i = 0; i &lt; size; i++)</span></span>
+<span id="L443"><span class="lineNum">     443</span>                 :<span class="tlaGNC">     5268313 :                     registerProtocol(protocol, gate(gateName, i), servicePrimitive);</span></span>
+<span id="L444"><span class="lineNum">     444</span>                 :<span class="tlaGNC">     1560324 :             }</span></span>
+<span id="L445"><span class="lineNum">     445</span>                 :<span class="tlaGNC">     1560324 :         }</span></span>
+<span id="L446"><span class="lineNum">     446</span>                 :<span class="tlaGNC">     1560738 :         registeringProtocol = nullptr;</span></span>
+<span id="L447"><span class="lineNum">     447</span>                 :<span class="tlaGNC">     1560738 :     }</span></span>
+<span id="L448"><span class="lineNum">     448</span>                 :<span class="tlaGNC">     2923623 : }</span></span>
+<span id="L449"><span class="lineNum">     449</span>                 :             : </span>
+<span id="L450"><span class="lineNum">     450</span>                 :             : void MessageDispatcher::handleRegisterAnyProtocol(cGate *g, ServicePrimitive servicePrimitive)</span>
+<span id="L451"><span class="lineNum">     451</span>                 :<span class="tlaGNC">       23519 : {</span></span>
+<span id="L452"><span class="lineNum">     452</span>                 :<span class="tlaGNC">       23519 :     Enter_Method(&quot;handleRegisterAnyProtocol&quot;);</span></span>
+<span id="L453"><span class="lineNum">     453</span>         [<span class="tlaGBC" title="Branch 0 was taken 15774 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 7745 times"> + </span>]:<span class="tlaGNC">       23519 :     if (!registeringAny) {</span></span>
+<span id="L454"><span class="lineNum">     454</span>                 :<span class="tlaGNC">       15774 :         registeringAny = true;</span></span>
+<span id="L455"><span class="lineNum">     455</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 937 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 937 times"> + </span>]:<span class="tlaGNC">       15774 :         EV_INFO &lt;&lt; &quot;Handling any protocol registration from &quot; &lt;&lt; printRegistrationPath() &lt;&lt; EV_FIELD(servicePrimitive) &lt;&lt; EV_FIELD(gate, g) &lt;&lt; EV_ENDL;</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 937 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 937 times"> + </span>]
+<span id="L456"><span class="lineNum">     456</span>                 :<span class="tlaGNC">       15774 :         auto key = Key(-1, servicePrimitive);</span></span>
+<span id="L457"><span class="lineNum">     457</span>                 :<span class="tlaGNC">       15774 :         auto it = protocolToGateIndex.find(key);</span></span>
+<span id="L458"><span class="lineNum">     458</span>         [<span class="tlaGBC" title="Branch 0 was taken 73 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 15701 times"> + </span>]:<span class="tlaGNC">       15774 :         if (it != protocolToGateIndex.end()) {</span></span>
+<span id="L459"><span class="lineNum">     459</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 73 times"> + </span>]:<span class="tlaGNC">          73 :             if (it-&gt;second != g-&gt;getIndex())</span></span>
+<span id="L460"><span class="lineNum">     460</span>                 :<span class="tlaUNC tlaBgUNC">           0 :                 throw cRuntimeError(&quot;handleRegisterAnyProtocol(): any protocol is already registered: servicePrimitive = %d, pathStartGate = %s, pathEndGate = %s&quot;, static_cast&lt;int&gt;(servicePrimitive), g-&gt;getPathStartGate()-&gt;getFullPath().c_str(), g-&gt;getPathEndGate()-&gt;getFullPath().c_str());</span></span>
+<span id="L461"><span class="lineNum">     461</span>                 :<span class="tlaGNC tlaBgGNC">          73 :         }</span></span>
+<span id="L462"><span class="lineNum">     462</span>                 :<span class="tlaGNC">       15701 :         else {</span></span>
+<span id="L463"><span class="lineNum">     463</span>                 :<span class="tlaGNC">       15701 :             protocolToGateIndex[key] = g-&gt;getIndex();</span></span>
+<span id="L464"><span class="lineNum">     464</span>         [<span class="tlaGBC" title="Branch 0 was taken 15701 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">       15701 :             if (forwardProtocolRegistration) {</span></span>
+<span id="L465"><span class="lineNum">     465</span>         [<span class="tlaGBC" title="Branch 0 was taken 7534 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 8167 times"> + </span>]:<span class="tlaGNC">       15701 :                 auto gateName = g-&gt;getType() == cGate::INPUT ? &quot;out&quot; : &quot;in&quot;;</span></span>
+<span id="L466"><span class="lineNum">     466</span>                 :<span class="tlaGNC">       15701 :                 int size = gateSize(gateName);</span></span>
+<span id="L467"><span class="lineNum">     467</span>         [<span class="tlaGBC" title="Branch 0 was taken 65721 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 15701 times"> + </span>]:<span class="tlaGNC">       81422 :                 for (int i = 0; i &lt; size; i++)</span></span>
+<span id="L468"><span class="lineNum">     468</span>                 :<span class="tlaGNC">       65721 :                     registerAnyProtocol(gate(gateName, i), servicePrimitive);</span></span>
+<span id="L469"><span class="lineNum">     469</span>                 :<span class="tlaGNC">       15701 :             }</span></span>
+<span id="L470"><span class="lineNum">     470</span>                 :<span class="tlaGNC">       15701 :         }</span></span>
+<span id="L471"><span class="lineNum">     471</span>                 :<span class="tlaGNC">       15774 :         registeringAny = false;</span></span>
+<span id="L472"><span class="lineNum">     472</span>                 :<span class="tlaGNC">       15774 :     }</span></span>
+<span id="L473"><span class="lineNum">     473</span>                 :<span class="tlaGNC">       23519 : }</span></span>
+<span id="L474"><span class="lineNum">     474</span>                 :             : </span>
+<span id="L475"><span class="lineNum">     475</span>                 :             : void MessageDispatcher::handleRegisterInterface(const NetworkInterface&amp; interface, cGate *out, cGate *in)</span>
+<span id="L476"><span class="lineNum">     476</span>                 :<span class="tlaGNC">      336213 : {</span></span>
+<span id="L477"><span class="lineNum">     477</span>                 :<span class="tlaGNC">      336213 :     Enter_Method(&quot;handleRegisterInterface&quot;);</span></span>
+<span id="L478"><span class="lineNum">     478</span> [<span class="tlaGBC" title="Branch 0 was taken 36 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 45375 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 36 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 45375 times"> + </span>]:<span class="tlaGNC">      336213 :     EV_INFO &lt;&lt; &quot;Handling interface registration&quot; &lt;&lt; EV_FIELD(interface) &lt;&lt; EV_FIELD(out, out) &lt;&lt; EV_FIELD(in) &lt;&lt; EV_ENDL;</span></span>
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 36 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 45375 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 36 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 45375 times"> + </span>]
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 36 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 45375 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 36 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 45375 times"> + </span>]
+<span id="L479"><span class="lineNum">     479</span>                 :<span class="tlaGNC">      336213 :     auto it = interfaceIdToGateIndex.find(interface.getInterfaceId());</span></span>
+<span id="L480"><span class="lineNum">     480</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 336213 times"> + </span>]:<span class="tlaGNC">      336213 :     if (it != interfaceIdToGateIndex.end()) {</span></span>
+<span id="L481"><span class="lineNum">     481</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC tlaBgUNC">           0 :         if (it-&gt;second != out-&gt;getIndex())</span></span>
+<span id="L482"><span class="lineNum">     482</span>                 :<span class="tlaUNC">           0 :             throw cRuntimeError(&quot;handleRegisterInterface(): interface is already registered: interfaceId = %d, interfaceName = %s, pathStartGate = %s, pathEndGate = %s&quot;, interface.getInterfaceId(), interface.str().c_str(), out-&gt;getPathStartGate()-&gt;getFullPath().c_str(), out-&gt;getPathEndGate()-&gt;getFullPath().c_str());</span></span>
+<span id="L483"><span class="lineNum">     483</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L484"><span class="lineNum">     484</span>                 :<span class="tlaGNC tlaBgGNC">      336213 :     else {</span></span>
+<span id="L485"><span class="lineNum">     485</span>                 :<span class="tlaGNC">      336213 :         interfaceIdToGateIndex[interface.getInterfaceId()] = out-&gt;getIndex();</span></span>
+<span id="L486"><span class="lineNum">     486</span>                 :<span class="tlaGNC">      336213 :         int size = gateSize(&quot;out&quot;);</span></span>
+<span id="L487"><span class="lineNum">     487</span>         [<span class="tlaGBC" title="Branch 0 was taken 1149748 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 336213 times"> + </span>]:<span class="tlaGNC">     1485961 :         for (int i = 0; i &lt; size; i++)</span></span>
+<span id="L488"><span class="lineNum">     488</span>         [<span class="tlaGBC" title="Branch 0 was taken 813535 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 336213 times"> + </span>]:<span class="tlaGNC">     1149748 :             if (i != in-&gt;getIndex())</span></span>
+<span id="L489"><span class="lineNum">     489</span>                 :<span class="tlaGNC">      813535 :                 registerInterface(interface, gate(&quot;in&quot;, i), gate(&quot;out&quot;, i));</span></span>
+<span id="L490"><span class="lineNum">     490</span>                 :<span class="tlaGNC">      336213 :     }</span></span>
+<span id="L491"><span class="lineNum">     491</span>                 :<span class="tlaGNC">      336213 : }</span></span>
+<span id="L492"><span class="lineNum">     492</span>                 :             : </span>
+<span id="L493"><span class="lineNum">     493</span>                 :             : void MessageDispatcher::handleUnregisterInterface(const NetworkInterface&amp; interface, cGate *out, cGate *in)</span>
+<span id="L494"><span class="lineNum">     494</span>                 :<span class="tlaGNC">         247 : {</span></span>
+<span id="L495"><span class="lineNum">     495</span>                 :<span class="tlaGNC">         247 :     Enter_Method(&quot;handleUnregisterInterface&quot;);</span></span>
+<span id="L496"><span class="lineNum">     496</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaGNC">         247 :     EV_INFO &lt;&lt; &quot;Handling interface unregistration&quot; &lt;&lt; EV_FIELD(interface) &lt;&lt; EV_FIELD(out, out) &lt;&lt; EV_FIELD(in) &lt;&lt; EV_ENDL;</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L497"><span class="lineNum">     497</span>                 :<span class="tlaGNC">         247 :     auto it = interfaceIdToGateIndex.find(interface.getInterfaceId());</span></span>
+<span id="L498"><span class="lineNum">     498</span> [<span class="tlaGBC" title="Branch 0 was taken 247 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 247 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">         247 :     if (it != interfaceIdToGateIndex.end() &amp;&amp; it-&gt;second == out-&gt;getIndex()) {</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 247 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span id="L499"><span class="lineNum">     499</span>                 :<span class="tlaGNC">         247 :         interfaceIdToGateIndex.erase(it);</span></span>
+<span id="L500"><span class="lineNum">     500</span>                 :<span class="tlaGNC">         247 :         int size = gateSize(&quot;out&quot;);</span></span>
+<span id="L501"><span class="lineNum">     501</span>         [<span class="tlaGBC" title="Branch 0 was taken 788 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 247 times"> + </span>]:<span class="tlaGNC">        1035 :         for (int i = 0; i &lt; size; i++)</span></span>
+<span id="L502"><span class="lineNum">     502</span>         [<span class="tlaGBC" title="Branch 0 was taken 541 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 247 times"> + </span>]:<span class="tlaGNC">         788 :             if (i != in-&gt;getIndex())</span></span>
+<span id="L503"><span class="lineNum">     503</span>                 :<span class="tlaGNC">         541 :                 unregisterInterface(interface, gate(&quot;in&quot;, i), gate(&quot;out&quot;, i));</span></span>
+<span id="L504"><span class="lineNum">     504</span>                 :<span class="tlaGNC">         247 :     }</span></span>
+<span id="L505"><span class="lineNum">     505</span>                 :<span class="tlaGNC">         247 : }</span></span>
+<span id="L506"><span class="lineNum">     506</span>                 :             : </span>
+<span id="L507"><span class="lineNum">     507</span>                 :             : int MessageDispatcher::getGateIndexToConnectedModule(const char *moduleName)</span>
+<span id="L508"><span class="lineNum">     508</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L509"><span class="lineNum">     509</span>                 :<span class="tlaUNC">           0 :     int size = gateSize(&quot;out&quot;);</span></span>
+<span id="L510"><span class="lineNum">     510</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     for (int i = 0; i &lt; size; i++) {</span></span>
+<span id="L511"><span class="lineNum">     511</span>                 :<span class="tlaUNC">           0 :         auto g = gate(&quot;out&quot;, i);</span></span>
+<span id="L512"><span class="lineNum">     512</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         while (g != nullptr) {</span></span>
+<span id="L513"><span class="lineNum">     513</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             if (!strcmp(g-&gt;getOwnerModule()-&gt;getFullName(), moduleName))</span></span>
+<span id="L514"><span class="lineNum">     514</span>                 :<span class="tlaUNC">           0 :                 return i;</span></span>
+<span id="L515"><span class="lineNum">     515</span>                 :<span class="tlaUNC">           0 :             g = g-&gt;getNextGate();</span></span>
+<span id="L516"><span class="lineNum">     516</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L517"><span class="lineNum">     517</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L518"><span class="lineNum">     518</span>                 :<span class="tlaUNC">           0 :     throw cRuntimeError(&quot;Cannot find module: %s&quot;, moduleName);</span></span>
+<span id="L519"><span class="lineNum">     519</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L520"><span class="lineNum">     520</span>                 :             : </span>
+<span id="L521"><span class="lineNum">     521</span>                 :             : } // namespace inet</span>
+<span id="L522"><span class="lineNum">     522</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

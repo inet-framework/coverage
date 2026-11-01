@@ -1,0 +1,180 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - common/lifecycle/src/inet/common/lifecycle/LifecycleController.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">common/lifecycle/src/inet/common/lifecycle</a> - LifecycleController.h<span style="font-size: 80%;"> (source / <a href="LifecycleController.h.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2013 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #ifndef __INET_LIFECYCLECONTROLLER_H</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : #define __INET_LIFECYCLECONTROLLER_H</span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : </span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &quot;inet/common/lifecycle/ILifecycle.h&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &quot;inet/common/scenario/IScriptable.h&quot;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : </span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : namespace inet {</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : </span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : /**</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             :  * Manages operations like shutdown/restart, suspend/resume, crash/recover</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             :  * and similar operations for nodes (routers, hosts, etc), interfaces, and</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             :  * protocols.</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             :  *</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             :  * Overview and usage are described in the NED file, you are advised to read</span>
+<span id="L22"><span class="lineNum">      22</span>                 :             :  * that first. The rest of this documentation concentrates on the C++ API.</span>
+<span id="L23"><span class="lineNum">      23</span>                 :             :  *</span>
+<span id="L24"><span class="lineNum">      24</span>                 :             :  * Operations are represented by C++ class derived from LifecycleOperation.</span>
+<span id="L25"><span class="lineNum">      25</span>                 :             :  * Simple modules that wish to participate in an operation need to implement</span>
+<span id="L26"><span class="lineNum">      26</span>                 :             :  * the ILifecycle interface (C++ class).</span>
+<span id="L27"><span class="lineNum">      27</span>                 :             :  *</span>
+<span id="L28"><span class="lineNum">      28</span>                 :             :  * An operation is initiated by calling the &lt;tt&gt;initiateStateChange(cModule *module,</span>
+<span id="L29"><span class="lineNum">      29</span>                 :             :  * LifecycleOperation *operation)&lt;/tt&gt; method of this class. (This is often done</span>
+<span id="L30"><span class="lineNum">      30</span>                 :             :  * from a ScenarioManager script). This method applies the operation to the</span>
+<span id="L31"><span class="lineNum">      31</span>                 :             :  * given module (usually a host, router or network interface compound module).</span>
+<span id="L32"><span class="lineNum">      32</span>                 :             :  *</span>
+<span id="L33"><span class="lineNum">      33</span>                 :             :  * Operations may have multiple stages (think multi-stage initialization),</span>
+<span id="L34"><span class="lineNum">      34</span>                 :             :  * where each stage may take nonzero simulation time. The number of stages</span>
+<span id="L35"><span class="lineNum">      35</span>                 :             :  * are defined by the operation (its getNumStages() method).</span>
+<span id="L36"><span class="lineNum">      36</span>                 :             :  * Within a stage, the submodule tree is traversed, and initiateStateChange()</span>
+<span id="L37"><span class="lineNum">      37</span>                 :             :  * is invoked on each module that implements ILifecycle.</span>
+<span id="L38"><span class="lineNum">      38</span>                 :             :  *</span>
+<span id="L39"><span class="lineNum">      39</span>                 :             :  * Operations may take nonzero simulation time. A module that needs nonzero</span>
+<span id="L40"><span class="lineNum">      40</span>                 :             :  * simulation time to complete a stage (e.g. it wants to close TCP connections</span>
+<span id="L41"><span class="lineNum">      41</span>                 :             :  * or model finite shutdown/reboot time) can signal that in the return value</span>
+<span id="L42"><span class="lineNum">      42</span>                 :             :  * of initiateStateChange(). When it is done, it can signal that to</span>
+<span id="L43"><span class="lineNum">      43</span>                 :             :  * LifecycleController by invoking the callback passed to it in</span>
+<span id="L44"><span class="lineNum">      44</span>                 :             :  * initiateStateChange(). LifecycleController only regards the stage as completed</span>
+<span id="L45"><span class="lineNum">      45</span>                 :             :  * (and goes on to the next stage) when all participating modules have indicated</span>
+<span id="L46"><span class="lineNum">      46</span>                 :             :  * that they are done.</span>
+<span id="L47"><span class="lineNum">      47</span>                 :             :  *</span>
+<span id="L48"><span class="lineNum">      48</span>                 :             :  * Operations can be nested, that is, it's possible to initiate another operation</span>
+<span id="L49"><span class="lineNum">      49</span>                 :             :  * while one is underway.</span>
+<span id="L50"><span class="lineNum">      50</span>                 :             :  *</span>
+<span id="L51"><span class="lineNum">      51</span>                 :             :  * @see ILifecycle, LifecycleOperation</span>
+<span id="L52"><span class="lineNum">      52</span>                 :             :  */</span>
+<span id="L53"><span class="lineNum">      53</span>                 :             : class INET_API LifecycleController</span>
+<span id="L54"><span class="lineNum">      54</span>                 :             : {</span>
+<span id="L55"><span class="lineNum">      55</span>                 :             :   protected:</span>
+<span id="L56"><span class="lineNum">      56</span>                 :             :     class INET_API Callback : public IDoneCallback {</span>
+<span id="L57"><span class="lineNum">      57</span>                 :             :       public:</span>
+<span id="L58"><span class="lineNum">      58</span>                 :             :         LifecycleController *controller = nullptr;</span>
+<span id="L59"><span class="lineNum">      59</span>                 :             :         LifecycleOperation *operation = nullptr;</span>
+<span id="L60"><span class="lineNum">      60</span>                 :             :         cModule *module = nullptr;</span>
+<span id="L61"><span class="lineNum">      61</span>                 :             : </span>
+<span id="L62"><span class="lineNum">      62</span>                 :             :         void init(LifecycleController *controller, LifecycleOperation *operation, cModule *module);</span>
+<span id="L63"><span class="lineNum">      63</span>                 :             :         virtual void invoke() override;</span>
+<span id="L64"><span class="lineNum">      64</span>                 :             :     };</span>
+<span id="L65"><span class="lineNum">      65</span>                 :             : </span>
+<span id="L66"><span class="lineNum">      66</span>                 :             :     Callback *spareCallback = nullptr;</span>
+<span id="L67"><span class="lineNum">      67</span>                 :             :     std::vector&lt;LifecycleOperation *&gt; runningOperations;</span>
+<span id="L68"><span class="lineNum">      68</span>                 :             : </span>
+<span id="L69"><span class="lineNum">      69</span>                 :             :   protected:</span>
+<span id="L70"><span class="lineNum">      70</span>                 :             :     virtual bool resumeOperation(LifecycleOperation *operation);</span>
+<span id="L71"><span class="lineNum">      71</span>                 :             :     virtual void doOneStage(LifecycleOperation *operation, cModule *submodule);</span>
+<span id="L72"><span class="lineNum">      72</span>                 :             :     virtual void moduleOperationStageCompleted(Callback *callback); // invoked from the callback</span>
+<span id="L73"><span class="lineNum">      73</span>                 :             : </span>
+<span id="L74"><span class="lineNum">      74</span>                 :             :   public:</span>
+<span id="L75"><span class="lineNum">      75</span>                 :<span class="tlaGNC tlaBgGNC">         632 :     LifecycleController() : spareCallback(nullptr) {}</span></span>
+<span id="L76"><span class="lineNum">      76</span>                 :             :     virtual ~LifecycleController();</span>
+<span id="L77"><span class="lineNum">      77</span>                 :             : </span>
+<span id="L78"><span class="lineNum">      78</span>                 :             :     /**</span>
+<span id="L79"><span class="lineNum">      79</span>                 :             :      * Initiate an operation. See the class documentation and ILifecycle for</span>
+<span id="L80"><span class="lineNum">      80</span>                 :             :      * details. The target module will be taken from the operation object.</span>
+<span id="L81"><span class="lineNum">      81</span>                 :             :      *</span>
+<span id="L82"><span class="lineNum">      82</span>                 :             :      * The return value indicates whether the operation has been completed</span>
+<span id="L83"><span class="lineNum">      83</span>                 :             :      * inside the call (true), or is pending because it will take several</span>
+<span id="L84"><span class="lineNum">      84</span>                 :             :      * events and likely nonzero simulation time to complete (false).</span>
+<span id="L85"><span class="lineNum">      85</span>                 :             :      * In the latter case, and if you provided a completionCallback as</span>
+<span id="L86"><span class="lineNum">      86</span>                 :             :      * parameter, you will be notified via the callback when the operation</span>
+<span id="L87"><span class="lineNum">      87</span>                 :             :      * completes.</span>
+<span id="L88"><span class="lineNum">      88</span>                 :             :      */</span>
+<span id="L89"><span class="lineNum">      89</span>                 :             :     virtual bool initiateOperation(LifecycleOperation *operation, IDoneCallback *completionCallback = nullptr);</span>
+<span id="L90"><span class="lineNum">      90</span>                 :             : };</span>
+<span id="L91"><span class="lineNum">      91</span>                 :             : </span>
+<span id="L92"><span class="lineNum">      92</span>                 :             : } // namespace inet</span>
+<span id="L93"><span class="lineNum">      93</span>                 :             : </span>
+<span id="L94"><span class="lineNum">      94</span>                 :             : #endif</span>
+<span id="L95"><span class="lineNum">      95</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

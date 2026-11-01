@@ -1,0 +1,422 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - physicallayer/wireless/ieee80211/bitlevel/src/inet/physicallayer/wireless/ieee80211/bitlevel/Ieee80211LayeredOfdmTransmitter.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../../../index.html">top level</a> - <a href="index.html">physicallayer/wireless/ieee80211/bitlevel/src/inet/physicallayer/wireless/ieee80211/bitlevel</a> - Ieee80211LayeredOfdmTransmitter.cc<span style="font-size: 80%;"> (source / <a href="Ieee80211LayeredOfdmTransmitter.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryMed">79.4&nbsp;%</td>
+            <td class="headerCovTableEntry">247</td>
+            <td class="headerCovTableEntry">196</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">93.3&nbsp;%</td>
+            <td class="headerCovTableEntry">15</td>
+            <td class="headerCovTableEntry">14</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryLo">38.6&nbsp;%</td>
+            <td class="headerCovTableEntry">132</td>
+            <td class="headerCovTableEntry">51</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2014 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #include &quot;inet/physicallayer/wireless/ieee80211/bitlevel/Ieee80211LayeredOfdmTransmitter.h&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : </span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &quot;inet/common/math/Functions.h&quot;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &quot;inet/common/packet/chunk/BytesChunk.h&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &quot;inet/mobility/contract/IMobility.h&quot;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : #include &quot;inet/physicallayer/wireless/common/analogmodel/dimensional/DimensionalTransmissionAnalogModel.h&quot;</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : #include &quot;inet/physicallayer/wireless/common/contract/bitlevel/ISignalAnalogModel.h&quot;</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : #include &quot;inet/physicallayer/wireless/common/contract/packetlevel/IRadio.h&quot;</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : #include &quot;inet/physicallayer/wireless/common/radio/bitlevel/SignalPacketModel.h&quot;</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : #include &quot;inet/physicallayer/wireless/ieee80211/bitlevel/Ieee80211ConvolutionalCode.h&quot;</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : #include &quot;inet/physicallayer/wireless/ieee80211/bitlevel/Ieee80211OfdmDefs.h&quot;</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : #include &quot;inet/physicallayer/wireless/ieee80211/bitlevel/Ieee80211OfdmEncoder.h&quot;</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : #include &quot;inet/physicallayer/wireless/ieee80211/bitlevel/Ieee80211OfdmEncoderModule.h&quot;</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             : #include &quot;inet/physicallayer/wireless/ieee80211/bitlevel/Ieee80211OfdmModulator.h&quot;</span>
+<span id="L22"><span class="lineNum">      22</span>                 :             : #include &quot;inet/physicallayer/wireless/ieee80211/bitlevel/Ieee80211OfdmModulatorModule.h&quot;</span>
+<span id="L23"><span class="lineNum">      23</span>                 :             : #include &quot;inet/physicallayer/wireless/ieee80211/bitlevel/Ieee80211OfdmSymbolModel.h&quot;</span>
+<span id="L24"><span class="lineNum">      24</span>                 :             : #include &quot;inet/physicallayer/wireless/ieee80211/mode/Ieee80211OfdmCode.h&quot;</span>
+<span id="L25"><span class="lineNum">      25</span>                 :             : #include &quot;inet/physicallayer/wireless/ieee80211/mode/Ieee80211OfdmMode.h&quot;</span>
+<span id="L26"><span class="lineNum">      26</span>                 :             : #include &quot;inet/physicallayer/wireless/ieee80211/mode/Ieee80211OfdmModulation.h&quot;</span>
+<span id="L27"><span class="lineNum">      27</span>                 :             : #include &quot;inet/physicallayer/wireless/ieee80211/packetlevel/Ieee80211ControlInfo_m.h&quot;</span>
+<span id="L28"><span class="lineNum">      28</span>                 :             : #include &quot;inet/physicallayer/wireless/ieee80211/packetlevel/Ieee80211PhyHeader_m.h&quot;</span>
+<span id="L29"><span class="lineNum">      29</span>                 :             : #include &quot;inet/physicallayer/wireless/ieee80211/packetlevel/Ieee80211Tag_m.h&quot;</span>
+<span id="L30"><span class="lineNum">      30</span>                 :             : #include &quot;inet/physicallayer/wireless/ieee80211/packetlevel/Ieee80211Transmission.h&quot;</span>
+<span id="L31"><span class="lineNum">      31</span>                 :             : </span>
+<span id="L32"><span class="lineNum">      32</span>                 :             : namespace inet {</span>
+<span id="L33"><span class="lineNum">      33</span>                 :             : </span>
+<span id="L34"><span class="lineNum">      34</span>                 :             : namespace physicallayer {</span>
+<span id="L35"><span class="lineNum">      35</span>                 :             : </span>
+<span id="L36"><span class="lineNum">      36</span>                 :             : Define_Module(Ieee80211LayeredOfdmTransmitter);</span>
+<span id="L37"><span class="lineNum">      37</span>                 :             : </span>
+<span id="L38"><span class="lineNum">      38</span>                 :             : void Ieee80211LayeredOfdmTransmitter::initialize(int stage)</span>
+<span id="L39"><span class="lineNum">      39</span>                 :<span class="tlaGNC tlaBgGNC">         384 : {</span></span>
+<span id="L40"><span class="lineNum">      40</span>         [<span class="tlaGBC" title="Branch 0 was taken 16 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 368 times"> + </span>]:<span class="tlaGNC">         384 :     if (stage == INITSTAGE_LOCAL) {</span></span>
+<span id="L41"><span class="lineNum">      41</span>                 :<span class="tlaGNC">          16 :         isCompliant = par(&quot;isCompliant&quot;);</span></span>
+<span id="L42"><span class="lineNum">      42</span>                 :<span class="tlaGNC">          16 :         dataEncoder = dynamic_cast&lt;const IEncoder *&gt;(getSubmodule(&quot;dataEncoder&quot;));</span></span>
+<span id="L43"><span class="lineNum">      43</span>                 :<span class="tlaGNC">          16 :         signalEncoder = dynamic_cast&lt;const IEncoder *&gt;(getSubmodule(&quot;signalEncoder&quot;));</span></span>
+<span id="L44"><span class="lineNum">      44</span>                 :<span class="tlaGNC">          16 :         dataModulator = dynamic_cast&lt;const IModulator *&gt;(getSubmodule(&quot;dataModulator&quot;));</span></span>
+<span id="L45"><span class="lineNum">      45</span>                 :<span class="tlaGNC">          16 :         signalModulator = dynamic_cast&lt;const IModulator *&gt;(getSubmodule(&quot;signalModulator&quot;));</span></span>
+<span id="L46"><span class="lineNum">      46</span>                 :<span class="tlaGNC">          16 :         pulseShaper = dynamic_cast&lt;const IPulseShaper *&gt;(getSubmodule(&quot;pulseShaper&quot;));</span></span>
+<span id="L47"><span class="lineNum">      47</span>                 :<span class="tlaGNC">          16 :         digitalAnalogConverter = dynamic_cast&lt;const IDigitalAnalogConverter *&gt;(getSubmodule(&quot;digitalAnalogConverter&quot;));</span></span>
+<span id="L48"><span class="lineNum">      48</span>                 :<span class="tlaGNC">          16 :         channelSpacing = Hz(par(&quot;channelSpacing&quot;));</span></span>
+<span id="L49"><span class="lineNum">      49</span>                 :<span class="tlaGNC">          16 :         power = W(par(&quot;power&quot;));</span></span>
+<span id="L50"><span class="lineNum">      50</span>                 :<span class="tlaGNC">          16 :         centerFrequency = Hz(par(&quot;centerFrequency&quot;));</span></span>
+<span id="L51"><span class="lineNum">      51</span>                 :<span class="tlaGNC">          16 :         bandwidth = Hz(par(&quot;bandwidth&quot;));</span></span>
+<span id="L52"><span class="lineNum">      52</span> [<span class="tlaGBC" title="Branch 0 was taken 14 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 14 times"> + </span>]:<span class="tlaGNC">          16 :         if (isCompliant &amp;&amp; (dataEncoder || signalEncoder || dataModulator || signalModulator</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 14 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 14 times"> + </span>]
+<span class="lineNum">        </span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 14 times"> + </span>]
+<span id="L53"><span class="lineNum">      53</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 14 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 14 times"> + </span>]:<span class="tlaGNC">          14 :                             || pulseShaper || digitalAnalogConverter || !std::isnan(channelSpacing.get()))) // TODO check modulations</span></span>
+<span class="lineNum">        </span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 14 times"> + </span>]
+<span id="L54"><span class="lineNum">      54</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         {</span></span>
+<span id="L55"><span class="lineNum">      55</span>                 :<span class="tlaUNC">           0 :             throw cRuntimeError(&quot;In compliant mode it is forbidden to set the following parameters: dataEncoder, signalEncoder, modulator, signalModulator, pulseShaper, digitalAnalogConverter, bandwidth, channelSpacing&quot;);</span></span>
+<span id="L56"><span class="lineNum">      56</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L57"><span class="lineNum">      57</span>                 :<span class="tlaGNC tlaBgGNC">          16 :         const char *levelOfDetailStr = par(&quot;levelOfDetail&quot;);</span></span>
+<span id="L58"><span class="lineNum">      58</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 16 times"> + </span>]:<span class="tlaGNC">          16 :         if (strcmp(&quot;bit&quot;, levelOfDetailStr) == 0)</span></span>
+<span id="L59"><span class="lineNum">      59</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             levelOfDetail = BIT_DOMAIN;</span></span>
+<span id="L60"><span class="lineNum">      60</span>         [<span class="tlaGBC" title="Branch 0 was taken 16 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC tlaBgGNC">          16 :         else if (strcmp(&quot;symbol&quot;, levelOfDetailStr) == 0)</span></span>
+<span id="L61"><span class="lineNum">      61</span>                 :<span class="tlaGNC">          16 :             levelOfDetail = SYMBOL_DOMAIN;</span></span>
+<span id="L62"><span class="lineNum">      62</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC tlaBgUNC">           0 :         else if (strcmp(&quot;sample&quot;, levelOfDetailStr) == 0)</span></span>
+<span id="L63"><span class="lineNum">      63</span>                 :<span class="tlaUNC">           0 :             levelOfDetail = SAMPLE_DOMAIN;</span></span>
+<span id="L64"><span class="lineNum">      64</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         else if (strcmp(&quot;packet&quot;, levelOfDetailStr) == 0)</span></span>
+<span id="L65"><span class="lineNum">      65</span>                 :<span class="tlaUNC">           0 :             levelOfDetail = PACKET_DOMAIN;</span></span>
+<span id="L66"><span class="lineNum">      66</span>                 :<span class="tlaUNC">           0 :         else</span></span>
+<span id="L67"><span class="lineNum">      67</span>                 :<span class="tlaUNC">           0 :             throw cRuntimeError(&quot;Unknown level of detail='%s'&quot;, levelOfDetailStr);</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :<span class="tlaGNC tlaBgGNC">          16 :     }</span></span>
+<span id="L69"><span class="lineNum">      69</span>         [<span class="tlaGBC" title="Branch 0 was taken 16 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 352 times"> + </span>]:<span class="tlaGNC">         368 :     else if (stage == INITSTAGE_LAST) {</span></span>
+<span id="L70"><span class="lineNum">      70</span>         [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 14 times"> + </span>]:<span class="tlaGNC">          16 :         if (!isCompliant)</span></span>
+<span id="L71"><span class="lineNum">      71</span>                 :<span class="tlaGNC">           2 :             mode = computeMode(bandwidth);</span></span>
+<span id="L72"><span class="lineNum">      72</span>                 :<span class="tlaGNC">          16 :     }</span></span>
+<span id="L73"><span class="lineNum">      73</span>                 :<span class="tlaGNC">         384 : }</span></span>
+<span id="L74"><span class="lineNum">      74</span>                 :             : </span>
+<span id="L75"><span class="lineNum">      75</span>                 :             : std::ostream&amp; Ieee80211LayeredOfdmTransmitter::printToStream(std::ostream&amp; stream, int level, int evFlags) const</span>
+<span id="L76"><span class="lineNum">      76</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L77"><span class="lineNum">      77</span>                 :<span class="tlaUNC">           0 :     stream &lt;&lt; &quot;Ieee80211LayeredOfdmTransmitter&quot;;</span></span>
+<span id="L78"><span class="lineNum">      78</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (level &lt;= PRINT_LEVEL_TRACE)</span></span>
+<span id="L79"><span class="lineNum">      79</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         stream &lt;&lt; EV_FIELD(levelOfDetail)</span></span>
+<span id="L80"><span class="lineNum">      80</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                &lt;&lt; EV_FIELD(mode, printFieldToString(mode, level + 1, evFlags))</span></span>
+<span id="L81"><span class="lineNum">      81</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                &lt;&lt; EV_FIELD(signalEncoder, printFieldToString(signalEncoder, level + 1, evFlags))</span></span>
+<span id="L82"><span class="lineNum">      82</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                &lt;&lt; EV_FIELD(dataEncoder, printFieldToString(dataEncoder, level + 1, evFlags))</span></span>
+<span id="L83"><span class="lineNum">      83</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                &lt;&lt; EV_FIELD(signalModulator, printFieldToString(signalModulator, level + 1, evFlags))</span></span>
+<span id="L84"><span class="lineNum">      84</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                &lt;&lt; EV_FIELD(dataModulator, printFieldToString(dataModulator, level + 1, evFlags))</span></span>
+<span id="L85"><span class="lineNum">      85</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                &lt;&lt; EV_FIELD(pulseShaper, printFieldToString(pulseShaper, level + 1, evFlags))</span></span>
+<span id="L86"><span class="lineNum">      86</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                &lt;&lt; EV_FIELD(digitalAnalogConverter, printFieldToString(digitalAnalogConverter, level + 1, evFlags))</span></span>
+<span id="L87"><span class="lineNum">      87</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                &lt;&lt; EV_FIELD(isCompliant)</span></span>
+<span id="L88"><span class="lineNum">      88</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                &lt;&lt; EV_FIELD(bandwidth)</span></span>
+<span id="L89"><span class="lineNum">      89</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                &lt;&lt; EV_FIELD(channelSpacing)</span></span>
+<span id="L90"><span class="lineNum">      90</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                &lt;&lt; EV_FIELD(centerFrequency)</span></span>
+<span id="L91"><span class="lineNum">      91</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                &lt;&lt; EV_FIELD(power);</span></span>
+<span id="L92"><span class="lineNum">      92</span>                 :<span class="tlaUNC">           0 :     return stream;</span></span>
+<span id="L93"><span class="lineNum">      93</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L94"><span class="lineNum">      94</span>                 :             : </span>
+<span id="L95"><span class="lineNum">      95</span>                 :             : const ITransmissionPacketModel *Ieee80211LayeredOfdmTransmitter::createPacketModel(const Packet *packet) const</span>
+<span id="L96"><span class="lineNum">      96</span>                 :<span class="tlaGNC tlaBgGNC">        2813 : {</span></span>
+<span id="L97"><span class="lineNum">      97</span>                 :<span class="tlaGNC">        2813 :     return new TransmissionPacketModel(packet, mode-&gt;getHeaderMode()-&gt;getNetBitrate(), mode-&gt;getDataMode()-&gt;getNetBitrate());</span></span>
+<span id="L98"><span class="lineNum">      98</span>                 :<span class="tlaGNC">        2813 : }</span></span>
+<span id="L99"><span class="lineNum">      99</span>                 :             : </span>
+<span id="L100"><span class="lineNum">     100</span>                 :             : const ITransmissionAnalogModel *Ieee80211LayeredOfdmTransmitter::createDimensionalAnalogModel(simtime_t startTime, const ITransmissionPacketModel *packetModel, const ITransmissionBitModel *bitModel) const</span>
+<span id="L101"><span class="lineNum">     101</span>                 :<span class="tlaGNC">        2813 : {</span></span>
+<span id="L102"><span class="lineNum">     102</span>                 :<span class="tlaGNC">        2813 :     int headerBitLength = -1;</span></span>
+<span id="L103"><span class="lineNum">     103</span>                 :<span class="tlaGNC">        2813 :     int dataBitLength = -1;</span></span>
+<span id="L104"><span class="lineNum">     104</span>         [<span class="tlaGBC" title="Branch 0 was taken 2813 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        2813 :     if (levelOfDetail &gt; PACKET_DOMAIN) {</span></span>
+<span id="L105"><span class="lineNum">     105</span>                 :<span class="tlaGNC">        2813 :         headerBitLength = bitModel-&gt;getHeaderLength().get&lt;b&gt;();</span></span>
+<span id="L106"><span class="lineNum">     106</span>                 :<span class="tlaGNC">        2813 :         dataBitLength = bitModel-&gt;getDataLength().get&lt;b&gt;();</span></span>
+<span id="L107"><span class="lineNum">     107</span>                 :<span class="tlaGNC">        2813 :     }</span></span>
+<span id="L108"><span class="lineNum">     108</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     else {</span></span>
+<span id="L109"><span class="lineNum">     109</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         if (isCompliant) {</span></span>
+<span id="L110"><span class="lineNum">     110</span>                 :<span class="tlaUNC">           0 :             const ConvolutionalCode *convolutionalCode = mode-&gt;getDataMode()-&gt;getCode()-&gt;getConvolutionalCode();</span></span>
+<span id="L111"><span class="lineNum">     111</span>                 :<span class="tlaUNC">           0 :             headerBitLength = ENCODED_SIGNAL_FIELD_LENGTH;</span></span>
+<span id="L112"><span class="lineNum">     112</span>                 :<span class="tlaUNC">           0 :             dataBitLength = convolutionalCode-&gt;getEncodedLength((packetModel-&gt;getPacket()-&gt;getByteLength() * 8 - DECODED_SIGNAL_FIELD_LENGTH));</span></span>
+<span id="L113"><span class="lineNum">     113</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L114"><span class="lineNum">     114</span>                 :<span class="tlaUNC">           0 :         else {</span></span>
+<span id="L115"><span class="lineNum">     115</span>                 :<span class="tlaUNC">           0 :             throw cRuntimeError(&quot;Unimplemented&quot;);</span></span>
+<span id="L116"><span class="lineNum">     116</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L117"><span class="lineNum">     117</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L118"><span class="lineNum">     118</span>                 :<span class="tlaGNC tlaBgGNC">        2813 :     simtime_t preambleDuration = mode-&gt;getPreambleMode()-&gt;getDuration();</span></span>
+<span id="L119"><span class="lineNum">     119</span>                 :<span class="tlaGNC">        2813 :     simtime_t headerDuration = 0;</span></span>
+<span id="L120"><span class="lineNum">     120</span>         [<span class="tlaGBC" title="Branch 0 was taken 400 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2413 times"> + </span>]:<span class="tlaGNC">        2813 :     if (!isCompliant) {</span></span>
+<span id="L121"><span class="lineNum">     121</span>                 :<span class="tlaGNC">         400 :         unsigned int headerCodeWordSize = mode-&gt;getSignalMode()-&gt;getModulation()-&gt;getSubcarrierModulation()-&gt;getCodeWordSize();</span></span>
+<span id="L122"><span class="lineNum">     122</span>                 :<span class="tlaGNC">         400 :         ASSERT(headerBitLength % headerCodeWordSize == 0);</span></span>
+<span id="L123"><span class="lineNum">     123</span>                 :<span class="tlaGNC">         400 :         unsigned int numberOfSignalApskSymbols = headerBitLength / headerCodeWordSize;</span></span>
+<span id="L124"><span class="lineNum">     124</span>                 :<span class="tlaGNC">         400 :         unsigned int numberOfSignalOFDMSymbols = numberOfSignalApskSymbols / NUMBER_OF_OFDM_DATA_SUBCARRIERS;</span></span>
+<span id="L125"><span class="lineNum">     125</span>                 :<span class="tlaGNC">         400 :         headerDuration = numberOfSignalOFDMSymbols * mode-&gt;getSymbolInterval();</span></span>
+<span id="L126"><span class="lineNum">     126</span>                 :<span class="tlaGNC">         400 :     }</span></span>
+<span id="L127"><span class="lineNum">     127</span>                 :<span class="tlaGNC">        2413 :     else</span></span>
+<span id="L128"><span class="lineNum">     128</span>                 :<span class="tlaGNC">        2413 :         headerDuration = mode-&gt;getSignalMode()-&gt;getDuration();</span></span>
+<span id="L129"><span class="lineNum">     129</span>                 :<span class="tlaGNC">        2813 :     unsigned int dataCodeWordSize = mode-&gt;getDataMode()-&gt;getModulation()-&gt;getSubcarrierModulation()-&gt;getCodeWordSize();</span></span>
+<span id="L130"><span class="lineNum">     130</span>                 :<span class="tlaGNC">        2813 :     ASSERT(dataBitLength % dataCodeWordSize == 0);</span></span>
+<span id="L131"><span class="lineNum">     131</span>                 :<span class="tlaGNC">        2813 :     unsigned int numberOfDataApskSymbols = dataBitLength / dataCodeWordSize;</span></span>
+<span id="L132"><span class="lineNum">     132</span>                 :<span class="tlaGNC">        2813 :     unsigned int numberOfDataOFDMSymbols = numberOfDataApskSymbols / NUMBER_OF_OFDM_DATA_SUBCARRIERS;</span></span>
+<span id="L133"><span class="lineNum">     133</span>                 :<span class="tlaGNC">        2813 :     simtime_t dataDuration = numberOfDataOFDMSymbols * mode-&gt;getSymbolInterval();</span></span>
+<span id="L134"><span class="lineNum">     134</span>                 :<span class="tlaGNC">        2813 :     auto endTime = startTime + preambleDuration + headerDuration + dataDuration;</span></span>
+<span id="L135"><span class="lineNum">     135</span>                 :             :     // TODO: centerFrequency doesn't take the channel into account</span>
+<span id="L136"><span class="lineNum">     136</span>                 :<span class="tlaGNC">        2813 :     auto powerFunction = makeShared&lt;math::Boxcar2DFunction&lt;WpHz, simsec, Hz&gt;&gt;(simsec(startTime), simsec(endTime), centerFrequency - bandwidth / 2, centerFrequency + bandwidth / 2, power / bandwidth);</span></span>
+<span id="L137"><span class="lineNum">     137</span>                 :<span class="tlaGNC">        2813 :     return new DimensionalTransmissionAnalogModel(preambleDuration, headerDuration, dataDuration, centerFrequency, mode-&gt;getDataMode()-&gt;getBandwidth(), powerFunction);</span></span>
+<span id="L138"><span class="lineNum">     138</span>                 :<span class="tlaGNC">        2813 : }</span></span>
+<span id="L139"><span class="lineNum">     139</span>                 :             : </span>
+<span id="L140"><span class="lineNum">     140</span>                 :             : const ITransmissionPacketModel *Ieee80211LayeredOfdmTransmitter::createSignalFieldPacketModel(const ITransmissionPacketModel *completePacketModel) const</span>
+<span id="L141"><span class="lineNum">     141</span>                 :<span class="tlaGNC">        2813 : {</span></span>
+<span id="L142"><span class="lineNum">     142</span>                 :             :     // The SIGNAL field is composed of RATE (4), Reserved (1), LENGTH (12), Parity (1), Tail (6),</span>
+<span id="L143"><span class="lineNum">     143</span>                 :             :     // fields, so the SIGNAL field is 24 bits (OFDM_SYMBOL_SIZE / 2) long.</span>
+<span id="L144"><span class="lineNum">     144</span>                 :<span class="tlaGNC">        2813 :     auto packet = completePacketModel-&gt;getPacket();</span></span>
+<span id="L145"><span class="lineNum">     145</span>                 :<span class="tlaGNC">        2813 :     const auto&amp; signalChunk = packet-&gt;peekAt(b(0), b(NUMBER_OF_OFDM_DATA_SUBCARRIERS / 2));</span></span>
+<span id="L146"><span class="lineNum">     146</span>                 :<span class="tlaGNC">        2813 :     return new TransmissionPacketModel(new Packet(nullptr, signalChunk), bps(NaN), bps(NaN));</span></span>
+<span id="L147"><span class="lineNum">     147</span>                 :<span class="tlaGNC">        2813 : }</span></span>
+<span id="L148"><span class="lineNum">     148</span>                 :             : </span>
+<span id="L149"><span class="lineNum">     149</span>                 :             : const ITransmissionPacketModel *Ieee80211LayeredOfdmTransmitter::createDataFieldPacketModel(const ITransmissionPacketModel *completePacketModel) const</span>
+<span id="L150"><span class="lineNum">     150</span>                 :<span class="tlaGNC">        2813 : {</span></span>
+<span id="L151"><span class="lineNum">     151</span>                 :<span class="tlaGNC">        2813 :     auto packet = completePacketModel-&gt;getPacket();</span></span>
+<span id="L152"><span class="lineNum">     152</span>                 :<span class="tlaGNC">        2813 :     const auto&amp; dataChunk = packet-&gt;peekAt(b(NUMBER_OF_OFDM_DATA_SUBCARRIERS / 2), packet-&gt;getDataLength() - b(NUMBER_OF_OFDM_DATA_SUBCARRIERS / 2));</span></span>
+<span id="L153"><span class="lineNum">     153</span>                 :<span class="tlaGNC">        2813 :     return new TransmissionPacketModel(new Packet(nullptr, dataChunk), bps(NaN), bps(NaN));</span></span>
+<span id="L154"><span class="lineNum">     154</span>                 :<span class="tlaGNC">        2813 : }</span></span>
+<span id="L155"><span class="lineNum">     155</span>                 :             : </span>
+<span id="L156"><span class="lineNum">     156</span>                 :             : void Ieee80211LayeredOfdmTransmitter::encodeAndModulate(const ITransmissionPacketModel *packetModel, const ITransmissionBitModel *&amp; fieldBitModel, const ITransmissionSymbolModel *&amp; fieldSymbolModel, const IEncoder *encoder, const IModulator *modulator, bool isSignalField) const</span>
+<span id="L157"><span class="lineNum">     157</span>                 :<span class="tlaGNC">        5626 : {</span></span>
+<span id="L158"><span class="lineNum">     158</span>                 :<span class="tlaGNC">        5626 :     const ITransmissionPacketModel *fieldPacketModel = nullptr;</span></span>
+<span id="L159"><span class="lineNum">     159</span>         [<span class="tlaGBC" title="Branch 0 was taken 2813 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2813 times"> + </span>]:<span class="tlaGNC">        5626 :     if (isSignalField)</span></span>
+<span id="L160"><span class="lineNum">     160</span>                 :<span class="tlaGNC">        2813 :         fieldPacketModel = createSignalFieldPacketModel(packetModel);</span></span>
+<span id="L161"><span class="lineNum">     161</span>                 :<span class="tlaGNC">        2813 :     else</span></span>
+<span id="L162"><span class="lineNum">     162</span>                 :<span class="tlaGNC">        2813 :         fieldPacketModel = createDataFieldPacketModel(packetModel);</span></span>
+<span id="L163"><span class="lineNum">     163</span>         [<span class="tlaGBC" title="Branch 0 was taken 5626 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        5626 :     if (levelOfDetail &gt;= BIT_DOMAIN) {</span></span>
+<span id="L164"><span class="lineNum">     164</span>         [<span class="tlaGBC" title="Branch 0 was taken 5626 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        5626 :         if (fieldPacketModel) {</span></span>
+<span id="L165"><span class="lineNum">     165</span>         [<span class="tlaGBC" title="Branch 0 was taken 800 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4826 times"> + </span>]:<span class="tlaGNC">        5626 :             if (encoder) // non-compliant mode</span></span>
+<span id="L166"><span class="lineNum">     166</span>                 :<span class="tlaGNC">         800 :                 fieldBitModel = encoder-&gt;encode(fieldPacketModel);</span></span>
+<span id="L167"><span class="lineNum">     167</span>                 :<span class="tlaGNC">        4826 :             else { // compliant mode</span></span>
+<span id="L168"><span class="lineNum">     168</span>         [<span class="tlaGBC" title="Branch 0 was taken 2413 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2413 times"> + </span>]:<span class="tlaGNC">        4826 :                 const Ieee80211OfdmCode *code = isSignalField ? mode-&gt;getSignalMode()-&gt;getCode() : mode-&gt;getDataMode()-&gt;getCode();</span></span>
+<span id="L169"><span class="lineNum">     169</span>                 :<span class="tlaGNC">        4826 :                 const Ieee80211OfdmEncoder encoder(code);</span></span>
+<span id="L170"><span class="lineNum">     170</span>                 :<span class="tlaGNC">        4826 :                 fieldBitModel = encoder.encode(fieldPacketModel);</span></span>
+<span id="L171"><span class="lineNum">     171</span>                 :<span class="tlaGNC">        4826 :             }</span></span>
+<span id="L172"><span class="lineNum">     172</span>                 :<span class="tlaGNC">        5626 :         }</span></span>
+<span id="L173"><span class="lineNum">     173</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         else</span></span>
+<span id="L174"><span class="lineNum">     174</span>                 :<span class="tlaUNC">           0 :             throw cRuntimeError(&quot;Encoder needs packet representation&quot;);</span></span>
+<span id="L175"><span class="lineNum">     175</span>                 :<span class="tlaGNC tlaBgGNC">        5626 :     }</span></span>
+<span id="L176"><span class="lineNum">     176</span>         [<span class="tlaGBC" title="Branch 0 was taken 5626 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        5626 :     if (levelOfDetail &gt;= SYMBOL_DOMAIN) {</span></span>
+<span id="L177"><span class="lineNum">     177</span>         [<span class="tlaGBC" title="Branch 0 was taken 5626 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        5626 :         if (fieldBitModel) {</span></span>
+<span id="L178"><span class="lineNum">     178</span>         [<span class="tlaGBC" title="Branch 0 was taken 800 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4826 times"> + </span>]:<span class="tlaGNC">        5626 :             if (modulator) // non-compliant mode</span></span>
+<span id="L179"><span class="lineNum">     179</span>                 :<span class="tlaGNC">         800 :                 fieldSymbolModel = modulator-&gt;modulate(fieldBitModel);</span></span>
+<span id="L180"><span class="lineNum">     180</span>                 :<span class="tlaGNC">        4826 :             else { // compliant mode</span></span>
+<span id="L181"><span class="lineNum">     181</span>         [<span class="tlaGBC" title="Branch 0 was taken 2413 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2413 times"> + </span>]:<span class="tlaGNC">        4826 :                 const Ieee80211OfdmModulation *ofdmModulation = isSignalField ? mode-&gt;getSignalMode()-&gt;getModulation() : mode-&gt;getDataMode()-&gt;getModulation();</span></span>
+<span id="L182"><span class="lineNum">     182</span>         [<span class="tlaGBC" title="Branch 0 was taken 2413 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2413 times"> + </span>]:<span class="tlaGNC">        4826 :                 Ieee80211OfdmModulator modulator(ofdmModulation, isSignalField ? 0 : 1);</span></span>
+<span id="L183"><span class="lineNum">     183</span>                 :<span class="tlaGNC">        4826 :                 fieldSymbolModel = modulator.modulate(fieldBitModel);</span></span>
+<span id="L184"><span class="lineNum">     184</span>                 :<span class="tlaGNC">        4826 :             }</span></span>
+<span id="L185"><span class="lineNum">     185</span>                 :<span class="tlaGNC">        5626 :         }</span></span>
+<span id="L186"><span class="lineNum">     186</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         else</span></span>
+<span id="L187"><span class="lineNum">     187</span>                 :<span class="tlaUNC">           0 :             throw cRuntimeError(&quot;Modulator needs bit representation&quot;);</span></span>
+<span id="L188"><span class="lineNum">     188</span>                 :<span class="tlaGNC tlaBgGNC">        5626 :     }</span></span>
+<span id="L189"><span class="lineNum">     189</span>                 :<span class="tlaGNC">        5626 :     delete fieldPacketModel-&gt;getPacket();</span></span>
+<span id="L190"><span class="lineNum">     190</span>                 :<span class="tlaGNC">        5626 :     delete fieldPacketModel;</span></span>
+<span id="L191"><span class="lineNum">     191</span>                 :<span class="tlaGNC">        5626 : }</span></span>
+<span id="L192"><span class="lineNum">     192</span>                 :             : </span>
+<span id="L193"><span class="lineNum">     193</span>                 :             : const ITransmissionSymbolModel *Ieee80211LayeredOfdmTransmitter::createSymbolModel(const ITransmissionSymbolModel *signalFieldSymbolModel, const ITransmissionSymbolModel *dataFieldSymbolModel) const</span>
+<span id="L194"><span class="lineNum">     194</span>                 :<span class="tlaGNC">        2813 : {</span></span>
+<span id="L195"><span class="lineNum">     195</span>         [<span class="tlaGBC" title="Branch 0 was taken 2813 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        2813 :     if (levelOfDetail &gt;= SYMBOL_DOMAIN) {</span></span>
+<span id="L196"><span class="lineNum">     196</span>                 :<span class="tlaGNC">        2813 :         const std::vector&lt;const ISymbol *&gt; *signalSymbols = signalFieldSymbolModel-&gt;getAllSymbols();</span></span>
+<span id="L197"><span class="lineNum">     197</span>                 :<span class="tlaGNC">        2813 :         std::vector&lt;const ISymbol *&gt; *mergedSymbols = new std::vector&lt;const ISymbol *&gt;();</span></span>
+<span id="L198"><span class="lineNum">     198</span>                 :<span class="tlaGNC">        2813 :         const Ieee80211OfdmSymbol *ofdmSymbol = nullptr;</span></span>
+<span id="L199"><span class="lineNum">     199</span>         [<span class="tlaGBC" title="Branch 0 was taken 2813 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2813 times"> + </span>]:<span class="tlaGNC">        2813 :         for (auto&amp; signalSymbol : *signalSymbols) {</span></span>
+<span id="L200"><span class="lineNum">     200</span>                 :<span class="tlaGNC">        2813 :             ofdmSymbol = check_and_cast&lt;const Ieee80211OfdmSymbol *&gt;(signalSymbol);</span></span>
+<span id="L201"><span class="lineNum">     201</span>                 :<span class="tlaGNC">        2813 :             mergedSymbols-&gt;push_back(new Ieee80211OfdmSymbol(*ofdmSymbol));</span></span>
+<span id="L202"><span class="lineNum">     202</span>                 :<span class="tlaGNC">        2813 :         }</span></span>
+<span id="L203"><span class="lineNum">     203</span>                 :<span class="tlaGNC">        2813 :         const std::vector&lt;const ISymbol *&gt; *dataSymbols = dataFieldSymbolModel-&gt;getAllSymbols();</span></span>
+<span id="L204"><span class="lineNum">     204</span>         [<span class="tlaGBC" title="Branch 0 was taken 66577 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2813 times"> + </span>]:<span class="tlaGNC">       66577 :         for (auto&amp; dataSymbol : *dataSymbols) {</span></span>
+<span id="L205"><span class="lineNum">     205</span>                 :<span class="tlaGNC">       66577 :             ofdmSymbol = check_and_cast&lt;const Ieee80211OfdmSymbol *&gt;(dataSymbol);</span></span>
+<span id="L206"><span class="lineNum">     206</span>                 :<span class="tlaGNC">       66577 :             mergedSymbols-&gt;push_back(new Ieee80211OfdmSymbol(*ofdmSymbol));</span></span>
+<span id="L207"><span class="lineNum">     207</span>                 :<span class="tlaGNC">       66577 :         }</span></span>
+<span id="L208"><span class="lineNum">     208</span>                 :<span class="tlaGNC">        2813 :         const Ieee80211OfdmTransmissionSymbolModel *transmissionSymbolModel = new Ieee80211OfdmTransmissionSymbolModel(1, 1.0 / mode-&gt;getSignalMode()-&gt;getDuration(), mergedSymbols-&gt;size() - 1, 1.0 / mode-&gt;getSymbolInterval(), mergedSymbols, signalFieldSymbolModel-&gt;getHeaderModulation(), dataFieldSymbolModel-&gt;getDataModulation());</span></span>
+<span id="L209"><span class="lineNum">     209</span>                 :<span class="tlaGNC">        2813 :         delete signalFieldSymbolModel;</span></span>
+<span id="L210"><span class="lineNum">     210</span>                 :<span class="tlaGNC">        2813 :         delete dataFieldSymbolModel;</span></span>
+<span id="L211"><span class="lineNum">     211</span>                 :<span class="tlaGNC">        2813 :         return transmissionSymbolModel;</span></span>
+<span id="L212"><span class="lineNum">     212</span>                 :<span class="tlaGNC">        2813 :     }</span></span>
+<span id="L213"><span class="lineNum">     213</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     return new Ieee80211OfdmTransmissionSymbolModel(-1, NaN, -1, NaN, nullptr, mode-&gt;getSignalMode()-&gt;getModulation(), mode-&gt;getDataMode()-&gt;getModulation());</span></span>
+<span id="L214"><span class="lineNum">     214</span>                 :<span class="tlaGNC tlaBgGNC">        2813 : }</span></span>
+<span id="L215"><span class="lineNum">     215</span>                 :             : </span>
+<span id="L216"><span class="lineNum">     216</span>                 :             : const ITransmissionBitModel *Ieee80211LayeredOfdmTransmitter::createBitModel(const ITransmissionBitModel *signalFieldBitModel, const ITransmissionBitModel *dataFieldBitModel, const ITransmissionPacketModel *packetModel) const</span>
+<span id="L217"><span class="lineNum">     217</span>                 :<span class="tlaGNC">        2813 : {</span></span>
+<span id="L218"><span class="lineNum">     218</span>         [<span class="tlaGBC" title="Branch 0 was taken 2813 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        2813 :     if (levelOfDetail &gt;= BIT_DOMAIN) {</span></span>
+<span id="L219"><span class="lineNum">     219</span>                 :<span class="tlaGNC">        2813 :         BitVector *encodedBits = new BitVector(*signalFieldBitModel-&gt;getAllBits());</span></span>
+<span id="L220"><span class="lineNum">     220</span>                 :<span class="tlaGNC">        2813 :         unsigned int signalBitLength = signalFieldBitModel-&gt;getAllBits()-&gt;getSize();</span></span>
+<span id="L221"><span class="lineNum">     221</span>                 :<span class="tlaGNC">        2813 :         const BitVector *dataFieldBits = dataFieldBitModel-&gt;getAllBits();</span></span>
+<span id="L222"><span class="lineNum">     222</span>                 :<span class="tlaGNC">        2813 :         unsigned int dataBitLength = dataFieldBits-&gt;getSize();</span></span>
+<span id="L223"><span class="lineNum">     223</span>         [<span class="tlaGBC" title="Branch 0 was taken 3634656 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2813 times"> + </span>]:<span class="tlaGNC">     3637469 :         for (unsigned int i = 0; i &lt; dataFieldBits-&gt;getSize(); i++)</span></span>
+<span id="L224"><span class="lineNum">     224</span>                 :<span class="tlaGNC">     3634656 :             encodedBits-&gt;appendBit(dataFieldBits-&gt;getBit(i));</span></span>
+<span id="L225"><span class="lineNum">     225</span>                 :<span class="tlaGNC">        2813 :         const TransmissionBitModel *transmissionBitModel = new TransmissionBitModel(b(signalBitLength), mode-&gt;getSignalMode()-&gt;getGrossBitrate(), b(dataBitLength), mode-&gt;getDataMode()-&gt;getGrossBitrate(), encodedBits, dataFieldBitModel-&gt;getForwardErrorCorrection(), dataFieldBitModel-&gt;getScrambling(), dataFieldBitModel-&gt;getInterleaving());</span></span>
+<span id="L226"><span class="lineNum">     226</span>                 :<span class="tlaGNC">        2813 :         delete signalFieldBitModel;</span></span>
+<span id="L227"><span class="lineNum">     227</span>                 :<span class="tlaGNC">        2813 :         delete dataFieldBitModel;</span></span>
+<span id="L228"><span class="lineNum">     228</span>                 :<span class="tlaGNC">        2813 :         return transmissionBitModel;</span></span>
+<span id="L229"><span class="lineNum">     229</span>                 :<span class="tlaGNC">        2813 :     }</span></span>
+<span id="L230"><span class="lineNum">     230</span>                 :             :     // TODO</span>
+<span id="L231"><span class="lineNum">     231</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     return new TransmissionBitModel(b(-1), mode-&gt;getSignalMode()-&gt;getGrossBitrate(), b(-1), mode-&gt;getDataMode()-&gt;getGrossBitrate(), nullptr, nullptr, nullptr, nullptr);</span></span>
+<span id="L232"><span class="lineNum">     232</span>                 :<span class="tlaGNC tlaBgGNC">        2813 : }</span></span>
+<span id="L233"><span class="lineNum">     233</span>                 :             : </span>
+<span id="L234"><span class="lineNum">     234</span>                 :             : const ITransmissionSampleModel *Ieee80211LayeredOfdmTransmitter::createSampleModel(const ITransmissionSymbolModel *symbolModel) const</span>
+<span id="L235"><span class="lineNum">     235</span>                 :<span class="tlaGNC">        2813 : {</span></span>
+<span id="L236"><span class="lineNum">     236</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2813 times"> + </span>]:<span class="tlaGNC">        2813 :     if (levelOfDetail &gt;= SAMPLE_DOMAIN) {</span></span>
+<span id="L237"><span class="lineNum">     237</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         throw cRuntimeError(&quot;This level of detail is unimplemented.&quot;);</span></span>
+<span id="L238"><span class="lineNum">     238</span>                 :             : //        if (symbolModel)</span>
+<span id="L239"><span class="lineNum">     239</span>                 :             : //        {</span>
+<span id="L240"><span class="lineNum">     240</span>                 :             : //            if (pulseShaper) // non-compliant mode</span>
+<span id="L241"><span class="lineNum">     241</span>                 :             : //                sampleModel = pulseShaper-&gt;shape(symbolModel);</span>
+<span id="L242"><span class="lineNum">     242</span>                 :             : //            else // compliant mode</span>
+<span id="L243"><span class="lineNum">     243</span>                 :             : //            {</span>
+<span id="L244"><span class="lineNum">     244</span>                 :             : //            }</span>
+<span id="L245"><span class="lineNum">     245</span>                 :             : //        }</span>
+<span id="L246"><span class="lineNum">     246</span>                 :             : //        else</span>
+<span id="L247"><span class="lineNum">     247</span>                 :             : //            throw cRuntimeError(&quot;Pulse shaper needs symbol representation&quot;);</span>
+<span id="L248"><span class="lineNum">     248</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L249"><span class="lineNum">     249</span>                 :<span class="tlaGNC tlaBgGNC">        2813 :     else</span></span>
+<span id="L250"><span class="lineNum">     250</span>                 :<span class="tlaGNC">        2813 :         return nullptr;</span></span>
+<span id="L251"><span class="lineNum">     251</span>                 :<span class="tlaGNC">        2813 : }</span></span>
+<span id="L252"><span class="lineNum">     252</span>                 :             : </span>
+<span id="L253"><span class="lineNum">     253</span>                 :             : const ITransmissionAnalogModel *Ieee80211LayeredOfdmTransmitter::createAnalogModel(simtime_t startTime, const ITransmissionPacketModel *packetModel, const ITransmissionBitModel *bitModel, const ITransmissionSymbolModel *symbolModel, const ITransmissionSampleModel *sampleModel) const</span>
+<span id="L254"><span class="lineNum">     254</span>                 :<span class="tlaGNC">        2813 : {</span></span>
+<span id="L255"><span class="lineNum">     255</span>                 :<span class="tlaGNC">        2813 :     const ITransmissionAnalogModel *analogModel = nullptr;</span></span>
+<span id="L256"><span class="lineNum">     256</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2813 times"> + </span>]:<span class="tlaGNC">        2813 :     if (digitalAnalogConverter) {</span></span>
+<span id="L257"><span class="lineNum">     257</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC tlaBgUNC">           0 :         if (!sampleModel)</span></span>
+<span id="L258"><span class="lineNum">     258</span>                 :<span class="tlaUNC">           0 :             analogModel = digitalAnalogConverter-&gt;convertDigitalToAnalog(sampleModel);</span></span>
+<span id="L259"><span class="lineNum">     259</span>                 :<span class="tlaUNC">           0 :         else</span></span>
+<span id="L260"><span class="lineNum">     260</span>                 :<span class="tlaUNC">           0 :             throw cRuntimeError(&quot;Digital/analog converter needs sample representation&quot;);</span></span>
+<span id="L261"><span class="lineNum">     261</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L262"><span class="lineNum">     262</span>                 :<span class="tlaGNC tlaBgGNC">        2813 :     else // TODO: Analog model is obligatory, currently we use dimensional analog model as default analog model</span></span>
+<span id="L263"><span class="lineNum">     263</span>                 :<span class="tlaGNC">        2813 :         analogModel = createDimensionalAnalogModel(startTime, packetModel, bitModel);</span></span>
+<span id="L264"><span class="lineNum">     264</span>                 :<span class="tlaGNC">        2813 :     return analogModel;</span></span>
+<span id="L265"><span class="lineNum">     265</span>                 :<span class="tlaGNC">        2813 : }</span></span>
+<span id="L266"><span class="lineNum">     266</span>                 :             : </span>
+<span id="L267"><span class="lineNum">     267</span>                 :             : const Ieee80211OfdmMode *Ieee80211LayeredOfdmTransmitter::computeMode(Hz bandwidth) const</span>
+<span id="L268"><span class="lineNum">     268</span>                 :<span class="tlaGNC">           2 : {</span></span>
+<span id="L269"><span class="lineNum">     269</span>                 :<span class="tlaGNC">           2 :     const Ieee80211OfdmEncoderModule *ofdmSignalEncoderModule = check_and_cast&lt;const Ieee80211OfdmEncoderModule *&gt;(signalEncoder);</span></span>
+<span id="L270"><span class="lineNum">     270</span>                 :<span class="tlaGNC">           2 :     const Ieee80211OfdmEncoderModule *ofdmDataEncoderModule = check_and_cast&lt;const Ieee80211OfdmEncoderModule *&gt;(dataEncoder);</span></span>
+<span id="L271"><span class="lineNum">     271</span>                 :<span class="tlaGNC">           2 :     const Ieee80211OfdmModulatorModule *ofdmSignalModulatorModule = check_and_cast&lt;const Ieee80211OfdmModulatorModule *&gt;(signalModulator);</span></span>
+<span id="L272"><span class="lineNum">     272</span>                 :<span class="tlaGNC">           2 :     const Ieee80211OfdmModulatorModule *ofdmDataModulatorModule = check_and_cast&lt;const Ieee80211OfdmModulatorModule *&gt;(dataModulator);</span></span>
+<span id="L273"><span class="lineNum">     273</span>                 :<span class="tlaGNC">           2 :     const Ieee80211OfdmSignalMode *signalMode = new Ieee80211OfdmSignalMode(ofdmSignalEncoderModule-&gt;getCode(), ofdmSignalModulatorModule-&gt;getModulation(), channelSpacing, bandwidth, 0);</span></span>
+<span id="L274"><span class="lineNum">     274</span>                 :<span class="tlaGNC">           2 :     const Ieee80211OfdmDataMode *dataMode = new Ieee80211OfdmDataMode(ofdmDataEncoderModule-&gt;getCode(), ofdmDataModulatorModule-&gt;getModulation(), channelSpacing, bandwidth);</span></span>
+<span id="L275"><span class="lineNum">     275</span>                 :<span class="tlaGNC">           2 :     return new Ieee80211OfdmMode(&quot;&quot;, new Ieee80211OfdmPreambleMode(channelSpacing), signalMode, dataMode, channelSpacing, bandwidth);</span></span>
+<span id="L276"><span class="lineNum">     276</span>                 :<span class="tlaGNC">           2 : }</span></span>
+<span id="L277"><span class="lineNum">     277</span>                 :             : </span>
+<span id="L278"><span class="lineNum">     278</span>                 :             : const Ieee80211OfdmMode *Ieee80211LayeredOfdmTransmitter::getMode(const Packet *packet) const</span>
+<span id="L279"><span class="lineNum">     279</span>                 :<span class="tlaGNC">        5630 : {</span></span>
+<span id="L280"><span class="lineNum">     280</span>                 :<span class="tlaGNC">        5630 :     const auto&amp; modeReq = const_cast&lt;Packet *&gt;(packet)-&gt;findTag&lt;Ieee80211ModeReq&gt;();</span></span>
+<span id="L281"><span class="lineNum">     281</span>         [<span class="tlaGBC" title="Branch 0 was taken 4830 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 800 times"> + </span>]:<span class="tlaGNC">        5630 :     if (isCompliant)</span></span>
+<span id="L282"><span class="lineNum">     282</span>         [<span class="tlaGBC" title="Branch 0 was taken 4830 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        4830 :         return modeReq != nullptr ? check_and_cast&lt;const Ieee80211OfdmMode *&gt;(modeReq-&gt;getMode()) : &amp;Ieee80211OfdmCompliantModes::getCompliantMode(11, MHz(20));</span></span>
+<span id="L283"><span class="lineNum">     283</span>                 :<span class="tlaGNC">         800 :     else</span></span>
+<span id="L284"><span class="lineNum">     284</span>                 :<span class="tlaGNC">         800 :         return mode;</span></span>
+<span id="L285"><span class="lineNum">     285</span>                 :<span class="tlaGNC">        5630 : }</span></span>
+<span id="L286"><span class="lineNum">     286</span>                 :             : </span>
+<span id="L287"><span class="lineNum">     287</span>                 :             : const ITransmission *Ieee80211LayeredOfdmTransmitter::createTransmission(const IRadio *transmitter, const Packet *packet, const simtime_t startTime) const</span>
+<span id="L288"><span class="lineNum">     288</span>                 :<span class="tlaGNC">        2813 : {</span></span>
+<span id="L289"><span class="lineNum">     289</span>                 :<span class="tlaGNC">        2813 :     mode = getMode(packet);</span></span>
+<span id="L290"><span class="lineNum">     290</span>                 :<span class="tlaGNC">        2813 :     const ITransmissionBitModel *bitModel = nullptr;</span></span>
+<span id="L291"><span class="lineNum">     291</span>                 :<span class="tlaGNC">        2813 :     const ITransmissionBitModel *signalFieldBitModel = nullptr;</span></span>
+<span id="L292"><span class="lineNum">     292</span>                 :<span class="tlaGNC">        2813 :     const ITransmissionBitModel *dataFieldBitModel = nullptr;</span></span>
+<span id="L293"><span class="lineNum">     293</span>                 :<span class="tlaGNC">        2813 :     const ITransmissionSymbolModel *symbolModel = nullptr;</span></span>
+<span id="L294"><span class="lineNum">     294</span>                 :<span class="tlaGNC">        2813 :     const ITransmissionSymbolModel *signalFieldSymbolModel = nullptr;</span></span>
+<span id="L295"><span class="lineNum">     295</span>                 :<span class="tlaGNC">        2813 :     const ITransmissionSymbolModel *dataFieldSymbolModel = nullptr;</span></span>
+<span id="L296"><span class="lineNum">     296</span>                 :<span class="tlaGNC">        2813 :     const ITransmissionSampleModel *sampleModel = nullptr;</span></span>
+<span id="L297"><span class="lineNum">     297</span>                 :<span class="tlaGNC">        2813 :     const ITransmissionAnalogModel *analogModel = nullptr;</span></span>
+<span id="L298"><span class="lineNum">     298</span>                 :<span class="tlaGNC">        2813 :     const ITransmissionPacketModel *packetModel = createPacketModel(packet);</span></span>
+<span id="L299"><span class="lineNum">     299</span>                 :<span class="tlaGNC">        2813 :     encodeAndModulate(packetModel, signalFieldBitModel, signalFieldSymbolModel, signalEncoder, signalModulator, true);</span></span>
+<span id="L300"><span class="lineNum">     300</span>                 :<span class="tlaGNC">        2813 :     encodeAndModulate(packetModel, dataFieldBitModel, dataFieldSymbolModel, dataEncoder, dataModulator, false);</span></span>
+<span id="L301"><span class="lineNum">     301</span>                 :<span class="tlaGNC">        2813 :     bitModel = createBitModel(signalFieldBitModel, dataFieldBitModel, packetModel);</span></span>
+<span id="L302"><span class="lineNum">     302</span>                 :<span class="tlaGNC">        2813 :     symbolModel = createSymbolModel(signalFieldSymbolModel, dataFieldSymbolModel);</span></span>
+<span id="L303"><span class="lineNum">     303</span>                 :<span class="tlaGNC">        2813 :     sampleModel = createSampleModel(symbolModel);</span></span>
+<span id="L304"><span class="lineNum">     304</span>                 :<span class="tlaGNC">        2813 :     analogModel = createAnalogModel(startTime, packetModel, bitModel, symbolModel, sampleModel);</span></span>
+<span id="L305"><span class="lineNum">     305</span>                 :<span class="tlaGNC">        2813 :     IMobility *mobility = transmitter-&gt;getAntenna()-&gt;getMobility();</span></span>
+<span id="L306"><span class="lineNum">     306</span>                 :             :     // assuming movement and rotation during transmission is negligible</span>
+<span id="L307"><span class="lineNum">     307</span>                 :<span class="tlaGNC">        2813 :     const simtime_t endTime = startTime + analogModel-&gt;getDuration();</span></span>
+<span id="L308"><span class="lineNum">     308</span>                 :<span class="tlaGNC">        2813 :     const Coord&amp; startPosition = mobility-&gt;getCurrentPosition();</span></span>
+<span id="L309"><span class="lineNum">     309</span>                 :<span class="tlaGNC">        2813 :     const Coord&amp; endPosition = mobility-&gt;getCurrentPosition();</span></span>
+<span id="L310"><span class="lineNum">     310</span>                 :<span class="tlaGNC">        2813 :     const Quaternion&amp; startOrientation = mobility-&gt;getCurrentAngularPosition();</span></span>
+<span id="L311"><span class="lineNum">     311</span>                 :<span class="tlaGNC">        2813 :     const Quaternion&amp; endOrientation = mobility-&gt;getCurrentAngularPosition();</span></span>
+<span id="L312"><span class="lineNum">     312</span>                 :             :     // TODO: compute channel</span>
+<span id="L313"><span class="lineNum">     313</span>                 :<span class="tlaGNC">        2813 :     const simtime_t preambleDuration = mode-&gt;getPreambleLength();</span></span>
+<span id="L314"><span class="lineNum">     314</span>                 :<span class="tlaGNC">        2813 :     const simtime_t headerDuration = mode-&gt;getHeaderMode()-&gt;getDuration();</span></span>
+<span id="L315"><span class="lineNum">     315</span>                 :<span class="tlaGNC">        2813 :     const simtime_t dataDuration = mode-&gt;getDataMode()-&gt;getDuration(packet-&gt;getDataLength());</span></span>
+<span id="L316"><span class="lineNum">     316</span>                 :<span class="tlaGNC">        2813 :     return new Ieee80211Transmission(transmitter, packet, startTime, endTime, preambleDuration, headerDuration, dataDuration, startPosition, endPosition, startOrientation, endOrientation, packetModel, bitModel, symbolModel, sampleModel, analogModel, mode, nullptr);</span></span>
+<span id="L317"><span class="lineNum">     317</span>                 :<span class="tlaGNC">        2813 : }</span></span>
+<span id="L318"><span class="lineNum">     318</span>                 :             : </span>
+<span id="L319"><span class="lineNum">     319</span>                 :             : Ieee80211LayeredOfdmTransmitter::~Ieee80211LayeredOfdmTransmitter()</span>
+<span id="L320"><span class="lineNum">     320</span>                 :<span class="tlaGNC">          17 : {</span></span>
+<span id="L321"><span class="lineNum">     321</span>         [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 15 times"> + </span>]:<span class="tlaGNC">          17 :     if (!isCompliant) {</span></span>
+<span id="L322"><span class="lineNum">     322</span>                 :<span class="tlaGNC">           2 :         delete mode-&gt;getDataMode()-&gt;getModulation();</span></span>
+<span id="L323"><span class="lineNum">     323</span>                 :<span class="tlaGNC">           2 :         delete mode-&gt;getSignalMode()-&gt;getModulation();</span></span>
+<span id="L324"><span class="lineNum">     324</span>                 :<span class="tlaGNC">           2 :         delete mode-&gt;getPreambleMode();</span></span>
+<span id="L325"><span class="lineNum">     325</span>                 :<span class="tlaGNC">           2 :         delete mode-&gt;getSignalMode();</span></span>
+<span id="L326"><span class="lineNum">     326</span>                 :<span class="tlaGNC">           2 :         delete mode-&gt;getDataMode();</span></span>
+<span id="L327"><span class="lineNum">     327</span>                 :<span class="tlaGNC">           2 :         delete mode;</span></span>
+<span id="L328"><span class="lineNum">     328</span>                 :<span class="tlaGNC">           2 :     }</span></span>
+<span id="L329"><span class="lineNum">     329</span>                 :<span class="tlaGNC">          17 : }</span></span>
+<span id="L330"><span class="lineNum">     330</span>                 :             : </span>
+<span id="L331"><span class="lineNum">     331</span>                 :             : } // namespace physicallayer</span>
+<span id="L332"><span class="lineNum">     332</span>                 :             : </span>
+<span id="L333"><span class="lineNum">     333</span>                 :             : } // namespace inet</span>
+<span id="L334"><span class="lineNum">     334</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

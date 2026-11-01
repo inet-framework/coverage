@@ -1,0 +1,346 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - transportlayer/tcp_lwip/queues/src/inet/transportlayer/tcp_lwip/queues/TcpLwipQueues.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../index.html">top level</a> - <a href="index.html">transportlayer/tcp_lwip/queues/src/inet/transportlayer/tcp_lwip/queues</a> - TcpLwipQueues.cc<span style="font-size: 80%;"> (source / <a href="TcpLwipQueues.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">91.1&nbsp;%</td>
+            <td class="headerCovTableEntry">146</td>
+            <td class="headerCovTableEntry">133</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryMed">82.6&nbsp;%</td>
+            <td class="headerCovTableEntry">23</td>
+            <td class="headerCovTableEntry">19</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryMed">75.0&nbsp;%</td>
+            <td class="headerCovTableEntry">44</td>
+            <td class="headerCovTableEntry">33</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2004 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #include &quot;inet/transportlayer/tcp_lwip/queues/TcpLwipQueues.h&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : </span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &lt;algorithm&gt;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : </span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &quot;inet/common/packet/serializer/BytesChunkSerializer.h&quot;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : #include &quot;inet/transportlayer/contract/tcp/TcpCommand_m.h&quot;</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : #include &quot;inet/transportlayer/tcp_common/TcpHeader.h&quot;</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : #include &quot;inet/transportlayer/tcp_common/TcpHeaderSerializer.h&quot;</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : #include &quot;inet/transportlayer/tcp_lwip/TcpLwipConnection.h&quot;</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : </span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : namespace inet {</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : namespace tcp {</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : </span>
+<span id="L21"><span class="lineNum">      21</span>                 :             : Register_Class(TcpLwipSendQueue);</span>
+<span id="L22"><span class="lineNum">      22</span>                 :             : </span>
+<span id="L23"><span class="lineNum">      23</span>                 :             : Register_Class(TcpLwipReceiveQueue);</span>
+<span id="L24"><span class="lineNum">      24</span>                 :             : </span>
+<span id="L25"><span class="lineNum">      25</span>                 :             : // Assembles the region-tagged data for [seqNo, seqNo+length) from a seqno-keyed</span>
+<span id="L26"><span class="lineNum">      26</span>                 :             : // cache of segment payloads, slicing and concatenating as needed. Returns nullptr</span>
+<span id="L27"><span class="lineNum">      27</span>                 :             : // if any part of the range is not covered by the cache.</span>
+<span id="L28"><span class="lineNum">      28</span>                 :             : static const Ptr&lt;const Chunk&gt; assembleTaggedData(const std::map&lt;uint32_t, Ptr&lt;const Chunk&gt;&gt;&amp; cache,</span>
+<span id="L29"><span class="lineNum">      29</span>                 :             :         uint32_t seqNo, unsigned int length)</span>
+<span id="L30"><span class="lineNum">      30</span>                 :<span class="tlaGNC tlaBgGNC">      198085 : {</span></span>
+<span id="L31"><span class="lineNum">      31</span>                 :<span class="tlaGNC">      198085 :     ChunkQueue assembled;</span></span>
+<span id="L32"><span class="lineNum">      32</span>                 :<span class="tlaGNC">      198085 :     uint32_t pos = seqNo;</span></span>
+<span id="L33"><span class="lineNum">      33</span>                 :<span class="tlaGNC">      198085 :     unsigned int remaining = length;</span></span>
+<span id="L34"><span class="lineNum">      34</span>                 :             : </span>
+<span id="L35"><span class="lineNum">      35</span>         [<span class="tlaGBC" title="Branch 0 was taken 218950 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 198085 times"> + </span>]:<span class="tlaGNC">      417035 :     while (remaining &gt; 0) {</span></span>
+<span id="L36"><span class="lineNum">      36</span>                 :<span class="tlaGNC">      218950 :         auto it = cache.upper_bound(pos); // first entry starting after pos</span></span>
+<span id="L37"><span class="lineNum">      37</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 218950 times"> + </span>]:<span class="tlaGNC">      218950 :         if (it == cache.begin())</span></span>
+<span id="L38"><span class="lineNum">      38</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             return nullptr; // no entry starts at or before pos</span></span>
+<span id="L39"><span class="lineNum">      39</span>                 :<span class="tlaGNC tlaBgGNC">      218950 :         --it; // entry with the greatest start &lt;= pos</span></span>
+<span id="L40"><span class="lineNum">      40</span>                 :<span class="tlaGNC">      218950 :         uint32_t segSeq = it-&gt;first;</span></span>
+<span id="L41"><span class="lineNum">      41</span>                 :<span class="tlaGNC">      218950 :         const auto&amp; segChunk = it-&gt;second;</span></span>
+<span id="L42"><span class="lineNum">      42</span>                 :<span class="tlaGNC">      218950 :         unsigned int segLen = segChunk-&gt;getChunkLength().get&lt;B&gt;();</span></span>
+<span id="L43"><span class="lineNum">      43</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 218950 times"> + </span>]:<span class="tlaGNC">      218950 :         if ((int32_t)(pos - (segSeq + segLen)) &gt;= 0)</span></span>
+<span id="L44"><span class="lineNum">      44</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             return nullptr; // pos is past this entry -&gt; gap</span></span>
+<span id="L45"><span class="lineNum">      45</span>                 :<span class="tlaGNC tlaBgGNC">      218950 :         unsigned int sliceOffset = pos - segSeq;</span></span>
+<span id="L46"><span class="lineNum">      46</span>                 :<span class="tlaGNC">      218950 :         unsigned int sliceLen = std::min(remaining, segLen - sliceOffset);</span></span>
+<span id="L47"><span class="lineNum">      47</span>                 :<span class="tlaGNC">      218950 :         assembled.push(segChunk-&gt;peek(Chunk::Iterator(true, B(sliceOffset), -1), B(sliceLen)));</span></span>
+<span id="L48"><span class="lineNum">      48</span>                 :<span class="tlaGNC">      218950 :         pos += sliceLen;</span></span>
+<span id="L49"><span class="lineNum">      49</span>                 :<span class="tlaGNC">      218950 :         remaining -= sliceLen;</span></span>
+<span id="L50"><span class="lineNum">      50</span>                 :<span class="tlaGNC">      218950 :     }</span></span>
+<span id="L51"><span class="lineNum">      51</span>                 :<span class="tlaGNC">      198085 :     return assembled.pop(B(length));</span></span>
+<span id="L52"><span class="lineNum">      52</span>                 :<span class="tlaGNC">      198085 : }</span></span>
+<span id="L53"><span class="lineNum">      53</span>                 :             : </span>
+<span id="L54"><span class="lineNum">      54</span>                 :             : // Drops cache entries whose data is entirely before upToSeq (delivered/acked).</span>
+<span id="L55"><span class="lineNum">      55</span>                 :             : static void pruneTaggedData(std::map&lt;uint32_t, Ptr&lt;const Chunk&gt;&gt;&amp; cache, uint32_t upToSeq)</span>
+<span id="L56"><span class="lineNum">      56</span>                 :<span class="tlaGNC">      198085 : {</span></span>
+<span id="L57"><span class="lineNum">      57</span>         [<span class="tlaGBC" title="Branch 0 was taken 58662172 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 198085 times"> + </span>]:<span class="tlaGNC">    58860257 :     for (auto it = cache.begin(); it != cache.end();) {</span></span>
+<span id="L58"><span class="lineNum">      58</span>                 :<span class="tlaGNC">    58662172 :         uint32_t segEnd = it-&gt;first + it-&gt;second-&gt;getChunkLength().get&lt;B&gt;();</span></span>
+<span id="L59"><span class="lineNum">      59</span>         [<span class="tlaGBC" title="Branch 0 was taken 122381 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 58539791 times"> + </span>]:<span class="tlaGNC">    58662172 :         if ((int32_t)(segEnd - upToSeq) &lt;= 0)</span></span>
+<span id="L60"><span class="lineNum">      60</span>                 :<span class="tlaGNC">      122381 :             it = cache.erase(it);</span></span>
+<span id="L61"><span class="lineNum">      61</span>                 :<span class="tlaGNC">    58539791 :         else</span></span>
+<span id="L62"><span class="lineNum">      62</span>                 :<span class="tlaGNC">    58539791 :             ++it;</span></span>
+<span id="L63"><span class="lineNum">      63</span>                 :<span class="tlaGNC">    58662172 :     }</span></span>
+<span id="L64"><span class="lineNum">      64</span>                 :<span class="tlaGNC">      198085 : }</span></span>
+<span id="L65"><span class="lineNum">      65</span>                 :             : </span>
+<span id="L66"><span class="lineNum">      66</span>                 :             : TcpLwipSendQueue::TcpLwipSendQueue()</span>
+<span id="L67"><span class="lineNum">      67</span>                 :<span class="tlaGNC">         179 : {</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :<span class="tlaGNC">         179 : }</span></span>
+<span id="L69"><span class="lineNum">      69</span>                 :             : </span>
+<span id="L70"><span class="lineNum">      70</span>                 :             : TcpLwipSendQueue::~TcpLwipSendQueue()</span>
+<span id="L71"><span class="lineNum">      71</span>                 :<span class="tlaGNC">         179 : {</span></span>
+<span id="L72"><span class="lineNum">      72</span>                 :<span class="tlaGNC">         179 : }</span></span>
+<span id="L73"><span class="lineNum">      73</span>                 :             : </span>
+<span id="L74"><span class="lineNum">      74</span>                 :             : void TcpLwipSendQueue::setConnection(TcpLwipConnection *connP)</span>
+<span id="L75"><span class="lineNum">      75</span>                 :<span class="tlaGNC">         179 : {</span></span>
+<span id="L76"><span class="lineNum">      76</span>                 :<span class="tlaGNC">         179 :     dataBuffer.clear();</span></span>
+<span id="L77"><span class="lineNum">      77</span>                 :<span class="tlaGNC">         179 :     taggedSegments.clear();</span></span>
+<span id="L78"><span class="lineNum">      78</span>                 :<span class="tlaGNC">         179 :     connM = connP;</span></span>
+<span id="L79"><span class="lineNum">      79</span>                 :<span class="tlaGNC">         179 : }</span></span>
+<span id="L80"><span class="lineNum">      80</span>                 :             : </span>
+<span id="L81"><span class="lineNum">      81</span>                 :             : void TcpLwipSendQueue::enqueueAppData(Packet *msg)</span>
+<span id="L82"><span class="lineNum">      82</span>                 :<span class="tlaGNC">       44355 : {</span></span>
+<span id="L83"><span class="lineNum">      83</span>                 :<span class="tlaGNC">       44355 :     ASSERT(msg);</span></span>
+<span id="L84"><span class="lineNum">      84</span>                 :<span class="tlaGNC">       44355 :     const auto&amp; data = msg-&gt;peekDataAt(B(0), B(msg-&gt;getByteLength()));</span></span>
+<span id="L85"><span class="lineNum">      85</span>                 :             :     // Cache the region tags before dataBuffer is drained into the (tag-less) lwIP</span>
+<span id="L86"><span class="lineNum">      86</span>                 :             :     // stack. This chunk will be buffered by lwIP right after the not-yet-sent data</span>
+<span id="L87"><span class="lineNum">      87</span>                 :             :     // already in dataBuffer, i.e. at sequence number snd_lbb + dataBuffer length.</span>
+<span id="L88"><span class="lineNum">      88</span> [<span class="tlaGBC" title="Branch 0 was taken 44355 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 44355 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">       44355 :     if (connM != nullptr &amp;&amp; connM-&gt;pcbM != nullptr &amp;&amp; data-&gt;getChunkLength() &gt; b(0)) {</span></span>
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 44355 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 44355 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span id="L89"><span class="lineNum">      89</span>                 :<span class="tlaGNC">       44355 :         uint32_t seq = connM-&gt;pcbM-&gt;snd_lbb + dataBuffer.getLength().get&lt;B&gt;();</span></span>
+<span id="L90"><span class="lineNum">      90</span>                 :<span class="tlaGNC">       44355 :         taggedSegments[seq] = data;</span></span>
+<span id="L91"><span class="lineNum">      91</span>                 :<span class="tlaGNC">       44355 :     }</span></span>
+<span id="L92"><span class="lineNum">      92</span>                 :<span class="tlaGNC">       44355 :     dataBuffer.push(data);</span></span>
+<span id="L93"><span class="lineNum">      93</span>                 :<span class="tlaGNC">       44355 :     delete msg;</span></span>
+<span id="L94"><span class="lineNum">      94</span>                 :<span class="tlaGNC">       44355 : }</span></span>
+<span id="L95"><span class="lineNum">      95</span>                 :             : </span>
+<span id="L96"><span class="lineNum">      96</span>                 :             : unsigned int TcpLwipSendQueue::getBytesForTcpLayer(void *bufferP, unsigned int bufferLengthP) const</span>
+<span id="L97"><span class="lineNum">      97</span>                 :<span class="tlaGNC">      261598 : {</span></span>
+<span id="L98"><span class="lineNum">      98</span>                 :<span class="tlaGNC">      261598 :     ASSERT(bufferP);</span></span>
+<span id="L99"><span class="lineNum">      99</span>                 :             : </span>
+<span id="L100"><span class="lineNum">     100</span>                 :<span class="tlaGNC">      261598 :     unsigned int length = dataBuffer.getLength().get&lt;B&gt;();</span></span>
+<span id="L101"><span class="lineNum">     101</span>         [<span class="tlaGBC" title="Branch 0 was taken 248795 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 12803 times"> + </span>]:<span class="tlaGNC">      261598 :     if (bufferLengthP &lt; length)</span></span>
+<span id="L102"><span class="lineNum">     102</span>                 :<span class="tlaGNC">      248795 :         length = bufferLengthP;</span></span>
+<span id="L103"><span class="lineNum">     103</span>         [<span class="tlaGBC" title="Branch 0 was taken 11980 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 249618 times"> + </span>]:<span class="tlaGNC">      261598 :     if (length == 0)</span></span>
+<span id="L104"><span class="lineNum">     104</span>                 :<span class="tlaGNC">       11980 :         return 0;</span></span>
+<span id="L105"><span class="lineNum">     105</span>                 :             : </span>
+<span id="L106"><span class="lineNum">     106</span>                 :<span class="tlaGNC">      249618 :     const auto&amp; bytesChunk = dataBuffer.peek&lt;BytesChunk&gt;(B(length));</span></span>
+<span id="L107"><span class="lineNum">     107</span>                 :<span class="tlaGNC">      249618 :     return bytesChunk-&gt;copyToBuffer(static_cast&lt;uint8_t *&gt;(bufferP), length);</span></span>
+<span id="L108"><span class="lineNum">     108</span>                 :<span class="tlaGNC">      261598 : }</span></span>
+<span id="L109"><span class="lineNum">     109</span>                 :             : </span>
+<span id="L110"><span class="lineNum">     110</span>                 :             : void TcpLwipSendQueue::dequeueTcpLayerMsg(unsigned int msgLengthP)</span>
+<span id="L111"><span class="lineNum">     111</span>                 :<span class="tlaGNC">       81580 : {</span></span>
+<span id="L112"><span class="lineNum">     112</span>                 :<span class="tlaGNC">       81580 :     dataBuffer.pop(B(msgLengthP));</span></span>
+<span id="L113"><span class="lineNum">     113</span>                 :<span class="tlaGNC">       81580 : }</span></span>
+<span id="L114"><span class="lineNum">     114</span>                 :             : </span>
+<span id="L115"><span class="lineNum">     115</span>                 :             : unsigned long TcpLwipSendQueue::getBytesAvailable() const</span>
+<span id="L116"><span class="lineNum">     116</span>                 :<span class="tlaGNC">       66916 : {</span></span>
+<span id="L117"><span class="lineNum">     117</span>                 :<span class="tlaGNC">       66916 :     return dataBuffer.getLength().get&lt;B&gt;();</span></span>
+<span id="L118"><span class="lineNum">     118</span>                 :<span class="tlaGNC">       66916 : }</span></span>
+<span id="L119"><span class="lineNum">     119</span>                 :             : </span>
+<span id="L120"><span class="lineNum">     120</span>                 :             : Packet *TcpLwipSendQueue::createSegmentWithBytes(const void *tcpDataP, unsigned int tcpLengthP)</span>
+<span id="L121"><span class="lineNum">     121</span>                 :<span class="tlaGNC">      169090 : {</span></span>
+<span id="L122"><span class="lineNum">     122</span>                 :<span class="tlaGNC">      169090 :     ASSERT(tcpDataP);</span></span>
+<span id="L123"><span class="lineNum">     123</span>                 :             : </span>
+<span id="L124"><span class="lineNum">     124</span>                 :<span class="tlaGNC">      169090 :     const auto&amp; bytes = makeShared&lt;BytesChunk&gt;((const uint8_t *)tcpDataP, tcpLengthP);</span></span>
+<span id="L125"><span class="lineNum">     125</span>                 :<span class="tlaGNC">      169090 :     auto packet = new Packet(nullptr, bytes);</span></span>
+<span id="L126"><span class="lineNum">     126</span>                 :<span class="tlaGNC">      169090 :     auto tcpHdr = packet-&gt;removeAtFront&lt;TcpHeader&gt;();</span></span>
+<span id="L127"><span class="lineNum">     127</span>                 :<span class="tlaGNC">      169090 :     int64_t numBytes = packet-&gt;getByteLength();</span></span>
+<span id="L128"><span class="lineNum">     128</span>                 :             : </span>
+<span id="L129"><span class="lineNum">     129</span>                 :             :     // The lwIP stack works on raw bytes and has stripped the application data's</span>
+<span id="L130"><span class="lineNum">     130</span>                 :             :     // region tags. Restore them by replacing this segment's payload with the</span>
+<span id="L131"><span class="lineNum">     131</span>                 :             :     // corresponding (still region-tagged) chunk held in the send buffer, so the</span>
+<span id="L132"><span class="lineNum">     132</span>                 :             :     // tags travel to the peer. The send buffer's front byte has sequence number</span>
+<span id="L133"><span class="lineNum">     133</span>                 :             :     // SND.UNA (== pcb-&gt;lastack), which maps the segment to a buffer offset.</span>
+<span id="L134"><span class="lineNum">     134</span> [<span class="tlaGBC" title="Branch 0 was taken 103207 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 65883 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 103207 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">      169090 :     if (numBytes &gt; 0 &amp;&amp; connM != nullptr &amp;&amp; connM-&gt;pcbM != nullptr) {</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 103207 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span id="L135"><span class="lineNum">     135</span>                 :<span class="tlaGNC">      103207 :         uint32_t seq = tcpHdr-&gt;getSequenceNo();</span></span>
+<span id="L136"><span class="lineNum">     136</span>                 :<span class="tlaGNC">      103207 :         const auto&amp; appData = assembleTaggedData(taggedSegments, seq, numBytes);</span></span>
+<span id="L137"><span class="lineNum">     137</span>         [<span class="tlaGBC" title="Branch 0 was taken 103207 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">      103207 :         if (appData != nullptr) {</span></span>
+<span id="L138"><span class="lineNum">     138</span>                 :<span class="tlaGNC">      103207 :             packet-&gt;eraseAll();</span></span>
+<span id="L139"><span class="lineNum">     139</span>                 :<span class="tlaGNC">      103207 :             packet-&gt;insertAtBack(appData);</span></span>
+<span id="L140"><span class="lineNum">     140</span>                 :<span class="tlaGNC">      103207 :         }</span></span>
+<span id="L141"><span class="lineNum">     141</span>                 :<span class="tlaGNC">      103207 :         pruneTaggedData(taggedSegments, connM-&gt;pcbM-&gt;lastack);</span></span>
+<span id="L142"><span class="lineNum">     142</span>                 :<span class="tlaGNC">      103207 :     }</span></span>
+<span id="L143"><span class="lineNum">     143</span>                 :<span class="tlaGNC">      169090 :     packet-&gt;insertAtFront(tcpHdr);</span></span>
+<span id="L144"><span class="lineNum">     144</span>                 :             : </span>
+<span id="L145"><span class="lineNum">     145</span>                 :             : //    auto payload = makeShared&lt;BytesChunk&gt;((const uint8_t*)tcpDataP, tcpLengthP);</span>
+<span id="L146"><span class="lineNum">     146</span>                 :             : //    const auto&amp; tcpHdr = payload-&gt;Chunk::peek&lt;TcpHeader&gt;(byte(0));</span>
+<span id="L147"><span class="lineNum">     147</span>                 :             : //    payload-&gt;removeFromBeginning(tcpHdr-&gt;getChunkLength());</span>
+<span id="L148"><span class="lineNum">     148</span>                 :             : </span>
+<span id="L149"><span class="lineNum">     149</span>                 :<span class="tlaGNC">      169090 :     char msgname[80];</span></span>
+<span id="L150"><span class="lineNum">     150</span>                 :<span class="tlaGNC">      169090 :     snprintf(msgname, sizeof(msgname), &quot;%.10s%s%s%s(l=%lu bytes)&quot;,</span></span>
+<span id="L151"><span class="lineNum">     151</span>                 :<span class="tlaGNC">      169090 :             &quot;tcpHdr&quot;,</span></span>
+<span id="L152"><span class="lineNum">     152</span>         [<span class="tlaGBC" title="Branch 0 was taken 174 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 168916 times"> + </span>]:<span class="tlaGNC">      169090 :             tcpHdr-&gt;getSynBit() ? &quot; SYN&quot; : &quot;&quot;,</span></span>
+<span id="L153"><span class="lineNum">     153</span>         [<span class="tlaGBC" title="Branch 0 was taken 84 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 169006 times"> + </span>]:<span class="tlaGNC">      169090 :             tcpHdr-&gt;getFinBit() ? &quot; FIN&quot; : &quot;&quot;,</span></span>
+<span id="L154"><span class="lineNum">     154</span> [<span class="tlaGBC" title="Branch 0 was taken 168972 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 118 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 65765 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 103207 times"> + </span>]:<span class="tlaGNC">      169090 :             (tcpHdr-&gt;getAckBit() &amp;&amp; 0 == numBytes) ? &quot; ACK&quot; : &quot;&quot;,</span></span>
+<span id="L155"><span class="lineNum">     155</span>                 :<span class="tlaGNC">      169090 :             (unsigned long)numBytes);</span></span>
+<span id="L156"><span class="lineNum">     156</span>                 :             : </span>
+<span id="L157"><span class="lineNum">     157</span>                 :<span class="tlaGNC">      169090 :     return packet;</span></span>
+<span id="L158"><span class="lineNum">     158</span>                 :<span class="tlaGNC">      169090 : }</span></span>
+<span id="L159"><span class="lineNum">     159</span>                 :             : </span>
+<span id="L160"><span class="lineNum">     160</span>                 :             : void TcpLwipSendQueue::discardAckedBytes(unsigned long bytesP)</span>
+<span id="L161"><span class="lineNum">     161</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L162"><span class="lineNum">     162</span>                 :             :     // nothing to do here</span>
+<span id="L163"><span class="lineNum">     163</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L164"><span class="lineNum">     164</span>                 :             : </span>
+<span id="L165"><span class="lineNum">     165</span>                 :             : TcpLwipReceiveQueue::TcpLwipReceiveQueue()</span>
+<span id="L166"><span class="lineNum">     166</span>                 :<span class="tlaGNC tlaBgGNC">         179 : {</span></span>
+<span id="L167"><span class="lineNum">     167</span>                 :<span class="tlaGNC">         179 : }</span></span>
+<span id="L168"><span class="lineNum">     168</span>                 :             : </span>
+<span id="L169"><span class="lineNum">     169</span>                 :             : TcpLwipReceiveQueue::~TcpLwipReceiveQueue()</span>
+<span id="L170"><span class="lineNum">     170</span>                 :<span class="tlaGNC">         179 : {</span></span>
+<span id="L171"><span class="lineNum">     171</span>                 :             :     // nothing to do here</span>
+<span id="L172"><span class="lineNum">     172</span>                 :<span class="tlaGNC">         179 : }</span></span>
+<span id="L173"><span class="lineNum">     173</span>                 :             : </span>
+<span id="L174"><span class="lineNum">     174</span>                 :             : void TcpLwipReceiveQueue::setConnection(TcpLwipConnection *connP)</span>
+<span id="L175"><span class="lineNum">     175</span>                 :<span class="tlaGNC">         179 : {</span></span>
+<span id="L176"><span class="lineNum">     176</span>                 :<span class="tlaGNC">         179 :     ASSERT(connP);</span></span>
+<span id="L177"><span class="lineNum">     177</span>                 :<span class="tlaGNC">         179 :     ASSERT(connM == nullptr);</span></span>
+<span id="L178"><span class="lineNum">     178</span>                 :             : </span>
+<span id="L179"><span class="lineNum">     179</span>                 :<span class="tlaGNC">         179 :     dataBuffer.clear();</span></span>
+<span id="L180"><span class="lineNum">     180</span>                 :<span class="tlaGNC">         179 :     taggedSegments.clear();</span></span>
+<span id="L181"><span class="lineNum">     181</span>                 :<span class="tlaGNC">         179 :     connM = connP;</span></span>
+<span id="L182"><span class="lineNum">     182</span>                 :<span class="tlaGNC">         179 : }</span></span>
+<span id="L183"><span class="lineNum">     183</span>                 :             : </span>
+<span id="L184"><span class="lineNum">     184</span>                 :             : void TcpLwipReceiveQueue::notifyAboutIncomingSegmentProcessing(Packet *packet, uint32_t seqno, const void *bufferP, size_t bufferLengthP)</span>
+<span id="L185"><span class="lineNum">     185</span>                 :<span class="tlaGNC">       94962 : {</span></span>
+<span id="L186"><span class="lineNum">     186</span>                 :<span class="tlaGNC">       94962 :     ASSERT(packet);</span></span>
+<span id="L187"><span class="lineNum">     187</span>                 :<span class="tlaGNC">       94962 :     ASSERT(bufferP);</span></span>
+<span id="L188"><span class="lineNum">     188</span>                 :             : </span>
+<span id="L189"><span class="lineNum">     189</span>                 :             :     // Cache the region tags carried by this segment's payload, keyed by its TCP</span>
+<span id="L190"><span class="lineNum">     190</span>                 :             :     // sequence number, so they can be re-attached when lwIP delivers the</span>
+<span id="L191"><span class="lineNum">     191</span>                 :             :     // (possibly reassembled) data. Called for every arriving data segment,</span>
+<span id="L192"><span class="lineNum">     192</span>                 :             :     // in-order or out-of-order.</span>
+<span id="L193"><span class="lineNum">     193</span>         [<span class="tlaGBC" title="Branch 0 was taken 94878 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 84 times"> + </span>]:<span class="tlaGNC">       94962 :     if (bufferLengthP &gt; 0) {</span></span>
+<span id="L194"><span class="lineNum">     194</span>                 :<span class="tlaGNC">       94878 :         const auto&amp; tcpHdr = packet-&gt;peekAtFront&lt;TcpHeader&gt;();</span></span>
+<span id="L195"><span class="lineNum">     195</span>                 :<span class="tlaGNC">       94878 :         taggedSegments[seqno] = packet-&gt;peekAt(tcpHdr-&gt;getChunkLength(), B(bufferLengthP));</span></span>
+<span id="L196"><span class="lineNum">     196</span>                 :<span class="tlaGNC">       94878 :     }</span></span>
+<span id="L197"><span class="lineNum">     197</span>                 :<span class="tlaGNC">       94962 : }</span></span>
+<span id="L198"><span class="lineNum">     198</span>                 :             : </span>
+<span id="L199"><span class="lineNum">     199</span>                 :             : const Ptr&lt;const Chunk&gt; TcpLwipReceiveQueue::getCachedTaggedData(uint32_t seqNoP, unsigned int lengthP)</span>
+<span id="L200"><span class="lineNum">     200</span>                 :<span class="tlaGNC">       94878 : {</span></span>
+<span id="L201"><span class="lineNum">     201</span>                 :<span class="tlaGNC">       94878 :     return assembleTaggedData(taggedSegments, seqNoP, lengthP);</span></span>
+<span id="L202"><span class="lineNum">     202</span>                 :<span class="tlaGNC">       94878 : }</span></span>
+<span id="L203"><span class="lineNum">     203</span>                 :             : </span>
+<span id="L204"><span class="lineNum">     204</span>                 :             : void TcpLwipReceiveQueue::enqueueTcpLayerData(void *dataP, unsigned int dataLengthP, uint32_t seqNoP)</span>
+<span id="L205"><span class="lineNum">     205</span>                 :<span class="tlaGNC">       94878 : {</span></span>
+<span id="L206"><span class="lineNum">     206</span>                 :             :     // Prefer the region-tagged application data cached as the segments arrived;</span>
+<span id="L207"><span class="lineNum">     207</span>                 :             :     // fall back to plain bytes if the range is not (fully) cached (e.g. a tag-less</span>
+<span id="L208"><span class="lineNum">     208</span>                 :             :     // transport on the far side).</span>
+<span id="L209"><span class="lineNum">     209</span>                 :<span class="tlaGNC">       94878 :     Ptr&lt;const Chunk&gt; chunk = getCachedTaggedData(seqNoP, dataLengthP);</span></span>
+<span id="L210"><span class="lineNum">     210</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 94878 times"> + </span>]:<span class="tlaGNC">       94878 :     if (chunk == nullptr)</span></span>
+<span id="L211"><span class="lineNum">     211</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         chunk = makeShared&lt;BytesChunk&gt;(static_cast&lt;uint8_t *&gt;(dataP), dataLengthP);</span></span>
+<span id="L212"><span class="lineNum">     212</span>                 :<span class="tlaGNC tlaBgGNC">       94878 :     dataBuffer.push(chunk);</span></span>
+<span id="L213"><span class="lineNum">     213</span>                 :<span class="tlaGNC">       94878 :     pruneTaggedData(taggedSegments, seqNoP + dataLengthP);</span></span>
+<span id="L214"><span class="lineNum">     214</span>                 :<span class="tlaGNC">       94878 : }</span></span>
+<span id="L215"><span class="lineNum">     215</span>                 :             : </span>
+<span id="L216"><span class="lineNum">     216</span>                 :             : B TcpLwipReceiveQueue::getExtractableBytesUpTo() const</span>
+<span id="L217"><span class="lineNum">     217</span>                 :<span class="tlaGNC">      189995 : {</span></span>
+<span id="L218"><span class="lineNum">     218</span>                 :<span class="tlaGNC">      189995 :     return B(dataBuffer.getLength());</span></span>
+<span id="L219"><span class="lineNum">     219</span>                 :<span class="tlaGNC">      189995 : }</span></span>
+<span id="L220"><span class="lineNum">     220</span>                 :             : </span>
+<span id="L221"><span class="lineNum">     221</span>                 :             : Packet *TcpLwipReceiveQueue::extractBytesUpTo(B length)</span>
+<span id="L222"><span class="lineNum">     222</span>                 :<span class="tlaGNC">       94872 : {</span></span>
+<span id="L223"><span class="lineNum">     223</span>                 :<span class="tlaGNC">       94872 :     ASSERT(connM);</span></span>
+<span id="L224"><span class="lineNum">     224</span>                 :             : </span>
+<span id="L225"><span class="lineNum">     225</span>                 :<span class="tlaGNC">       94872 :     Packet *dataMsg = nullptr;</span></span>
+<span id="L226"><span class="lineNum">     226</span>                 :<span class="tlaGNC">       94872 :     b queueLength = dataBuffer.getLength();</span></span>
+<span id="L227"><span class="lineNum">     227</span>                 :             : </span>
+<span id="L228"><span class="lineNum">     228</span>         [<span class="tlaGBC" title="Branch 0 was taken 94872 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">       94872 :     if (queueLength &gt; b(0)) {</span></span>
+<span id="L229"><span class="lineNum">     229</span>                 :<span class="tlaGNC">       94872 :         dataMsg = new Packet(&quot;DATA&quot;, TCP_I_DATA);</span></span>
+<span id="L230"><span class="lineNum">     230</span>                 :<span class="tlaGNC">       94872 :         const auto&amp; data = dataBuffer.pop&lt;Chunk&gt;(queueLength);</span></span>
+<span id="L231"><span class="lineNum">     231</span>                 :<span class="tlaGNC">       94872 :         dataMsg-&gt;insertAtBack(data);</span></span>
+<span id="L232"><span class="lineNum">     232</span>                 :<span class="tlaGNC">       94872 :     }</span></span>
+<span id="L233"><span class="lineNum">     233</span>                 :             : </span>
+<span id="L234"><span class="lineNum">     234</span>                 :<span class="tlaGNC">       94872 :     return dataMsg;</span></span>
+<span id="L235"><span class="lineNum">     235</span>                 :<span class="tlaGNC">       94872 : }</span></span>
+<span id="L236"><span class="lineNum">     236</span>                 :             : </span>
+<span id="L237"><span class="lineNum">     237</span>                 :             : uint32_t TcpLwipReceiveQueue::getAmountOfBufferedBytes() const</span>
+<span id="L238"><span class="lineNum">     238</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L239"><span class="lineNum">     239</span>                 :<span class="tlaUNC">           0 :     return dataBuffer.getLength().get&lt;B&gt;();</span></span>
+<span id="L240"><span class="lineNum">     240</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L241"><span class="lineNum">     241</span>                 :             : </span>
+<span id="L242"><span class="lineNum">     242</span>                 :             : uint32_t TcpLwipReceiveQueue::getQueueLength() const</span>
+<span id="L243"><span class="lineNum">     243</span>                 :<span class="tlaUNC">           0 : {</span></span>
+<span id="L244"><span class="lineNum">     244</span>                 :<span class="tlaUNC">           0 :     return dataBuffer.getLength().get&lt;B&gt;();</span></span>
+<span id="L245"><span class="lineNum">     245</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L246"><span class="lineNum">     246</span>                 :             : </span>
+<span id="L247"><span class="lineNum">     247</span>                 :             : void TcpLwipReceiveQueue::getQueueStatus() const</span>
+<span id="L248"><span class="lineNum">     248</span>                 :<span class="tlaUNC">           0 : {</span></span>
+<span id="L249"><span class="lineNum">     249</span>                 :             :     // TODO</span>
+<span id="L250"><span class="lineNum">     250</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L251"><span class="lineNum">     251</span>                 :             : </span>
+<span id="L252"><span class="lineNum">     252</span>                 :             : void TcpLwipReceiveQueue::notifyAboutSending(const TcpHeader *tcpsegP)</span>
+<span id="L253"><span class="lineNum">     253</span>                 :<span class="tlaGNC tlaBgGNC">      169090 : {</span></span>
+<span id="L254"><span class="lineNum">     254</span>                 :             :     // nothing to do</span>
+<span id="L255"><span class="lineNum">     255</span>                 :<span class="tlaGNC">      169090 : }</span></span>
+<span id="L256"><span class="lineNum">     256</span>                 :             : </span>
+<span id="L257"><span class="lineNum">     257</span>                 :             : } // namespace tcp</span>
+<span id="L258"><span class="lineNum">     258</span>                 :             : } // namespace inet</span>
+<span id="L259"><span class="lineNum">     259</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

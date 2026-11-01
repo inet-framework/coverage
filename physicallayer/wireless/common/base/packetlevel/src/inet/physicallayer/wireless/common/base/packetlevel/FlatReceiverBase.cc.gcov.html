@@ -1,0 +1,188 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - physicallayer/wireless/common/base/packetlevel/src/inet/physicallayer/wireless/common/base/packetlevel/FlatReceiverBase.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../../../../../index.html">top level</a> - <a href="index.html">physicallayer/wireless/common/base/packetlevel/src/inet/physicallayer/wireless/common/base/packetlevel</a> - FlatReceiverBase.cc<span style="font-size: 80%;"> (source / <a href="FlatReceiverBase.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">66</td>
+            <td class="headerCovTableEntry">66</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">7</td>
+            <td class="headerCovTableEntry">7</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryMed">79.4&nbsp;%</td>
+            <td class="headerCovTableEntry">34</td>
+            <td class="headerCovTableEntry">27</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2013 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #include &quot;inet/physicallayer/wireless/common/base/packetlevel/FlatReceiverBase.h&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : </span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &quot;inet/physicallayer/wireless/common/base/packetlevel/ApskModulationBase.h&quot;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &quot;inet/physicallayer/wireless/common/base/packetlevel/NarrowbandNoiseBase.h&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &quot;inet/physicallayer/wireless/common/contract/packetlevel/IRadioMedium.h&quot;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : #include &quot;inet/physicallayer/wireless/common/contract/packetlevel/SignalTag_m.h&quot;</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : #include &quot;inet/physicallayer/wireless/common/radio/packetlevel/ListeningDecision.h&quot;</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : #include &quot;inet/physicallayer/wireless/common/radio/packetlevel/ReceptionDecision.h&quot;</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : </span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : namespace inet {</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : namespace physicallayer {</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : </span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : FlatReceiverBase::FlatReceiverBase() :</span>
+<span id="L21"><span class="lineNum">      21</span>                 :<span class="tlaGNC tlaBgGNC">        3622 :     NarrowbandReceiverBase(),</span></span>
+<span id="L22"><span class="lineNum">      22</span>                 :<span class="tlaGNC">        3622 :     errorModel(nullptr),</span></span>
+<span id="L23"><span class="lineNum">      23</span>                 :<span class="tlaGNC">        3622 :     energyDetection(W(NaN)),</span></span>
+<span id="L24"><span class="lineNum">      24</span>                 :<span class="tlaGNC">        3622 :     sensitivity(W(NaN))</span></span>
+<span id="L25"><span class="lineNum">      25</span>                 :<span class="tlaGNC">        3622 : {</span></span>
+<span id="L26"><span class="lineNum">      26</span>                 :<span class="tlaGNC">        3622 : }</span></span>
+<span id="L27"><span class="lineNum">      27</span>                 :             : </span>
+<span id="L28"><span class="lineNum">      28</span>                 :             : void FlatReceiverBase::initialize(int stage)</span>
+<span id="L29"><span class="lineNum">      29</span>                 :<span class="tlaGNC">       86871 : {</span></span>
+<span id="L30"><span class="lineNum">      30</span>                 :<span class="tlaGNC">       86871 :     NarrowbandReceiverBase::initialize(stage);</span></span>
+<span id="L31"><span class="lineNum">      31</span>         [<span class="tlaGBC" title="Branch 0 was taken 3622 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 83249 times"> + </span>]:<span class="tlaGNC">       86871 :     if (stage == INITSTAGE_LOCAL) {</span></span>
+<span id="L32"><span class="lineNum">      32</span>                 :<span class="tlaGNC">        3622 :         errorModel = dynamic_cast&lt;IErrorModel *&gt;(getSubmodule(&quot;errorModel&quot;));</span></span>
+<span id="L33"><span class="lineNum">      33</span>                 :<span class="tlaGNC">        3622 :         energyDetection = mW(math::dBmW2mW(par(&quot;energyDetection&quot;)));</span></span>
+<span id="L34"><span class="lineNum">      34</span>                 :<span class="tlaGNC">        3622 :         sensitivity = mW(math::dBmW2mW(par(&quot;sensitivity&quot;)));</span></span>
+<span id="L35"><span class="lineNum">      35</span>                 :<span class="tlaGNC">        3622 :     }</span></span>
+<span id="L36"><span class="lineNum">      36</span>                 :<span class="tlaGNC">       86871 : }</span></span>
+<span id="L37"><span class="lineNum">      37</span>                 :             : </span>
+<span id="L38"><span class="lineNum">      38</span>                 :             : std::ostream&amp; FlatReceiverBase::printToStream(std::ostream&amp; stream, int level, int evFlags) const</span>
+<span id="L39"><span class="lineNum">      39</span>                 :<span class="tlaGNC">     1017887 : {</span></span>
+<span id="L40"><span class="lineNum">      40</span>         [<span class="tlaGBC" title="Branch 0 was taken 620 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1017267 times"> + </span>]:<span class="tlaGNC">     1017887 :     if (level &lt;= PRINT_LEVEL_TRACE)</span></span>
+<span id="L41"><span class="lineNum">      41</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 620 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 620 times"> + </span>]:<span class="tlaGNC">         620 :         stream &lt;&lt; EV_FIELD(errorModel, printFieldToString(errorModel, level + 1, evFlags));</span></span>
+<span id="L42"><span class="lineNum">      42</span>         [<span class="tlaGBC" title="Branch 0 was taken 1017887 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">     1017887 :     if (level &lt;= PRINT_LEVEL_INFO)</span></span>
+<span id="L43"><span class="lineNum">      43</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1017887 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1017887 times"> + </span>]:<span class="tlaGNC">     1017887 :         stream &lt;&lt; EV_FIELD(energyDetection)</span></span>
+<span id="L44"><span class="lineNum">      44</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1017887 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1017887 times"> + </span>]:<span class="tlaGNC">     1017887 :                &lt;&lt; EV_FIELD(sensitivity);</span></span>
+<span id="L45"><span class="lineNum">      45</span>                 :<span class="tlaGNC">     1017887 :     return NarrowbandReceiverBase::printToStream(stream, level);</span></span>
+<span id="L46"><span class="lineNum">      46</span>                 :<span class="tlaGNC">     1017887 : }</span></span>
+<span id="L47"><span class="lineNum">      47</span>                 :             : </span>
+<span id="L48"><span class="lineNum">      48</span>                 :             : const IListeningDecision *FlatReceiverBase::computeListeningDecision(const IListening *listening, const IInterference *interference) const</span>
+<span id="L49"><span class="lineNum">      49</span>                 :<span class="tlaGNC">    10054438 : {</span></span>
+<span id="L50"><span class="lineNum">      50</span>                 :<span class="tlaGNC">    10054438 :     const IRadio *receiver = listening-&gt;getReceiverRadio();</span></span>
+<span id="L51"><span class="lineNum">      51</span>                 :<span class="tlaGNC">    10054438 :     const IRadioMedium *radioMedium = receiver-&gt;getMedium();</span></span>
+<span id="L52"><span class="lineNum">      52</span>                 :<span class="tlaGNC">    10054438 :     const IMediumAnalogModel *analogModel = radioMedium-&gt;getAnalogModel();</span></span>
+<span id="L53"><span class="lineNum">      53</span>                 :<span class="tlaGNC">    10054438 :     const INoise *noise = analogModel-&gt;computeNoise(listening, interference);</span></span>
+<span id="L54"><span class="lineNum">      54</span>                 :             : </span>
+<span id="L55"><span class="lineNum">      55</span>                 :<span class="tlaGNC">    10054438 :     W maxPower = noise-&gt;computeMaxPower(listening-&gt;getStartTime(), listening-&gt;getEndTime());</span></span>
+<span id="L56"><span class="lineNum">      56</span>                 :<span class="tlaGNC">    10054438 :     bool isListeningPossible = maxPower &gt;= energyDetection;</span></span>
+<span id="L57"><span class="lineNum">      57</span>                 :<span class="tlaGNC">    10054438 :     delete noise;</span></span>
+<span id="L58"><span class="lineNum">      58</span>         [<span class="tlaGBC" title="Branch 0 was taken 2959 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 219140 times"> + </span>]:<span class="tlaGNC">    10054438 :     EV_DEBUG &lt;&lt; &quot;Computing whether listening is possible: maximum power = &quot; &lt;&lt; maxPower &lt;&lt; &quot;, energy detection = &quot; &lt;&lt; energyDetection &lt;&lt; &quot; -&gt; listening is &quot; &lt;&lt; (isListeningPossible ? &quot;possible&quot; : &quot;impossible&quot;) &lt;&lt; endl;</span></span>
+<span id="L59"><span class="lineNum">      59</span>                 :<span class="tlaGNC">    10054438 :     return new ListeningDecision(listening, isListeningPossible);</span></span>
+<span id="L60"><span class="lineNum">      60</span>                 :<span class="tlaGNC">    10054438 : }</span></span>
+<span id="L61"><span class="lineNum">      61</span>                 :             : </span>
+<span id="L62"><span class="lineNum">      62</span>                 :             : bool FlatReceiverBase::computeIsReceptionSuccessful(const IListening *listening, const IReception *reception, IRadioSignal::SignalPart part, const IInterference *interference, const ISnir *snir) const</span>
+<span id="L63"><span class="lineNum">      63</span>                 :<span class="tlaGNC">     3485792 : {</span></span>
+<span id="L64"><span class="lineNum">      64</span>         [<span class="tlaGBC" title="Branch 0 was taken 51255 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3434537 times"> + </span>]:<span class="tlaGNC">     3485792 :     if (!SnirReceiverBase::computeIsReceptionSuccessful(listening, reception, part, interference, snir))</span></span>
+<span id="L65"><span class="lineNum">      65</span>                 :<span class="tlaGNC">       51255 :         return false;</span></span>
+<span id="L66"><span class="lineNum">      66</span>         [<span class="tlaGBC" title="Branch 0 was taken 64646 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3369891 times"> + </span>]:<span class="tlaGNC">     3434537 :     else if (!errorModel)</span></span>
+<span id="L67"><span class="lineNum">      67</span>                 :<span class="tlaGNC">       64646 :         return true;</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :<span class="tlaGNC">     3369891 :     else {</span></span>
+<span id="L69"><span class="lineNum">      69</span>                 :<span class="tlaGNC">     3369891 :         double packetErrorRate = errorModel-&gt;computePacketErrorRate(snir, part);</span></span>
+<span id="L70"><span class="lineNum">      70</span>         [<span class="tlaGBC" title="Branch 0 was taken 2659629 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 710262 times"> + </span>]:<span class="tlaGNC">     3369891 :         if (packetErrorRate == 0.0)</span></span>
+<span id="L71"><span class="lineNum">      71</span>                 :<span class="tlaGNC">     2659629 :             return true;</span></span>
+<span id="L72"><span class="lineNum">      72</span>         [<span class="tlaGBC" title="Branch 0 was taken 21280 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 688982 times"> + </span>]:<span class="tlaGNC">      710262 :         else if (packetErrorRate == 1.0)</span></span>
+<span id="L73"><span class="lineNum">      73</span>                 :<span class="tlaGNC">       21280 :             return false;</span></span>
+<span id="L74"><span class="lineNum">      74</span>                 :<span class="tlaGNC">      688982 :         else {</span></span>
+<span id="L75"><span class="lineNum">      75</span>                 :<span class="tlaGNC">      688982 :             ASSERT(0.0 &lt; packetErrorRate &amp;&amp; packetErrorRate &lt; 1.0);</span></span>
+<span id="L76"><span class="lineNum">      76</span>                 :<span class="tlaGNC">      688982 :             return dblrand() &gt; packetErrorRate;</span></span>
+<span id="L77"><span class="lineNum">      77</span>                 :<span class="tlaGNC">      688982 :         }</span></span>
+<span id="L78"><span class="lineNum">      78</span>                 :<span class="tlaGNC">     3369891 :     }</span></span>
+<span id="L79"><span class="lineNum">      79</span>                 :<span class="tlaGNC">     3485792 : }</span></span>
+<span id="L80"><span class="lineNum">      80</span>                 :             : </span>
+<span id="L81"><span class="lineNum">      81</span>                 :             : const IReceptionResult *FlatReceiverBase::computeReceptionResult(const IListening *listening, const IReception *reception, const IInterference *interference, const ISnir *snir, const std::vector&lt;const IReceptionDecision *&gt; *decisions) const</span>
+<span id="L82"><span class="lineNum">      82</span>                 :<span class="tlaGNC">     3471026 : {</span></span>
+<span id="L83"><span class="lineNum">      83</span>                 :<span class="tlaGNC">     3471026 :     auto receptionResult = NarrowbandReceiverBase::computeReceptionResult(listening, reception, interference, snir, decisions);</span></span>
+<span id="L84"><span class="lineNum">      84</span>         [<span class="tlaGBC" title="Branch 0 was taken 3403514 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 67512 times"> + </span>]:<span class="tlaGNC">     3471026 :     if (errorModel != nullptr) {</span></span>
+<span id="L85"><span class="lineNum">      85</span>                 :<span class="tlaGNC">     3403514 :         auto errorRateInd = const_cast&lt;Packet *&gt;(receptionResult-&gt;getPacket())-&gt;addTagIfAbsent&lt;ErrorRateInd&gt;();</span></span>
+<span id="L86"><span class="lineNum">      86</span>                 :<span class="tlaGNC">     3403514 :         errorRateInd-&gt;setPacketErrorRate(errorModel-&gt;computePacketErrorRate(snir, IRadioSignal::SIGNAL_PART_WHOLE));</span></span>
+<span id="L87"><span class="lineNum">      87</span>                 :<span class="tlaGNC">     3403514 :         errorRateInd-&gt;setBitErrorRate(errorModel-&gt;computeBitErrorRate(snir, IRadioSignal::SIGNAL_PART_WHOLE));</span></span>
+<span id="L88"><span class="lineNum">      88</span>                 :<span class="tlaGNC">     3403514 :         errorRateInd-&gt;setSymbolErrorRate(errorModel-&gt;computeSymbolErrorRate(snir, IRadioSignal::SIGNAL_PART_WHOLE));</span></span>
+<span id="L89"><span class="lineNum">      89</span>                 :<span class="tlaGNC">     3403514 :     }</span></span>
+<span id="L90"><span class="lineNum">      90</span>                 :<span class="tlaGNC">     3471026 :     return receptionResult;</span></span>
+<span id="L91"><span class="lineNum">      91</span>                 :<span class="tlaGNC">     3471026 : }</span></span>
+<span id="L92"><span class="lineNum">      92</span>                 :             : </span>
+<span id="L93"><span class="lineNum">      93</span>                 :             : Packet *FlatReceiverBase::computeReceivedPacket(const ISnir *snir, bool isReceptionSuccessful) const</span>
+<span id="L94"><span class="lineNum">      94</span>                 :<span class="tlaGNC">     3471026 : {</span></span>
+<span id="L95"><span class="lineNum">      95</span> [<span class="tlaGBC" title="Branch 0 was taken 67512 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3403514 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 3198177 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 205337 times"> + </span>]:<span class="tlaGNC">     3471026 :     if (errorModel == nullptr || isReceptionSuccessful)</span></span>
+<span id="L96"><span class="lineNum">      96</span>                 :<span class="tlaGNC">     3265689 :         return ReceiverBase::computeReceivedPacket(snir, isReceptionSuccessful);</span></span>
+<span id="L97"><span class="lineNum">      97</span>                 :<span class="tlaGNC">      205337 :     else</span></span>
+<span id="L98"><span class="lineNum">      98</span>                 :<span class="tlaGNC">      205337 :         return errorModel-&gt;computeCorruptedPacket(snir);</span></span>
+<span id="L99"><span class="lineNum">      99</span>                 :<span class="tlaGNC">     3471026 : }</span></span>
+<span id="L100"><span class="lineNum">     100</span>                 :             : </span>
+<span id="L101"><span class="lineNum">     101</span>                 :             : } // namespace physicallayer</span>
+<span id="L102"><span class="lineNum">     102</span>                 :             : } // namespace inet</span>
+<span id="L103"><span class="lineNum">     103</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

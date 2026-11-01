@@ -1,0 +1,598 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - networklayer/mpls/src/inet/networklayer/mpls/Mpls.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">networklayer/mpls/src/inet/networklayer/mpls</a> - Mpls.cc<span style="font-size: 80%;"> (source / <a href="Mpls.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryMed">89.7&nbsp;%</td>
+            <td class="headerCovTableEntry">359</td>
+            <td class="headerCovTableEntry">322</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">95.2&nbsp;%</td>
+            <td class="headerCovTableEntry">21</td>
+            <td class="headerCovTableEntry">20</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryMed">76.4&nbsp;%</td>
+            <td class="headerCovTableEntry">140</td>
+            <td class="headerCovTableEntry">107</td>
+          </tr>
+                  <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2005 Vojtech Janota</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : // Copyright (C) 2003 Xuan Thang Nguyen</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : //</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : //</span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #include &quot;inet/networklayer/mpls/Mpls.h&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : </span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &lt;string.h&gt;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : </span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &quot;inet/common/ModuleAccess.h&quot;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : #include &quot;inet/common/ProtocolTag_m.h&quot;</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : #include &quot;inet/common/ProtocolUtils.h&quot;</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : #include &quot;inet/common/Simsignals.h&quot;</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : #include &quot;inet/common/packet/Packet.h&quot;</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : #include &quot;inet/linklayer/common/InterfaceTag_m.h&quot;</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : #include &quot;inet/linklayer/common/MacAddressTag_m.h&quot;</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : #include &quot;inet/networklayer/ipv4/Ipv4Header_m.h&quot;</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : #include &quot;inet/networklayer/ldp/Ldp.h&quot;</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             : #include &quot;inet/networklayer/mpls/IIngressClassifier.h&quot;</span>
+<span id="L22"><span class="lineNum">      22</span>                 :             : #include &quot;inet/networklayer/rsvpte/Utils.h&quot;</span>
+<span id="L23"><span class="lineNum">      23</span>                 :             : #include &quot;inet/transportlayer/tcp_common/TcpHeader.h&quot;</span>
+<span id="L24"><span class="lineNum">      24</span>                 :             : </span>
+<span id="L25"><span class="lineNum">      25</span>                 :             : namespace inet {</span>
+<span id="L26"><span class="lineNum">      26</span>                 :             : </span>
+<span id="L27"><span class="lineNum">      27</span>                 :<span class="tlaGNC tlaBgGNC">        9473 : #define ICMP_TRAFFIC    6</span></span>
+<span id="L28"><span class="lineNum">      28</span>                 :             : </span>
+<span id="L29"><span class="lineNum">      29</span>                 :             : Define_Module(Mpls);</span>
+<span id="L30"><span class="lineNum">      30</span>                 :             : </span>
+<span id="L31"><span class="lineNum">      31</span>                 :             : void Mpls::initialize(int stage)</span>
+<span id="L32"><span class="lineNum">      32</span>                 :<span class="tlaGNC">        3360 : {</span></span>
+<span id="L33"><span class="lineNum">      33</span>                 :<span class="tlaGNC">        3360 :     SimpleModule::initialize(stage);</span></span>
+<span id="L34"><span class="lineNum">      34</span>                 :             : </span>
+<span id="L35"><span class="lineNum">      35</span>         [<span class="tlaGBC" title="Branch 0 was taken 140 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3220 times"> + </span>]:<span class="tlaGNC">        3360 :     if (stage == INITSTAGE_LOCAL) {</span></span>
+<span id="L36"><span class="lineNum">      36</span>                 :             :         // interfaceTable must be initialized</span>
+<span id="L37"><span class="lineNum">      37</span>                 :             : </span>
+<span id="L38"><span class="lineNum">      38</span>                 :<span class="tlaGNC">         140 :         lt.reference(this, &quot;libTableModule&quot;, true);</span></span>
+<span id="L39"><span class="lineNum">      39</span>                 :<span class="tlaGNC">         140 :         ift.reference(this, &quot;interfaceTableModule&quot;, true);</span></span>
+<span id="L40"><span class="lineNum">      40</span>                 :<span class="tlaGNC">         140 :         pct.reference(this, &quot;classifierModule&quot;, true);</span></span>
+<span id="L41"><span class="lineNum">      41</span>                 :<span class="tlaGNC">         140 :         icmp.reference(this, &quot;icmpModule&quot;, false);</span></span>
+<span id="L42"><span class="lineNum">      42</span>                 :             : </span>
+<span id="L43"><span class="lineNum">      43</span>                 :<span class="tlaGNC">         140 :         WATCH(delay1);</span></span>
+<span id="L44"><span class="lineNum">      44</span>                 :<span class="tlaGNC">         140 :         WATCH(numReceived);</span></span>
+<span id="L45"><span class="lineNum">      45</span>                 :<span class="tlaGNC">         140 :         WATCH(numSent);</span></span>
+<span id="L46"><span class="lineNum">      46</span>                 :<span class="tlaGNC">         140 :     }</span></span>
+<span id="L47"><span class="lineNum">      47</span>         [<span class="tlaGBC" title="Branch 0 was taken 140 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3080 times"> + </span>]:<span class="tlaGNC">        3220 :     else if (stage == INITSTAGE_NETWORK_LAYER) {</span></span>
+<span id="L48"><span class="lineNum">      48</span>                 :<span class="tlaGNC">         140 :         registerService(Protocol::mpls, gate(&quot;upperLayerIn&quot;), gate(&quot;upperLayerOut&quot;));</span></span>
+<span id="L49"><span class="lineNum">      49</span>                 :<span class="tlaGNC">         140 :         registerProtocol(Protocol::mpls, gate(&quot;lowerLayerOut&quot;), gate(&quot;lowerLayerIn&quot;));</span></span>
+<span id="L50"><span class="lineNum">      50</span>                 :<span class="tlaGNC">         140 :     }</span></span>
+<span id="L51"><span class="lineNum">      51</span>                 :<span class="tlaGNC">        3360 : }</span></span>
+<span id="L52"><span class="lineNum">      52</span>                 :             : </span>
+<span id="L53"><span class="lineNum">      53</span>                 :             : void Mpls::handleMessage(cMessage *msg)</span>
+<span id="L54"><span class="lineNum">      54</span>                 :<span class="tlaGNC">      644722 : {</span></span>
+<span id="L55"><span class="lineNum">      55</span>                 :<span class="tlaGNC">      644722 :     Packet *pk = check_and_cast&lt;Packet *&gt;(msg);</span></span>
+<span id="L56"><span class="lineNum">      56</span>                 :<span class="tlaGNC">      644722 :     numReceived++;</span></span>
+<span id="L57"><span class="lineNum">      57</span>         [<span class="tlaGBC" title="Branch 0 was taken 436281 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 208441 times"> + </span>]:<span class="tlaGNC">      644722 :     if (msg-&gt;getArrivalGate()-&gt;isName(&quot;lowerLayerIn&quot;)) {</span></span>
+<span id="L58"><span class="lineNum">      58</span>                 :<span class="tlaGNC">      436281 :         EV_INFO &lt;&lt; &quot;Processing message from L2: &quot; &lt;&lt; pk &lt;&lt; endl;</span></span>
+<span id="L59"><span class="lineNum">      59</span>                 :<span class="tlaGNC">      436281 :         processPacketFromL2(pk);</span></span>
+<span id="L60"><span class="lineNum">      60</span>                 :<span class="tlaGNC">      436281 :     }</span></span>
+<span id="L61"><span class="lineNum">      61</span>         [<span class="tlaGBC" title="Branch 0 was taken 208441 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">      208441 :     else if (msg-&gt;getArrivalGate()-&gt;isName(&quot;upperLayerIn&quot;)) {</span></span>
+<span id="L62"><span class="lineNum">      62</span>                 :<span class="tlaGNC">      208441 :         EV_INFO &lt;&lt; &quot;Processing message from L3: &quot; &lt;&lt; pk &lt;&lt; endl;</span></span>
+<span id="L63"><span class="lineNum">      63</span>                 :<span class="tlaGNC">      208441 :         processPacketFromL3(pk);</span></span>
+<span id="L64"><span class="lineNum">      64</span>                 :<span class="tlaGNC">      208441 :     }</span></span>
+<span id="L65"><span class="lineNum">      65</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     else {</span></span>
+<span id="L66"><span class="lineNum">      66</span>                 :<span class="tlaUNC">           0 :         throw cRuntimeError(&quot;unexpected message: %s&quot;, msg-&gt;getName());</span></span>
+<span id="L67"><span class="lineNum">      67</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :<span class="tlaGNC tlaBgGNC">      644722 : }</span></span>
+<span id="L69"><span class="lineNum">      69</span>                 :             : </span>
+<span id="L70"><span class="lineNum">      70</span>                 :             : void Mpls::processPacketFromL3(Packet *msg)</span>
+<span id="L71"><span class="lineNum">      71</span>                 :<span class="tlaGNC">      208441 : {</span></span>
+<span id="L72"><span class="lineNum">      72</span>                 :<span class="tlaGNC">      208441 :     using namespace tcp;</span></span>
+<span id="L73"><span class="lineNum">      73</span>                 :             : </span>
+<span id="L74"><span class="lineNum">      74</span>                 :<span class="tlaGNC">      208441 :     const Protocol *protocol = msg-&gt;getTag&lt;PacketProtocolTag&gt;()-&gt;getProtocol();</span></span>
+<span id="L75"><span class="lineNum">      75</span>         [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 208439 times"> + </span>]:<span class="tlaGNC">      208441 :     if (protocol != &amp;Protocol::ipv4) {</span></span>
+<span id="L76"><span class="lineNum">      76</span>                 :             :         // only the Ipv4 protocol supported yet</span>
+<span id="L77"><span class="lineNum">      77</span>                 :<span class="tlaGNC">           2 :         sendToL2(msg);</span></span>
+<span id="L78"><span class="lineNum">      78</span>                 :<span class="tlaGNC">           2 :         return;</span></span>
+<span id="L79"><span class="lineNum">      79</span>                 :<span class="tlaGNC">           2 :     }</span></span>
+<span id="L80"><span class="lineNum">      80</span>                 :             : </span>
+<span id="L81"><span class="lineNum">      81</span>                 :<span class="tlaGNC">      208439 :     const auto&amp; ipHeader = msg-&gt;peekAtFront&lt;Ipv4Header&gt;();</span></span>
+<span id="L82"><span class="lineNum">      82</span>                 :             : </span>
+<span id="L83"><span class="lineNum">      83</span>                 :             :     // TODO temporary solution, until TcpSocket and Ipv4 are extended to support nam tracing</span>
+<span id="L84"><span class="lineNum">      84</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 208439 times"> + </span>]:<span class="tlaGNC">      208439 :     if (ipHeader-&gt;getProtocolId() == IP_PROT_TCP) {</span></span>
+<span id="L85"><span class="lineNum">      85</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         const auto&amp; seg = msg-&gt;peekDataAt&lt;TcpHeader&gt;(ipHeader-&gt;getChunkLength());</span></span>
+<span id="L86"><span class="lineNum">      86</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         if (seg-&gt;getDestPort() == LDP_PORT || seg-&gt;getSrcPort() == LDP_PORT) {</span></span>
+<span id="L87"><span class="lineNum">      87</span>                 :<span class="tlaUNC">           0 :             ASSERT(!msg-&gt;hasPar(&quot;color&quot;));</span></span>
+<span id="L88"><span class="lineNum">      88</span>                 :<span class="tlaUNC">           0 :             msg-&gt;addPar(&quot;color&quot;) = LDP_TRAFFIC;</span></span>
+<span id="L89"><span class="lineNum">      89</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L90"><span class="lineNum">      90</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L91"><span class="lineNum">      91</span>         [<span class="tlaGBC" title="Branch 0 was taken 65854 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 142585 times"> + </span>]:<span class="tlaGNC tlaBgGNC">      208439 :     else if (ipHeader-&gt;getProtocolId() == IP_PROT_ICMP) {</span></span>
+<span id="L92"><span class="lineNum">      92</span>                 :             : //        ASSERT(!msg-&gt;hasPar(&quot;color&quot;)); TODO this did not hold sometimes...</span>
+<span id="L93"><span class="lineNum">      93</span>         [<span class="tlaGBC" title="Branch 0 was taken 9473 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 56381 times"> + </span>]:<span class="tlaGNC">       65854 :         if (!msg-&gt;hasPar(&quot;color&quot;))</span></span>
+<span id="L94"><span class="lineNum">      94</span>                 :<span class="tlaGNC">        9473 :             msg-&gt;addPar(&quot;color&quot;) = ICMP_TRAFFIC;</span></span>
+<span id="L95"><span class="lineNum">      95</span>                 :<span class="tlaGNC">       65854 :     }</span></span>
+<span id="L96"><span class="lineNum">      96</span>                 :             :     // TODO end of temporary area</span>
+<span id="L97"><span class="lineNum">      97</span>                 :             : </span>
+<span id="L98"><span class="lineNum">      98</span>                 :<span class="tlaGNC">      208439 :     labelAndForwardIpv4Datagram(msg);</span></span>
+<span id="L99"><span class="lineNum">      99</span>                 :<span class="tlaGNC">      208439 : }</span></span>
+<span id="L100"><span class="lineNum">     100</span>                 :             : </span>
+<span id="L101"><span class="lineNum">     101</span>                 :             : bool Mpls::tryLabelAndForwardIpv4Datagram(Packet *packet, bool fromLink)</span>
+<span id="L102"><span class="lineNum">     102</span>                 :<span class="tlaGNC">      469988 : {</span></span>
+<span id="L103"><span class="lineNum">     103</span>                 :<span class="tlaGNC">      469988 :     LabelOpVector outLabel;</span></span>
+<span id="L104"><span class="lineNum">     104</span>                 :<span class="tlaGNC">      469988 :     std::string outInterface; // FIXME set based on interfaceID</span></span>
+<span id="L105"><span class="lineNum">     105</span>                 :<span class="tlaGNC">      469988 :     int color;</span></span>
+<span id="L106"><span class="lineNum">     106</span>                 :             : </span>
+<span id="L107"><span class="lineNum">     107</span>         [<span class="tlaGBC" title="Branch 0 was taken 432684 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 37304 times"> + </span>]:<span class="tlaGNC">      469988 :     if (!pct-&gt;lookupLabel(packet, outLabel, outInterface, color)) {</span></span>
+<span id="L108"><span class="lineNum">     108</span>                 :<span class="tlaGNC">      432684 :         EV_WARN &lt;&lt; &quot;no mapping exists for this packet&quot; &lt;&lt; endl;</span></span>
+<span id="L109"><span class="lineNum">     109</span>                 :<span class="tlaGNC">      432684 :         return false;</span></span>
+<span id="L110"><span class="lineNum">     110</span>                 :<span class="tlaGNC">      432684 :     }</span></span>
+<span id="L111"><span class="lineNum">     111</span>                 :<span class="tlaGNC">       37304 :     int outInterfaceId = CHK(ift-&gt;findInterfaceByName(outInterface.c_str()))-&gt;getInterfaceId();</span></span>
+<span id="L112"><span class="lineNum">     112</span>                 :             : </span>
+<span id="L113"><span class="lineNum">     113</span>                 :<span class="tlaGNC">       37304 :     ASSERT(outLabel.size() &gt; 0);</span></span>
+<span id="L114"><span class="lineNum">     114</span>                 :             : </span>
+<span id="L115"><span class="lineNum">     115</span>         [<span class="tlaGBC" title="Branch 0 was taken 37304 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">       37304 :     if (fromLink) {</span></span>
+<span id="L116"><span class="lineNum">     116</span>                 :             :         // the ingress forwards the datagram as an IP router: the TTL is decremented before</span>
+<span id="L117"><span class="lineNum">     117</span>                 :             :         // the first label copies it (RFC 3032 section 2.4.3); an expiring datagram goes to</span>
+<span id="L118"><span class="lineNum">     118</span>                 :             :         // the network layer, which reports it</span>
+<span id="L119"><span class="lineNum">     119</span>                 :<span class="tlaGNC">       37304 :         int ttl = packet-&gt;peekAtFront&lt;Ipv4Header&gt;()-&gt;getTimeToLive();</span></span>
+<span id="L120"><span class="lineNum">     120</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 37304 times"> + </span>]:<span class="tlaGNC">       37304 :         if (ttl &lt;= 1)</span></span>
+<span id="L121"><span class="lineNum">     121</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             return false;</span></span>
+<span id="L122"><span class="lineNum">     122</span>                 :<span class="tlaGNC tlaBgGNC">       37304 :         setIpv4Ttl(packet, ttl - 1);</span></span>
+<span id="L123"><span class="lineNum">     123</span>                 :<span class="tlaGNC">       37304 :     }</span></span>
+<span id="L124"><span class="lineNum">     124</span>                 :             : </span>
+<span id="L125"><span class="lineNum">     125</span>                 :<span class="tlaGNC">       37304 :     doStackOps(packet, outLabel);</span></span>
+<span id="L126"><span class="lineNum">     126</span>                 :             : </span>
+<span id="L127"><span class="lineNum">     127</span>                 :<span class="tlaGNC">       37304 :     EV_INFO &lt;&lt; &quot;forwarding packet to &quot; &lt;&lt; outInterface &lt;&lt; endl;</span></span>
+<span id="L128"><span class="lineNum">     128</span>                 :             : </span>
+<span id="L129"><span class="lineNum">     129</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 37304 times"> + </span>]:<span class="tlaGNC">       37304 :     if (packet-&gt;hasPar(&quot;color&quot;))</span></span>
+<span id="L130"><span class="lineNum">     130</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         packet-&gt;par(&quot;color&quot;) = color;</span></span>
+<span id="L131"><span class="lineNum">     131</span>                 :<span class="tlaGNC tlaBgGNC">       37304 :     else</span></span>
+<span id="L132"><span class="lineNum">     132</span>                 :<span class="tlaGNC">       37304 :         packet-&gt;addPar(&quot;color&quot;) = color;</span></span>
+<span id="L133"><span class="lineNum">     133</span>                 :             : </span>
+<span id="L134"><span class="lineNum">     134</span>                 :<span class="tlaGNC">       37304 :     sendToLink(packet, ift-&gt;getInterfaceById(outInterfaceId));</span></span>
+<span id="L135"><span class="lineNum">     135</span>                 :             : </span>
+<span id="L136"><span class="lineNum">     136</span>                 :<span class="tlaGNC">       37304 :     return true;</span></span>
+<span id="L137"><span class="lineNum">     137</span>                 :<span class="tlaGNC">       37304 : }</span></span>
+<span id="L138"><span class="lineNum">     138</span>                 :             : </span>
+<span id="L139"><span class="lineNum">     139</span>                 :             : void Mpls::labelAndForwardIpv4Datagram(Packet *ipdatagram)</span>
+<span id="L140"><span class="lineNum">     140</span>                 :<span class="tlaGNC">      208439 : {</span></span>
+<span id="L141"><span class="lineNum">     141</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 208439 times"> + </span>]:<span class="tlaGNC">      208439 :     if (tryLabelAndForwardIpv4Datagram(ipdatagram))</span></span>
+<span id="L142"><span class="lineNum">     142</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         return;</span></span>
+<span id="L143"><span class="lineNum">     143</span>                 :             : </span>
+<span id="L144"><span class="lineNum">     144</span>                 :             :     // handling our outgoing Ipv4 traffic that didn't match any FEC/LSP</span>
+<span id="L145"><span class="lineNum">     145</span>                 :             :     // do not use labelAndForwardIPv4Datagram for packets arriving to ingress!</span>
+<span id="L146"><span class="lineNum">     146</span>                 :             : </span>
+<span id="L147"><span class="lineNum">     147</span>                 :<span class="tlaGNC tlaBgGNC">      208439 :     EV_INFO &lt;&lt; &quot;FEC not resolved, doing regular L3 routing&quot; &lt;&lt; endl;</span></span>
+<span id="L148"><span class="lineNum">     148</span>                 :             : </span>
+<span id="L149"><span class="lineNum">     149</span>                 :<span class="tlaGNC">      208439 :     sendToL2(ipdatagram);</span></span>
+<span id="L150"><span class="lineNum">     150</span>                 :<span class="tlaGNC">      208439 : }</span></span>
+<span id="L151"><span class="lineNum">     151</span>                 :             : </span>
+<span id="L152"><span class="lineNum">     152</span>                 :             : void Mpls::pushLabel(Packet *packet, Ptr&lt;MplsHeader&gt;&amp; newMplsHeader)</span>
+<span id="L153"><span class="lineNum">     153</span>                 :<span class="tlaGNC">       47312 : {</span></span>
+<span id="L154"><span class="lineNum">     154</span>                 :<span class="tlaGNC">       47312 :     packet-&gt;trimFront();</span></span>
+<span id="L155"><span class="lineNum">     155</span>                 :<span class="tlaGNC">       47312 :     int protocolId = packet-&gt;getTag&lt;PacketProtocolTag&gt;()-&gt;getProtocol()-&gt;getId();</span></span>
+<span id="L156"><span class="lineNum">     156</span>                 :<span class="tlaGNC">       47312 :     newMplsHeader-&gt;setS(protocolId != Protocol::mpls.getId());</span></span>
+<span id="L157"><span class="lineNum">     157</span>                 :             :     // the Uniform Model (RFC 3443 section 3.6): a pushed entry copies the TTL of the entry below</span>
+<span id="L158"><span class="lineNum">     158</span>                 :             :     // it, or of the IP header when it is the first label (RFC 3032 section 2.4.3)</span>
+<span id="L159"><span class="lineNum">     159</span>         [<span class="tlaGBC" title="Branch 0 was taken 10008 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 37304 times"> + </span>]:<span class="tlaGNC">       47312 :     if (protocolId == Protocol::mpls.getId())</span></span>
+<span id="L160"><span class="lineNum">     160</span>                 :<span class="tlaGNC">       10008 :         newMplsHeader-&gt;setTtl(packet-&gt;peekAtFront&lt;MplsHeader&gt;()-&gt;getTtl());</span></span>
+<span id="L161"><span class="lineNum">     161</span>         [<span class="tlaGBC" title="Branch 0 was taken 37304 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">       37304 :     else if (protocolId == Protocol::ipv4.getId())</span></span>
+<span id="L162"><span class="lineNum">     162</span>                 :<span class="tlaGNC">       37304 :         newMplsHeader-&gt;setTtl(packet-&gt;peekAtFront&lt;Ipv4Header&gt;()-&gt;getTimeToLive());</span></span>
+<span id="L163"><span class="lineNum">     163</span>                 :<span class="tlaGNC">       47312 :     packet-&gt;insertAtFront(newMplsHeader);</span></span>
+<span id="L164"><span class="lineNum">     164</span>                 :<span class="tlaGNC">       47312 :     packet-&gt;addTagIfAbsent&lt;PacketProtocolTag&gt;()-&gt;setProtocol(&amp;Protocol::mpls);</span></span>
+<span id="L165"><span class="lineNum">     165</span>                 :<span class="tlaGNC">       47312 : }</span></span>
+<span id="L166"><span class="lineNum">     166</span>                 :             : </span>
+<span id="L167"><span class="lineNum">     167</span>                 :             : void Mpls::swapLabel(Packet *packet, Ptr&lt;MplsHeader&gt;&amp; newMplsHeader)</span>
+<span id="L168"><span class="lineNum">     168</span>                 :<span class="tlaGNC">      117911 : {</span></span>
+<span id="L169"><span class="lineNum">     169</span>                 :<span class="tlaGNC">      117911 :     ASSERT(packet-&gt;getTag&lt;PacketProtocolTag&gt;()-&gt;getProtocol()-&gt;getId() == Protocol::mpls.getId());</span></span>
+<span id="L170"><span class="lineNum">     170</span>                 :<span class="tlaGNC">      117911 :     packet-&gt;trimFront();</span></span>
+<span id="L171"><span class="lineNum">     171</span>                 :<span class="tlaGNC">      117911 :     auto oldMplsHeader = packet-&gt;removeAtFront&lt;MplsHeader&gt;();</span></span>
+<span id="L172"><span class="lineNum">     172</span>                 :<span class="tlaGNC">      117911 :     newMplsHeader-&gt;setS(oldMplsHeader-&gt;getS());</span></span>
+<span id="L173"><span class="lineNum">     173</span>                 :<span class="tlaGNC">      117911 :     newMplsHeader-&gt;setTtl(oldMplsHeader-&gt;getTtl());</span></span>
+<span id="L174"><span class="lineNum">     174</span>                 :<span class="tlaGNC">      117911 :     packet-&gt;insertAtFront(newMplsHeader);</span></span>
+<span id="L175"><span class="lineNum">     175</span>                 :<span class="tlaGNC">      117911 : }</span></span>
+<span id="L176"><span class="lineNum">     176</span>                 :             : </span>
+<span id="L177"><span class="lineNum">     177</span>                 :             : void Mpls::setTopLabelTtl(Packet *packet, int ttl)</span>
+<span id="L178"><span class="lineNum">     178</span>                 :<span class="tlaGNC">      137924 : {</span></span>
+<span id="L179"><span class="lineNum">     179</span>                 :<span class="tlaGNC">      137924 :     packet-&gt;trimFront();</span></span>
+<span id="L180"><span class="lineNum">     180</span>                 :<span class="tlaGNC">      137924 :     auto mplsHeader = packet-&gt;removeAtFront&lt;MplsHeader&gt;();</span></span>
+<span id="L181"><span class="lineNum">     181</span>                 :<span class="tlaGNC">      137924 :     mplsHeader-&gt;setTtl(ttl);</span></span>
+<span id="L182"><span class="lineNum">     182</span>                 :<span class="tlaGNC">      137924 :     packet-&gt;insertAtFront(mplsHeader);</span></span>
+<span id="L183"><span class="lineNum">     183</span>                 :<span class="tlaGNC">      137924 : }</span></span>
+<span id="L184"><span class="lineNum">     184</span>                 :             : </span>
+<span id="L185"><span class="lineNum">     185</span>                 :             : void Mpls::setIpv4Ttl(Packet *packet, int ttl)</span>
+<span id="L186"><span class="lineNum">     186</span>                 :<span class="tlaGNC">       74130 : {</span></span>
+<span id="L187"><span class="lineNum">     187</span>                 :<span class="tlaGNC">       74130 :     packet-&gt;trimFront();</span></span>
+<span id="L188"><span class="lineNum">     188</span>                 :<span class="tlaGNC">       74130 :     auto ipv4Header = packet-&gt;removeAtFront&lt;Ipv4Header&gt;();</span></span>
+<span id="L189"><span class="lineNum">     189</span>                 :<span class="tlaGNC">       74130 :     ipv4Header-&gt;setTimeToLive(ttl);</span></span>
+<span id="L190"><span class="lineNum">     190</span>                 :<span class="tlaGNC">       74130 :     ipv4Header-&gt;updateChecksum();</span></span>
+<span id="L191"><span class="lineNum">     191</span>                 :<span class="tlaGNC">       74130 :     packet-&gt;insertAtFront(ipv4Header);</span></span>
+<span id="L192"><span class="lineNum">     192</span>                 :<span class="tlaGNC">       74130 : }</span></span>
+<span id="L193"><span class="lineNum">     193</span>                 :             : </span>
+<span id="L194"><span class="lineNum">     194</span>                 :             : void Mpls::popLabel(Packet *packet)</span>
+<span id="L195"><span class="lineNum">     195</span>                 :<span class="tlaGNC">       46831 : {</span></span>
+<span id="L196"><span class="lineNum">     196</span>                 :<span class="tlaGNC">       46831 :     ASSERT(packet-&gt;getTag&lt;PacketProtocolTag&gt;()-&gt;getProtocol()-&gt;getId() == Protocol::mpls.getId());</span></span>
+<span id="L197"><span class="lineNum">     197</span>                 :<span class="tlaGNC">       46831 :     auto oldMplsHeader = packet-&gt;popAtFront&lt;MplsHeader&gt;();</span></span>
+<span id="L198"><span class="lineNum">     198</span>         [<span class="tlaGBC" title="Branch 0 was taken 36826 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 10005 times"> + </span>]:<span class="tlaGNC">       46831 :     if (oldMplsHeader-&gt;getS()) {</span></span>
+<span id="L199"><span class="lineNum">     199</span>                 :<span class="tlaGNC">       36826 :         packet-&gt;addTagIfAbsent&lt;PacketProtocolTag&gt;()-&gt;setProtocol(&amp;Protocol::ipv4);</span></span>
+<span id="L200"><span class="lineNum">     200</span>                 :<span class="tlaGNC">       36826 :     }</span></span>
+<span id="L201"><span class="lineNum">     201</span>                 :<span class="tlaGNC">       46831 : }</span></span>
+<span id="L202"><span class="lineNum">     202</span>                 :             : </span>
+<span id="L203"><span class="lineNum">     203</span>                 :             : void Mpls::doStackOps(Packet *packet, const LabelOpVector&amp; outLabel, int outgoingTtl)</span>
+<span id="L204"><span class="lineNum">     204</span>                 :<span class="tlaGNC">      212019 : {</span></span>
+<span id="L205"><span class="lineNum">     205</span>                 :<span class="tlaGNC">      212019 :     unsigned int n = outLabel.size();</span></span>
+<span id="L206"><span class="lineNum">     206</span>                 :             : </span>
+<span id="L207"><span class="lineNum">     207</span>                 :<span class="tlaGNC">      212019 :     EV_INFO &lt;&lt; &quot;doStackOps: &quot; &lt;&lt; outLabel &lt;&lt; endl;</span></span>
+<span id="L208"><span class="lineNum">     208</span>                 :             : </span>
+<span id="L209"><span class="lineNum">     209</span>         [<span class="tlaGBC" title="Branch 0 was taken 212049 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 212019 times"> + </span>]:<span class="tlaGNC">      424068 :     for (unsigned int i = 0; i &lt; n; i++) {</span></span>
+<span id="L210"><span class="lineNum">     210</span>                 :<span class="tlaGNC">      212049 :         switch (outLabel[i].optcode) {</span></span>
+<span id="L211"><span class="lineNum">     211</span>         [<span class="tlaGBC" title="Branch 0 was taken 47312 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 164737 times"> + </span>]:<span class="tlaGNC">       47312 :             case PUSH_OPER: {</span></span>
+<span id="L212"><span class="lineNum">     212</span>                 :             :                 // RFC 3032 section 2.1: the Implicit NULL label never appears in the encapsulation</span>
+<span id="L213"><span class="lineNum">     213</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 47312 times"> + </span>]:<span class="tlaGNC">       47312 :                 if ((uint32_t)outLabel[i].label == mpls_constants::IMPLICIT_NULL_LABEL)</span></span>
+<span id="L214"><span class="lineNum">     214</span>                 :<span class="tlaUNC tlaBgUNC">           0 :                     break;</span></span>
+<span id="L215"><span class="lineNum">     215</span>                 :<span class="tlaGNC tlaBgGNC">       47312 :                 auto mplsHeader = makeShared&lt;MplsHeader&gt;();</span></span>
+<span id="L216"><span class="lineNum">     216</span>                 :<span class="tlaGNC">       47312 :                 mplsHeader-&gt;setLabel(outLabel[i].label);</span></span>
+<span id="L217"><span class="lineNum">     217</span>                 :<span class="tlaGNC">       47312 :                 pushLabel(packet, mplsHeader);</span></span>
+<span id="L218"><span class="lineNum">     218</span>                 :<span class="tlaGNC">       47312 :                 break;</span></span>
+<span id="L219"><span class="lineNum">     219</span>                 :<span class="tlaGNC">       47312 :             }</span></span>
+<span id="L220"><span class="lineNum">     220</span>         [<span class="tlaGBC" title="Branch 0 was taken 117916 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 94133 times"> + </span>]:<span class="tlaGNC">      117916 :             case SWAP_OPER: {</span></span>
+<span id="L221"><span class="lineNum">     221</span>                 :             :                 // RFC 3032 section 2.1: an LSR that would replace the top label with the Implicit</span>
+<span id="L222"><span class="lineNum">     222</span>                 :             :                 // NULL label pops the stack instead</span>
+<span id="L223"><span class="lineNum">     223</span>         [<span class="tlaGBC" title="Branch 0 was taken 5 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 117911 times"> + </span>]:<span class="tlaGNC">      117916 :                 if ((uint32_t)outLabel[i].label == mpls_constants::IMPLICIT_NULL_LABEL) {</span></span>
+<span id="L224"><span class="lineNum">     224</span>                 :<span class="tlaGNC">           5 :                     popLabel(packet);</span></span>
+<span id="L225"><span class="lineNum">     225</span>                 :<span class="tlaGNC">           5 :                     break;</span></span>
+<span id="L226"><span class="lineNum">     226</span>                 :<span class="tlaGNC">           5 :                 }</span></span>
+<span id="L227"><span class="lineNum">     227</span>                 :<span class="tlaGNC">      117911 :                 auto mplsHeader = makeShared&lt;MplsHeader&gt;();</span></span>
+<span id="L228"><span class="lineNum">     228</span>                 :<span class="tlaGNC">      117911 :                 mplsHeader-&gt;setLabel(outLabel[i].label);</span></span>
+<span id="L229"><span class="lineNum">     229</span>                 :<span class="tlaGNC">      117911 :                 swapLabel(packet, mplsHeader);</span></span>
+<span id="L230"><span class="lineNum">     230</span>                 :<span class="tlaGNC">      117911 :                 break;</span></span>
+<span id="L231"><span class="lineNum">     231</span>                 :<span class="tlaGNC">      117916 :             }</span></span>
+<span id="L232"><span class="lineNum">     232</span>         [<span class="tlaGBC" title="Branch 0 was taken 46821 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 165228 times"> + </span>]:<span class="tlaGNC">       46821 :             case POP_OPER:</span></span>
+<span id="L233"><span class="lineNum">     233</span>                 :<span class="tlaGNC">       46821 :                 popLabel(packet);</span></span>
+<span id="L234"><span class="lineNum">     234</span>                 :<span class="tlaGNC">       46821 :                 break;</span></span>
+<span id="L235"><span class="lineNum">     235</span>                 :             : </span>
+<span id="L236"><span class="lineNum">     236</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 212049 times"> + </span>]:<span class="tlaUNC tlaBgUNC">           0 :             default:</span></span>
+<span id="L237"><span class="lineNum">     237</span>                 :<span class="tlaUNC">           0 :                 throw cRuntimeError(&quot;Unknown MPLS OptCode %d&quot;, outLabel[i].optcode);</span></span>
+<span id="L238"><span class="lineNum">     238</span>                 :<span class="tlaUNC">           0 :                 break;</span></span>
+<span id="L239"><span class="lineNum">     239</span>                 :<span class="tlaGNC tlaBgGNC">      212049 :         }</span></span>
+<span id="L240"><span class="lineNum">     240</span>                 :             :         // RFC 3032 section 2.4.2: the top entry leaves with the outgoing TTL, whatever labels</span>
+<span id="L241"><span class="lineNum">     241</span>                 :             :         // were pushed or popped; a pushed entry then copies it (RFC 3443 section 3.6), and a</span>
+<span id="L242"><span class="lineNum">     242</span>                 :             :         // pop that empties the stack gives it to the IP header (RFC 3032 section 2.4.3)</span>
+<span id="L243"><span class="lineNum">     243</span>         [<span class="tlaGBC" title="Branch 0 was taken 174745 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 37304 times"> + </span>]:<span class="tlaGNC">      212049 :         if (outgoingTtl &gt;= 0) {</span></span>
+<span id="L244"><span class="lineNum">     244</span>                 :<span class="tlaGNC">      174745 :             int protocolId = packet-&gt;getTag&lt;PacketProtocolTag&gt;()-&gt;getProtocol()-&gt;getId();</span></span>
+<span id="L245"><span class="lineNum">     245</span>         [<span class="tlaGBC" title="Branch 0 was taken 137924 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 36821 times"> + </span>]:<span class="tlaGNC">      174745 :             if (protocolId == Protocol::mpls.getId())</span></span>
+<span id="L246"><span class="lineNum">     246</span>                 :<span class="tlaGNC">      137924 :                 setTopLabelTtl(packet, outgoingTtl);</span></span>
+<span id="L247"><span class="lineNum">     247</span>         [<span class="tlaGBC" title="Branch 0 was taken 36821 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">       36821 :             else if (protocolId == Protocol::ipv4.getId())</span></span>
+<span id="L248"><span class="lineNum">     248</span>                 :<span class="tlaGNC">       36821 :                 setIpv4Ttl(packet, outgoingTtl);</span></span>
+<span id="L249"><span class="lineNum">     249</span>                 :<span class="tlaGNC">      174745 :         }</span></span>
+<span id="L250"><span class="lineNum">     250</span>                 :<span class="tlaGNC">      212049 :     }</span></span>
+<span id="L251"><span class="lineNum">     251</span>                 :<span class="tlaGNC">      212019 : }</span></span>
+<span id="L252"><span class="lineNum">     252</span>                 :             : </span>
+<span id="L253"><span class="lineNum">     253</span>                 :             : void Mpls::processPacketFromL2(Packet *packet)</span>
+<span id="L254"><span class="lineNum">     254</span>                 :<span class="tlaGNC">      436281 : {</span></span>
+<span id="L255"><span class="lineNum">     255</span>                 :<span class="tlaGNC">      436281 :     int protocolId = packet-&gt;getTag&lt;PacketProtocolTag&gt;()-&gt;getProtocol()-&gt;getId();</span></span>
+<span id="L256"><span class="lineNum">     256</span>         [<span class="tlaGBC" title="Branch 0 was taken 174730 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 261551 times"> + </span>]:<span class="tlaGNC">      436281 :     if (protocolId == Protocol::mpls.getId()) {</span></span>
+<span id="L257"><span class="lineNum">     257</span>                 :<span class="tlaGNC">      174730 :         processMplsPacketFromL2(packet);</span></span>
+<span id="L258"><span class="lineNum">     258</span>                 :<span class="tlaGNC">      174730 :     }</span></span>
+<span id="L259"><span class="lineNum">     259</span>         [<span class="tlaGBC" title="Branch 0 was taken 261549 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:<span class="tlaGNC">      261551 :     else if (protocolId == Protocol::ipv4.getId()) {</span></span>
+<span id="L260"><span class="lineNum">     260</span>                 :             :         // Ipv4 datagram arrives at Ingress router. We'll try to classify it</span>
+<span id="L261"><span class="lineNum">     261</span>                 :             :         // and add an MPLS header</span>
+<span id="L262"><span class="lineNum">     262</span>                 :             : </span>
+<span id="L263"><span class="lineNum">     263</span>         [<span class="tlaGBC" title="Branch 0 was taken 224245 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 37304 times"> + </span>]:<span class="tlaGNC">      261549 :         if (!tryLabelAndForwardIpv4Datagram(packet, true)) {</span></span>
+<span id="L264"><span class="lineNum">     264</span>                 :<span class="tlaGNC">      224245 :             sendToL3(packet);</span></span>
+<span id="L265"><span class="lineNum">     265</span>                 :<span class="tlaGNC">      224245 :         }</span></span>
+<span id="L266"><span class="lineNum">     266</span>                 :<span class="tlaGNC">      261549 :     }</span></span>
+<span id="L267"><span class="lineNum">     267</span>                 :<span class="tlaGNC">           2 :     else {</span></span>
+<span id="L268"><span class="lineNum">     268</span>                 :             :         // a packet of another protocol, for example ARP on an Ethernet link, is not for MPLS</span>
+<span id="L269"><span class="lineNum">     269</span>                 :<span class="tlaGNC">           2 :         sendToL3(packet);</span></span>
+<span id="L270"><span class="lineNum">     270</span>                 :<span class="tlaGNC">           2 :     }</span></span>
+<span id="L271"><span class="lineNum">     271</span>                 :<span class="tlaGNC">      436281 : }</span></span>
+<span id="L272"><span class="lineNum">     272</span>                 :             : </span>
+<span id="L273"><span class="lineNum">     273</span>                 :             : void Mpls::processMplsPacketFromL2(Packet *packet)</span>
+<span id="L274"><span class="lineNum">     274</span>                 :<span class="tlaGNC">      174730 : {</span></span>
+<span id="L275"><span class="lineNum">     275</span>                 :<span class="tlaGNC">      174730 :     int incomingInterfaceId = packet-&gt;getTag&lt;InterfaceInd&gt;()-&gt;getInterfaceId();</span></span>
+<span id="L276"><span class="lineNum">     276</span>                 :<span class="tlaGNC">      174730 :     NetworkInterface *ie = ift-&gt;getInterfaceById(incomingInterfaceId);</span></span>
+<span id="L277"><span class="lineNum">     277</span>                 :<span class="tlaGNC">      174730 :     std::string incomingInterfaceName = ie-&gt;getInterfaceName();</span></span>
+<span id="L278"><span class="lineNum">     278</span>                 :<span class="tlaGNC">      174730 :     const auto&amp; mplsHeader = packet-&gt;peekAtFront&lt;MplsHeader&gt;();</span></span>
+<span id="L279"><span class="lineNum">     279</span>                 :             : </span>
+<span id="L280"><span class="lineNum">     280</span>                 :<span class="tlaGNC">      174730 :     EV_INFO &lt;&lt; &quot;Received &quot; &lt;&lt; packet &lt;&lt; &quot; from L2, label=&quot; &lt;&lt; mplsHeader-&gt;getLabel() &lt;&lt; &quot; inInterface=&quot; &lt;&lt; incomingInterfaceName &lt;&lt; endl;</span></span>
+<span id="L281"><span class="lineNum">     281</span>                 :             : </span>
+<span id="L282"><span class="lineNum">     282</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 174730 times"> + </span>]:<span class="tlaGNC">      174730 :     if (mplsHeader-&gt;getLabel() == (uint32_t)-1) { // FIXME</span></span>
+<span id="L283"><span class="lineNum">     283</span>                 :             :         // This is a Ipv4 native packet (RSVP/TED traffic)</span>
+<span id="L284"><span class="lineNum">     284</span>                 :             :         // Decapsulate the message and pass up to L3</span>
+<span id="L285"><span class="lineNum">     285</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         EV_INFO &lt;&lt; &quot;: decapsulating and sending up\n&quot;;</span></span>
+<span id="L286"><span class="lineNum">     286</span>                 :<span class="tlaUNC">           0 :         packet-&gt;popAtFront&lt;MplsHeader&gt;();</span></span>
+<span id="L287"><span class="lineNum">     287</span>                 :<span class="tlaUNC">           0 :         packet-&gt;getTagForUpdate&lt;PacketProtocolTag&gt;()-&gt;setProtocol(&amp;Protocol::ipv4);</span></span>
+<span id="L288"><span class="lineNum">     288</span>                 :<span class="tlaUNC">           0 :         sendToL3(packet);</span></span>
+<span id="L289"><span class="lineNum">     289</span>                 :<span class="tlaUNC">           0 :         return;</span></span>
+<span id="L290"><span class="lineNum">     290</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L291"><span class="lineNum">     291</span>                 :             : </span>
+<span id="L292"><span class="lineNum">     292</span> [<span class="tlaGBC" title="Branch 0 was taken 5 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 174725 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 5 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC tlaBgGNC">      174730 :     if (mplsHeader-&gt;getLabel() == mpls_constants::IPV4_EXPLICIT_NULL_LABEL &amp;&amp; mplsHeader-&gt;getS()) {</span></span>
+<span id="L293"><span class="lineNum">     293</span>                 :             :         // RFC 3032 section 2.1: the IPv4 Explicit NULL label at the bottom of the stack is</span>
+<span id="L294"><span class="lineNum">     294</span>                 :             :         // popped, with no binding, and the IPv4 header decides the forwarding. The IP header</span>
+<span id="L295"><span class="lineNum">     295</span>                 :             :         // gets the TTL of the label, and IPv4 decrements it (RFC 3443 section 3.5).</span>
+<span id="L296"><span class="lineNum">     296</span>                 :<span class="tlaGNC">           5 :         int ttl = mplsHeader-&gt;getTtl();</span></span>
+<span id="L297"><span class="lineNum">     297</span>                 :<span class="tlaGNC">           5 :         popLabel(packet);</span></span>
+<span id="L298"><span class="lineNum">     298</span>                 :<span class="tlaGNC">           5 :         setIpv4Ttl(packet, ttl);</span></span>
+<span id="L299"><span class="lineNum">     299</span>                 :<span class="tlaGNC">           5 :         auto dispatchProtocolReq = packet-&gt;addTagIfAbsent&lt;DispatchProtocolReq&gt;();</span></span>
+<span id="L300"><span class="lineNum">     300</span>                 :<span class="tlaGNC">           5 :         dispatchProtocolReq-&gt;setProtocol(&amp;Protocol::ipv4);</span></span>
+<span id="L301"><span class="lineNum">     301</span>                 :<span class="tlaGNC">           5 :         dispatchProtocolReq-&gt;setServicePrimitive(SP_INDICATION);</span></span>
+<span id="L302"><span class="lineNum">     302</span>                 :<span class="tlaGNC">           5 :         sendToL3(packet);</span></span>
+<span id="L303"><span class="lineNum">     303</span>                 :<span class="tlaGNC">           5 :         return;</span></span>
+<span id="L304"><span class="lineNum">     304</span>                 :<span class="tlaGNC">           5 :     }</span></span>
+<span id="L305"><span class="lineNum">     305</span>                 :             : </span>
+<span id="L306"><span class="lineNum">     306</span>                 :<span class="tlaGNC">      174725 :     LabelOpVector outLabel;</span></span>
+<span id="L307"><span class="lineNum">     307</span>                 :<span class="tlaGNC">      174725 :     std::string outInterface;</span></span>
+<span id="L308"><span class="lineNum">     308</span>                 :<span class="tlaGNC">      174725 :     int color;</span></span>
+<span id="L309"><span class="lineNum">     309</span>                 :             : </span>
+<span id="L310"><span class="lineNum">     310</span>                 :<span class="tlaGNC">      174725 :     bool found = lt-&gt;resolveLabel(incomingInterfaceName, mplsHeader-&gt;getLabel(), outLabel, outInterface, color);</span></span>
+<span id="L311"><span class="lineNum">     311</span>         [<span class="tlaGBC" title="Branch 0 was taken 5 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 174720 times"> + </span>]:<span class="tlaGNC">      174725 :     if (!found) {</span></span>
+<span id="L312"><span class="lineNum">     312</span>                 :<span class="tlaGNC">           5 :         EV_INFO &lt;&lt; &quot;discarding packet, incoming label not resolved&quot; &lt;&lt; endl;</span></span>
+<span id="L313"><span class="lineNum">     313</span>                 :             : </span>
+<span id="L314"><span class="lineNum">     314</span>                 :<span class="tlaGNC">           5 :         delete packet;</span></span>
+<span id="L315"><span class="lineNum">     315</span>                 :<span class="tlaGNC">           5 :         return;</span></span>
+<span id="L316"><span class="lineNum">     316</span>                 :<span class="tlaGNC">           5 :     }</span></span>
+<span id="L317"><span class="lineNum">     317</span>                 :             : </span>
+<span id="L318"><span class="lineNum">     318</span>                 :<span class="tlaGNC">      174720 :     NetworkInterface *outgoingInterface = CHK(ift-&gt;findInterfaceByName(outInterface.c_str()));</span></span>
+<span id="L319"><span class="lineNum">     319</span>                 :             : </span>
+<span id="L320"><span class="lineNum">     320</span>                 :             :     // RFC 3032 section 2.4.1: the outgoing TTL is one less than the TTL of the top entry</span>
+<span id="L321"><span class="lineNum">     321</span>                 :<span class="tlaGNC">      174720 :     int incomingTtl = mplsHeader-&gt;getTtl();</span></span>
+<span id="L322"><span class="lineNum">     322</span>         [<span class="tlaGBC" title="Branch 0 was taken 174720 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">      174720 :     int outgoingTtl = incomingTtl &gt; 0 ? incomingTtl - 1 : 0;</span></span>
+<span id="L323"><span class="lineNum">     323</span>         [<span class="tlaGBC" title="Branch 0 was taken 5 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 174715 times"> + </span>]:<span class="tlaGNC">      174720 :     if (outgoingTtl == 0) {</span></span>
+<span id="L324"><span class="lineNum">     324</span>                 :             :         // RFC 3032 section 2.4.2: a packet whose outgoing TTL is zero is not forwarded, with or</span>
+<span id="L325"><span class="lineNum">     325</span>                 :             :         // without its label stack</span>
+<span id="L326"><span class="lineNum">     326</span>                 :<span class="tlaGNC">           5 :         EV_WARN &lt;&lt; &quot;discarding packet, the outgoing TTL is zero&quot; &lt;&lt; endl;</span></span>
+<span id="L327"><span class="lineNum">     327</span>                 :<span class="tlaGNC">           5 :         PacketDropDetails details;</span></span>
+<span id="L328"><span class="lineNum">     328</span>                 :<span class="tlaGNC">           5 :         details.setReason(HOP_LIMIT_REACHED);</span></span>
+<span id="L329"><span class="lineNum">     329</span>                 :<span class="tlaGNC">           5 :         emit(packetDroppedSignal, packet, &amp;details);</span></span>
+<span id="L330"><span class="lineNum">     330</span>                 :<span class="tlaGNC">           5 :         delete packet;</span></span>
+<span id="L331"><span class="lineNum">     331</span>                 :<span class="tlaGNC">           5 :         return;</span></span>
+<span id="L332"><span class="lineNum">     332</span>                 :<span class="tlaGNC">           5 :     }</span></span>
+<span id="L333"><span class="lineNum">     333</span>                 :             : </span>
+<span id="L334"><span class="lineNum">     334</span>                 :<span class="tlaGNC">      174715 :     doStackOps(packet, outLabel, outgoingTtl);</span></span>
+<span id="L335"><span class="lineNum">     335</span>                 :             : </span>
+<span id="L336"><span class="lineNum">     336</span>         [<span class="tlaGBC" title="Branch 0 was taken 137894 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 36821 times"> + </span>]:<span class="tlaGNC">      174715 :     if ((packet-&gt;getTag&lt;PacketProtocolTag&gt;()-&gt;getProtocol()-&gt;getId() == Protocol::mpls.getId())) {</span></span>
+<span id="L337"><span class="lineNum">     337</span>                 :             :         // forward labeled packet</span>
+<span id="L338"><span class="lineNum">     338</span>                 :<span class="tlaGNC">      137894 :         EV_INFO &lt;&lt; &quot;forwarding packet to &quot; &lt;&lt; outInterface &lt;&lt; endl;</span></span>
+<span id="L339"><span class="lineNum">     339</span>                 :             : </span>
+<span id="L340"><span class="lineNum">     340</span>         [<span class="tlaGBC" title="Branch 0 was taken 137894 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">      137894 :         if (packet-&gt;hasPar(&quot;color&quot;)) {</span></span>
+<span id="L341"><span class="lineNum">     341</span>                 :<span class="tlaGNC">      137894 :             packet-&gt;par(&quot;color&quot;) = color;</span></span>
+<span id="L342"><span class="lineNum">     342</span>                 :<span class="tlaGNC">      137894 :         }</span></span>
+<span id="L343"><span class="lineNum">     343</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         else {</span></span>
+<span id="L344"><span class="lineNum">     344</span>                 :<span class="tlaUNC">           0 :             packet-&gt;addPar(&quot;color&quot;) = color;</span></span>
+<span id="L345"><span class="lineNum">     345</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L346"><span class="lineNum">     346</span>                 :             : </span>
+<span id="L347"><span class="lineNum">     347</span>                 :             : //        ASSERT(labelIf[outgoingPort]);</span>
+<span id="L348"><span class="lineNum">     348</span>                 :<span class="tlaGNC tlaBgGNC">      137894 :         sendToLink(packet, outgoingInterface);</span></span>
+<span id="L349"><span class="lineNum">     349</span>                 :<span class="tlaGNC">      137894 :     }</span></span>
+<span id="L350"><span class="lineNum">     350</span>                 :<span class="tlaGNC">       36821 :     else {</span></span>
+<span id="L351"><span class="lineNum">     351</span>                 :             :         // last label popped, decapsulate and send out Ipv4 datagram</span>
+<span id="L352"><span class="lineNum">     352</span>                 :             : </span>
+<span id="L353"><span class="lineNum">     353</span>                 :<span class="tlaGNC">       36821 :         EV_INFO &lt;&lt; &quot;decapsulating Ipv4 datagram&quot; &lt;&lt; endl;</span></span>
+<span id="L354"><span class="lineNum">     354</span>                 :<span class="tlaGNC">       36821 :         ASSERT(packet-&gt;getTag&lt;PacketProtocolTag&gt;()-&gt;getProtocol()-&gt;getId() == Protocol::ipv4.getId());</span></span>
+<span id="L355"><span class="lineNum">     355</span>                 :             : </span>
+<span id="L356"><span class="lineNum">     356</span>         [<span class="tlaGBC" title="Branch 0 was taken 36821 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">       36821 :         if (outgoingInterface) {</span></span>
+<span id="L357"><span class="lineNum">     357</span>                 :<span class="tlaGNC">       36821 :             sendToLink(packet, outgoingInterface);</span></span>
+<span id="L358"><span class="lineNum">     358</span>                 :<span class="tlaGNC">       36821 :         }</span></span>
+<span id="L359"><span class="lineNum">     359</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         else {</span></span>
+<span id="L360"><span class="lineNum">     360</span>                 :<span class="tlaUNC">           0 :             sendToL3(packet);</span></span>
+<span id="L361"><span class="lineNum">     361</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L362"><span class="lineNum">     362</span>                 :<span class="tlaGNC tlaBgGNC">       36821 :     }</span></span>
+<span id="L363"><span class="lineNum">     363</span>                 :<span class="tlaGNC">      174715 : }</span></span>
+<span id="L364"><span class="lineNum">     364</span>                 :             : </span>
+<span id="L365"><span class="lineNum">     365</span>                 :             : void Mpls::sendToLink(Packet *packet, const NetworkInterface *networkInterface)</span>
+<span id="L366"><span class="lineNum">     366</span>                 :<span class="tlaGNC">      212034 : {</span></span>
+<span id="L367"><span class="lineNum">     367</span>                 :<span class="tlaGNC">      212034 :     packet-&gt;trim();</span></span>
+<span id="L368"><span class="lineNum">     368</span>                 :             :     // RFC 3032 section 3.3: a labeled IP datagram that is longer than the payload of the link</span>
+<span id="L369"><span class="lineNum">     369</span>                 :             :     // is too big (an MTU of 0 means no limit)</span>
+<span id="L370"><span class="lineNum">     370</span>                 :<span class="tlaGNC">      212034 :     int mtu = networkInterface-&gt;getMtu();</span></span>
+<span id="L371"><span class="lineNum">     371</span> [<span class="tlaGBC" title="Branch 0 was taken 212034 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 11 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 212023 times"> + </span>]:<span class="tlaGNC">      212034 :     if (mtu &gt; 0 &amp;&amp; packet-&gt;getByteLength() &gt; mtu) {</span></span>
+<span id="L372"><span class="lineNum">     372</span>                 :<span class="tlaGNC">          11 :         const Protocol *protocol = packet-&gt;getTag&lt;PacketProtocolTag&gt;()-&gt;getProtocol();</span></span>
+<span id="L373"><span class="lineNum">     373</span> [<span class="tlaGBC" title="Branch 0 was taken 11 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaGNC">          11 :         if (protocol == &amp;Protocol::mpls || protocol == &amp;Protocol::ipv4) {</span></span>
+<span id="L374"><span class="lineNum">     374</span>                 :<span class="tlaGNC">          11 :             processTooBigDatagram(packet, networkInterface, mtu);</span></span>
+<span id="L375"><span class="lineNum">     375</span>                 :<span class="tlaGNC">          11 :             return;</span></span>
+<span id="L376"><span class="lineNum">     376</span>                 :<span class="tlaGNC">          11 :         }</span></span>
+<span id="L377"><span class="lineNum">     377</span>                 :<span class="tlaGNC">          11 :     }</span></span>
+<span id="L378"><span class="lineNum">     378</span>                 :<span class="tlaGNC">      212023 :     packet-&gt;removeTagIfPresent&lt;DispatchProtocolReq&gt;();</span></span>
+<span id="L379"><span class="lineNum">     379</span>                 :<span class="tlaGNC">      212023 :     packet-&gt;addTagIfAbsent&lt;InterfaceReq&gt;()-&gt;setInterfaceId(networkInterface-&gt;getInterfaceId());</span></span>
+<span id="L380"><span class="lineNum">     380</span> [<span class="tlaGBC" title="Branch 0 was taken 5 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 212018 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 5 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 212018 times"> + </span>]:<span class="tlaGNC">      212023 :     if (networkInterface-&gt;isBroadcast() &amp;&amp; !networkInterface-&gt;getMacAddress().isUnspecified() &amp;&amp; packet-&gt;findTag&lt;MacAddressReq&gt;() == nullptr)</span></span>
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 5 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 5 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span id="L381"><span class="lineNum">     381</span>                 :             :         // a LIB entry holds no next hop, so a frame on a broadcast link goes to the broadcast</span>
+<span id="L382"><span class="lineNum">     382</span>                 :             :         // address; on a point-to-point Ethernet link that is the one neighbor</span>
+<span id="L383"><span class="lineNum">     383</span>                 :<span class="tlaGNC">           5 :         packet-&gt;addTag&lt;MacAddressReq&gt;()-&gt;setDestAddress(MacAddress::BROADCAST_ADDRESS);</span></span>
+<span id="L384"><span class="lineNum">     384</span>                 :             :     // the link layer protocol of the interface encapsulates the packet, as for an IPv4 datagram</span>
+<span id="L385"><span class="lineNum">     385</span>         [<span class="tlaGBC" title="Branch 0 was taken 5 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 212018 times"> + </span>]:<span class="tlaGNC">      212023 :     if (auto networkInterfaceProtocol = networkInterface-&gt;getProtocol())</span></span>
+<span id="L386"><span class="lineNum">     386</span>                 :<span class="tlaGNC">           5 :         ensureEncapsulationProtocolReq(packet, networkInterfaceProtocol, true, false);</span></span>
+<span id="L387"><span class="lineNum">     387</span>                 :<span class="tlaGNC">      212023 :     setDispatchProtocol(packet);</span></span>
+<span id="L388"><span class="lineNum">     388</span>                 :<span class="tlaGNC">      212023 :     sendToL2(packet);</span></span>
+<span id="L389"><span class="lineNum">     389</span>                 :<span class="tlaGNC">      212023 : }</span></span>
+<span id="L390"><span class="lineNum">     390</span>                 :             : </span>
+<span id="L391"><span class="lineNum">     391</span>                 :             : void Mpls::processTooBigDatagram(Packet *packet, const NetworkInterface *networkInterface, int mtu)</span>
+<span id="L392"><span class="lineNum">     392</span>                 :<span class="tlaGNC">          11 : {</span></span>
+<span id="L393"><span class="lineNum">     393</span>                 :             :     // the label stack comes off, and each fragment gets a copy of it</span>
+<span id="L394"><span class="lineNum">     394</span>                 :<span class="tlaGNC">          11 :     std::vector&lt;Ptr&lt;MplsHeader&gt;&gt; labelStack; // top entry first</span></span>
+<span id="L395"><span class="lineNum">     395</span>                 :<span class="tlaGNC">          11 :     bool labeled = packet-&gt;getTag&lt;PacketProtocolTag&gt;()-&gt;getProtocol() == &amp;Protocol::mpls;</span></span>
+<span id="L396"><span class="lineNum">     396</span>         [<span class="tlaGBC" title="Branch 0 was taken 11 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 11 times"> + </span>]:<span class="tlaGNC">          22 :     while (labeled) {</span></span>
+<span id="L397"><span class="lineNum">     397</span>                 :<span class="tlaGNC">          11 :         auto mplsHeader = packet-&gt;removeAtFront&lt;MplsHeader&gt;();</span></span>
+<span id="L398"><span class="lineNum">     398</span>                 :<span class="tlaGNC">          11 :         labeled = !mplsHeader-&gt;getS();</span></span>
+<span id="L399"><span class="lineNum">     399</span>                 :<span class="tlaGNC">          11 :         labelStack.push_back(mplsHeader);</span></span>
+<span id="L400"><span class="lineNum">     400</span>                 :<span class="tlaGNC">          11 :     }</span></span>
+<span id="L401"><span class="lineNum">     401</span>                 :<span class="tlaGNC">          11 :     int stackLength = 0;</span></span>
+<span id="L402"><span class="lineNum">     402</span>         [<span class="tlaGBC" title="Branch 0 was taken 11 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 11 times"> + </span>]:<span class="tlaGNC">          11 :     for (auto&amp; mplsHeader : labelStack)</span></span>
+<span id="L403"><span class="lineNum">     403</span>                 :<span class="tlaGNC">          11 :         stackLength += B(mplsHeader-&gt;getChunkLength()).get();</span></span>
+<span id="L404"><span class="lineNum">     404</span>                 :<span class="tlaGNC">          11 :     int maxDatagramLength = mtu - stackLength;</span></span>
+<span id="L405"><span class="lineNum">     405</span>                 :<span class="tlaGNC">          11 :     const auto&amp; ipv4Header = packet-&gt;peekAtFront&lt;Ipv4Header&gt;();</span></span>
+<span id="L406"><span class="lineNum">     406</span>                 :             : </span>
+<span id="L407"><span class="lineNum">     407</span>         [<span class="tlaGBC" title="Branch 0 was taken 6 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5 times"> + </span>]:<span class="tlaGNC">          11 :     if (ipv4Header-&gt;getDontFragment()) {</span></span>
+<span id="L408"><span class="lineNum">     408</span>                 :             :         // RFC 3032 section 3.4: the datagram is not forwarded, and its source gets an ICMP</span>
+<span id="L409"><span class="lineNum">     409</span>                 :             :         // Destination Unreachable message whose Next-Hop MTU leaves room for the label stack</span>
+<span id="L410"><span class="lineNum">     410</span>                 :<span class="tlaGNC">           6 :         EV_WARN &lt;&lt; &quot;discarding a too-big datagram with the DF bit, sending ICMP_DESTINATION_UNREACHABLE&quot; &lt;&lt; endl;</span></span>
+<span id="L411"><span class="lineNum">     411</span>                 :<span class="tlaGNC">           6 :         PacketDropDetails details;</span></span>
+<span id="L412"><span class="lineNum">     412</span>                 :<span class="tlaGNC">           6 :         details.setReason(PACKET_TOO_BIG);</span></span>
+<span id="L413"><span class="lineNum">     413</span>                 :<span class="tlaGNC">           6 :         emit(packetDroppedSignal, packet, &amp;details);</span></span>
+<span id="L414"><span class="lineNum">     414</span>         [<span class="tlaGBC" title="Branch 0 was taken 6 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">           6 :         if (icmp != nullptr)</span></span>
+<span id="L415"><span class="lineNum">     415</span>                 :<span class="tlaGNC">           6 :             icmp-&gt;sendPtbMessage(packet, maxDatagramLength);</span></span>
+<span id="L416"><span class="lineNum">     416</span>                 :<span class="tlaGNC">           6 :         delete packet;</span></span>
+<span id="L417"><span class="lineNum">     417</span>                 :<span class="tlaGNC">           6 :         return;</span></span>
+<span id="L418"><span class="lineNum">     418</span>                 :<span class="tlaGNC">           6 :     }</span></span>
+<span id="L419"><span class="lineNum">     419</span>                 :             : </span>
+<span id="L420"><span class="lineNum">     420</span>                 :             :     // RFC 3032 section 3.4: each fragment is at least as many octets shorter than the payload</span>
+<span id="L421"><span class="lineNum">     421</span>                 :             :     // of the link as the label stack is long, and carries the same label stack</span>
+<span id="L422"><span class="lineNum">     422</span>                 :<span class="tlaGNC">           5 :     int headerLength = B(ipv4Header-&gt;getHeaderLength()).get();</span></span>
+<span id="L423"><span class="lineNum">     423</span>                 :<span class="tlaGNC">           5 :     int payloadLength = B(packet-&gt;getDataLength()).get() - headerLength;</span></span>
+<span id="L424"><span class="lineNum">     424</span>                 :<span class="tlaGNC">           5 :     int fragmentLength = ((maxDatagramLength - headerLength) / 8) * 8;</span></span>
+<span id="L425"><span class="lineNum">     425</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 5 times"> + </span>]:<span class="tlaGNC">           5 :     if (fragmentLength &lt;= 0)</span></span>
+<span id="L426"><span class="lineNum">     426</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         throw cRuntimeError(&quot;Cannot fragment datagram: MTU=%d too small for the label stack (%d bytes) and the header (%d bytes)&quot;, mtu, stackLength, headerLength);</span></span>
+<span id="L427"><span class="lineNum">     427</span>                 :<span class="tlaGNC tlaBgGNC">           5 :     int offsetBase = ipv4Header-&gt;getFragmentOffset();</span></span>
+<span id="L428"><span class="lineNum">     428</span>                 :<span class="tlaGNC">           5 :     EV_DETAIL &lt;&lt; &quot;Breaking a too-big datagram into &quot; &lt;&lt; (payloadLength + fragmentLength - 1) / fragmentLength &lt;&lt; &quot; fragments\n&quot;;</span></span>
+<span id="L429"><span class="lineNum">     429</span>         [<span class="tlaGBC" title="Branch 0 was taken 15 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5 times"> + </span>]:<span class="tlaGNC">          20 :     for (int offset = 0; offset &lt; payloadLength; offset += fragmentLength) {</span></span>
+<span id="L430"><span class="lineNum">     430</span>                 :<span class="tlaGNC">          15 :         bool lastFragment = offset + fragmentLength &gt;= payloadLength;</span></span>
+<span id="L431"><span class="lineNum">     431</span>         [<span class="tlaGBC" title="Branch 0 was taken 5 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 10 times"> + </span>]:<span class="tlaGNC">          15 :         int thisFragmentLength = lastFragment ? payloadLength - offset : fragmentLength;</span></span>
+<span id="L432"><span class="lineNum">     432</span>                 :<span class="tlaGNC">          15 :         std::string fragmentName = std::string(packet-&gt;getName()) + &quot;-frag-&quot; + std::to_string(offset);</span></span>
+<span id="L433"><span class="lineNum">     433</span>         [<span class="tlaGBC" title="Branch 0 was taken 5 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 10 times"> + </span>]:<span class="tlaGNC">          15 :         if (lastFragment)</span></span>
+<span id="L434"><span class="lineNum">     434</span>                 :<span class="tlaGNC">           5 :             fragmentName += &quot;-last&quot;;</span></span>
+<span id="L435"><span class="lineNum">     435</span>                 :<span class="tlaGNC">          15 :         Packet *fragment = new Packet(fragmentName.c_str());</span></span>
+<span id="L436"><span class="lineNum">     436</span>                 :<span class="tlaGNC">          15 :         fragment-&gt;copyTags(*packet);</span></span>
+<span id="L437"><span class="lineNum">     437</span>                 :<span class="tlaGNC">          15 :         fragment-&gt;insertAtBack(packet-&gt;peekDataAt(B(headerLength + offset), B(thisFragmentLength)));</span></span>
+<span id="L438"><span class="lineNum">     438</span>                 :<span class="tlaGNC">          15 :         auto fragmentHeader = staticPtrCast&lt;Ipv4Header&gt;(ipv4Header-&gt;dupShared());</span></span>
+<span id="L439"><span class="lineNum">     439</span>         [<span class="tlaGBC" title="Branch 0 was taken 10 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5 times"> + </span>]:<span class="tlaGNC">          15 :         if (!lastFragment)</span></span>
+<span id="L440"><span class="lineNum">     440</span>                 :<span class="tlaGNC">          10 :             fragmentHeader-&gt;setMoreFragments(true);</span></span>
+<span id="L441"><span class="lineNum">     441</span>                 :<span class="tlaGNC">          15 :         fragmentHeader-&gt;setFragmentOffset(offsetBase + offset);</span></span>
+<span id="L442"><span class="lineNum">     442</span>                 :<span class="tlaGNC">          15 :         fragmentHeader-&gt;setTotalLengthField(B(headerLength + thisFragmentLength));</span></span>
+<span id="L443"><span class="lineNum">     443</span>                 :<span class="tlaGNC">          15 :         fragmentHeader-&gt;updateChecksum();</span></span>
+<span id="L444"><span class="lineNum">     444</span>                 :<span class="tlaGNC">          15 :         fragment-&gt;insertAtFront(fragmentHeader);</span></span>
+<span id="L445"><span class="lineNum">     445</span>         [<span class="tlaGBC" title="Branch 0 was taken 15 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 15 times"> + </span>]:<span class="tlaGNC">          30 :         for (auto it = labelStack.rbegin(); it != labelStack.rend(); ++it)</span></span>
+<span id="L446"><span class="lineNum">     446</span>                 :<span class="tlaGNC">          15 :             fragment-&gt;insertAtFront(staticPtrCast&lt;MplsHeader&gt;((*it)-&gt;dupShared()));</span></span>
+<span id="L447"><span class="lineNum">     447</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 15 times"> + </span>]:<span class="tlaGNC">          15 :         fragment-&gt;addTagIfAbsent&lt;PacketProtocolTag&gt;()-&gt;setProtocol(labelStack.empty() ? &amp;Protocol::ipv4 : &amp;Protocol::mpls);</span></span>
+<span id="L448"><span class="lineNum">     448</span>                 :<span class="tlaGNC">          15 :         sendToLink(fragment, networkInterface);</span></span>
+<span id="L449"><span class="lineNum">     449</span>                 :<span class="tlaGNC">          15 :     }</span></span>
+<span id="L450"><span class="lineNum">     450</span>                 :<span class="tlaGNC">           5 :     delete packet;</span></span>
+<span id="L451"><span class="lineNum">     451</span>                 :<span class="tlaGNC">           5 : }</span></span>
+<span id="L452"><span class="lineNum">     452</span>                 :             : </span>
+<span id="L453"><span class="lineNum">     453</span>                 :             : void Mpls::sendToL2(Packet *msg)</span>
+<span id="L454"><span class="lineNum">     454</span>                 :<span class="tlaGNC">      420464 : {</span></span>
+<span id="L455"><span class="lineNum">     455</span>                 :<span class="tlaGNC">      420464 :     ASSERT(msg-&gt;findTag&lt;InterfaceReq&gt;());</span></span>
+<span id="L456"><span class="lineNum">     456</span>                 :<span class="tlaGNC">      420464 :     ASSERT(msg-&gt;findTag&lt;PacketProtocolTag&gt;());</span></span>
+<span id="L457"><span class="lineNum">     457</span>                 :<span class="tlaGNC">      420464 :     numSent++;</span></span>
+<span id="L458"><span class="lineNum">     458</span>                 :<span class="tlaGNC">      420464 :     send(msg, &quot;lowerLayerOut&quot;);</span></span>
+<span id="L459"><span class="lineNum">     459</span>                 :<span class="tlaGNC">      420464 : }</span></span>
+<span id="L460"><span class="lineNum">     460</span>                 :             : </span>
+<span id="L461"><span class="lineNum">     461</span>                 :             : void Mpls::sendToL3(Packet *msg)</span>
+<span id="L462"><span class="lineNum">     462</span>                 :<span class="tlaGNC">      224252 : {</span></span>
+<span id="L463"><span class="lineNum">     463</span>                 :<span class="tlaGNC">      224252 :     ASSERT(msg-&gt;findTag&lt;InterfaceInd&gt;());</span></span>
+<span id="L464"><span class="lineNum">     464</span>                 :<span class="tlaGNC">      224252 :     ASSERT(msg-&gt;findTag&lt;DispatchProtocolReq&gt;());</span></span>
+<span id="L465"><span class="lineNum">     465</span>                 :<span class="tlaGNC">      224252 :     numSent++;</span></span>
+<span id="L466"><span class="lineNum">     466</span>                 :<span class="tlaGNC">      224252 :     send(msg, &quot;upperLayerOut&quot;);</span></span>
+<span id="L467"><span class="lineNum">     467</span>                 :<span class="tlaGNC">      224252 : }</span></span>
+<span id="L468"><span class="lineNum">     468</span>                 :             : </span>
+<span id="L469"><span class="lineNum">     469</span>                 :             : void Mpls::handleRegisterInterface(const NetworkInterface&amp; interface, cGate *out, cGate *in)</span>
+<span id="L470"><span class="lineNum">     470</span>                 :<span class="tlaGNC">         517 : {</span></span>
+<span id="L471"><span class="lineNum">     471</span>         [<span class="tlaGBC" title="Branch 0 was taken 517 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">         517 :     if (!strcmp(&quot;lowerLayerIn&quot;, in-&gt;getBaseName()))</span></span>
+<span id="L472"><span class="lineNum">     472</span>                 :<span class="tlaGNC">         517 :         registerInterface(interface, gate(&quot;upperLayerIn&quot;), gate(&quot;upperLayerOut&quot;));</span></span>
+<span id="L473"><span class="lineNum">     473</span>                 :<span class="tlaGNC">         517 : }</span></span>
+<span id="L474"><span class="lineNum">     474</span>                 :             : </span>
+<span id="L475"><span class="lineNum">     475</span>                 :             : void Mpls::handleUnregisterInterface(const NetworkInterface&amp; interface, cGate *out, cGate *in)</span>
+<span id="L476"><span class="lineNum">     476</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L477"><span class="lineNum">     477</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (!strcmp(&quot;lowerLayerIn&quot;, in-&gt;getBaseName()))</span></span>
+<span id="L478"><span class="lineNum">     478</span>                 :<span class="tlaUNC">           0 :         unregisterInterface(interface, gate(&quot;upperLayerIn&quot;), gate(&quot;upperLayerOut&quot;));</span></span>
+<span id="L479"><span class="lineNum">     479</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L480"><span class="lineNum">     480</span>                 :             : </span>
+<span id="L481"><span class="lineNum">     481</span>                 :             : void Mpls::handleRegisterService(const Protocol&amp; protocol, cGate *g, ServicePrimitive servicePrimitive)</span>
+<span id="L482"><span class="lineNum">     482</span>                 :<span class="tlaGNC tlaBgGNC">        1296 : {</span></span>
+<span id="L483"><span class="lineNum">     483</span>                 :<span class="tlaGNC">        1296 :     Enter_Method(&quot;handleRegisterService&quot;);</span></span>
+<span id="L484"><span class="lineNum">     484</span>         [<span class="tlaGBC" title="Branch 0 was taken 432 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 864 times"> + </span>]:<span class="tlaGNC">        1296 :     if (g-&gt;isName(&quot;lowerLayerOut&quot;))</span></span>
+<span id="L485"><span class="lineNum">     485</span>                 :<span class="tlaGNC">         432 :         registerService(protocol, gate(&quot;upperLayerIn&quot;), servicePrimitive);</span></span>
+<span id="L486"><span class="lineNum">     486</span>         [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 862 times"> + </span>]:<span class="tlaGNC">         864 :     else if (g-&gt;isName(&quot;lowerLayerIn&quot;))</span></span>
+<span id="L487"><span class="lineNum">     487</span>                 :<span class="tlaGNC">           2 :         ;</span></span>
+<span id="L488"><span class="lineNum">     488</span>         [<span class="tlaGBC" title="Branch 0 was taken 432 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 430 times"> + </span>]:<span class="tlaGNC">         862 :     else if (g-&gt;isName(&quot;upperLayerOut&quot;))</span></span>
+<span id="L489"><span class="lineNum">     489</span>                 :<span class="tlaGNC">         432 :         registerService(protocol, gate(&quot;lowerLayerIn&quot;), servicePrimitive);</span></span>
+<span id="L490"><span class="lineNum">     490</span>         [<span class="tlaGBC" title="Branch 0 was taken 430 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">         430 :     else if (g-&gt;isName(&quot;upperLayerIn&quot;))</span></span>
+<span id="L491"><span class="lineNum">     491</span>                 :<span class="tlaGNC">         430 :         ;</span></span>
+<span id="L492"><span class="lineNum">     492</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     else</span></span>
+<span id="L493"><span class="lineNum">     493</span>                 :<span class="tlaUNC">           0 :         throw cRuntimeError(&quot;Unknown gate: %s&quot;, g-&gt;getName());</span></span>
+<span id="L494"><span class="lineNum">     494</span>                 :<span class="tlaGNC tlaBgGNC">        1296 : }</span></span>
+<span id="L495"><span class="lineNum">     495</span>                 :             : </span>
+<span id="L496"><span class="lineNum">     496</span>                 :             : void Mpls::handleRegisterProtocol(const Protocol&amp; protocol, cGate *g, ServicePrimitive servicePrimitive)</span>
+<span id="L497"><span class="lineNum">     497</span>                 :<span class="tlaGNC">        2961 : {</span></span>
+<span id="L498"><span class="lineNum">     498</span>                 :<span class="tlaGNC">        2961 :     Enter_Method(&quot;handleRegisterProtocol&quot;);</span></span>
+<span id="L499"><span class="lineNum">     499</span>         [<span class="tlaGBC" title="Branch 0 was taken 142 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2819 times"> + </span>]:<span class="tlaGNC">        2961 :     if (g-&gt;isName(&quot;lowerLayerIn&quot;))</span></span>
+<span id="L500"><span class="lineNum">     500</span>                 :<span class="tlaGNC">         142 :         registerProtocol(protocol, gate(&quot;upperLayerOut&quot;), servicePrimitive);</span></span>
+<span id="L501"><span class="lineNum">     501</span>         [<span class="tlaGBC" title="Branch 0 was taken 987 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1832 times"> + </span>]:<span class="tlaGNC">        2819 :     else if (g-&gt;isName(&quot;lowerLayerOut&quot;))</span></span>
+<span id="L502"><span class="lineNum">     502</span>                 :<span class="tlaGNC">         987 :         ;</span></span>
+<span id="L503"><span class="lineNum">     503</span>         [<span class="tlaGBC" title="Branch 0 was taken 845 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 987 times"> + </span>]:<span class="tlaGNC">        1832 :     else if (g-&gt;isName(&quot;upperLayerOut&quot;))</span></span>
+<span id="L504"><span class="lineNum">     504</span>                 :<span class="tlaGNC">         845 :         registerProtocol(protocol, gate(&quot;lowerLayerIn&quot;), servicePrimitive);</span></span>
+<span id="L505"><span class="lineNum">     505</span>         [<span class="tlaGBC" title="Branch 0 was taken 987 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">         987 :     else if (g-&gt;isName(&quot;upperLayerIn&quot;))</span></span>
+<span id="L506"><span class="lineNum">     506</span>                 :<span class="tlaGNC">         987 :         ; // void</span></span>
+<span id="L507"><span class="lineNum">     507</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     else</span></span>
+<span id="L508"><span class="lineNum">     508</span>                 :<span class="tlaUNC">           0 :         throw cRuntimeError(&quot;Unknown gate: %s&quot;, g-&gt;getName());</span></span>
+<span id="L509"><span class="lineNum">     509</span>                 :<span class="tlaGNC tlaBgGNC">        2961 : }</span></span>
+<span id="L510"><span class="lineNum">     510</span>                 :             : </span>
+<span id="L511"><span class="lineNum">     511</span>                 :             : } // namespace inet</span>
+<span id="L512"><span class="lineNum">     512</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

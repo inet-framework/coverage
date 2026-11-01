@@ -1,0 +1,448 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - clock/common/src/inet/clock/common/ClockTime.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">clock/common/src/inet/clock/common</a> - ClockTime.h<span style="font-size: 80%;"> (source / <a href="ClockTime.h.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">32.8&nbsp;%</td>
+            <td class="headerCovTableEntry">116</td>
+            <td class="headerCovTableEntry">38</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryLo">30.4&nbsp;%</td>
+            <td class="headerCovTableEntry">112</td>
+            <td class="headerCovTableEntry">34</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2020 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #ifndef __INET_COMMON_CLOCKTIME_H</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : #define __INET_COMMON_CLOCKTIME_H</span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : </span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &quot;inet/common/INETDefs.h&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : </span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : namespace inet {</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : </span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : typedef simtime_raw_t clocktime_raw_t;</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : </span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : /**</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             :  * This class is a proxy for the SimTime class. The reason behind this design</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             :  * is that the simulation time and the clock time must not be confused. So this</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             :  * class doesn't have implicit conversion operators to and from the simulation</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             :  * time.</span>
+<span id="L22"><span class="lineNum">      22</span>                 :             :  */</span>
+<span id="L23"><span class="lineNum">      23</span>                 :             : class INET_API ClockTime</span>
+<span id="L24"><span class="lineNum">      24</span>                 :             : {</span>
+<span id="L25"><span class="lineNum">      25</span>                 :             :   private:</span>
+<span id="L26"><span class="lineNum">      26</span>                 :             :     SimTime impl;</span>
+<span id="L27"><span class="lineNum">      27</span>                 :             : </span>
+<span id="L28"><span class="lineNum">      28</span>                 :             :   public:</span>
+<span id="L29"><span class="lineNum">      29</span>                 :             :     /**</span>
+<span id="L30"><span class="lineNum">      30</span>                 :             :      * Represents the zero simulation time. Using ClockTime::ZERO may be faster</span>
+<span id="L31"><span class="lineNum">      31</span>                 :             :      * than writing ClockTime() or conversion from 0.0, because the constructor</span>
+<span id="L32"><span class="lineNum">      32</span>                 :             :      * call is spared.</span>
+<span id="L33"><span class="lineNum">      33</span>                 :             :      */</span>
+<span id="L34"><span class="lineNum">      34</span>                 :             :     static const ClockTime ZERO;</span>
+<span id="L35"><span class="lineNum">      35</span>                 :             : </span>
+<span id="L36"><span class="lineNum">      36</span>                 :             :   public:</span>
+<span id="L37"><span class="lineNum">      37</span>                 :             :     /** @name Constructors */</span>
+<span id="L38"><span class="lineNum">      38</span>                 :             :     //@{</span>
+<span id="L39"><span class="lineNum">      39</span>                 :             :     /**</span>
+<span id="L40"><span class="lineNum">      40</span>                 :             :      * Constructor initializes to zero.</span>
+<span id="L41"><span class="lineNum">      41</span>                 :             :      */</span>
+<span id="L42"><span class="lineNum">      42</span>                 :<span class="tlaGNC tlaBgGNC">    89379542 :     ClockTime() {}</span></span>
+<span id="L43"><span class="lineNum">      43</span>                 :             : </span>
+<span id="L44"><span class="lineNum">      44</span>                 :             :     /**</span>
+<span id="L45"><span class="lineNum">      45</span>                 :             :      * Initialize simulation time from a double-precision number. This constructor</span>
+<span id="L46"><span class="lineNum">      46</span>                 :             :      * is recommended if the value is the result of some computation done in</span>
+<span id="L47"><span class="lineNum">      47</span>                 :             :      * &lt;tt&gt;double&lt;/tt&gt;. For integer-based computations and time constants, the</span>
+<span id="L48"><span class="lineNum">      48</span>                 :             :      * &lt;tt&gt;ClockTime(simtime_raw_t x, int exponent)&lt;/tt&gt; constructor is usually a better</span>
+<span id="L49"><span class="lineNum">      49</span>                 :             :      * choice, because it does not have rounding errors caused by double-to-integer</span>
+<span id="L50"><span class="lineNum">      50</span>                 :             :      * conversion.</span>
+<span id="L51"><span class="lineNum">      51</span>                 :             :      */</span>
+<span id="L52"><span class="lineNum">      52</span>                 :<span class="tlaGNC">    30139661 :     ClockTime(double d) { operator=(d); }</span></span>
+<span id="L53"><span class="lineNum">      53</span>                 :             : </span>
+<span id="L54"><span class="lineNum">      54</span>                 :             :     /**</span>
+<span id="L55"><span class="lineNum">      55</span>                 :             :      * Initialize simulation time from a module or channel parameter. It uses</span>
+<span id="L56"><span class="lineNum">      56</span>                 :             :      * conversion to &lt;tt&gt;double&lt;/tt&gt;. It currently does not check the measurement</span>
+<span id="L57"><span class="lineNum">      57</span>                 :             :      * unit of the parameter (@unit NED property), although this may change in</span>
+<span id="L58"><span class="lineNum">      58</span>                 :             :      * future releases.</span>
+<span id="L59"><span class="lineNum">      59</span>                 :             :      */</span>
+<span id="L60"><span class="lineNum">      60</span>                 :<span class="tlaGNC">     2330229 :     ClockTime(cPar&amp; d) { operator=(d); }</span></span>
+<span id="L61"><span class="lineNum">      61</span>                 :             : </span>
+<span id="L62"><span class="lineNum">      62</span>                 :             :     /**</span>
+<span id="L63"><span class="lineNum">      63</span>                 :             :      * Initialize simulation time from value specified in the given units.</span>
+<span id="L64"><span class="lineNum">      64</span>                 :             :      * This constructor allows one to specify precise constants, without</span>
+<span id="L65"><span class="lineNum">      65</span>                 :             :      * conversion errors incurred by the &lt;tt&gt;double&lt;/tt&gt; constructor.</span>
+<span id="L66"><span class="lineNum">      66</span>                 :             :      * An error will be thrown if the resulting value cannot be represented</span>
+<span id="L67"><span class="lineNum">      67</span>                 :             :      * (overflow) or it cannot be represented precisely (precision loss) with</span>
+<span id="L68"><span class="lineNum">      68</span>                 :             :      * the current resolution (i.e. scale exponent). Note that the unit</span>
+<span id="L69"><span class="lineNum">      69</span>                 :             :      * parameter actually represents a base-10 exponent, so the constructor</span>
+<span id="L70"><span class="lineNum">      70</span>                 :             :      * will also work correctly for values not in the SimTimeUnit enum.</span>
+<span id="L71"><span class="lineNum">      71</span>                 :             :      *</span>
+<span id="L72"><span class="lineNum">      72</span>                 :             :      * Examples:</span>
+<span id="L73"><span class="lineNum">      73</span>                 :             :      *   Simtime(15, SIMTIME_US) -&gt; 15us</span>
+<span id="L74"><span class="lineNum">      74</span>                 :             :      *   Simtime(-3, SIMTIME_S) -&gt; -1s</span>
+<span id="L75"><span class="lineNum">      75</span>                 :             :      *   Simtime(5, (SimTimeUnit)2) -&gt; 500s;</span>
+<span id="L76"><span class="lineNum">      76</span>                 :             :      */</span>
+<span id="L77"><span class="lineNum">      77</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     ClockTime(simtime_raw_t value, SimTimeUnit unit) : impl(value, unit) {}</span></span>
+<span id="L78"><span class="lineNum">      78</span>                 :             : </span>
+<span id="L79"><span class="lineNum">      79</span>                 :             :     /**</span>
+<span id="L80"><span class="lineNum">      80</span>                 :             :      * Copy constructor.</span>
+<span id="L81"><span class="lineNum">      81</span>                 :             :      */</span>
+<span id="L82"><span class="lineNum">      82</span>                 :<span class="tlaGNC tlaBgGNC">   668381715 :     ClockTime(const ClockTime&amp; x) : impl(x.impl) {}</span></span>
+<span id="L83"><span class="lineNum">      83</span>                 :             :     //@}</span>
+<span id="L84"><span class="lineNum">      84</span>                 :             : </span>
+<span id="L85"><span class="lineNum">      85</span>                 :             :     /** @name Arithmetic operations */</span>
+<span id="L86"><span class="lineNum">      86</span>                 :             :     //@{</span>
+<span id="L87"><span class="lineNum">      87</span>                 :<span class="tlaGNC">    53782424 :     const ClockTime&amp; operator=(const ClockTime&amp; x) { impl = x.impl; return *this; }</span></span>
+<span id="L88"><span class="lineNum">      88</span>                 :<span class="tlaGNC">     2336598 :     const ClockTime&amp; operator=(const cPar&amp; d) { impl = d; return *this; }</span></span>
+<span id="L89"><span class="lineNum">      89</span>                 :<span class="tlaGNC">    30139748 :     const ClockTime&amp; operator=(double d) { impl = d; return *this; }</span></span>
+<span id="L90"><span class="lineNum">      90</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     const ClockTime&amp; operator=(short d) { impl = d; return *this; }</span></span>
+<span id="L91"><span class="lineNum">      91</span>                 :<span class="tlaGNC tlaBgGNC">     6168286 :     const ClockTime&amp; operator=(int d) { impl = d; return *this; }</span></span>
+<span id="L92"><span class="lineNum">      92</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     const ClockTime&amp; operator=(long d) { impl = d; return *this; }</span></span>
+<span id="L93"><span class="lineNum">      93</span>                 :<span class="tlaUNC">           0 :     const ClockTime&amp; operator=(long long d) { impl = d; return *this; }</span></span>
+<span id="L94"><span class="lineNum">      94</span>                 :<span class="tlaUNC">           0 :     const ClockTime&amp; operator=(unsigned short d) { impl = d; return *this; }</span></span>
+<span id="L95"><span class="lineNum">      95</span>                 :<span class="tlaUNC">           0 :     const ClockTime&amp; operator=(unsigned int d) { impl = d; return *this; }</span></span>
+<span id="L96"><span class="lineNum">      96</span>                 :<span class="tlaUNC">           0 :     const ClockTime&amp; operator=(unsigned long d) { impl = d; return *this; }</span></span>
+<span id="L97"><span class="lineNum">      97</span>                 :<span class="tlaUNC">           0 :     const ClockTime&amp; operator=(unsigned long long d) { impl = d; return *this; }</span></span>
+<span id="L98"><span class="lineNum">      98</span>                 :             : </span>
+<span id="L99"><span class="lineNum">      99</span>                 :<span class="tlaGNC tlaBgGNC">     5096735 :     bool operator==(const ClockTime&amp; x) const { return impl == x.impl; }</span></span>
+<span id="L100"><span class="lineNum">     100</span>                 :<span class="tlaGNC">     1358675 :     bool operator!=(const ClockTime&amp; x) const { return impl != x.impl; }</span></span>
+<span id="L101"><span class="lineNum">     101</span>                 :<span class="tlaGNC">    44917527 :     bool operator&lt;(const ClockTime&amp; x) const { return impl &lt; x.impl; }</span></span>
+<span id="L102"><span class="lineNum">     102</span>                 :<span class="tlaGNC">    13211119 :     bool operator&gt;(const ClockTime&amp; x) const { return impl &gt; x.impl; }</span></span>
+<span id="L103"><span class="lineNum">     103</span>                 :<span class="tlaGNC">    16510941 :     bool operator&lt;=(const ClockTime&amp; x) const { return impl &lt;= x.impl; }</span></span>
+<span id="L104"><span class="lineNum">     104</span>                 :<span class="tlaGNC">    75457926 :     bool operator&gt;=(const ClockTime&amp; x) const { return impl &gt;= x.impl; }</span></span>
+<span id="L105"><span class="lineNum">     105</span>                 :             : </span>
+<span id="L106"><span class="lineNum">     106</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     ClockTime operator-() const { return from(-impl); }</span></span>
+<span id="L107"><span class="lineNum">     107</span>                 :             : </span>
+<span id="L108"><span class="lineNum">     108</span>                 :<span class="tlaGNC tlaBgGNC">    33200503 :     const ClockTime&amp; operator+=(const ClockTime&amp; x) { impl += x.impl; return *this; }</span></span>
+<span id="L109"><span class="lineNum">     109</span>                 :<span class="tlaGNC">    68797545 :     const ClockTime&amp; operator-=(const ClockTime&amp; x) { impl -= x.impl; return *this; }</span></span>
+<span id="L110"><span class="lineNum">     110</span>                 :<span class="tlaGNC">    32594356 :     friend const ClockTime operator+(const ClockTime&amp; x, const ClockTime&amp; y) { return ClockTime(x) += y; }</span></span>
+<span id="L111"><span class="lineNum">     111</span>                 :<span class="tlaGNC">    68197535 :     friend const ClockTime operator-(const ClockTime&amp; x, const ClockTime&amp; y) { return ClockTime(x) -= y; }</span></span>
+<span id="L112"><span class="lineNum">     112</span>                 :             : </span>
+<span id="L113"><span class="lineNum">     113</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     const ClockTime&amp; operator*=(double d) { impl *= d; return *this; }</span></span>
+<span id="L114"><span class="lineNum">     114</span>                 :<span class="tlaUNC">           0 :     const ClockTime&amp; operator*=(short d) { impl *= d; return *this; }</span></span>
+<span id="L115"><span class="lineNum">     115</span>                 :<span class="tlaUNC">           0 :     const ClockTime&amp; operator*=(int d) { impl *= d; return *this; }</span></span>
+<span id="L116"><span class="lineNum">     116</span>                 :<span class="tlaUNC">           0 :     const ClockTime&amp; operator*=(long d) { impl *= d; return *this; }</span></span>
+<span id="L117"><span class="lineNum">     117</span>                 :<span class="tlaUNC">           0 :     const ClockTime&amp; operator*=(long long d) { impl *= d; return *this; }</span></span>
+<span id="L118"><span class="lineNum">     118</span>                 :<span class="tlaUNC">           0 :     const ClockTime&amp; operator*=(unsigned short d) { impl *= d; return *this; }</span></span>
+<span id="L119"><span class="lineNum">     119</span>                 :<span class="tlaUNC">           0 :     const ClockTime&amp; operator*=(unsigned int d) { impl *= d; return *this; }</span></span>
+<span id="L120"><span class="lineNum">     120</span>                 :<span class="tlaUNC">           0 :     const ClockTime&amp; operator*=(unsigned long d) { impl *= d; return *this; }</span></span>
+<span id="L121"><span class="lineNum">     121</span>                 :<span class="tlaUNC">           0 :     const ClockTime&amp; operator*=(unsigned long long d) { impl *= d; return *this; }</span></span>
+<span id="L122"><span class="lineNum">     122</span>                 :<span class="tlaUNC">           0 :     const ClockTime&amp; operator*=(const cPar&amp; p) { impl *= p; return *this; }</span></span>
+<span id="L123"><span class="lineNum">     123</span>                 :             : </span>
+<span id="L124"><span class="lineNum">     124</span>                 :<span class="tlaUNC">           0 :     const ClockTime&amp; operator/=(double d) { impl /= d; return *this; }</span></span>
+<span id="L125"><span class="lineNum">     125</span>                 :<span class="tlaUNC">           0 :     const ClockTime&amp; operator/=(short d) { impl /= d; return *this; }</span></span>
+<span id="L126"><span class="lineNum">     126</span>                 :<span class="tlaUNC">           0 :     const ClockTime&amp; operator/=(int d) { impl /= d; return *this; }</span></span>
+<span id="L127"><span class="lineNum">     127</span>                 :<span class="tlaUNC">           0 :     const ClockTime&amp; operator/=(long d) { impl /= d; return *this; }</span></span>
+<span id="L128"><span class="lineNum">     128</span>                 :<span class="tlaUNC">           0 :     const ClockTime&amp; operator/=(long long d) { impl /= d; return *this; }</span></span>
+<span id="L129"><span class="lineNum">     129</span>                 :<span class="tlaUNC">           0 :     const ClockTime&amp; operator/=(unsigned short d) { impl /= d; return *this; }</span></span>
+<span id="L130"><span class="lineNum">     130</span>                 :<span class="tlaUNC">           0 :     const ClockTime&amp; operator/=(unsigned int d) { impl /= d; return *this; }</span></span>
+<span id="L131"><span class="lineNum">     131</span>                 :<span class="tlaUNC">           0 :     const ClockTime&amp; operator/=(unsigned long d) { impl /= d; return *this; }</span></span>
+<span id="L132"><span class="lineNum">     132</span>                 :<span class="tlaUNC">           0 :     const ClockTime&amp; operator/=(unsigned long long d) { impl /= d; return *this; }</span></span>
+<span id="L133"><span class="lineNum">     133</span>                 :<span class="tlaUNC">           0 :     const ClockTime&amp; operator/=(const cPar&amp; p) { impl /= p; return *this; }</span></span>
+<span id="L134"><span class="lineNum">     134</span>                 :             : </span>
+<span id="L135"><span class="lineNum">     135</span>                 :<span class="tlaUNC">           0 :     friend const ClockTime operator*(const ClockTime&amp; x, double d) { return from(x.impl * d); }</span></span>
+<span id="L136"><span class="lineNum">     136</span>                 :<span class="tlaUNC">           0 :     friend const ClockTime operator*(const ClockTime&amp; x, short d) { return from(x.impl * d); }</span></span>
+<span id="L137"><span class="lineNum">     137</span>                 :<span class="tlaUNC">           0 :     friend const ClockTime operator*(const ClockTime&amp; x, int d) { return from(x.impl * d); }</span></span>
+<span id="L138"><span class="lineNum">     138</span>                 :<span class="tlaUNC">           0 :     friend const ClockTime operator*(const ClockTime&amp; x, long d) { return from(x.impl * d); }</span></span>
+<span id="L139"><span class="lineNum">     139</span>                 :<span class="tlaUNC">           0 :     friend const ClockTime operator*(const ClockTime&amp; x, long long d) { return from(x.impl * d); }</span></span>
+<span id="L140"><span class="lineNum">     140</span>                 :<span class="tlaUNC">           0 :     friend const ClockTime operator*(const ClockTime&amp; x, unsigned short d) { return from(x.impl * d); }</span></span>
+<span id="L141"><span class="lineNum">     141</span>                 :<span class="tlaUNC">           0 :     friend const ClockTime operator*(const ClockTime&amp; x, unsigned int d) { return from(x.impl * d); }</span></span>
+<span id="L142"><span class="lineNum">     142</span>                 :<span class="tlaUNC">           0 :     friend const ClockTime operator*(const ClockTime&amp; x, unsigned long d) { return from(x.impl * d); }</span></span>
+<span id="L143"><span class="lineNum">     143</span>                 :<span class="tlaUNC">           0 :     friend const ClockTime operator*(const ClockTime&amp; x, unsigned long long d) { return from(x.impl * d); }</span></span>
+<span id="L144"><span class="lineNum">     144</span>                 :<span class="tlaUNC">           0 :     friend const ClockTime operator*(const ClockTime&amp; x, const cPar&amp; p) { return from(x.impl * p); }</span></span>
+<span id="L145"><span class="lineNum">     145</span>                 :             : </span>
+<span id="L146"><span class="lineNum">     146</span>                 :<span class="tlaGNC tlaBgGNC">       11614 :     friend const ClockTime operator*(double d, const ClockTime&amp; x) { return from(d * x.impl); }</span></span>
+<span id="L147"><span class="lineNum">     147</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     friend const ClockTime operator*(short d, const ClockTime&amp; x) { return from(d * x.impl); }</span></span>
+<span id="L148"><span class="lineNum">     148</span>                 :<span class="tlaUNC">           0 :     friend const ClockTime operator*(int d, const ClockTime&amp; x) { return from(d * x.impl); }</span></span>
+<span id="L149"><span class="lineNum">     149</span>                 :<span class="tlaUNC">           0 :     friend const ClockTime operator*(long d, const ClockTime&amp; x) { return from(d * x.impl); }</span></span>
+<span id="L150"><span class="lineNum">     150</span>                 :<span class="tlaUNC">           0 :     friend const ClockTime operator*(long long d, const ClockTime&amp; x) { return from(d * x.impl); }</span></span>
+<span id="L151"><span class="lineNum">     151</span>                 :<span class="tlaUNC">           0 :     friend const ClockTime operator*(unsigned short d, const ClockTime&amp; x) { return from(d * x.impl); }</span></span>
+<span id="L152"><span class="lineNum">     152</span>                 :<span class="tlaUNC">           0 :     friend const ClockTime operator*(unsigned int d, const ClockTime&amp; x) { return from(d * x.impl); }</span></span>
+<span id="L153"><span class="lineNum">     153</span>                 :<span class="tlaUNC">           0 :     friend const ClockTime operator*(unsigned long d, const ClockTime&amp; x) { return from(d * x.impl); }</span></span>
+<span id="L154"><span class="lineNum">     154</span>                 :<span class="tlaUNC">           0 :     friend const ClockTime operator*(unsigned long long d, const ClockTime&amp; x) { return from(d * x.impl); }</span></span>
+<span id="L155"><span class="lineNum">     155</span>                 :<span class="tlaUNC">           0 :     friend const ClockTime operator*(const cPar&amp; p, const ClockTime&amp; x) { return from(p * x.impl); }</span></span>
+<span id="L156"><span class="lineNum">     156</span>                 :             : </span>
+<span id="L157"><span class="lineNum">     157</span>                 :<span class="tlaUNC">           0 :     friend const ClockTime operator/(const ClockTime&amp; x, double d) { return from(x.impl / d); }</span></span>
+<span id="L158"><span class="lineNum">     158</span>                 :<span class="tlaUNC">           0 :     friend const ClockTime operator/(const ClockTime&amp; x, short d) { return from(x.impl / d); }</span></span>
+<span id="L159"><span class="lineNum">     159</span>                 :<span class="tlaGNC tlaBgGNC">        6105 :     friend const ClockTime operator/(const ClockTime&amp; x, int d) { return from(x.impl / d); }</span></span>
+<span id="L160"><span class="lineNum">     160</span>                 :<span class="tlaGNC">     2751185 :     friend const ClockTime operator/(const ClockTime&amp; x, long d) { return from(x.impl / d); }</span></span>
+<span id="L161"><span class="lineNum">     161</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     friend const ClockTime operator/(const ClockTime&amp; x, long long d) { return from(x.impl / d); }</span></span>
+<span id="L162"><span class="lineNum">     162</span>                 :<span class="tlaUNC">           0 :     friend const ClockTime operator/(const ClockTime&amp; x, unsigned short d) { return from(x.impl / d); }</span></span>
+<span id="L163"><span class="lineNum">     163</span>                 :<span class="tlaUNC">           0 :     friend const ClockTime operator/(const ClockTime&amp; x, unsigned int d) { return from(x.impl / d); }</span></span>
+<span id="L164"><span class="lineNum">     164</span>                 :<span class="tlaUNC">           0 :     friend const ClockTime operator/(const ClockTime&amp; x, unsigned long d) { return from(x.impl / d); }</span></span>
+<span id="L165"><span class="lineNum">     165</span>                 :<span class="tlaUNC">           0 :     friend const ClockTime operator/(const ClockTime&amp; x, unsigned long long d) { return from(x.impl / d); }</span></span>
+<span id="L166"><span class="lineNum">     166</span>                 :<span class="tlaUNC">           0 :     friend const ClockTime operator/(const ClockTime&amp; x, const cPar&amp; p) { return from(x.impl / p); }</span></span>
+<span id="L167"><span class="lineNum">     167</span>                 :             : </span>
+<span id="L168"><span class="lineNum">     168</span>                 :<span class="tlaUNC">           0 :     friend double operator/(const ClockTime&amp; x, const ClockTime&amp; y) { return x.impl / y.impl; }</span></span>
+<span id="L169"><span class="lineNum">     169</span>                 :             : </span>
+<span id="L170"><span class="lineNum">     170</span>                 :<span class="tlaUNC">           0 :     friend double operator/(double x, const ClockTime&amp; y) { return x / y.impl; }</span></span>
+<span id="L171"><span class="lineNum">     171</span>                 :<span class="tlaUNC">           0 :     friend double operator/(short x, const ClockTime&amp; y) { return x / y.impl; }</span></span>
+<span id="L172"><span class="lineNum">     172</span>                 :<span class="tlaUNC">           0 :     friend double operator/(int x, const ClockTime&amp; y) { return x / y.impl; }</span></span>
+<span id="L173"><span class="lineNum">     173</span>                 :<span class="tlaUNC">           0 :     friend double operator/(long x, const ClockTime&amp; y) { return x / y.impl; }</span></span>
+<span id="L174"><span class="lineNum">     174</span>                 :<span class="tlaUNC">           0 :     friend double operator/(long long x, const ClockTime&amp; y) { return x / y.impl; }</span></span>
+<span id="L175"><span class="lineNum">     175</span>                 :<span class="tlaUNC">           0 :     friend double operator/(unsigned short x, const ClockTime&amp; y) { return x / y.impl; }</span></span>
+<span id="L176"><span class="lineNum">     176</span>                 :<span class="tlaUNC">           0 :     friend double operator/(unsigned int x, const ClockTime&amp; y) { return x / y.impl; }</span></span>
+<span id="L177"><span class="lineNum">     177</span>                 :<span class="tlaUNC">           0 :     friend double operator/(unsigned long x, const ClockTime&amp; y) { return x / y.impl; }</span></span>
+<span id="L178"><span class="lineNum">     178</span>                 :<span class="tlaUNC">           0 :     friend double operator/(unsigned long long x, const ClockTime&amp; y) { return x / y.impl; }</span></span>
+<span id="L179"><span class="lineNum">     179</span>                 :<span class="tlaUNC">           0 :     friend double operator/(const cPar&amp; p, const ClockTime&amp; x) { return p / x.impl; }</span></span>
+<span id="L180"><span class="lineNum">     180</span>                 :             :     //@}</span>
+<span id="L181"><span class="lineNum">     181</span>                 :             : </span>
+<span id="L182"><span class="lineNum">     182</span>                 :             :     /** @name Misc operations and utilities */</span>
+<span id="L183"><span class="lineNum">     183</span>                 :             :     //@{</span>
+<span id="L184"><span class="lineNum">     184</span>                 :             :     /**</span>
+<span id="L185"><span class="lineNum">     185</span>                 :             :      * Convert from SimTime.</span>
+<span id="L186"><span class="lineNum">     186</span>                 :             :      */</span>
+<span id="L187"><span class="lineNum">     187</span>                 :<span class="tlaGNC tlaBgGNC">    41869095 :     static ClockTime from(SimTime t) { ClockTime tmp; tmp.impl = t; return tmp; }</span></span>
+<span id="L188"><span class="lineNum">     188</span>                 :             : </span>
+<span id="L189"><span class="lineNum">     189</span>                 :             :     /**</span>
+<span id="L190"><span class="lineNum">     190</span>                 :             :      * Convert to SimTime.</span>
+<span id="L191"><span class="lineNum">     191</span>                 :             :      */</span>
+<span id="L192"><span class="lineNum">     192</span>                 :<span class="tlaGNC">    17561131 :     SimTime asSimTime() const { return impl; }</span></span>
+<span id="L193"><span class="lineNum">     193</span>                 :             : </span>
+<span id="L194"><span class="lineNum">     194</span>                 :             :     /**</span>
+<span id="L195"><span class="lineNum">     195</span>                 :             :      * Returns true if this simulation time is zero, false otherwise. This is</span>
+<span id="L196"><span class="lineNum">     196</span>                 :             :      * more efficient than comparing the variable to a (double) 0.0, and shorter</span>
+<span id="L197"><span class="lineNum">     197</span>                 :             :      * than comparing against ClockTime::ZERO.</span>
+<span id="L198"><span class="lineNum">     198</span>                 :             :      */</span>
+<span id="L199"><span class="lineNum">     199</span>                 :<span class="tlaGNC">       12915 :     bool isZero() const { return impl.isZero(); }</span></span>
+<span id="L200"><span class="lineNum">     200</span>                 :             : </span>
+<span id="L201"><span class="lineNum">     201</span>                 :             :     /**</span>
+<span id="L202"><span class="lineNum">     202</span>                 :             :      * Converts simulation time (in seconds) to a double. Note that conversion to</span>
+<span id="L203"><span class="lineNum">     203</span>                 :             :      * and from double may lose precision. We do not provide implicit conversion</span>
+<span id="L204"><span class="lineNum">     204</span>                 :             :      * to double as it would conflict with other overloaded operators, and would</span>
+<span id="L205"><span class="lineNum">     205</span>                 :             :      * cause ambiguities during compilation.</span>
+<span id="L206"><span class="lineNum">     206</span>                 :             :      */</span>
+<span id="L207"><span class="lineNum">     207</span>                 :<span class="tlaGNC">     2888687 :     double dbl() const { return impl.dbl(); }</span></span>
+<span id="L208"><span class="lineNum">     208</span>                 :             : </span>
+<span id="L209"><span class="lineNum">     209</span>                 :             :     /**</span>
+<span id="L210"><span class="lineNum">     210</span>                 :             :      * Converts the simulation time to the given time unit, discarding the</span>
+<span id="L211"><span class="lineNum">     211</span>                 :             :      * fractional part (i.e. rounding towards zero). If the return type is</span>
+<span id="L212"><span class="lineNum">     212</span>                 :             :      * not wide enough to hold the result, an error will be thrown.</span>
+<span id="L213"><span class="lineNum">     213</span>                 :             :      *</span>
+<span id="L214"><span class="lineNum">     214</span>                 :             :      * Examples:</span>
+<span id="L215"><span class="lineNum">     215</span>                 :             :      *   1.7ms in us --&gt; 1700;</span>
+<span id="L216"><span class="lineNum">     216</span>                 :             :      *   3.8ms in s --&gt; 3;</span>
+<span id="L217"><span class="lineNum">     217</span>                 :             :      *   -3.8ms in s --&gt; -3;</span>
+<span id="L218"><span class="lineNum">     218</span>                 :             :      *   999ms in s --&gt; 0</span>
+<span id="L219"><span class="lineNum">     219</span>                 :             :      */</span>
+<span id="L220"><span class="lineNum">     220</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     simtime_raw_t inUnit(SimTimeUnit unit) const { return impl.inUnit(unit); }</span></span>
+<span id="L221"><span class="lineNum">     221</span>                 :             : </span>
+<span id="L222"><span class="lineNum">     222</span>                 :             :     /**</span>
+<span id="L223"><span class="lineNum">     223</span>                 :             :      * Returns a new simulation time that is truncated (rounded towards zero)</span>
+<span id="L224"><span class="lineNum">     224</span>                 :             :      * to the precision of the specified time unit.</span>
+<span id="L225"><span class="lineNum">     225</span>                 :             :      *</span>
+<span id="L226"><span class="lineNum">     226</span>                 :             :      * Examples:</span>
+<span id="L227"><span class="lineNum">     227</span>                 :             :      *   3750ms truncated to s --&gt; 3;</span>
+<span id="L228"><span class="lineNum">     228</span>                 :             :      *   -3750ms truncated to s --&gt; -3</span>
+<span id="L229"><span class="lineNum">     229</span>                 :             :      */</span>
+<span id="L230"><span class="lineNum">     230</span>                 :<span class="tlaUNC">           0 :     ClockTime trunc(SimTimeUnit unit) const { return from(impl.trunc(unit)); }</span></span>
+<span id="L231"><span class="lineNum">     231</span>                 :             : </span>
+<span id="L232"><span class="lineNum">     232</span>                 :             :     /**</span>
+<span id="L233"><span class="lineNum">     233</span>                 :             :      * Returns a simtime that is the difference between the simulation time and</span>
+<span id="L234"><span class="lineNum">     234</span>                 :             :      * its truncated value (see trunc()).</span>
+<span id="L235"><span class="lineNum">     235</span>                 :             :      *</span>
+<span id="L236"><span class="lineNum">     236</span>                 :             :      * That is, t == t.trunc(unit) + t.remainderforUnit(unit) for any unit.</span>
+<span id="L237"><span class="lineNum">     237</span>                 :             :      */</span>
+<span id="L238"><span class="lineNum">     238</span>                 :<span class="tlaUNC">           0 :     ClockTime remainderForUnit(SimTimeUnit unit) const { return from(impl.remainderForUnit(unit)); }</span></span>
+<span id="L239"><span class="lineNum">     239</span>                 :             : </span>
+<span id="L240"><span class="lineNum">     240</span>                 :             :     /**</span>
+<span id="L241"><span class="lineNum">     241</span>                 :             :      * Convenience method: splits the simulation time into a whole and a</span>
+<span id="L242"><span class="lineNum">     242</span>                 :             :      * fractional part with regard to a time unit.</span>
+<span id="L243"><span class="lineNum">     243</span>                 :             :      * &lt;tt&gt;t.split(exponent, outValue, outRemainder)&lt;/tt&gt; is equivalent to:</span>
+<span id="L244"><span class="lineNum">     244</span>                 :             :      *</span>
+<span id="L245"><span class="lineNum">     245</span>                 :             :      * &lt;pre&gt;</span>
+<span id="L246"><span class="lineNum">     246</span>                 :             :      * outValue = t.inUnit(unit);</span>
+<span id="L247"><span class="lineNum">     247</span>                 :             :      * outRemainder = t.remainderForUnit(unit);</span>
+<span id="L248"><span class="lineNum">     248</span>                 :             :      * &lt;/pre&gt;</span>
+<span id="L249"><span class="lineNum">     249</span>                 :             :      */</span>
+<span id="L250"><span class="lineNum">     250</span>                 :<span class="tlaUNC">           0 :     void split(SimTimeUnit unit, simtime_raw_t&amp; outValue, ClockTime&amp; outRemainder) const { impl.split(unit, outValue, outRemainder.impl); }</span></span>
+<span id="L251"><span class="lineNum">     251</span>                 :             : </span>
+<span id="L252"><span class="lineNum">     252</span>                 :             :     /**</span>
+<span id="L253"><span class="lineNum">     253</span>                 :             :      * Converts the time to a numeric string. The number expresses the simulation</span>
+<span id="L254"><span class="lineNum">     254</span>                 :             :      * time precisely (including all significant digits), in seconds.</span>
+<span id="L255"><span class="lineNum">     255</span>                 :             :      * The measurement unit (seconds) is not part of the string.</span>
+<span id="L256"><span class="lineNum">     256</span>                 :             :      */</span>
+<span id="L257"><span class="lineNum">     257</span>                 :<span class="tlaGNC tlaBgGNC">         138 :     std::string str() const { return impl.str(); }</span></span>
+<span id="L258"><span class="lineNum">     258</span>                 :             : </span>
+<span id="L259"><span class="lineNum">     259</span>                 :             :     /**</span>
+<span id="L260"><span class="lineNum">     260</span>                 :             :      * Converts to a string in the same way as str() does. Use this variant</span>
+<span id="L261"><span class="lineNum">     261</span>                 :             :      * over str() where performance is critical. The result is placed somewhere</span>
+<span id="L262"><span class="lineNum">     262</span>                 :             :      * in the given buffer (pointer is returned), but for performance reasons,</span>
+<span id="L263"><span class="lineNum">     263</span>                 :             :      * not necessarily at the buffer's beginning. Please read the documentation</span>
+<span id="L264"><span class="lineNum">     264</span>                 :             :      * of ttoa() for the minimum required buffer size.</span>
+<span id="L265"><span class="lineNum">     265</span>                 :             :      */</span>
+<span id="L266"><span class="lineNum">     266</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     char *str(char *buf) const { return impl.str(buf); }</span></span>
+<span id="L267"><span class="lineNum">     267</span>                 :             : </span>
+<span id="L268"><span class="lineNum">     268</span>                 :             :     /**</span>
+<span id="L269"><span class="lineNum">     269</span>                 :             :      * Converts the time to a numeric string with unit in the same format as</span>
+<span id="L270"><span class="lineNum">     270</span>                 :             :      * ustr(SimTimeUnit) does, but chooses the time unit automatically.</span>
+<span id="L271"><span class="lineNum">     271</span>                 :             :      * The function tries to choose the &quot;natural&quot; time unit, e.g. 0.0033 is</span>
+<span id="L272"><span class="lineNum">     272</span>                 :             :      * returned as &quot;3.3ms&quot;.</span>
+<span id="L273"><span class="lineNum">     273</span>                 :             :      */</span>
+<span id="L274"><span class="lineNum">     274</span>                 :<span class="tlaGNC tlaBgGNC">          50 :     std::string ustr() const { return impl.ustr(); }</span></span>
+<span id="L275"><span class="lineNum">     275</span>                 :             : </span>
+<span id="L276"><span class="lineNum">     276</span>                 :             :     /**</span>
+<span id="L277"><span class="lineNum">     277</span>                 :             :      * Converts the time to a numeric string in the given time unit. The unit can</span>
+<span id="L278"><span class="lineNum">     278</span>                 :             :      * be &quot;s&quot;, &quot;ms&quot;, &quot;us&quot;, &quot;ns&quot;, &quot;ps&quot;, &quot;fs&quot;, or &quot;as&quot;. The result represents</span>
+<span id="L279"><span class="lineNum">     279</span>                 :             :      * the simulation time precisely (includes all significant digits), and the</span>
+<span id="L280"><span class="lineNum">     280</span>                 :             :      * unit is appended.</span>
+<span id="L281"><span class="lineNum">     281</span>                 :             :      */</span>
+<span id="L282"><span class="lineNum">     282</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     std::string ustr(SimTimeUnit unit) const { return impl.ustr(unit); }</span></span>
+<span id="L283"><span class="lineNum">     283</span>                 :             : </span>
+<span id="L284"><span class="lineNum">     284</span>                 :             :     /**</span>
+<span id="L285"><span class="lineNum">     285</span>                 :             :      * Returns the underlying 64-bit integer.</span>
+<span id="L286"><span class="lineNum">     286</span>                 :             :      */</span>
+<span id="L287"><span class="lineNum">     287</span>                 :<span class="tlaGNC tlaBgGNC">   331924443 :     simtime_raw_t raw() const { return impl.raw(); }</span></span>
+<span id="L288"><span class="lineNum">     288</span>                 :             : </span>
+<span id="L289"><span class="lineNum">     289</span>                 :             :     /**</span>
+<span id="L290"><span class="lineNum">     290</span>                 :             :      * Creates a ClockTime by setting its underlying 64-bit integer.</span>
+<span id="L291"><span class="lineNum">     291</span>                 :             :      */</span>
+<span id="L292"><span class="lineNum">     292</span>                 :<span class="tlaGNC">    45683472 :     static ClockTime fromRaw(simtime_raw_t l) { ClockTime tmp; tmp.impl.setRaw(l); return tmp; }</span></span>
+<span id="L293"><span class="lineNum">     293</span>                 :             : </span>
+<span id="L294"><span class="lineNum">     294</span>                 :             :     /**</span>
+<span id="L295"><span class="lineNum">     295</span>                 :             :      * Directly sets the underlying 64-bit integer.</span>
+<span id="L296"><span class="lineNum">     296</span>                 :             :      */</span>
+<span id="L297"><span class="lineNum">     297</span>                 :<span class="tlaGNC">     1413475 :     const ClockTime&amp; setRaw(simtime_raw_t l) { impl.setRaw(l); return *this; }</span></span>
+<span id="L298"><span class="lineNum">     298</span>                 :             : </span>
+<span id="L299"><span class="lineNum">     299</span>                 :             :     /**</span>
+<span id="L300"><span class="lineNum">     300</span>                 :             :      * Returns the largest simulation time that can be represented using the</span>
+<span id="L301"><span class="lineNum">     301</span>                 :             :      * present scale exponent.</span>
+<span id="L302"><span class="lineNum">     302</span>                 :             :      */</span>
+<span id="L303"><span class="lineNum">     303</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     static const ClockTime getMaxTime() { return from(SimTime::getMaxTime()); }</span></span>
+<span id="L304"><span class="lineNum">     304</span>                 :             : </span>
+<span id="L305"><span class="lineNum">     305</span>                 :             :     /**</span>
+<span id="L306"><span class="lineNum">     306</span>                 :             :      * Returns the time resolution as the number of units per second,</span>
+<span id="L307"><span class="lineNum">     307</span>                 :             :      * e.g. for microsecond resolution it returns 1000000.</span>
+<span id="L308"><span class="lineNum">     308</span>                 :             :      */</span>
+<span id="L309"><span class="lineNum">     309</span>                 :<span class="tlaUNC">           0 :     static simtime_raw_t getScale() { return SimTime::getScale(); }</span></span>
+<span id="L310"><span class="lineNum">     310</span>                 :             : </span>
+<span id="L311"><span class="lineNum">     311</span>                 :             :     /**</span>
+<span id="L312"><span class="lineNum">     312</span>                 :             :      * Returns the scale exponent, which is an integer in the range -18..0.</span>
+<span id="L313"><span class="lineNum">     313</span>                 :             :      * For example, for microsecond resolution it returns -6.</span>
+<span id="L314"><span class="lineNum">     314</span>                 :             :      */</span>
+<span id="L315"><span class="lineNum">     315</span>                 :<span class="tlaGNC tlaBgGNC">     1200891 :     static int getScaleExp() { return SimTime::getScaleExp(); }</span></span>
+<span id="L316"><span class="lineNum">     316</span>                 :             : </span>
+<span id="L317"><span class="lineNum">     317</span>                 :             :     /**</span>
+<span id="L318"><span class="lineNum">     318</span>                 :             :      * Converts the given string to simulation time. Throws an error if</span>
+<span id="L319"><span class="lineNum">     319</span>                 :             :      * there is an error during conversion. Accepted format is: \&lt;number\&gt;</span>
+<span id="L320"><span class="lineNum">     320</span>                 :             :      * or (\&lt;number\&gt;\&lt;unit\&gt;)+.</span>
+<span id="L321"><span class="lineNum">     321</span>                 :             :      */</span>
+<span id="L322"><span class="lineNum">     322</span>                 :<span class="tlaGNC">           6 :     static const ClockTime parse(const char *s) { return from(SimTime::parse(s)); }</span></span>
+<span id="L323"><span class="lineNum">     323</span>                 :             : </span>
+<span id="L324"><span class="lineNum">     324</span>                 :             :     /**</span>
+<span id="L325"><span class="lineNum">     325</span>                 :             :      * Converts a prefix of the given string to simulation time, up to the</span>
+<span id="L326"><span class="lineNum">     326</span>                 :             :      * first character that cannot occur in simulation time strings:</span>
+<span id="L327"><span class="lineNum">     327</span>                 :             :      * not (digit or letter or &quot;.&quot; or &quot;+&quot; or &quot;-&quot; or whitespace).</span>
+<span id="L328"><span class="lineNum">     328</span>                 :             :      * Throws an error if there is an error during conversion of the prefix.</span>
+<span id="L329"><span class="lineNum">     329</span>                 :             :      * If the prefix is empty (whitespace only), then 0 is returned, and</span>
+<span id="L330"><span class="lineNum">     330</span>                 :             :      * endp is set equal to s; otherwise,  endp is set to point to the</span>
+<span id="L331"><span class="lineNum">     331</span>                 :             :      * first character that was not converted.</span>
+<span id="L332"><span class="lineNum">     332</span>                 :             :      */</span>
+<span id="L333"><span class="lineNum">     333</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     static const ClockTime parse(const char *s, const char *&amp; endp) { return from(SimTime::parse(s, endp)); }</span></span>
+<span id="L334"><span class="lineNum">     334</span>                 :             : </span>
+<span id="L335"><span class="lineNum">     335</span>                 :             :     /**</span>
+<span id="L336"><span class="lineNum">     336</span>                 :             :      * Utility function to convert a 64-bit fixed point number into a string</span>
+<span id="L337"><span class="lineNum">     337</span>                 :             :      * buffer. scaleexp must be in the -18..0 range, and the buffer must be</span>
+<span id="L338"><span class="lineNum">     338</span>                 :             :      * at least 64 bytes long. A pointer to the result string will be</span>
+<span id="L339"><span class="lineNum">     339</span>                 :             :      * returned. A pointer to the terminating '\\0' will be returned in endp.</span>
+<span id="L340"><span class="lineNum">     340</span>                 :             :      *</span>
+<span id="L341"><span class="lineNum">     341</span>                 :             :      * ATTENTION: For performance reasons, the returned pointer will point</span>
+<span id="L342"><span class="lineNum">     342</span>                 :             :      * *somewhere* into the buffer, but NOT necessarily at the beginning.</span>
+<span id="L343"><span class="lineNum">     343</span>                 :             :      */</span>
+<span id="L344"><span class="lineNum">     344</span>                 :<span class="tlaGNC tlaBgGNC">     1200891 :     static char *ttoa(char *buf, simtime_raw_t impl, int scaleexp, char *&amp; endp) { return SimTime::ttoa(buf, impl, scaleexp, endp); }</span></span>
+<span id="L345"><span class="lineNum">     345</span>                 :             :     //@}</span>
+<span id="L346"><span class="lineNum">     346</span>                 :             : };</span>
+<span id="L347"><span class="lineNum">     347</span>                 :             : </span>
+<span id="L348"><span class="lineNum">     348</span>                 :             : inline std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os, const ClockTime&amp; x)</span>
+<span id="L349"><span class="lineNum">     349</span>                 :<span class="tlaGNC">     1200891 : {</span></span>
+<span id="L350"><span class="lineNum">     350</span>                 :<span class="tlaGNC">     1200891 :     char buf[64];</span></span>
+<span id="L351"><span class="lineNum">     351</span>                 :<span class="tlaGNC">     1200891 :     char *endp;</span></span>
+<span id="L352"><span class="lineNum">     352</span>                 :<span class="tlaGNC">     1200891 :     return os &lt;&lt; ClockTime::ttoa(buf, x.raw(), ClockTime::getScaleExp(), endp);</span></span>
+<span id="L353"><span class="lineNum">     353</span>                 :<span class="tlaGNC">     1200891 : }</span></span>
+<span id="L354"><span class="lineNum">     354</span>                 :             : </span>
+<span id="L355"><span class="lineNum">     355</span>                 :             : } // namespace inet</span>
+<span id="L356"><span class="lineNum">     356</span>                 :             : </span>
+<span id="L357"><span class="lineNum">     357</span>                 :             : namespace omnetpp {</span>
+<span id="L358"><span class="lineNum">     358</span>                 :<span class="tlaUNC tlaBgUNC">           0 : inline any_ptr toAnyPtr(const inet::ClockTime *p) {return any_ptr(p);}</span></span>
+<span id="L359"><span class="lineNum">     359</span>                 :<span class="tlaUNC">           0 : template&lt;&gt; inline inet::ClockTime *fromAnyPtr(any_ptr ptr) { return ptr.get&lt;inet::ClockTime&gt;(); }</span></span>
+<span id="L360"><span class="lineNum">     360</span>                 :             : }  // namespace omnetpp</span>
+<span id="L361"><span class="lineNum">     361</span>                 :             : </span>
+<span id="L362"><span class="lineNum">     362</span>                 :             : #endif</span>
+<span id="L363"><span class="lineNum">     363</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

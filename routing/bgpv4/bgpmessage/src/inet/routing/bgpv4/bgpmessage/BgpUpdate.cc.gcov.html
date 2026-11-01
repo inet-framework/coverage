@@ -1,0 +1,163 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - routing/bgpv4/bgpmessage/src/inet/routing/bgpv4/bgpmessage/BgpUpdate.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../index.html">top level</a> - <a href="index.html">routing/bgpv4/bgpmessage/src/inet/routing/bgpv4/bgpmessage</a> - BgpUpdate.cc<span style="font-size: 80%;"> (source / <a href="BgpUpdate.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryMed">85.2&nbsp;%</td>
+            <td class="headerCovTableEntry">61</td>
+            <td class="headerCovTableEntry">52</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryMed">87.5&nbsp;%</td>
+            <td class="headerCovTableEntry">24</td>
+            <td class="headerCovTableEntry">21</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2010 Helene Lageber</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : #include &quot;inet/routing/bgpv4/bgpmessage/BgpUpdate.h&quot;</span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : </span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : namespace inet {</span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : namespace bgp {</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : </span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : unsigned short computePathAttributeBytes(const BgpUpdatePathAttributes&amp; pathAttr)</span>
+<span id="L13"><span class="lineNum">      13</span>                 :<span class="tlaGNC tlaBgGNC">        3262 : {</span></span>
+<span id="L14"><span class="lineNum">      14</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 3262 times"> + </span>]:<span class="tlaGNC">        3262 :     unsigned short contentBytes = pathAttr.getExtendedLengthBit() ? 4 : 3;</span></span>
+<span id="L15"><span class="lineNum">      15</span>                 :<span class="tlaGNC">        3262 :     switch (pathAttr.getTypeCode()) {</span></span>
+<span id="L16"><span class="lineNum">      16</span>         [<span class="tlaGBC" title="Branch 0 was taken 983 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2279 times"> + </span>]:<span class="tlaGNC">         983 :         case BgpUpdateAttributeTypeCode::ORIGIN: {</span></span>
+<span id="L17"><span class="lineNum">      17</span>                 :<span class="tlaGNC">         983 :             auto&amp; attr = *check_and_cast&lt;const BgpUpdatePathAttributesOrigin *&gt;(&amp;pathAttr);</span></span>
+<span id="L18"><span class="lineNum">      18</span>                 :<span class="tlaGNC">         983 :             ASSERT(attr.getLength() == 1);</span></span>
+<span id="L19"><span class="lineNum">      19</span>                 :<span class="tlaGNC">         983 :             contentBytes += 1;</span></span>
+<span id="L20"><span class="lineNum">      20</span>                 :<span class="tlaGNC">         983 :             return contentBytes;</span></span>
+<span id="L21"><span class="lineNum">      21</span>                 :<span class="tlaGNC">         983 :         }</span></span>
+<span id="L22"><span class="lineNum">      22</span>         [<span class="tlaGBC" title="Branch 0 was taken 983 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2279 times"> + </span>]:<span class="tlaGNC">         983 :         case BgpUpdateAttributeTypeCode::AS_PATH: {</span></span>
+<span id="L23"><span class="lineNum">      23</span>                 :<span class="tlaGNC">         983 :             auto&amp; attr = *check_and_cast&lt;const BgpUpdatePathAttributesAsPath *&gt;(&amp;pathAttr);</span></span>
+<span id="L24"><span class="lineNum">      24</span>                 :<span class="tlaGNC">         983 :     #ifndef NDEBUG</span></span>
+<span id="L25"><span class="lineNum">      25</span>                 :<span class="tlaGNC">         983 :             {</span></span>
+<span id="L26"><span class="lineNum">      26</span>                 :<span class="tlaGNC">         983 :                 unsigned short s = 0;</span></span>
+<span id="L27"><span class="lineNum">      27</span>         [<span class="tlaGBC" title="Branch 0 was taken 983 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 983 times"> + </span>]:<span class="tlaGNC">        1966 :                 for (size_t j = 0; j &lt; attr.getValueArraySize(); j++) {</span></span>
+<span id="L28"><span class="lineNum">      28</span>                 :<span class="tlaGNC">         983 :                     ASSERT(attr.getValue(j).getLength() == attr.getValue(j).getAsValueArraySize());</span></span>
+<span id="L29"><span class="lineNum">      29</span>                 :<span class="tlaGNC">         983 :                     s += 2 + 2 * attr.getValue(j).getAsValueArraySize();</span></span>
+<span id="L30"><span class="lineNum">      30</span>                 :<span class="tlaGNC">         983 :                 }</span></span>
+<span id="L31"><span class="lineNum">      31</span>                 :<span class="tlaGNC">         983 :                 ASSERT(s == attr.getLength());</span></span>
+<span id="L32"><span class="lineNum">      32</span>                 :<span class="tlaGNC">         983 :             }</span></span>
+<span id="L33"><span class="lineNum">      33</span>                 :<span class="tlaGNC">         983 :     #endif</span></span>
+<span id="L34"><span class="lineNum">      34</span>                 :<span class="tlaGNC">         983 :             contentBytes += attr.getLength(); // type (1) + length (1) + value</span></span>
+<span id="L35"><span class="lineNum">      35</span>                 :<span class="tlaGNC">         983 :             return contentBytes;</span></span>
+<span id="L36"><span class="lineNum">      36</span>                 :<span class="tlaGNC">         983 :         }</span></span>
+<span id="L37"><span class="lineNum">      37</span>         [<span class="tlaGBC" title="Branch 0 was taken 938 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2324 times"> + </span>]:<span class="tlaGNC">         938 :         case BgpUpdateAttributeTypeCode::NEXT_HOP: {</span></span>
+<span id="L38"><span class="lineNum">      38</span>                 :<span class="tlaGNC">         938 :             auto&amp; attr = *check_and_cast&lt;const BgpUpdatePathAttributesNextHop *&gt;(&amp;pathAttr);</span></span>
+<span id="L39"><span class="lineNum">      39</span>                 :<span class="tlaGNC">         938 :             ASSERT(attr.getLength() == 4);</span></span>
+<span id="L40"><span class="lineNum">      40</span>                 :<span class="tlaGNC">         938 :             contentBytes += 4;</span></span>
+<span id="L41"><span class="lineNum">      41</span>                 :<span class="tlaGNC">         938 :             return contentBytes;</span></span>
+<span id="L42"><span class="lineNum">      42</span>                 :<span class="tlaGNC">         938 :         }</span></span>
+<span id="L43"><span class="lineNum">      43</span>         [<span class="tlaGBC" title="Branch 0 was taken 264 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2998 times"> + </span>]:<span class="tlaGNC">         264 :         case BgpUpdateAttributeTypeCode::LOCAL_PREF: {</span></span>
+<span id="L44"><span class="lineNum">      44</span>                 :<span class="tlaGNC">         264 :             auto&amp; attr = *check_and_cast&lt;const BgpUpdatePathAttributesLocalPref *&gt;(&amp;pathAttr);</span></span>
+<span id="L45"><span class="lineNum">      45</span>                 :<span class="tlaGNC">         264 :             ASSERT(attr.getLength() == 4);</span></span>
+<span id="L46"><span class="lineNum">      46</span>                 :<span class="tlaGNC">         264 :             contentBytes += 4;</span></span>
+<span id="L47"><span class="lineNum">      47</span>                 :<span class="tlaGNC">         264 :             return contentBytes;</span></span>
+<span id="L48"><span class="lineNum">      48</span>                 :<span class="tlaGNC">         264 :         }</span></span>
+<span id="L49"><span class="lineNum">      49</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 3262 times"> + </span>]:<span class="tlaUNC tlaBgUNC">           0 :         case BgpUpdateAttributeTypeCode::ATOMIC_AGGREGATE: {</span></span>
+<span id="L50"><span class="lineNum">      50</span>                 :<span class="tlaUNC">           0 :             auto&amp; attr = *check_and_cast&lt;const BgpUpdatePathAttributesAtomicAggregate *&gt;(&amp;pathAttr);</span></span>
+<span id="L51"><span class="lineNum">      51</span>                 :<span class="tlaUNC">           0 :             ASSERT(attr.getLength() == 0);</span></span>
+<span id="L52"><span class="lineNum">      52</span>                 :<span class="tlaUNC">           0 :             return contentBytes;</span></span>
+<span id="L53"><span class="lineNum">      53</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L54"><span class="lineNum">      54</span>         [<span class="tlaGBC" title="Branch 0 was taken 90 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3172 times"> + </span>]:<span class="tlaGNC tlaBgGNC">          90 :         case BgpUpdateAttributeTypeCode::MP_REACH_NLRI: {</span></span>
+<span id="L55"><span class="lineNum">      55</span>                 :<span class="tlaGNC">          90 :             auto&amp; attr = *check_and_cast&lt;const BgpUpdatePathAttributesMpReachNlri *&gt;(&amp;pathAttr);</span></span>
+<span id="L56"><span class="lineNum">      56</span>                 :             :             // afi(2) + safi(1) + nextHopLength(1) + nextHop(nextHopLength) + reserved(1) + NLRI</span>
+<span id="L57"><span class="lineNum">      57</span>                 :<span class="tlaGNC">          90 :             unsigned short value = 2 + 1 + 1 + attr.getNextHopLength() + 1;</span></span>
+<span id="L58"><span class="lineNum">      58</span>         [<span class="tlaGBC" title="Branch 0 was taken 90 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 90 times"> + </span>]:<span class="tlaGNC">         180 :             for (size_t j = 0; j &lt; attr.getNlriArraySize(); j++)</span></span>
+<span id="L59"><span class="lineNum">      59</span>                 :<span class="tlaGNC">          90 :                 value += 1 + (attr.getNlri(j).length + 7) / 8;</span></span>
+<span id="L60"><span class="lineNum">      60</span>                 :<span class="tlaGNC">          90 :             contentBytes += value;</span></span>
+<span id="L61"><span class="lineNum">      61</span>                 :<span class="tlaGNC">          90 :             return contentBytes;</span></span>
+<span id="L62"><span class="lineNum">      62</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         }</span></span>
+<span id="L63"><span class="lineNum">      63</span>         [<span class="tlaGBC" title="Branch 0 was taken 4 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3258 times"> + </span>]:<span class="tlaGNC tlaBgGNC">           4 :         case BgpUpdateAttributeTypeCode::MP_UNREACH_NLRI: {</span></span>
+<span id="L64"><span class="lineNum">      64</span>                 :<span class="tlaGNC">           4 :             auto&amp; attr = *check_and_cast&lt;const BgpUpdatePathAttributesMpUnreachNlri *&gt;(&amp;pathAttr);</span></span>
+<span id="L65"><span class="lineNum">      65</span>                 :<span class="tlaGNC">           4 :             unsigned short value = 2 + 1; // afi(2) + safi(1)</span></span>
+<span id="L66"><span class="lineNum">      66</span>         [<span class="tlaGBC" title="Branch 0 was taken 4 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4 times"> + </span>]:<span class="tlaGNC">           8 :             for (size_t j = 0; j &lt; attr.getWithdrawnRoutesArraySize(); j++)</span></span>
+<span id="L67"><span class="lineNum">      67</span>                 :<span class="tlaGNC">           4 :                 value += 1 + (attr.getWithdrawnRoutes(j).length + 7) / 8;</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :<span class="tlaGNC">           4 :             contentBytes += value;</span></span>
+<span id="L69"><span class="lineNum">      69</span>                 :<span class="tlaGNC">           4 :             return contentBytes;</span></span>
+<span id="L70"><span class="lineNum">      70</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         }</span></span>
+<span id="L71"><span class="lineNum">      71</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 3262 times"> + </span>]:<span class="tlaUNC">           0 :         default:</span></span>
+<span id="L72"><span class="lineNum">      72</span>                 :<span class="tlaUNC">           0 :             throw cRuntimeError(&quot;Unknown BgpUpdateAttributeTypeCode: %d&quot;, (int)pathAttr.getTypeCode());</span></span>
+<span id="L73"><span class="lineNum">      73</span>                 :<span class="tlaGNC tlaBgGNC">        3262 :     }</span></span>
+<span id="L74"><span class="lineNum">      74</span>                 :<span class="tlaGNC">        3262 : }</span></span>
+<span id="L75"><span class="lineNum">      75</span>                 :             : </span>
+<span id="L76"><span class="lineNum">      76</span>                 :             : } // namespace bgp</span>
+<span id="L77"><span class="lineNum">      77</span>                 :             : } // namespace inet</span>
+<span id="L78"><span class="lineNum">      78</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - physicallayer/wireless/common/base/packetlevel/src/inet/physicallayer/wireless/common/base/packetlevel/ReceiverBase.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../../../../../index.html">top level</a> - <a href="index.html">physicallayer/wireless/common/base/packetlevel/src/inet/physicallayer/wireless/common/base/packetlevel</a> - ReceiverBase.cc<span style="font-size: 80%;"> (source / <a href="ReceiverBase.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">91.1&nbsp;%</td>
+            <td class="headerCovTableEntry">101</td>
+            <td class="headerCovTableEntry">92</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryMed">77.8&nbsp;%</td>
+            <td class="headerCovTableEntry">9</td>
+            <td class="headerCovTableEntry">7</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryMed">78.8&nbsp;%</td>
+            <td class="headerCovTableEntry">52</td>
+            <td class="headerCovTableEntry">41</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2013 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #include &quot;inet/physicallayer/wireless/common/base/packetlevel/ReceiverBase.h&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : </span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &quot;inet/common/ProtocolTag_m.h&quot;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &quot;inet/common/stlutils.h&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &quot;inet/physicallayer/wireless/common/base/packetlevel/NarrowbandNoiseBase.h&quot;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : #include &quot;inet/physicallayer/wireless/common/contract/packetlevel/IRadio.h&quot;</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : #include &quot;inet/physicallayer/wireless/common/contract/packetlevel/IRadioMedium.h&quot;</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : #include &quot;inet/physicallayer/wireless/common/contract/packetlevel/SignalTag_m.h&quot;</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : #include &quot;inet/physicallayer/wireless/common/radio/packetlevel/ReceptionDecision.h&quot;</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : #include &quot;inet/physicallayer/wireless/common/radio/packetlevel/ReceptionResult.h&quot;</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : #include &quot;inet/physicallayer/wireless/common/signal/Interference.h&quot;</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : </span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : namespace inet {</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             : namespace physicallayer {</span>
+<span id="L22"><span class="lineNum">      22</span>                 :             : </span>
+<span id="L23"><span class="lineNum">      23</span>                 :             : void ReceiverBase::initialize(int stage)</span>
+<span id="L24"><span class="lineNum">      24</span>                 :<span class="tlaGNC tlaBgGNC">      104535 : {</span></span>
+<span id="L25"><span class="lineNum">      25</span>         [<span class="tlaGBC" title="Branch 0 was taken 4358 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 100177 times"> + </span>]:<span class="tlaGNC">      104535 :     if (stage == INITSTAGE_LOCAL)</span></span>
+<span id="L26"><span class="lineNum">      26</span>                 :<span class="tlaGNC">        4358 :         ignoreInterference = par(&quot;ignoreInterference&quot;);</span></span>
+<span id="L27"><span class="lineNum">      27</span>                 :<span class="tlaGNC">      104535 : }</span></span>
+<span id="L28"><span class="lineNum">      28</span>                 :             : </span>
+<span id="L29"><span class="lineNum">      29</span>                 :             : std::ostream&amp; ReceiverBase::printToStream(std::ostream&amp; stream, int level, int evFlags) const</span>
+<span id="L30"><span class="lineNum">      30</span>                 :<span class="tlaGNC">     1018265 : {</span></span>
+<span id="L31"><span class="lineNum">      31</span>         [<span class="tlaGBC" title="Branch 0 was taken 1018265 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">     1018265 :     if (level &lt;= PRINT_LEVEL_INFO)</span></span>
+<span id="L32"><span class="lineNum">      32</span>         [<span class="tlaGBC" title="Branch 0 was taken 89 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1018176 times"> + </span>]:<span class="tlaGNC">     1018265 :         stream &lt;&lt; (ignoreInterference ? &quot;, ignoring interference&quot; : &quot;, considering interference&quot;);</span></span>
+<span id="L33"><span class="lineNum">      33</span>                 :<span class="tlaGNC">     1018265 :     return stream;</span></span>
+<span id="L34"><span class="lineNum">      34</span>                 :<span class="tlaGNC">     1018265 : }</span></span>
+<span id="L35"><span class="lineNum">      35</span>                 :             : </span>
+<span id="L36"><span class="lineNum">      36</span>                 :             : bool ReceiverBase::computeIsReceptionPossible(const IListening *listening, const ITransmission *transmission) const</span>
+<span id="L37"><span class="lineNum">      37</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L38"><span class="lineNum">      38</span>                 :<span class="tlaUNC">           0 :     return true;</span></span>
+<span id="L39"><span class="lineNum">      39</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L40"><span class="lineNum">      40</span>                 :             : </span>
+<span id="L41"><span class="lineNum">      41</span>                 :             : bool ReceiverBase::computeIsReceptionPossible(const IListening *listening, const IReception *reception, IRadioSignal::SignalPart part) const</span>
+<span id="L42"><span class="lineNum">      42</span>                 :<span class="tlaUNC">           0 : {</span></span>
+<span id="L43"><span class="lineNum">      43</span>                 :<span class="tlaUNC">           0 :     return true;</span></span>
+<span id="L44"><span class="lineNum">      44</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L45"><span class="lineNum">      45</span>                 :             : </span>
+<span id="L46"><span class="lineNum">      46</span>                 :             : bool ReceiverBase::computeIsReceptionAttempted(const IListening *listening, const IReception *reception, IRadioSignal::SignalPart part, const IInterference *interference) const</span>
+<span id="L47"><span class="lineNum">      47</span>                 :<span class="tlaGNC tlaBgGNC">    10266839 : {</span></span>
+<span id="L48"><span class="lineNum">      48</span>         [<span class="tlaGBC" title="Branch 0 was taken 2323443 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 7943396 times"> + </span>]:<span class="tlaGNC">    10266839 :     if (!computeIsReceptionPossible(listening, reception, part))</span></span>
+<span id="L49"><span class="lineNum">      49</span>                 :<span class="tlaGNC">     2323443 :         return false;</span></span>
+<span id="L50"><span class="lineNum">      50</span>         [<span class="tlaGBC" title="Branch 0 was taken 4090088 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3853308 times"> + </span>]:<span class="tlaGNC">     7943396 :     else if (simTime() == reception-&gt;getStartTime(part)) {</span></span>
+<span id="L51"><span class="lineNum">      51</span>                 :             :         // TODO isn't there a better way for this optimization? see also in RadioMedium::isReceptionAttempted</span>
+<span id="L52"><span class="lineNum">      52</span>                 :<span class="tlaGNC">     4090088 :         auto receptionsInProgress = reception-&gt;getReceiverRadio()-&gt;getReceptionsInProgress();</span></span>
+<span id="L53"><span class="lineNum">      53</span> [<span class="tlaGBC" title="Branch 0 was taken 3853092 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 236996 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 9878 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 227118 times"> + </span>]:<span class="tlaGNC">     4090088 :         return receptionsInProgress.empty() || contains(receptionsInProgress, reception-&gt;getTransmission());</span></span>
+<span id="L54"><span class="lineNum">      54</span>                 :<span class="tlaGNC">     4090088 :     }</span></span>
+<span id="L55"><span class="lineNum">      55</span>                 :<span class="tlaGNC">     3853308 :     else {</span></span>
+<span id="L56"><span class="lineNum">      56</span>                 :             :         // determining whether the reception is attempted or not for the future</span>
+<span id="L57"><span class="lineNum">      57</span>                 :<span class="tlaGNC">     3853308 :         auto radio = reception-&gt;getReceiverRadio();</span></span>
+<span id="L58"><span class="lineNum">      58</span>                 :<span class="tlaGNC">     3853308 :         auto radioMedium = radio-&gt;getMedium();</span></span>
+<span id="L59"><span class="lineNum">      59</span>                 :<span class="tlaGNC">     3853308 :         auto interferingReceptions = interference-&gt;getInterferingReceptions();</span></span>
+<span id="L60"><span class="lineNum">      60</span>                 :<span class="tlaGNC">     3853308 :         auto receptionsInProgress = radio-&gt;getReceptionsInProgress();</span></span>
+<span id="L61"><span class="lineNum">      61</span>         [<span class="tlaGBC" title="Branch 0 was taken 593505 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3853308 times"> + </span>]:<span class="tlaGNC">     3853308 :         for (auto interferingReception : *interferingReceptions) {</span></span>
+<span id="L62"><span class="lineNum">      62</span>         [<span class="tlaGBC" title="Branch 0 was taken 274258 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 319247 times"> + </span>]:<span class="tlaGNC">      593505 :             auto isPrecedingReception = interferingReception-&gt;getStartTime() &lt; reception-&gt;getStartTime() ||</span></span>
+<span id="L63"><span class="lineNum">      63</span>         [<span class="tlaGBC" title="Branch 0 was taken 1139 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 318108 times"> + </span>]:<span class="tlaGNC">      593505 :                 (interferingReception-&gt;getStartTime() == reception-&gt;getStartTime() &amp;&amp;</span></span>
+<span id="L64"><span class="lineNum">      64</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1139 times"> + </span>]:<span class="tlaGNC">      319247 :                  interferingReception-&gt;getTransmission()-&gt;getId() &lt; reception-&gt;getTransmission()-&gt;getId());</span></span>
+<span id="L65"><span class="lineNum">      65</span>         [<span class="tlaGBC" title="Branch 0 was taken 274258 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 319247 times"> + </span>]:<span class="tlaGNC">      593505 :             if (isPrecedingReception) {</span></span>
+<span id="L66"><span class="lineNum">      66</span>                 :<span class="tlaGNC">      274258 :                 auto interferingTransmission = interferingReception-&gt;getTransmission();</span></span>
+<span id="L67"><span class="lineNum">      67</span>         [<span class="tlaGBC" title="Branch 0 was taken 274258 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">      274258 :                 if (interferingReception-&gt;getStartTime() &lt;= simTime()) {</span></span>
+<span id="L68"><span class="lineNum">      68</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 274258 times"> + </span>]:<span class="tlaGNC">      274258 :                     if (contains(receptionsInProgress, interferingTransmission))</span></span>
+<span id="L69"><span class="lineNum">      69</span>                 :<span class="tlaUNC tlaBgUNC">           0 :                         return false;</span></span>
+<span id="L70"><span class="lineNum">      70</span>                 :<span class="tlaGNC tlaBgGNC">      274258 :                 }</span></span>
+<span id="L71"><span class="lineNum">      71</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC tlaBgUNC">           0 :                 else if (radioMedium-&gt;isReceptionAttempted(radio, interferingTransmission, part))</span></span>
+<span id="L72"><span class="lineNum">      72</span>                 :<span class="tlaUNC">           0 :                     return false;</span></span>
+<span id="L73"><span class="lineNum">      73</span>                 :<span class="tlaGNC tlaBgGNC">      274258 :             }</span></span>
+<span id="L74"><span class="lineNum">      74</span>                 :<span class="tlaGNC">      593505 :         }</span></span>
+<span id="L75"><span class="lineNum">      75</span>                 :<span class="tlaGNC">     3853308 :         return true;</span></span>
+<span id="L76"><span class="lineNum">      76</span>                 :<span class="tlaGNC">     3853308 :     }</span></span>
+<span id="L77"><span class="lineNum">      77</span>                 :<span class="tlaGNC">    10266839 : }</span></span>
+<span id="L78"><span class="lineNum">      78</span>                 :             : </span>
+<span id="L79"><span class="lineNum">      79</span>                 :             : const IReceptionDecision *ReceiverBase::computeReceptionDecision(const IListening *listening, const IReception *reception, IRadioSignal::SignalPart part, const IInterference *interference, const ISnir *snir) const</span>
+<span id="L80"><span class="lineNum">      80</span>                 :<span class="tlaGNC">     3853326 : {</span></span>
+<span id="L81"><span class="lineNum">      81</span>                 :<span class="tlaGNC">     3853326 :     auto isReceptionPossible = computeIsReceptionPossible(listening, reception, part);</span></span>
+<span id="L82"><span class="lineNum">      82</span> [<span class="tlaGBC" title="Branch 0 was taken 3853326 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 3853326 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">     3853326 :     auto isReceptionAttempted = isReceptionPossible &amp;&amp; computeIsReceptionAttempted(listening, reception, part, interference);</span></span>
+<span id="L83"><span class="lineNum">      83</span> [<span class="tlaGBC" title="Branch 0 was taken 3853326 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 3637985 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 215341 times"> + </span>]:<span class="tlaGNC">     3853326 :     auto isReceptionSuccessful = isReceptionAttempted &amp;&amp; computeIsReceptionSuccessful(listening, reception, part, interference, snir);</span></span>
+<span id="L84"><span class="lineNum">      84</span>                 :<span class="tlaGNC">     3853326 :     return new ReceptionDecision(reception, part, isReceptionPossible, isReceptionAttempted, isReceptionSuccessful);</span></span>
+<span id="L85"><span class="lineNum">      85</span>                 :<span class="tlaGNC">     3853326 : }</span></span>
+<span id="L86"><span class="lineNum">      86</span>                 :             : </span>
+<span id="L87"><span class="lineNum">      87</span>                 :             : const IReceptionResult *ReceiverBase::computeReceptionResult(const IListening *listening, const IReception *reception, const IInterference *interference, const ISnir *snir, const std::vector&lt;const IReceptionDecision *&gt; *decisions) const</span>
+<span id="L88"><span class="lineNum">      88</span>                 :<span class="tlaGNC">     3845320 : {</span></span>
+<span id="L89"><span class="lineNum">      89</span>                 :<span class="tlaGNC">     3845320 :     bool isReceptionSuccessful = true;</span></span>
+<span id="L90"><span class="lineNum">      90</span>         [<span class="tlaGBC" title="Branch 0 was taken 3845320 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3845320 times"> + </span>]:<span class="tlaGNC">     3845320 :     for (auto decision : *decisions)</span></span>
+<span id="L91"><span class="lineNum">      91</span>                 :<span class="tlaGNC">     3845320 :         isReceptionSuccessful &amp;= decision-&gt;isReceptionSuccessful();</span></span>
+<span id="L92"><span class="lineNum">      92</span>                 :<span class="tlaGNC">     3845320 :     auto packet = computeReceivedPacket(snir, isReceptionSuccessful);</span></span>
+<span id="L93"><span class="lineNum">      93</span>                 :<span class="tlaGNC">     3845320 :     auto signalPower = computeSignalPower(listening, snir, interference);</span></span>
+<span id="L94"><span class="lineNum">      94</span>         [<span class="tlaGBC" title="Branch 0 was taken 3845320 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">     3845320 :     if (!std::isnan(signalPower.get())) {</span></span>
+<span id="L95"><span class="lineNum">      95</span>                 :<span class="tlaGNC">     3845320 :         auto signalPowerInd = packet-&gt;addTagIfAbsent&lt;SignalPowerInd&gt;();</span></span>
+<span id="L96"><span class="lineNum">      96</span>                 :<span class="tlaGNC">     3845320 :         signalPowerInd-&gt;setPower(signalPower);</span></span>
+<span id="L97"><span class="lineNum">      97</span>                 :<span class="tlaGNC">     3845320 :     }</span></span>
+<span id="L98"><span class="lineNum">      98</span>                 :<span class="tlaGNC">     3845320 :     auto snirInd = packet-&gt;addTagIfAbsent&lt;SnirInd&gt;();</span></span>
+<span id="L99"><span class="lineNum">      99</span>                 :<span class="tlaGNC">     3845320 :     snirInd-&gt;setMinimumSnir(snir-&gt;getMin());</span></span>
+<span id="L100"><span class="lineNum">     100</span>                 :<span class="tlaGNC">     3845320 :     snirInd-&gt;setMaximumSnir(snir-&gt;getMax());</span></span>
+<span id="L101"><span class="lineNum">     101</span>                 :<span class="tlaGNC">     3845320 :     snirInd-&gt;setAverageSnir(snir-&gt;getMean());</span></span>
+<span id="L102"><span class="lineNum">     102</span>                 :<span class="tlaGNC">     3845320 :     auto signalTimeInd = packet-&gt;addTagIfAbsent&lt;SignalTimeInd&gt;();</span></span>
+<span id="L103"><span class="lineNum">     103</span>                 :<span class="tlaGNC">     3845320 :     signalTimeInd-&gt;setStartTime(reception-&gt;getStartTime());</span></span>
+<span id="L104"><span class="lineNum">     104</span>                 :<span class="tlaGNC">     3845320 :     signalTimeInd-&gt;setEndTime(reception-&gt;getEndTime());</span></span>
+<span id="L105"><span class="lineNum">     105</span>         [<span class="tlaGBC" title="Branch 0 was taken 35506 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3809814 times"> + </span>]:<span class="tlaGNC">     3845320 :     if (snir-&gt;getMax() == 0) {</span></span>
+<span id="L106"><span class="lineNum">     106</span>                 :<span class="tlaGNC">       35506 :         auto errorRateInd = packet-&gt;addTagIfAbsent&lt;ErrorRateInd&gt;();</span></span>
+<span id="L107"><span class="lineNum">     107</span>                 :<span class="tlaGNC">       35506 :         errorRateInd-&gt;setSymbolErrorRate(1);</span></span>
+<span id="L108"><span class="lineNum">     108</span>                 :<span class="tlaGNC">       35506 :         errorRateInd-&gt;setBitErrorRate(1);</span></span>
+<span id="L109"><span class="lineNum">     109</span>                 :<span class="tlaGNC">       35506 :         errorRateInd-&gt;setPacketErrorRate(1);</span></span>
+<span id="L110"><span class="lineNum">     110</span>                 :<span class="tlaGNC">       35506 :     }</span></span>
+<span id="L111"><span class="lineNum">     111</span>         [<span class="tlaGBC" title="Branch 0 was taken 338203 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3471611 times"> + </span>]:<span class="tlaGNC">     3809814 :     else if (snir-&gt;getMin() == INFINITY) {</span></span>
+<span id="L112"><span class="lineNum">     112</span>                 :<span class="tlaGNC">      338203 :         auto errorRateInd = packet-&gt;addTagIfAbsent&lt;ErrorRateInd&gt;();</span></span>
+<span id="L113"><span class="lineNum">     113</span>                 :<span class="tlaGNC">      338203 :         errorRateInd-&gt;setSymbolErrorRate(0);</span></span>
+<span id="L114"><span class="lineNum">     114</span>                 :<span class="tlaGNC">      338203 :         errorRateInd-&gt;setBitErrorRate(0);</span></span>
+<span id="L115"><span class="lineNum">     115</span>                 :<span class="tlaGNC">      338203 :         errorRateInd-&gt;setPacketErrorRate(0);</span></span>
+<span id="L116"><span class="lineNum">     116</span>                 :<span class="tlaGNC">      338203 :     }</span></span>
+<span id="L117"><span class="lineNum">     117</span>                 :<span class="tlaGNC">     3845320 :     return new ReceptionResult(reception, decisions, packet);</span></span>
+<span id="L118"><span class="lineNum">     118</span>                 :<span class="tlaGNC">     3845320 : }</span></span>
+<span id="L119"><span class="lineNum">     119</span>                 :             : </span>
+<span id="L120"><span class="lineNum">     120</span>                 :             : W ReceiverBase::computeSignalPower(const IListening *listening, const ISnir *snir, const IInterference *interference) const</span>
+<span id="L121"><span class="lineNum">     121</span>                 :<span class="tlaGNC">     3845320 : {</span></span>
+<span id="L122"><span class="lineNum">     122</span>         [<span class="tlaGBC" title="Branch 0 was taken 373709 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3471611 times"> + </span>]:<span class="tlaGNC">     3845320 :     if (!dynamic_cast&lt;const NarrowbandNoiseBase *&gt;(snir-&gt;getNoise()))</span></span>
+<span id="L123"><span class="lineNum">     123</span>                 :<span class="tlaGNC">      373709 :         return W(0);</span></span>
+<span id="L124"><span class="lineNum">     124</span>                 :<span class="tlaGNC">     3471611 :     else {</span></span>
+<span id="L125"><span class="lineNum">     125</span>                 :<span class="tlaGNC">     3471611 :         auto analogModel = snir-&gt;getReception()-&gt;getTransmission()-&gt;getMedium()-&gt;getAnalogModel();</span></span>
+<span id="L126"><span class="lineNum">     126</span>                 :<span class="tlaGNC">     3471611 :         auto signalPlusNoise = check_and_cast&lt;const NarrowbandNoiseBase *&gt;(analogModel-&gt;computeNoise(snir-&gt;getReception(), snir-&gt;getNoise()));</span></span>
+<span id="L127"><span class="lineNum">     127</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 3471611 times"> + </span>]:<span class="tlaGNC">     3471611 :         auto signalPower = signalPlusNoise == nullptr ? W(NaN) : signalPlusNoise-&gt;computeMinPower(listening-&gt;getStartTime(), listening-&gt;getEndTime());</span></span>
+<span id="L128"><span class="lineNum">     128</span>                 :<span class="tlaGNC">     3471611 :         delete signalPlusNoise;</span></span>
+<span id="L129"><span class="lineNum">     129</span>                 :<span class="tlaGNC">     3471611 :         return signalPower;</span></span>
+<span id="L130"><span class="lineNum">     130</span>                 :<span class="tlaGNC">     3471611 :     }</span></span>
+<span id="L131"><span class="lineNum">     131</span>                 :<span class="tlaGNC">     3845320 : }</span></span>
+<span id="L132"><span class="lineNum">     132</span>                 :             : </span>
+<span id="L133"><span class="lineNum">     133</span>                 :             : Packet *ReceiverBase::computeReceivedPacket(const ISnir *snir, bool isReceptionSuccessful) const</span>
+<span id="L134"><span class="lineNum">     134</span>                 :<span class="tlaGNC">     3639983 : {</span></span>
+<span id="L135"><span class="lineNum">     135</span>                 :<span class="tlaGNC">     3639983 :     auto transmittedPacket = snir-&gt;getReception()-&gt;getTransmission()-&gt;getPacket();</span></span>
+<span id="L136"><span class="lineNum">     136</span>                 :<span class="tlaGNC">     3639983 :     auto receivedPacket = transmittedPacket-&gt;dup();</span></span>
+<span id="L137"><span class="lineNum">     137</span>                 :<span class="tlaGNC">     3639983 :     receivedPacket-&gt;clearTags();</span></span>
+<span id="L138"><span class="lineNum">     138</span>                 :<span class="tlaGNC">     3639983 :     receivedPacket-&gt;addTag&lt;PacketProtocolTag&gt;()-&gt;setProtocol(transmittedPacket-&gt;getTag&lt;PacketProtocolTag&gt;()-&gt;getProtocol());</span></span>
+<span id="L139"><span class="lineNum">     139</span>         [<span class="tlaGBC" title="Branch 0 was taken 10006 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3629977 times"> + </span>]:<span class="tlaGNC">     3639983 :     if (!isReceptionSuccessful)</span></span>
+<span id="L140"><span class="lineNum">     140</span>                 :<span class="tlaGNC">       10006 :         receivedPacket-&gt;setBitError(true);</span></span>
+<span id="L141"><span class="lineNum">     141</span>                 :<span class="tlaGNC">     3639983 :     return receivedPacket;</span></span>
+<span id="L142"><span class="lineNum">     142</span>                 :<span class="tlaGNC">     3639983 : }</span></span>
+<span id="L143"><span class="lineNum">     143</span>                 :             : </span>
+<span id="L144"><span class="lineNum">     144</span>                 :             : } // namespace physicallayer</span>
+<span id="L145"><span class="lineNum">     145</span>                 :             : } // namespace inet</span>
+<span id="L146"><span class="lineNum">     146</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - protocolelement/redundancy/src/inet/protocolelement/redundancy/StreamDecoder.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">protocolelement/redundancy/src/inet/protocolelement/redundancy</a> - StreamDecoder.cc<span style="font-size: 80%;"> (source / <a href="StreamDecoder.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">97.6&nbsp;%</td>
+            <td class="headerCovTableEntry">83</td>
+            <td class="headerCovTableEntry">81</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntry">6</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryMed">88.7&nbsp;%</td>
+            <td class="headerCovTableEntry">62</td>
+            <td class="headerCovTableEntry">55</td>
+          </tr>
+                  <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2020 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #include &quot;inet/protocolelement/redundancy/StreamDecoder.h&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : </span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &quot;inet/linklayer/common/InterfaceTag_m.h&quot;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &quot;inet/linklayer/common/MacAddressTag_m.h&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &quot;inet/linklayer/common/PcpTag_m.h&quot;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : #include &quot;inet/linklayer/common/VlanTag_m.h&quot;</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : #include &quot;inet/networklayer/common/L3AddressResolver.h&quot;</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : #include &quot;inet/networklayer/common/NetworkInterface.h&quot;</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : #include &quot;inet/protocolelement/redundancy/StreamTag_m.h&quot;</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : </span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : namespace inet {</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : </span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : Define_Module(StreamDecoder);</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             : </span>
+<span id="L22"><span class="lineNum">      22</span>                 :             : StreamDecoder::~StreamDecoder()</span>
+<span id="L23"><span class="lineNum">      23</span>                 :<span class="tlaGNC tlaBgGNC">         146 : {</span></span>
+<span id="L24"><span class="lineNum">      24</span>         [<span class="tlaGBC" title="Branch 0 was taken 216 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 146 times"> + </span>]:<span class="tlaGNC">         146 :     for (auto&amp; it : mappings)</span></span>
+<span id="L25"><span class="lineNum">      25</span>                 :<span class="tlaGNC">         216 :         delete it.interfaceNameMatcher;</span></span>
+<span id="L26"><span class="lineNum">      26</span>                 :<span class="tlaGNC">         146 : }</span></span>
+<span id="L27"><span class="lineNum">      27</span>                 :             : </span>
+<span id="L28"><span class="lineNum">      28</span>                 :             : void StreamDecoder::initialize(int stage)</span>
+<span id="L29"><span class="lineNum">      29</span>                 :<span class="tlaGNC">        3504 : {</span></span>
+<span id="L30"><span class="lineNum">      30</span>                 :<span class="tlaGNC">        3504 :     PacketFlowBase::initialize(stage);</span></span>
+<span id="L31"><span class="lineNum">      31</span>         [<span class="tlaGBC" title="Branch 0 was taken 146 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3358 times"> + </span>]:<span class="tlaGNC">        3504 :     if (stage == INITSTAGE_LOCAL) {</span></span>
+<span id="L32"><span class="lineNum">      32</span>                 :<span class="tlaGNC">         146 :         vlanTagType = parseVlanTagType(par(&quot;vlanTagType&quot;));</span></span>
+<span id="L33"><span class="lineNum">      33</span>                 :<span class="tlaGNC">         146 :         interfaceTable.reference(this, &quot;interfaceTableModule&quot;, true);</span></span>
+<span id="L34"><span class="lineNum">      34</span>                 :<span class="tlaGNC">         146 :     }</span></span>
+<span id="L35"><span class="lineNum">      35</span>         [<span class="tlaGBC" title="Branch 0 was taken 146 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3212 times"> + </span>]:<span class="tlaGNC">        3358 :     else if (stage == INITSTAGE_QUEUEING)</span></span>
+<span id="L36"><span class="lineNum">      36</span>                 :<span class="tlaGNC">         146 :         configureMappings();</span></span>
+<span id="L37"><span class="lineNum">      37</span>                 :<span class="tlaGNC">        3504 : }</span></span>
+<span id="L38"><span class="lineNum">      38</span>                 :             : </span>
+<span id="L39"><span class="lineNum">      39</span>                 :             : void StreamDecoder::handleParameterChange(const char *name)</span>
+<span id="L40"><span class="lineNum">      40</span>                 :<span class="tlaGNC">          45 : {</span></span>
+<span id="L41"><span class="lineNum">      41</span>         [<span class="tlaGBC" title="Branch 0 was taken 45 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">          45 :     if (!strcmp(name, &quot;mapping&quot;))</span></span>
+<span id="L42"><span class="lineNum">      42</span>                 :<span class="tlaGNC">          45 :         configureMappings();</span></span>
+<span id="L43"><span class="lineNum">      43</span>                 :<span class="tlaGNC">          45 : }</span></span>
+<span id="L44"><span class="lineNum">      44</span>                 :             : </span>
+<span id="L45"><span class="lineNum">      45</span>                 :             : void StreamDecoder::configureMappings()</span>
+<span id="L46"><span class="lineNum">      46</span>                 :<span class="tlaGNC">         191 : {</span></span>
+<span id="L47"><span class="lineNum">      47</span>                 :<span class="tlaGNC">         191 :     auto mappingParameter = check_and_cast&lt;cValueArray *&gt;(par(&quot;mapping&quot;).objectValue());</span></span>
+<span id="L48"><span class="lineNum">      48</span>                 :<span class="tlaGNC">         191 :     L3AddressResolver addressResolver;</span></span>
+<span id="L49"><span class="lineNum">      49</span>                 :<span class="tlaGNC">         191 :     mappings.resize(mappingParameter-&gt;size());</span></span>
+<span id="L50"><span class="lineNum">      50</span>         [<span class="tlaGBC" title="Branch 0 was taken 323 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 191 times"> + </span>]:<span class="tlaGNC">         514 :     for (int i = 0; i &lt; mappingParameter-&gt;size(); i++) {</span></span>
+<span id="L51"><span class="lineNum">      51</span>                 :<span class="tlaGNC">         323 :         auto element = check_and_cast&lt;cValueMap *&gt;(mappingParameter-&gt;get(i).objectValue());</span></span>
+<span id="L52"><span class="lineNum">      52</span>                 :<span class="tlaGNC">         323 :         Mapping&amp; mapping = mappings[i];</span></span>
+<span id="L53"><span class="lineNum">      53</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 323 times"> + </span>]:<span class="tlaGNC">         323 :         cValue packetPattern = element-&gt;containsKey(&quot;packetFilter&quot;) ? element-&gt;get(&quot;packetFilter&quot;) : cValue(&quot;*&quot;);</span></span>
+<span id="L54"><span class="lineNum">      54</span>                 :<span class="tlaGNC">         323 :         mapping.packetFilter.setExpression(packetPattern);</span></span>
+<span id="L55"><span class="lineNum">      55</span>                 :<span class="tlaGNC">         323 :         L3Address l3Address;</span></span>
+<span id="L56"><span class="lineNum">      56</span>                 :<span class="tlaGNC">         323 :         L3AddressResolver addressResolver;</span></span>
+<span id="L57"><span class="lineNum">      57</span>         [<span class="tlaGBC" title="Branch 0 was taken 60 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 263 times"> + </span>]:<span class="tlaGNC">         323 :         if (element-&gt;containsKey(&quot;source&quot;)) {</span></span>
+<span id="L58"><span class="lineNum">      58</span>                 :<span class="tlaGNC">          60 :             addressResolver.tryResolve(element-&gt;get(&quot;source&quot;).stringValue(), l3Address, L3AddressResolver::ADDR_MAC);</span></span>
+<span id="L59"><span class="lineNum">      59</span>                 :<span class="tlaGNC">          60 :             mapping.source = l3Address.toMac();</span></span>
+<span id="L60"><span class="lineNum">      60</span>                 :<span class="tlaGNC">          60 :         }</span></span>
+<span id="L61"><span class="lineNum">      61</span>         [<span class="tlaGBC" title="Branch 0 was taken 214 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 109 times"> + </span>]:<span class="tlaGNC">         323 :         if (element-&gt;containsKey(&quot;destination&quot;)) {</span></span>
+<span id="L62"><span class="lineNum">      62</span>                 :<span class="tlaGNC">         214 :             addressResolver.tryResolve(element-&gt;get(&quot;destination&quot;).stringValue(), l3Address, L3AddressResolver::ADDR_MAC);</span></span>
+<span id="L63"><span class="lineNum">      63</span>                 :<span class="tlaGNC">         214 :             mapping.destination = l3Address.toMac();</span></span>
+<span id="L64"><span class="lineNum">      64</span>                 :<span class="tlaGNC">         214 :         }</span></span>
+<span id="L65"><span class="lineNum">      65</span>         [<span class="tlaGBC" title="Branch 0 was taken 227 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 96 times"> + </span>]:<span class="tlaGNC">         323 :         mapping.vlanId = element-&gt;containsKey(&quot;vlan&quot;) ? element-&gt;get(&quot;vlan&quot;).intValue() : -1;</span></span>
+<span id="L66"><span class="lineNum">      66</span>         [<span class="tlaGBC" title="Branch 0 was taken 96 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 227 times"> + </span>]:<span class="tlaGNC">         323 :         mapping.pcp = element-&gt;containsKey(&quot;pcp&quot;) ? element-&gt;get(&quot;pcp&quot;).intValue() : -1;</span></span>
+<span id="L67"><span class="lineNum">      67</span>                 :<span class="tlaGNC">         323 :         mapping.stream = element-&gt;get(&quot;stream&quot;).stringValue();</span></span>
+<span id="L68"><span class="lineNum">      68</span>         [<span class="tlaGBC" title="Branch 0 was taken 223 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 100 times"> + </span>]:<span class="tlaGNC">         323 :         if (element-&gt;containsKey(&quot;interface&quot;)) {</span></span>
+<span id="L69"><span class="lineNum">      69</span>                 :<span class="tlaGNC">         223 :             auto interfaceNamePattern = element-&gt;get(&quot;interface&quot;).stringValue();</span></span>
+<span id="L70"><span class="lineNum">      70</span>                 :<span class="tlaGNC">         223 :             delete mapping.interfaceNameMatcher;</span></span>
+<span id="L71"><span class="lineNum">      71</span>                 :<span class="tlaGNC">         223 :             mapping.interfaceNameMatcher = new cPatternMatcher();</span></span>
+<span id="L72"><span class="lineNum">      72</span>                 :<span class="tlaGNC">         223 :             mapping.interfaceNameMatcher-&gt;setPattern(interfaceNamePattern, false, false, false);</span></span>
+<span id="L73"><span class="lineNum">      73</span>                 :<span class="tlaGNC">         223 :         }</span></span>
+<span id="L74"><span class="lineNum">      74</span>                 :<span class="tlaGNC">         323 :     }</span></span>
+<span id="L75"><span class="lineNum">      75</span>                 :<span class="tlaGNC">         191 : }</span></span>
+<span id="L76"><span class="lineNum">      76</span>                 :             : </span>
+<span id="L77"><span class="lineNum">      77</span>                 :             : cGate *StreamDecoder::getRegistrationForwardingGate(cGate *gate)</span>
+<span id="L78"><span class="lineNum">      78</span>                 :<span class="tlaGNC">        1062 : {</span></span>
+<span id="L79"><span class="lineNum">      79</span>         [<span class="tlaGBC" title="Branch 0 was taken 734 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 328 times"> + </span>]:<span class="tlaGNC">        1062 :     if (gate == outputGate)</span></span>
+<span id="L80"><span class="lineNum">      80</span>                 :<span class="tlaGNC">         734 :         return inputGate;</span></span>
+<span id="L81"><span class="lineNum">      81</span>         [<span class="tlaGBC" title="Branch 0 was taken 328 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">         328 :     else if (gate == inputGate)</span></span>
+<span id="L82"><span class="lineNum">      82</span>                 :<span class="tlaGNC">         328 :         return outputGate;</span></span>
+<span id="L83"><span class="lineNum">      83</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     else</span></span>
+<span id="L84"><span class="lineNum">      84</span>                 :<span class="tlaUNC">           0 :         throw cRuntimeError(&quot;Unknown gate&quot;);</span></span>
+<span id="L85"><span class="lineNum">      85</span>                 :<span class="tlaGNC tlaBgGNC">        1062 : }</span></span>
+<span id="L86"><span class="lineNum">      86</span>                 :             : </span>
+<span id="L87"><span class="lineNum">      87</span>                 :             : void StreamDecoder::processPacket(Packet *packet)</span>
+<span id="L88"><span class="lineNum">      88</span>                 :<span class="tlaGNC">      259796 : {</span></span>
+<span id="L89"><span class="lineNum">      89</span>                 :<span class="tlaGNC">      259796 :     auto vlanInd = findVlanInd(packet, vlanTagType);</span></span>
+<span id="L90"><span class="lineNum">      90</span>         [<span class="tlaGBC" title="Branch 0 was taken 343301 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 51413 times"> + </span>]:<span class="tlaGNC">      348621 :     for (auto&amp; mapping : mappings) {</span></span>
+<span id="L91"><span class="lineNum">      91</span>                 :<span class="tlaGNC">      343301 :         bool matches = true;</span></span>
+<span id="L92"><span class="lineNum">      92</span>                 :<span class="tlaGNC">      343301 :         const auto&amp; macAddressInd = packet-&gt;findTag&lt;MacAddressInd&gt;();</span></span>
+<span id="L93"><span class="lineNum">      93</span>                 :<span class="tlaGNC">      343301 :         const auto&amp; pcpInd = findPcpInd(packet, vlanTagType);</span></span>
+<span id="L94"><span class="lineNum">      94</span>                 :<span class="tlaGNC">      343301 :         const auto&amp; vlanInd = findVlanInd(packet, vlanTagType);</span></span>
+<span id="L95"><span class="lineNum">      95</span>                 :<span class="tlaGNC">      343301 :         const auto&amp; interfaceInd = packet-&gt;findTag&lt;InterfaceInd&gt;();</span></span>
+<span id="L96"><span class="lineNum">      96</span>                 :<span class="tlaGNC">      343301 :         matches &amp;= mapping.packetFilter.matches(packet);</span></span>
+<span id="L97"><span class="lineNum">      97</span>         [<span class="tlaGBC" title="Branch 0 was taken 31332 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 311969 times"> + </span>]:<span class="tlaGNC">      343301 :         if (mapping.interfaceNameMatcher != nullptr) {</span></span>
+<span id="L98"><span class="lineNum">      98</span>         [<span class="tlaGBC" title="Branch 0 was taken 31332 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">       31332 :             auto interfaceName = interfaceInd != nullptr ? interfaceTable-&gt;getInterfaceById(interfaceInd-&gt;getInterfaceId())-&gt;getInterfaceName() : nullptr;</span></span>
+<span id="L99"><span class="lineNum">      99</span> [<span class="tlaGBC" title="Branch 0 was taken 31332 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 20638 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 10694 times"> + </span>]:<span class="tlaGNC">       31332 :             matches &amp;= interfaceInd != nullptr &amp;&amp; mapping.interfaceNameMatcher-&gt;matches(interfaceName);</span></span>
+<span id="L100"><span class="lineNum">     100</span>                 :<span class="tlaGNC">       31332 :         }</span></span>
+<span id="L101"><span class="lineNum">     101</span>         [<span class="tlaGBC" title="Branch 0 was taken 11709 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 331592 times"> + </span>]:<span class="tlaGNC">      343301 :         if (!mapping.source.isUnspecified())</span></span>
+<span id="L102"><span class="lineNum">     102</span> [<span class="tlaGBC" title="Branch 0 was taken 11709 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 1164 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 10545 times"> + </span>]:<span class="tlaGNC">       11709 :             matches &amp;= macAddressInd != nullptr &amp;&amp; macAddressInd-&gt;getSrcAddress() == mapping.source;</span></span>
+<span id="L103"><span class="lineNum">     103</span>         [<span class="tlaGBC" title="Branch 0 was taken 30552 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 312749 times"> + </span>]:<span class="tlaGNC">      343301 :         if (!mapping.destination.isUnspecified())</span></span>
+<span id="L104"><span class="lineNum">     104</span> [<span class="tlaGBC" title="Branch 0 was taken 30552 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 22318 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 8234 times"> + </span>]:<span class="tlaGNC">       30552 :             matches &amp;= macAddressInd != nullptr &amp;&amp; macAddressInd-&gt;getDestAddress() == mapping.destination;</span></span>
+<span id="L105"><span class="lineNum">     105</span>         [<span class="tlaGBC" title="Branch 0 was taken 149581 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 193720 times"> + </span>]:<span class="tlaGNC">      343301 :         if (mapping.vlanId != -1)</span></span>
+<span id="L106"><span class="lineNum">     106</span> [<span class="tlaGBC" title="Branch 0 was taken 149307 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 274 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 134447 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 14860 times"> + </span>]:<span class="tlaGNC">      149581 :             matches &amp;= vlanInd != nullptr &amp;&amp; vlanInd-&gt;getVlanId() == mapping.vlanId;</span></span>
+<span id="L107"><span class="lineNum">     107</span>         [<span class="tlaGBC" title="Branch 0 was taken 193720 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 149581 times"> + </span>]:<span class="tlaGNC">      343301 :         if (mapping.pcp != -1)</span></span>
+<span id="L108"><span class="lineNum">     108</span> [<span class="tlaGBC" title="Branch 0 was taken 190610 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3110 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 83801 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 106809 times"> + </span>]:<span class="tlaGNC">      193720 :             matches &amp;= pcpInd != nullptr &amp;&amp; pcpInd-&gt;getPcp() == mapping.pcp;</span></span>
+<span id="L109"><span class="lineNum">     109</span>         [<span class="tlaGBC" title="Branch 0 was taken 208383 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 134918 times"> + </span>]:<span class="tlaGNC">      343301 :         if (matches) {</span></span>
+<span id="L110"><span class="lineNum">     110</span>                 :<span class="tlaGNC">      208383 :             packet-&gt;addTag&lt;StreamInd&gt;()-&gt;setStreamName(mapping.stream.c_str());</span></span>
+<span id="L111"><span class="lineNum">     111</span>                 :<span class="tlaGNC">      208383 :             break;</span></span>
+<span id="L112"><span class="lineNum">     112</span>                 :<span class="tlaGNC">      208383 :         }</span></span>
+<span id="L113"><span class="lineNum">     113</span>                 :<span class="tlaGNC">      343301 :     }</span></span>
+<span id="L114"><span class="lineNum">     114</span>                 :<span class="tlaGNC">      259796 :     handlePacketProcessed(packet);</span></span>
+<span id="L115"><span class="lineNum">     115</span>                 :<span class="tlaGNC">      259796 : }</span></span>
+<span id="L116"><span class="lineNum">     116</span>                 :             : </span>
+<span id="L117"><span class="lineNum">     117</span>                 :             : } // namespace inet</span>
+<span id="L118"><span class="lineNum">     118</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

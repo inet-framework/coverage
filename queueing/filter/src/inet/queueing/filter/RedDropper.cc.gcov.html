@@ -1,0 +1,281 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - queueing/filter/src/inet/queueing/filter/RedDropper.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">queueing/filter/src/inet/queueing/filter</a> - RedDropper.cc<span style="font-size: 80%;"> (source / <a href="RedDropper.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryMed">89.9&nbsp;%</td>
+            <td class="headerCovTableEntry">148</td>
+            <td class="headerCovTableEntry">133</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">7</td>
+            <td class="headerCovTableEntry">7</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryLo">67.0&nbsp;%</td>
+            <td class="headerCovTableEntry">106</td>
+            <td class="headerCovTableEntry">71</td>
+          </tr>
+                  <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2020 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #include &quot;inet/queueing/filter/RedDropper.h&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : </span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &quot;inet/common/ModuleAccess.h&quot;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &quot;inet/queueing/marker/EcnMarker.h&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : </span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : namespace inet {</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : namespace queueing {</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : </span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : Define_Module(RedDropper);</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : </span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : void RedDropper::initialize(int stage)</span>
+<span id="L19"><span class="lineNum">      19</span>                 :<span class="tlaGNC tlaBgGNC">        5160 : {</span></span>
+<span id="L20"><span class="lineNum">      20</span>                 :<span class="tlaGNC">        5160 :     PacketFilterBase::initialize(stage);</span></span>
+<span id="L21"><span class="lineNum">      21</span>                 :             : </span>
+<span id="L22"><span class="lineNum">      22</span>         [<span class="tlaGBC" title="Branch 0 was taken 215 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4945 times"> + </span>]:<span class="tlaGNC">        5160 :     if (stage == INITSTAGE_LOCAL) {</span></span>
+<span id="L23"><span class="lineNum">      23</span>                 :<span class="tlaGNC">         215 :         wq = par(&quot;wq&quot;);</span></span>
+<span id="L24"><span class="lineNum">      24</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 215 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 215 times"> + </span>]:<span class="tlaGNC">         215 :         if (wq &lt; 0.0 || wq &gt; 1.0)</span></span>
+<span id="L25"><span class="lineNum">      25</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             throw cRuntimeError(&quot;Invalid value for wq parameter: %g&quot;, wq);</span></span>
+<span id="L26"><span class="lineNum">      26</span>                 :<span class="tlaGNC tlaBgGNC">         215 :         minth = par(&quot;minth&quot;);</span></span>
+<span id="L27"><span class="lineNum">      27</span>                 :<span class="tlaGNC">         215 :         maxth = par(&quot;maxth&quot;);</span></span>
+<span id="L28"><span class="lineNum">      28</span>                 :<span class="tlaGNC">         215 :         maxp = par(&quot;maxp&quot;);</span></span>
+<span id="L29"><span class="lineNum">      29</span>                 :<span class="tlaGNC">         215 :         pkrate = par(&quot;pkrate&quot;);</span></span>
+<span id="L30"><span class="lineNum">      30</span>                 :<span class="tlaGNC">         215 :         count = -1;</span></span>
+<span id="L31"><span class="lineNum">      31</span>                 :<span class="tlaGNC">         215 :         randomValue = dblrand();</span></span>
+<span id="L32"><span class="lineNum">      32</span>                 :<span class="tlaGNC">         215 :         WATCH(avg);</span></span>
+<span id="L33"><span class="lineNum">      33</span>                 :<span class="tlaGNC">         215 :         WATCH(count);</span></span>
+<span id="L34"><span class="lineNum">      34</span>                 :<span class="tlaGNC">         215 :         WATCH(markNext);</span></span>
+<span id="L35"><span class="lineNum">      35</span>                 :<span class="tlaGNC">         215 :         WATCH(q_time);</span></span>
+<span id="L36"><span class="lineNum">      36</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 215 times"> + </span>]:<span class="tlaGNC">         215 :         if (minth &lt; 0.0)</span></span>
+<span id="L37"><span class="lineNum">      37</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             throw cRuntimeError(&quot;minth parameter must not be negative&quot;);</span></span>
+<span id="L38"><span class="lineNum">      38</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 215 times"> + </span>]:<span class="tlaGNC tlaBgGNC">         215 :         if (maxth &lt; 0.0)</span></span>
+<span id="L39"><span class="lineNum">      39</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             throw cRuntimeError(&quot;maxth parameter must not be negative&quot;);</span></span>
+<span id="L40"><span class="lineNum">      40</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 215 times"> + </span>]:<span class="tlaGNC tlaBgGNC">         215 :         if (minth &gt;= maxth)</span></span>
+<span id="L41"><span class="lineNum">      41</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             throw cRuntimeError(&quot;minth must be smaller than maxth&quot;);</span></span>
+<span id="L42"><span class="lineNum">      42</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 215 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 215 times"> + </span>]:<span class="tlaGNC tlaBgGNC">         215 :         if (maxp &lt; 0.0 || maxp &gt; 1.0)</span></span>
+<span id="L43"><span class="lineNum">      43</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             throw cRuntimeError(&quot;Invalid value for maxp parameter: %g&quot;, maxp);</span></span>
+<span id="L44"><span class="lineNum">      44</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 215 times"> + </span>]:<span class="tlaGNC tlaBgGNC">         215 :         if (pkrate &lt; 0.0)</span></span>
+<span id="L45"><span class="lineNum">      45</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             throw cRuntimeError(&quot;Invalid value for pkrate parameter: %g&quot;, pkrate);</span></span>
+<span id="L46"><span class="lineNum">      46</span>                 :<span class="tlaGNC tlaBgGNC">         215 :         useEcn = par(&quot;useEcn&quot;);</span></span>
+<span id="L47"><span class="lineNum">      47</span>                 :<span class="tlaGNC">         215 :         packetCapacity = par(&quot;packetCapacity&quot;);</span></span>
+<span id="L48"><span class="lineNum">      48</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 215 times"> + </span>]:<span class="tlaGNC">         215 :         if (maxth &gt; packetCapacity)</span></span>
+<span id="L49"><span class="lineNum">      49</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             throw cRuntimeError(&quot;Warning: packetCapacity &lt; maxth. Setting capacity to maxth&quot;);</span></span>
+<span id="L50"><span class="lineNum">      50</span>                 :<span class="tlaGNC tlaBgGNC">         215 :         auto outputGate = gate(&quot;out&quot;);</span></span>
+<span id="L51"><span class="lineNum">      51</span>                 :<span class="tlaGNC">         215 :         collection.reference(outputGate, false);</span></span>
+<span id="L52"><span class="lineNum">      52</span>         [<span class="tlaGBC" title="Branch 0 was taken 156 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 59 times"> + </span>]:<span class="tlaGNC">         215 :         if (!collection)</span></span>
+<span id="L53"><span class="lineNum">      53</span>                 :<span class="tlaGNC">         156 :             collection.reference(this, &quot;collectionModule&quot;, true);</span></span>
+<span id="L54"><span class="lineNum">      54</span>                 :<span class="tlaGNC">         215 :         cModule * cm = check_and_cast&lt;cModule *&gt;(collection.get());</span></span>
+<span id="L55"><span class="lineNum">      55</span>                 :<span class="tlaGNC">         215 :         cm-&gt;subscribe(packetPushedSignal, this);</span></span>
+<span id="L56"><span class="lineNum">      56</span>                 :<span class="tlaGNC">         215 :         cm-&gt;subscribe(packetPulledSignal, this);</span></span>
+<span id="L57"><span class="lineNum">      57</span>                 :<span class="tlaGNC">         215 :         cm-&gt;subscribe(packetRemovedSignal, this);</span></span>
+<span id="L58"><span class="lineNum">      58</span>                 :<span class="tlaGNC">         215 :         cm-&gt;subscribe(packetDroppedSignal, this);</span></span>
+<span id="L59"><span class="lineNum">      59</span>                 :<span class="tlaGNC">         215 :     }</span></span>
+<span id="L60"><span class="lineNum">      60</span>                 :<span class="tlaGNC">        5160 : }</span></span>
+<span id="L61"><span class="lineNum">      61</span>                 :             : </span>
+<span id="L62"><span class="lineNum">      62</span>                 :             : RedDropper::RedDecision RedDropper::doRandomEarlyDetection(const Packet *packet) const</span>
+<span id="L63"><span class="lineNum">      63</span>                 :<span class="tlaGNC">      376223 : {</span></span>
+<span id="L64"><span class="lineNum">      64</span>                 :<span class="tlaGNC">      376223 :     RedDecision decision;</span></span>
+<span id="L65"><span class="lineNum">      65</span>                 :<span class="tlaGNC">      376223 :     decision.avg = avg;</span></span>
+<span id="L66"><span class="lineNum">      66</span>                 :<span class="tlaGNC">      376223 :     decision.count = count;</span></span>
+<span id="L67"><span class="lineNum">      67</span>                 :<span class="tlaGNC">      376223 :     decision.q_time = q_time;</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :<span class="tlaGNC">      376223 :     int queueLength = collection-&gt;getNumPackets();</span></span>
+<span id="L69"><span class="lineNum">      69</span>                 :             : </span>
+<span id="L70"><span class="lineNum">      70</span>         [<span class="tlaGBC" title="Branch 0 was taken 158548 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 217675 times"> + </span>]:<span class="tlaGNC">      376223 :     if (queueLength &gt; 0) {</span></span>
+<span id="L71"><span class="lineNum">      71</span>                 :             :         // TD: This following calculation is only useful when the queue is not empty!</span>
+<span id="L72"><span class="lineNum">      72</span>                 :<span class="tlaGNC">      158548 :         decision.avg = (1 - wq) * avg + wq * queueLength;</span></span>
+<span id="L73"><span class="lineNum">      73</span>                 :<span class="tlaGNC">      158548 :     }</span></span>
+<span id="L74"><span class="lineNum">      74</span>                 :<span class="tlaGNC">      217675 :     else {</span></span>
+<span id="L75"><span class="lineNum">      75</span>                 :             :         // TD: Added behaviour for empty queue.</span>
+<span id="L76"><span class="lineNum">      76</span>                 :<span class="tlaGNC">      217675 :         const double m = SIMTIME_DBL(simTime() - q_time) * pkrate;</span></span>
+<span id="L77"><span class="lineNum">      77</span>                 :<span class="tlaGNC">      217675 :         decision.avg = pow(1 - wq, m) * avg;</span></span>
+<span id="L78"><span class="lineNum">      78</span>                 :<span class="tlaGNC">      217675 :         decision.q_time = simTime();</span></span>
+<span id="L79"><span class="lineNum">      79</span>                 :<span class="tlaGNC">      217675 :     }</span></span>
+<span id="L80"><span class="lineNum">      80</span>                 :             : </span>
+<span id="L81"><span class="lineNum">      81</span>         [<span class="tlaGBC" title="Branch 0 was taken 204 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 376019 times"> + </span>]:<span class="tlaGNC">      376223 :     if (queueLength &gt;= packetCapacity) { // maxth is also the &quot;hard&quot; limit</span></span>
+<span id="L82"><span class="lineNum">      82</span>                 :<span class="tlaGNC">         204 :         decision.count = 0;</span></span>
+<span id="L83"><span class="lineNum">      83</span>                 :<span class="tlaGNC">         204 :         decision.result = QUEUE_FULL;</span></span>
+<span id="L84"><span class="lineNum">      84</span>                 :<span class="tlaGNC">         204 :     }</span></span>
+<span id="L85"><span class="lineNum">      85</span> [<span class="tlaGBC" title="Branch 0 was taken 261798 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 114221 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 197276 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 64522 times"> + </span>]:<span class="tlaGNC">      376019 :     else if (minth &lt;= decision.avg &amp;&amp; decision.avg &lt; maxth) {</span></span>
+<span id="L86"><span class="lineNum">      86</span>                 :<span class="tlaGNC">      197276 :         decision.count = count + 1;</span></span>
+<span id="L87"><span class="lineNum">      87</span>                 :<span class="tlaGNC">      197276 :         const double pb = maxp * (decision.avg - minth) / (maxth - minth);</span></span>
+<span id="L88"><span class="lineNum">      88</span>                 :<span class="tlaGNC">      197276 :         const double pa = pb / (1 - decision.count * pb); // TD: Adapted to work as in [Floyd93].</span></span>
+<span id="L89"><span class="lineNum">      89</span>                 :<span class="tlaGNC">      197276 :         decision.usesRandomValue = true;</span></span>
+<span id="L90"><span class="lineNum">      90</span>         [<span class="tlaGBC" title="Branch 0 was taken 11122 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 186154 times"> + </span>]:<span class="tlaGNC">      197276 :         if (randomValue &lt; pa) {</span></span>
+<span id="L91"><span class="lineNum">      91</span>                 :<span class="tlaGNC">       11122 :             decision.count = 0;</span></span>
+<span id="L92"><span class="lineNum">      92</span>                 :<span class="tlaGNC">       11122 :             decision.result = RANDOMLY_ABOVE_LIMIT;</span></span>
+<span id="L93"><span class="lineNum">      93</span>                 :<span class="tlaGNC">       11122 :         }</span></span>
+<span id="L94"><span class="lineNum">      94</span>                 :<span class="tlaGNC">      186154 :         else</span></span>
+<span id="L95"><span class="lineNum">      95</span>                 :<span class="tlaGNC">      186154 :             decision.result = RANDOMLY_BELOW_LIMIT;</span></span>
+<span id="L96"><span class="lineNum">      96</span>                 :<span class="tlaGNC">      197276 :     }</span></span>
+<span id="L97"><span class="lineNum">      97</span>         [<span class="tlaGBC" title="Branch 0 was taken 64522 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 114221 times"> + </span>]:<span class="tlaGNC">      178743 :     else if (decision.avg &gt;= maxth) {</span></span>
+<span id="L98"><span class="lineNum">      98</span>                 :<span class="tlaGNC">       64522 :         decision.count = 0;</span></span>
+<span id="L99"><span class="lineNum">      99</span>                 :<span class="tlaGNC">       64522 :         decision.result = ABOVE_MAX_LIMIT;</span></span>
+<span id="L100"><span class="lineNum">     100</span>                 :<span class="tlaGNC">       64522 :     }</span></span>
+<span id="L101"><span class="lineNum">     101</span>                 :<span class="tlaGNC">      114221 :     else {</span></span>
+<span id="L102"><span class="lineNum">     102</span>                 :<span class="tlaGNC">      114221 :         decision.count = -1;</span></span>
+<span id="L103"><span class="lineNum">     103</span>                 :<span class="tlaGNC">      114221 :         decision.result = BELOW_MIN_LIMIT;</span></span>
+<span id="L104"><span class="lineNum">     104</span>                 :<span class="tlaGNC">      114221 :     }</span></span>
+<span id="L105"><span class="lineNum">     105</span>                 :<span class="tlaGNC">      376223 :     return decision;</span></span>
+<span id="L106"><span class="lineNum">     106</span>                 :<span class="tlaGNC">      376223 : }</span></span>
+<span id="L107"><span class="lineNum">     107</span>                 :             : </span>
+<span id="L108"><span class="lineNum">     108</span>                 :             : bool RedDropper::matchesResult(RedResult result, const Packet *packet) const</span>
+<span id="L109"><span class="lineNum">     109</span>                 :<span class="tlaGNC">      188203 : {</span></span>
+<span id="L110"><span class="lineNum">     110</span>                 :<span class="tlaGNC">      188203 :     switch (result) {</span></span>
+<span id="L111"><span class="lineNum">     111</span>         [<span class="tlaGBC" title="Branch 0 was taken 5591 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 182612 times"> + </span>]:<span class="tlaGNC">        5591 :         case RANDOMLY_ABOVE_LIMIT:</span></span>
+<span id="L112"><span class="lineNum">     112</span>         [<span class="tlaGBC" title="Branch 0 was taken 32261 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 155942 times"> + </span>]:<span class="tlaGNC">       37852 :         case ABOVE_MAX_LIMIT:</span></span>
+<span id="L113"><span class="lineNum">     113</span> [<span class="tlaGBC" title="Branch 0 was taken 37051 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 801 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 37024 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 27 times"> + </span>]:<span class="tlaGNC">       37852 :             return useEcn &amp;&amp; EcnMarker::getEcn(packet) != IP_ECN_NOT_ECT;</span></span>
+<span id="L114"><span class="lineNum">     114</span>         [<span class="tlaGBC" title="Branch 0 was taken 93122 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 95081 times"> + </span>]:<span class="tlaGNC">       93122 :         case RANDOMLY_BELOW_LIMIT:</span></span>
+<span id="L115"><span class="lineNum">     115</span>         [<span class="tlaGBC" title="Branch 0 was taken 57118 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 131085 times"> + </span>]:<span class="tlaGNC">      150240 :         case BELOW_MIN_LIMIT:</span></span>
+<span id="L116"><span class="lineNum">     116</span>                 :<span class="tlaGNC">      150240 :             return true;</span></span>
+<span id="L117"><span class="lineNum">     117</span>         [<span class="tlaGBC" title="Branch 0 was taken 111 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 188092 times"> + </span>]:<span class="tlaGNC">         111 :         case QUEUE_FULL:</span></span>
+<span id="L118"><span class="lineNum">     118</span>                 :<span class="tlaGNC">         111 :             return false;</span></span>
+<span id="L119"><span class="lineNum">     119</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 188203 times"> + </span>]:<span class="tlaUNC tlaBgUNC">           0 :         default:</span></span>
+<span id="L120"><span class="lineNum">     120</span>                 :<span class="tlaUNC">           0 :             throw cRuntimeError(&quot;Unknown RED result&quot;);</span></span>
+<span id="L121"><span class="lineNum">     121</span>                 :<span class="tlaGNC tlaBgGNC">      188203 :     }</span></span>
+<span id="L122"><span class="lineNum">     122</span>                 :<span class="tlaGNC">      188203 : }</span></span>
+<span id="L123"><span class="lineNum">     123</span>                 :             : </span>
+<span id="L124"><span class="lineNum">     124</span>                 :             : bool RedDropper::matchesPacket(const Packet *packet) const</span>
+<span id="L125"><span class="lineNum">     125</span>                 :<span class="tlaGNC">      188203 : {</span></span>
+<span id="L126"><span class="lineNum">     126</span>                 :<span class="tlaGNC">      188203 :     return matchesResult(doRandomEarlyDetection(packet).result, packet);</span></span>
+<span id="L127"><span class="lineNum">     127</span>                 :<span class="tlaGNC">      188203 : }</span></span>
+<span id="L128"><span class="lineNum">     128</span>                 :             : </span>
+<span id="L129"><span class="lineNum">     129</span>                 :             : void RedDropper::handlePacketFiltered(Packet *packet, bool matches)</span>
+<span id="L130"><span class="lineNum">     130</span>                 :<span class="tlaGNC">      188020 : {</span></span>
+<span id="L131"><span class="lineNum">     131</span>                 :             :     // the same state as the query, so the same decision</span>
+<span id="L132"><span class="lineNum">     132</span>                 :<span class="tlaGNC">      188020 :     auto decision = doRandomEarlyDetection(packet);</span></span>
+<span id="L133"><span class="lineNum">     133</span>                 :<span class="tlaGNC">      188020 :     avg = decision.avg;</span></span>
+<span id="L134"><span class="lineNum">     134</span>                 :<span class="tlaGNC">      188020 :     count = decision.count;</span></span>
+<span id="L135"><span class="lineNum">     135</span>                 :<span class="tlaGNC">      188020 :     q_time = decision.q_time;</span></span>
+<span id="L136"><span class="lineNum">     136</span>                 :<span class="tlaGNC">      188020 :     lastResult = decision.result;</span></span>
+<span id="L137"><span class="lineNum">     137</span>                 :<span class="tlaGNC">      188020 :     switch (decision.result) {</span></span>
+<span id="L138"><span class="lineNum">     138</span>         [<span class="tlaGBC" title="Branch 0 was taken 93 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 187927 times"> + </span>]:<span class="tlaGNC">          93 :         case QUEUE_FULL:</span></span>
+<span id="L139"><span class="lineNum">     139</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 19 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 19 times"> + </span>]:<span class="tlaGNC">          93 :             EV_DEBUG &lt;&lt; &quot;Queue length &gt;= capacity&quot; &lt;&lt; EV_FIELD(packetCapacity) &lt;&lt; EV_ENDL;</span></span>
+<span id="L140"><span class="lineNum">     140</span>                 :<span class="tlaGNC">          93 :             break;</span></span>
+<span id="L141"><span class="lineNum">     141</span>         [<span class="tlaGBC" title="Branch 0 was taken 5531 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 182489 times"> + </span>]:<span class="tlaGNC">        5531 :         case RANDOMLY_ABOVE_LIMIT:</span></span>
+<span id="L142"><span class="lineNum">     142</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 40 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 40 times"> + </span>]:<span class="tlaGNC">        5531 :             EV_DEBUG &lt;&lt; &quot;Random early packet detected&quot; &lt;&lt; EV_FIELD(averageQueueLength, avg) &lt;&lt; EV_ENDL;</span></span>
+<span id="L143"><span class="lineNum">     143</span>                 :<span class="tlaGNC">        5531 :             break;</span></span>
+<span id="L144"><span class="lineNum">     144</span>         [<span class="tlaGBC" title="Branch 0 was taken 32261 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 155759 times"> + </span>]:<span class="tlaGNC">       32261 :         case ABOVE_MAX_LIMIT:</span></span>
+<span id="L145"><span class="lineNum">     145</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaGNC">       32261 :             EV_DEBUG &lt;&lt; &quot;Average queue length &gt;= maxth&quot; &lt;&lt; EV_FIELD(averageQueueLength, avg) &lt;&lt; EV_FIELD(maxth) &lt;&lt; EV_ENDL;</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L146"><span class="lineNum">     146</span>                 :<span class="tlaGNC">       32261 :             break;</span></span>
+<span id="L147"><span class="lineNum">     147</span>         [<span class="tlaGBC" title="Branch 0 was taken 150135 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 37885 times"> + </span>]:<span class="tlaGNC">      150135 :         default:</span></span>
+<span id="L148"><span class="lineNum">     148</span>                 :<span class="tlaGNC">      150135 :             break;</span></span>
+<span id="L149"><span class="lineNum">     149</span>                 :<span class="tlaGNC">      188020 :     }</span></span>
+<span id="L150"><span class="lineNum">     150</span>         [<span class="tlaGBC" title="Branch 0 was taken 98563 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 89457 times"> + </span>]:<span class="tlaGNC">      188020 :     if (decision.usesRandomValue)</span></span>
+<span id="L151"><span class="lineNum">     151</span>                 :<span class="tlaGNC">       98563 :         randomValue = dblrand();</span></span>
+<span id="L152"><span class="lineNum">     152</span>                 :             :     // a packet above the limit passes only to be marked</span>
+<span id="L153"><span class="lineNum">     153</span> [<span class="tlaGBC" title="Branch 0 was taken 187159 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 861 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 5434 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 181725 times"> + </span>]:<span class="tlaGNC">      188020 :     if (matches &amp;&amp; (decision.result == RANDOMLY_ABOVE_LIMIT || decision.result == ABOVE_MAX_LIMIT) &amp;&amp; useEcn) {</span></span>
+<span class="lineNum">        </span> [<span class="tlaGBC" title="Branch 0 was taken 31590 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 150135 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 37024 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span id="L154"><span class="lineNum">     154</span>                 :<span class="tlaGNC">       37024 :         IpEcnCode ecn = EcnMarker::getEcn(packet);</span></span>
+<span id="L155"><span class="lineNum">     155</span>         [<span class="tlaGBC" title="Branch 0 was taken 37024 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">       37024 :         if (ecn != IP_ECN_NOT_ECT) {</span></span>
+<span id="L156"><span class="lineNum">     156</span>                 :             :             // if next packet should be marked and it is not</span>
+<span id="L157"><span class="lineNum">     157</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 37024 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaGNC">       37024 :             if (markNext &amp;&amp; ecn != IP_ECN_CE) {</span></span>
+<span id="L158"><span class="lineNum">     158</span>                 :<span class="tlaUNC tlaBgUNC">           0 :                 EcnMarker::setEcn(packet, IP_ECN_CE);</span></span>
+<span id="L159"><span class="lineNum">     159</span>                 :<span class="tlaUNC">           0 :                 markNext = false;</span></span>
+<span id="L160"><span class="lineNum">     160</span>                 :<span class="tlaUNC">           0 :             }</span></span>
+<span id="L161"><span class="lineNum">     161</span>                 :<span class="tlaGNC tlaBgGNC">       37024 :             else {</span></span>
+<span id="L162"><span class="lineNum">     162</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 37024 times"> + </span>]:<span class="tlaGNC">       37024 :                 if (ecn == IP_ECN_CE)</span></span>
+<span id="L163"><span class="lineNum">     163</span>                 :<span class="tlaUNC tlaBgUNC">           0 :                     markNext = true;</span></span>
+<span id="L164"><span class="lineNum">     164</span>                 :<span class="tlaGNC tlaBgGNC">       37024 :                 else</span></span>
+<span id="L165"><span class="lineNum">     165</span>                 :<span class="tlaGNC">       37024 :                     EcnMarker::setEcn(packet, IP_ECN_CE);</span></span>
+<span id="L166"><span class="lineNum">     166</span>                 :<span class="tlaGNC">       37024 :             }</span></span>
+<span id="L167"><span class="lineNum">     167</span>                 :<span class="tlaGNC">       37024 :         }</span></span>
+<span id="L168"><span class="lineNum">     168</span>                 :<span class="tlaGNC">       37024 :     }</span></span>
+<span id="L169"><span class="lineNum">     169</span>                 :<span class="tlaGNC">      188020 : }</span></span>
+<span id="L170"><span class="lineNum">     170</span>                 :             : </span>
+<span id="L171"><span class="lineNum">     171</span>                 :             : void RedDropper::dropPacket(Packet *packet)</span>
+<span id="L172"><span class="lineNum">     172</span>                 :<span class="tlaGNC">         861 : {</span></span>
+<span id="L173"><span class="lineNum">     173</span>                 :             :     // an early drop is the congestion signal RED exists to give, a drop at the packet</span>
+<span id="L174"><span class="lineNum">     174</span>                 :             :     // capacity is a buffer overflow, as in PacketQueue</span>
+<span id="L175"><span class="lineNum">     175</span>         [<span class="tlaGBC" title="Branch 0 was taken 93 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 768 times"> + </span>]:<span class="tlaGNC">         861 :     if (lastResult == QUEUE_FULL)</span></span>
+<span id="L176"><span class="lineNum">     176</span>                 :<span class="tlaGNC">          93 :         PacketFilterBase::dropPacket(packet, QUEUE_OVERFLOW);</span></span>
+<span id="L177"><span class="lineNum">     177</span> [<span class="tlaGBC" title="Branch 0 was taken 97 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 671 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 671 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">         768 :     else if (lastResult == RANDOMLY_ABOVE_LIMIT || lastResult == ABOVE_MAX_LIMIT)</span></span>
+<span id="L178"><span class="lineNum">     178</span>                 :<span class="tlaGNC">         768 :         PacketFilterBase::dropPacket(packet, CONGESTION);</span></span>
+<span id="L179"><span class="lineNum">     179</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     else</span></span>
+<span id="L180"><span class="lineNum">     180</span>                 :<span class="tlaUNC">           0 :         PacketFilterBase::dropPacket(packet, OTHER_PACKET_DROP);</span></span>
+<span id="L181"><span class="lineNum">     181</span>                 :<span class="tlaGNC tlaBgGNC">         861 : }</span></span>
+<span id="L182"><span class="lineNum">     182</span>                 :             : </span>
+<span id="L183"><span class="lineNum">     183</span>                 :             : void RedDropper::receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj, cObject *details)</span>
+<span id="L184"><span class="lineNum">     184</span>                 :<span class="tlaGNC">      209338 : {</span></span>
+<span id="L185"><span class="lineNum">     185</span>                 :<span class="tlaGNC">      209338 :     Enter_Method(&quot;%s&quot;, cComponent::getSignalName(signalID));</span></span>
+<span id="L186"><span class="lineNum">     186</span>                 :             : </span>
+<span id="L187"><span class="lineNum">     187</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 209338 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 209338 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">      209338 :     if (signalID == packetPushedSignal || signalID == packetPulledSignal || signalID == packetRemovedSignal || signalID == packetDroppedSignal)</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L188"><span class="lineNum">     188</span>                 :<span class="tlaGNC">      209338 :         q_time = simTime();</span></span>
+<span id="L189"><span class="lineNum">     189</span>                 :<span class="tlaGNC">      209338 : }</span></span>
+<span id="L190"><span class="lineNum">     190</span>                 :             : </span>
+<span id="L191"><span class="lineNum">     191</span>                 :             : } // namespace queueing</span>
+<span id="L192"><span class="lineNum">     192</span>                 :             : } // namespace inet</span>
+<span id="L193"><span class="lineNum">     193</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

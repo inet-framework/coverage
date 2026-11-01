@@ -1,0 +1,417 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - transportlayer/tcp/src/inet/transportlayer/tcp/Tcp.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">transportlayer/tcp/src/inet/transportlayer/tcp</a> - Tcp.h<span style="font-size: 80%;"> (source / <a href="Tcp.h.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">13</td>
+            <td class="headerCovTableEntry">13</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntry">4</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntry">6</td>
+          </tr>
+                  <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2004 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #ifndef __INET_TCP_H</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : #define __INET_TCP_H</span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : </span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &lt;map&gt;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &lt;set&gt;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : </span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : #include &quot;inet/common/lifecycle/ModuleOperations.h&quot;</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : #include &quot;inet/common/packet/Message.h&quot;</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : #include &quot;inet/common/packet/Packet.h&quot;</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : #include &quot;inet/networklayer/common/L3Address.h&quot;</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : #include &quot;inet/transportlayer/base/TransportProtocolBase.h&quot;</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : #include &quot;inet/common/checksum/ChecksumMode_m.h&quot;</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : #include &quot;inet/transportlayer/contract/tcp/TcpCommand_m.h&quot;</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             : #include &quot;inet/transportlayer/tcp_common/TcpChecksumInsertionHook.h&quot;</span>
+<span id="L22"><span class="lineNum">      22</span>                 :             : #include &quot;inet/transportlayer/tcp_common/TcpHeader.h&quot;</span>
+<span id="L23"><span class="lineNum">      23</span>                 :             : </span>
+<span id="L24"><span class="lineNum">      24</span>                 :             : namespace inet {</span>
+<span id="L25"><span class="lineNum">      25</span>                 :             : namespace tcp {</span>
+<span id="L26"><span class="lineNum">      26</span>                 :             : </span>
+<span id="L27"><span class="lineNum">      27</span>                 :             : // Forward declarations:</span>
+<span id="L28"><span class="lineNum">      28</span>                 :             : class TcpConnection;</span>
+<span id="L29"><span class="lineNum">      29</span>                 :             : class TcpSendQueue;</span>
+<span id="L30"><span class="lineNum">      30</span>                 :             : class TcpReceiveQueue;</span>
+<span id="L31"><span class="lineNum">      31</span>                 :             : </span>
+<span id="L32"><span class="lineNum">      32</span>                 :             : /**</span>
+<span id="L33"><span class="lineNum">      33</span>                 :             :  * Implements the TCP protocol. Usage and compliance with various RFCs are</span>
+<span id="L34"><span class="lineNum">      34</span>                 :             :  * discussed in the corresponding NED documentation.</span>
+<span id="L35"><span class="lineNum">      35</span>                 :             :  *</span>
+<span id="L36"><span class="lineNum">      36</span>                 :             :  * **Communication with clients**</span>
+<span id="L37"><span class="lineNum">      37</span>                 :             :  *</span>
+<span id="L38"><span class="lineNum">      38</span>                 :             :  * This section describes the interface between the Tcp module and its clients</span>
+<span id="L39"><span class="lineNum">      39</span>                 :             :  * (applications or higher-layer protocols). However, note that implementors</span>
+<span id="L40"><span class="lineNum">      40</span>                 :             :  * of client modules do not necessarily need to know the details described herein.</span>
+<span id="L41"><span class="lineNum">      41</span>                 :             :  * Instead, they can use the TcpSocket utility class which hides the details</span>
+<span id="L42"><span class="lineNum">      42</span>                 :             :  * of talking to Tcp under an easy-to-use class interface.</span>
+<span id="L43"><span class="lineNum">      43</span>                 :             : </span>
+<span id="L44"><span class="lineNum">      44</span>                 :             :  * For communication between client applications and TCP, the TcpCommandCode</span>
+<span id="L45"><span class="lineNum">      45</span>                 :             :  * and TcpStatusInd enums are used as message kinds, and TcpCommand</span>
+<span id="L46"><span class="lineNum">      46</span>                 :             :  * and its subclasses are used as control info.</span>
+<span id="L47"><span class="lineNum">      47</span>                 :             :  *</span>
+<span id="L48"><span class="lineNum">      48</span>                 :             :  * To open a connection from a client app, send a cMessage to TCP with</span>
+<span id="L49"><span class="lineNum">      49</span>                 :             :  * TCP_C_OPEN_ACTIVE as message kind and a TcpOpenCommand object filled in</span>
+<span id="L50"><span class="lineNum">      50</span>                 :             :  * and attached to it as control info. (The peer TCP will have to be LISTENing;</span>
+<span id="L51"><span class="lineNum">      51</span>                 :             :  * the server app can achieve this with a similar cMessage but TCP_C_OPEN_PASSIVE</span>
+<span id="L52"><span class="lineNum">      52</span>                 :             :  * message kind.) With passive open, there's a possibility to cause the connection</span>
+<span id="L53"><span class="lineNum">      53</span>                 :             :  * &quot;fork&quot; on an incoming connection, leaving the original connection LISTENing</span>
+<span id="L54"><span class="lineNum">      54</span>                 :             :  * on the port (see the fork field in TcpOpenCommand). Note that TcpOpenCommand</span>
+<span id="L55"><span class="lineNum">      55</span>                 :             :  * allows tcpAlgorithmClass to be specified, which will override the setting</span>
+<span id="L56"><span class="lineNum">      56</span>                 :             :  * in the TCP module. Also note that TcpOpenCommand allows the client to</span>
+<span id="L57"><span class="lineNum">      57</span>                 :             :  * choose between &quot;autoread&quot; and &quot;explicit-read&quot; modes.</span>
+<span id="L58"><span class="lineNum">      58</span>                 :             :  *</span>
+<span id="L59"><span class="lineNum">      59</span>                 :             :  * The client can send data by assigning the TCP_C_SEND message kind to the data</span>
+<span id="L60"><span class="lineNum">      60</span>                 :             :  * packet and sending it to TCP. Received data will be forwarded by TCP to the</span>
+<span id="L61"><span class="lineNum">      61</span>                 :             :  * client as messages with the TCP_I_DATA message kind. This happens</span>
+<span id="L62"><span class="lineNum">      62</span>                 :             :  * automatically in &quot;autoread&quot; mode. In &quot;explicit-read&quot; mode, the client must</span>
+<span id="L63"><span class="lineNum">      63</span>                 :             :  * issue READ requests to receive data. READ requests are cMessages with the</span>
+<span id="L64"><span class="lineNum">      64</span>                 :             :  * TCP_C_READ message kind and a TcpReadCommand control info attached.</span>
+<span id="L65"><span class="lineNum">      65</span>                 :             :  *</span>
+<span id="L66"><span class="lineNum">      66</span>                 :             :  * To close, the client sends a cMessage to TCP with the TCP_C_CLOSE message kind</span>
+<span id="L67"><span class="lineNum">      67</span>                 :             :  * and TcpCommand control info.</span>
+<span id="L68"><span class="lineNum">      68</span>                 :             :  *</span>
+<span id="L69"><span class="lineNum">      69</span>                 :             :  * Tcp sends notifications to the application whenever there's a significant</span>
+<span id="L70"><span class="lineNum">      70</span>                 :             :  * change in the state of the connection: established, remote TCP closed,</span>
+<span id="L71"><span class="lineNum">      71</span>                 :             :  * closed, timed out, connection refused, connection reset, etc. These</span>
+<span id="L72"><span class="lineNum">      72</span>                 :             :  * notifications are also cMessages with message kind TCP_I_xxx</span>
+<span id="L73"><span class="lineNum">      73</span>                 :             :  * (TCP_I_ESTABLISHED, etc.) and TcpCommand as control info.</span>
+<span id="L74"><span class="lineNum">      74</span>                 :             :  *</span>
+<span id="L75"><span class="lineNum">      75</span>                 :             :  * One TCP module can serve several application modules, and several</span>
+<span id="L76"><span class="lineNum">      76</span>                 :             :  * connections per application. When talking to applications, a</span>
+<span id="L77"><span class="lineNum">      77</span>                 :             :  * connection is identified by the socketId that is assigned by the application in</span>
+<span id="L78"><span class="lineNum">      78</span>                 :             :  * the OPEN call.</span>
+<span id="L79"><span class="lineNum">      79</span>                 :             :  *</span>
+<span id="L80"><span class="lineNum">      80</span>                 :             :  * **Sockets**</span>
+<span id="L81"><span class="lineNum">      81</span>                 :             :  *</span>
+<span id="L82"><span class="lineNum">      82</span>                 :             :  * The TcpSocket C++ class is provided to simplify managing TCP connections</span>
+<span id="L83"><span class="lineNum">      83</span>                 :             :  * from applications. TcpSocket handles the job of assembling and sending</span>
+<span id="L84"><span class="lineNum">      84</span>                 :             :  * command messages (OPEN, CLOSE, etc) to TCP, and it also simplifies</span>
+<span id="L85"><span class="lineNum">      85</span>                 :             :  * the task of dealing with packets and notification messages coming from Tcp.</span>
+<span id="L86"><span class="lineNum">      86</span>                 :             :  *</span>
+<span id="L87"><span class="lineNum">      87</span>                 :             :  *</span>
+<span id="L88"><span class="lineNum">      88</span>                 :             :  * **Communication with the IP layer**</span>
+<span id="L89"><span class="lineNum">      89</span>                 :             :  *</span>
+<span id="L90"><span class="lineNum">      90</span>                 :             :  * The TCP model relies on sending and receiving L3AddressReq/L3AddressInd tags</span>
+<span id="L91"><span class="lineNum">      91</span>                 :             :  * attached to TCP segment packets.</span>
+<span id="L92"><span class="lineNum">      92</span>                 :             :  *</span>
+<span id="L93"><span class="lineNum">      93</span>                 :             :  *</span>
+<span id="L94"><span class="lineNum">      94</span>                 :             :  * **Architecture**</span>
+<span id="L95"><span class="lineNum">      95</span>                 :             :  *</span>
+<span id="L96"><span class="lineNum">      96</span>                 :             :  * This section describes the internal architecture of the TCP model.</span>
+<span id="L97"><span class="lineNum">      97</span>                 :             :  * The implementation is composed of several classes (discussion follows below):</span>
+<span id="L98"><span class="lineNum">      98</span>                 :             :  *  - Tcp: the main module class</span>
+<span id="L99"><span class="lineNum">      99</span>                 :             :  *  - TcpConnection: module class that manages a connection</span>
+<span id="L100"><span class="lineNum">     100</span>                 :             :  *  - TcpSendQueue, TcpReceiveQueue: send and receive queues</span>
+<span id="L101"><span class="lineNum">     101</span>                 :             :  *  - TcpAlgorithm: abstract base class for TCP algorithms: DumbTcp, TcpTahoe,</span>
+<span id="L102"><span class="lineNum">     102</span>                 :             :  *    TcpReno, TcpNewReno, etc.</span>
+<span id="L103"><span class="lineNum">     103</span>                 :             :  *</span>
+<span id="L104"><span class="lineNum">     104</span>                 :             :  * Tcp is subclassed from cSimpleModule. It manages socketpair-to-connection</span>
+<span id="L105"><span class="lineNum">     105</span>                 :             :  * mapping, and dispatches segments and user commands to the appropriate</span>
+<span id="L106"><span class="lineNum">     106</span>                 :             :  * TcpConnection object.</span>
+<span id="L107"><span class="lineNum">     107</span>                 :             :  *</span>
+<span id="L108"><span class="lineNum">     108</span>                 :             :  * TcpConnection manages the connection, with the help of other objects.</span>
+<span id="L109"><span class="lineNum">     109</span>                 :             :  * TcpConnection itself implements the basic Tcp &quot;machinery&quot;: takes care</span>
+<span id="L110"><span class="lineNum">     110</span>                 :             :  * of the state machine, stores the state variables (TCB), sends/receives</span>
+<span id="L111"><span class="lineNum">     111</span>                 :             :  * SYN, FIN, RST, ACKs, etc.</span>
+<span id="L112"><span class="lineNum">     112</span>                 :             :  *</span>
+<span id="L113"><span class="lineNum">     113</span>                 :             :  * TcpConnection internally relies on 3 objects: send queue, receive queue,</span>
+<span id="L114"><span class="lineNum">     114</span>                 :             :  * and TCP algorithm. The first two are TcpSendQueue and TcpReceiveQueue.</span>
+<span id="L115"><span class="lineNum">     115</span>                 :             :  * They manage the actual data stream, so TcpConnection need to only concern</span>
+<span id="L116"><span class="lineNum">     116</span>                 :             :  * itself with sequence numbers.</span>
+<span id="L117"><span class="lineNum">     117</span>                 :             : </span>
+<span id="L118"><span class="lineNum">     118</span>                 :             :  * The TCP algorithm class is subclassed from TcpAlgorithm. Control over</span>
+<span id="L119"><span class="lineNum">     119</span>                 :             :  * retransmissions, congestion control and ACK sending are &quot;outsourced&quot;</span>
+<span id="L120"><span class="lineNum">     120</span>                 :             :  * from TcpConnection into TcpAlgorithm: delayed acks, slow start, fast rexmit,</span>
+<span id="L121"><span class="lineNum">     121</span>                 :             :  * etc. are all implemented in TcpAlgorithm subclasses. This simplifies the</span>
+<span id="L122"><span class="lineNum">     122</span>                 :             :  * design of TcpConnection and makes it a lot easier to implement new Tcp</span>
+<span id="L123"><span class="lineNum">     123</span>                 :             :  * variations such as NewReno, Vegas or LinuxTcp as TcpAlgorithm subclasses.</span>
+<span id="L124"><span class="lineNum">     124</span>                 :             :  *</span>
+<span id="L125"><span class="lineNum">     125</span>                 :             :  * The concrete TcpAlgorithm class to use can be chosen per connection (in OPEN)</span>
+<span id="L126"><span class="lineNum">     126</span>                 :             :  * or in a module parameter.</span>
+<span id="L127"><span class="lineNum">     127</span>                 :             :  */</span>
+<span id="L128"><span class="lineNum">     128</span>                 :             : class INET_API Tcp : public TransportProtocolBase</span>
+<span id="L129"><span class="lineNum">     129</span>                 :             : {</span>
+<span id="L130"><span class="lineNum">     130</span>                 :             :   public:</span>
+<span id="L131"><span class="lineNum">     131</span>                 :             :     static simsignal_t tcpConnectionAddedSignal;</span>
+<span id="L132"><span class="lineNum">     132</span>                 :             :     static simsignal_t tcpConnectionRemovedSignal;</span>
+<span id="L133"><span class="lineNum">     133</span>                 :             : </span>
+<span id="L134"><span class="lineNum">     134</span>                 :             :     enum PortRange {</span>
+<span id="L135"><span class="lineNum">     135</span>                 :             :         EPHEMERAL_PORTRANGE_START = 1024,</span>
+<span id="L136"><span class="lineNum">     136</span>                 :             :         EPHEMERAL_PORTRANGE_END   = 5000</span>
+<span id="L137"><span class="lineNum">     137</span>                 :             :     };</span>
+<span id="L138"><span class="lineNum">     138</span>                 :             : </span>
+<span id="L139"><span class="lineNum">     139</span>                 :             :     struct SockPair {</span>
+<span id="L140"><span class="lineNum">     140</span>                 :             :         L3Address localAddr;</span>
+<span id="L141"><span class="lineNum">     141</span>                 :             :         L3Address remoteAddr;</span>
+<span id="L142"><span class="lineNum">     142</span>                 :             :         int localPort; // -1: unspec</span>
+<span id="L143"><span class="lineNum">     143</span>                 :             :         int remotePort; // -1: unspec</span>
+<span id="L144"><span class="lineNum">     144</span>                 :             : </span>
+<span id="L145"><span class="lineNum">     145</span>                 :             :         inline bool operator&lt;(const SockPair&amp; b) const</span>
+<span id="L146"><span class="lineNum">     146</span>                 :<span class="tlaGNC tlaBgGNC">     3379824 :         {</span></span>
+<span id="L147"><span class="lineNum">     147</span>         [<span class="tlaGBC" title="Branch 0 was taken 988861 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2390963 times"> + </span>]:<span class="tlaGNC">     3379824 :             if (remoteAddr != b.remoteAddr)</span></span>
+<span id="L148"><span class="lineNum">     148</span>                 :<span class="tlaGNC">      988861 :                 return remoteAddr &lt; b.remoteAddr;</span></span>
+<span id="L149"><span class="lineNum">     149</span>         [<span class="tlaGBC" title="Branch 0 was taken 23329 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2367634 times"> + </span>]:<span class="tlaGNC">     2390963 :             else if (localAddr != b.localAddr)</span></span>
+<span id="L150"><span class="lineNum">     150</span>                 :<span class="tlaGNC">       23329 :                 return localAddr &lt; b.localAddr;</span></span>
+<span id="L151"><span class="lineNum">     151</span>         [<span class="tlaGBC" title="Branch 0 was taken 21158 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2346476 times"> + </span>]:<span class="tlaGNC">     2367634 :             else if (remotePort != b.remotePort)</span></span>
+<span id="L152"><span class="lineNum">     152</span>                 :<span class="tlaGNC">       21158 :                 return remotePort &lt; b.remotePort;</span></span>
+<span id="L153"><span class="lineNum">     153</span>                 :<span class="tlaGNC">     2346476 :             else</span></span>
+<span id="L154"><span class="lineNum">     154</span>                 :<span class="tlaGNC">     2346476 :                 return localPort &lt; b.localPort;</span></span>
+<span id="L155"><span class="lineNum">     155</span>                 :<span class="tlaGNC">     3379824 :         }</span></span>
+<span id="L156"><span class="lineNum">     156</span>                 :             :     };</span>
+<span id="L157"><span class="lineNum">     157</span>                 :             : </span>
+<span id="L158"><span class="lineNum">     158</span>                 :             :   protected:</span>
+<span id="L159"><span class="lineNum">     159</span>                 :             :     typedef std::map&lt;int /*socketId*/, TcpConnection *&gt; TcpAppConnMap;</span>
+<span id="L160"><span class="lineNum">     160</span>                 :             :     typedef std::map&lt;SockPair, TcpConnection *&gt; TcpConnMap;</span>
+<span id="L161"><span class="lineNum">     161</span>                 :             :     TcpAppConnMap tcpAppConnMap;</span>
+<span id="L162"><span class="lineNum">     162</span>                 :             :     TcpConnMap tcpConnMap;</span>
+<span id="L163"><span class="lineNum">     163</span>                 :             : </span>
+<span id="L164"><span class="lineNum">     164</span>                 :             :     // TCP Fast Open (RFC 7413): the key of the cookies that this module gives as a</span>
+<span id="L165"><span class="lineNum">     165</span>                 :             :     // server, and the cookies that it keeps as a client (RFC 7413 section 4.1.3),</span>
+<span id="L166"><span class="lineNum">     166</span>                 :             :     // with the MSS that each server announced. The key comes from the RNG at its</span>
+<span id="L167"><span class="lineNum">     167</span>                 :             :     // first use, so a simulation without Fast Open draws no number.</span>
+<span id="L168"><span class="lineNum">     168</span>                 :             :     bool fastOpenKeySet = false;</span>
+<span id="L169"><span class="lineNum">     169</span>                 :             :     uint8_t fastOpenKey[16] = {};</span>
+<span id="L170"><span class="lineNum">     170</span>                 :             :     // exp: the cached cookie came in the experimental option (kind 254). tryExp: the</span>
+<span id="L171"><span class="lineNum">     171</span>                 :             :     // option for a cookie request, while no cookie is cached (Linux tcpm_fastopen</span>
+<span id="L172"><span class="lineNum">     172</span>                 :             :     // try_exp): 0 = kind 34; 1 = a kind 34 request had no answer, so the next</span>
+<span id="L173"><span class="lineNum">     173</span>                 :             :     // request uses kind 254; 2 = that request had no answer too, so kind 34 again.</span>
+<span id="L174"><span class="lineNum">     174</span>                 :             :     // It never goes back, so kind 254 is tried once.</span>
+<span id="L175"><span class="lineNum">     175</span>                 :             :     struct FastOpenCacheEntry { std::vector&lt;uint8_t&gt; cookie; uint32_t peerMss = 0; bool exp = false; uint8_t tryExp = 0; };</span>
+<span id="L176"><span class="lineNum">     176</span>                 :             :     std::map&lt;L3Address, FastOpenCacheEntry&gt; fastOpenCookieCache;</span>
+<span id="L177"><span class="lineNum">     177</span>                 :             :     int fastOpenCookieCacheSize = 0; // from the fastopenCookieCacheSize parameter</span>
+<span id="L178"><span class="lineNum">     178</span>                 :             :     // TCP Fast Open, client: blackhole detection (RFC 7413 section 4.1.3.1). After a</span>
+<span id="L179"><span class="lineNum">     179</span>                 :             :     // suspected blackhole, no connection of the module uses Fast Open for a time</span>
+<span id="L180"><span class="lineNum">     180</span>                 :             :     // (as in Linux).</span>
+<span id="L181"><span class="lineNum">     181</span>                 :             :     int fastOpenBlackholeCount = 0;</span>
+<span id="L182"><span class="lineNum">     182</span>                 :             :     simtime_t fastOpenDisabledUntil = SIMTIME_ZERO;</span>
+<span id="L183"><span class="lineNum">     183</span>                 :             : </span>
+<span id="L184"><span class="lineNum">     184</span>                 :             :     ushort lastEphemeralPort = static_cast&lt;ushort&gt;(-1);</span>
+<span id="L185"><span class="lineNum">     185</span>                 :             :     std::multiset&lt;ushort&gt; usedEphemeralPorts;</span>
+<span id="L186"><span class="lineNum">     186</span>                 :             :     long numSegmentsSent = 0;</span>
+<span id="L187"><span class="lineNum">     187</span>                 :             :     long numSegmentsRcvd = 0;</span>
+<span id="L188"><span class="lineNum">     188</span>                 :             : </span>
+<span id="L189"><span class="lineNum">     189</span>                 :             :   protected:</span>
+<span id="L190"><span class="lineNum">     190</span>                 :             :     /** Factory method; may be overriden for customizing Tcp */</span>
+<span id="L191"><span class="lineNum">     191</span>                 :             :     virtual TcpConnection *createConnection(int socketId);</span>
+<span id="L192"><span class="lineNum">     192</span>                 :             : </span>
+<span id="L193"><span class="lineNum">     193</span>                 :             :     // utility methods</span>
+<span id="L194"><span class="lineNum">     194</span>                 :             :     virtual TcpConnection *findConnForSegment(const Ptr&lt;const TcpHeader&gt;&amp; tcpHeader, L3Address srcAddr, L3Address destAddr);</span>
+<span id="L195"><span class="lineNum">     195</span>                 :             :     virtual TcpConnection *findConnForSockPair(const SockPair&amp; key);</span>
+<span id="L196"><span class="lineNum">     196</span>                 :             :     virtual TcpConnection *findConnForApp(int socketId);</span>
+<span id="L197"><span class="lineNum">     197</span>                 :             :     virtual void segmentArrivalWhileClosed(Packet *tcpSegment, const Ptr&lt;const TcpHeader&gt;&amp; tcpHeader, L3Address src, L3Address dest);</span>
+<span id="L198"><span class="lineNum">     198</span>                 :             :     virtual void processIcmpv4Error(Indication *indication);</span>
+<span id="L199"><span class="lineNum">     199</span>                 :             :     virtual void processIcmpv6Error(Indication *indication);</span>
+<span id="L200"><span class="lineNum">     200</span>                 :             :     virtual std::string getTcpStatusString() const;</span>
+<span id="L201"><span class="lineNum">     201</span>                 :             : </span>
+<span id="L202"><span class="lineNum">     202</span>                 :             :   public:</span>
+<span id="L203"><span class="lineNum">     203</span>                 :             :     ChecksumMode checksumMode = CHECKSUM_MODE_UNDEFINED;</span>
+<span id="L204"><span class="lineNum">     204</span>                 :             :     int msl;</span>
+<span id="L205"><span class="lineNum">     205</span>                 :             :     bool alignOptions = true; // from the alignOptions parameter: align the options with NOPs</span>
+<span id="L206"><span class="lineNum">     206</span>                 :             :     bool accEcnBareTimeWaitAck = false; // from the accEcnBareTimeWaitAck parameter</span>
+<span id="L207"><span class="lineNum">     207</span>                 :             :     bool accEcnOptionLinux = false; // from the accEcnOptionPolicy parameter: &quot;linux&quot;</span>
+<span id="L208"><span class="lineNum">     208</span>                 :             :     bool sendMssOption = true; // from the sendMssOption parameter: send the MSS option in the SYN and the SYN-ACK</span>
+<span id="L209"><span class="lineNum">     209</span>                 :             :     bool ecnMarkAll = false; // from the ecnMarkAll parameter</span>
+<span id="L210"><span class="lineNum">     210</span>                 :             : </span>
+<span id="L211"><span class="lineNum">     211</span>                 :             :   public:</span>
+<span id="L212"><span class="lineNum">     212</span>                 :<span class="tlaGNC">       11480 :     Tcp() {}</span></span>
+<span id="L213"><span class="lineNum">     213</span>                 :             :     virtual ~Tcp();</span>
+<span id="L214"><span class="lineNum">     214</span>                 :             : </span>
+<span id="L215"><span class="lineNum">     215</span>                 :             :   protected:</span>
+<span id="L216"><span class="lineNum">     216</span>                 :             :     virtual void initialize(int stage) override;</span>
+<span id="L217"><span class="lineNum">     217</span>                 :<span class="tlaGNC">      274671 :     virtual int numInitStages() const override { return NUM_INIT_STAGES; }</span></span>
+<span id="L218"><span class="lineNum">     218</span>                 :             :     virtual void finish() override;</span>
+<span id="L219"><span class="lineNum">     219</span>                 :             : </span>
+<span id="L220"><span class="lineNum">     220</span>                 :             :     virtual void handleSelfMessage(cMessage *message) override;</span>
+<span id="L221"><span class="lineNum">     221</span>                 :             :     virtual void handleUpperCommand(cMessage *message) override;</span>
+<span id="L222"><span class="lineNum">     222</span>                 :             :     virtual void handleUpperPacket(Packet *packet) override;</span>
+<span id="L223"><span class="lineNum">     223</span>                 :             :     virtual void handleLowerPacket(Packet *packet) override;</span>
+<span id="L224"><span class="lineNum">     224</span>                 :             :     virtual void handleLowerCommand(cMessage *msg) override;</span>
+<span id="L225"><span class="lineNum">     225</span>                 :             : </span>
+<span id="L226"><span class="lineNum">     226</span>                 :             :   public:</span>
+<span id="L227"><span class="lineNum">     227</span>                 :             :     /**</span>
+<span id="L228"><span class="lineNum">     228</span>                 :             :      * To be called from TcpConnection when a new connection gets created,</span>
+<span id="L229"><span class="lineNum">     229</span>                 :             :      * during processing of OPEN_ACTIVE or OPEN_PASSIVE.</span>
+<span id="L230"><span class="lineNum">     230</span>                 :             :      */</span>
+<span id="L231"><span class="lineNum">     231</span>                 :             :     virtual void addSockPair(TcpConnection *conn, L3Address localAddr, L3Address remoteAddr, int localPort, int remotePort);</span>
+<span id="L232"><span class="lineNum">     232</span>                 :             : </span>
+<span id="L233"><span class="lineNum">     233</span>                 :             :     /**</span>
+<span id="L234"><span class="lineNum">     234</span>                 :             :      * TCP Fast Open (RFC 7413 section 4.1.2): the cookie for a client, a SipHash-2-4</span>
+<span id="L235"><span class="lineNum">     235</span>                 :             :      * MAC of the source and the destination address of its SYN (as Linux makes</span>
+<span id="L236"><span class="lineNum">     236</span>                 :             :      * it) under the key of this module (fastopenKey, or a key from the RNG). The</span>
+<span id="L237"><span class="lineNum">     237</span>                 :             :      * same addresses give the same cookie.</span>
+<span id="L238"><span class="lineNum">     238</span>                 :             :      */</span>
+<span id="L239"><span class="lineNum">     239</span>                 :             :     virtual std::vector&lt;uint8_t&gt; generateFastOpenCookie(const L3Address&amp; localAddr, const L3Address&amp; remoteAddr, int cookieBytes);</span>
+<span id="L240"><span class="lineNum">     240</span>                 :             : </span>
+<span id="L241"><span class="lineNum">     241</span>                 :             :     /** TCP Fast Open, client: the cached cookie of the server; false if there is none. */</span>
+<span id="L242"><span class="lineNum">     242</span>                 :             :     virtual bool getFastOpenCookie(const L3Address&amp; remoteAddr, std::vector&lt;uint8_t&gt;&amp; cookie) const;</span>
+<span id="L243"><span class="lineNum">     243</span>                 :             : </span>
+<span id="L244"><span class="lineNum">     244</span>                 :             :     /** TCP Fast Open, client: caches the cookie and the MSS that the server sent in a SYN-ACK. */</span>
+<span id="L245"><span class="lineNum">     245</span>                 :             :     virtual void setFastOpenCookie(const L3Address&amp; remoteAddr, const std::vector&lt;uint8_t&gt;&amp; cookie, uint32_t peerMss);</span>
+<span id="L246"><span class="lineNum">     246</span>                 :             : </span>
+<span id="L247"><span class="lineNum">     247</span>                 :             :     /** TCP Fast Open, client: caches the MSS of the server, and keeps its cookie. */</span>
+<span id="L248"><span class="lineNum">     248</span>                 :             :     virtual void updateFastOpenCachedMss(const L3Address&amp; remoteAddr, uint32_t peerMss);</span>
+<span id="L249"><span class="lineNum">     249</span>                 :             : </span>
+<span id="L250"><span class="lineNum">     250</span>                 :             :     /** TCP Fast Open, client: the cached MSS of the server; 0 if there is none. */</span>
+<span id="L251"><span class="lineNum">     251</span>                 :             :     virtual uint32_t getFastOpenCachedMss(const L3Address&amp; remoteAddr) const;</span>
+<span id="L252"><span class="lineNum">     252</span>                 :             : </span>
+<span id="L253"><span class="lineNum">     253</span>                 :             :     /**</span>
+<span id="L254"><span class="lineNum">     254</span>                 :             :      * TCP Fast Open, client: true if the option for remoteAddr is the experimental</span>
+<span id="L255"><span class="lineNum">     255</span>                 :             :      * option (kind 254, RFC 7413 appendix A): the option of the cached cookie, or,</span>
+<span id="L256"><span class="lineNum">     256</span>                 :             :      * without a cookie, the second request (Linux tcp_fastopen_cache_get()).</span>
+<span id="L257"><span class="lineNum">     257</span>                 :             :      */</span>
+<span id="L258"><span class="lineNum">     258</span>                 :             :     virtual bool getFastOpenUseExpOption(const L3Address&amp; remoteAddr) const;</span>
+<span id="L259"><span class="lineNum">     259</span>                 :             : </span>
+<span id="L260"><span class="lineNum">     260</span>                 :             :     /** TCP Fast Open, client: records the option in which the cached cookie came. */</span>
+<span id="L261"><span class="lineNum">     261</span>                 :             :     virtual void setFastOpenCookieExpForm(const L3Address&amp; remoteAddr, bool exp);</span>
+<span id="L262"><span class="lineNum">     262</span>                 :             : </span>
+<span id="L263"><span class="lineNum">     263</span>                 :             :     /** TCP Fast Open, client: a cookie request in the given option had no answer; the next request uses the other option once. */</span>
+<span id="L264"><span class="lineNum">     264</span>                 :             :     virtual void noteFastOpenCookieRequestUnanswered(const L3Address&amp; remoteAddr, bool usedExpOption);</span>
+<span id="L265"><span class="lineNum">     265</span>                 :             : </span>
+<span id="L266"><span class="lineNum">     266</span>                 :             :     /** TCP Fast Open, client: removes all cached cookies, as `ip tcp_metrics flush` does on Linux. */</span>
+<span id="L267"><span class="lineNum">     267</span>                 :             :     virtual void clearFastOpenCookieCache();</span>
+<span id="L268"><span class="lineNum">     268</span>                 :             : </span>
+<span id="L269"><span class="lineNum">     269</span>                 :             :     /** TCP Fast Open, server: the number of Fast Open connections of the local port in SYN_RCVD (PendingFastOpenRequests of RFC 7413). */</span>
+<span id="L270"><span class="lineNum">     270</span>                 :             :     virtual int getNumPendingFastOpenRequests(const L3Address&amp; localAddr, int localPort) const;</span>
+<span id="L271"><span class="lineNum">     271</span>                 :             : </span>
+<span id="L272"><span class="lineNum">     272</span>                 :             :     /** TCP Fast Open, client: true while blackhole detection stops Fast Open. */</span>
+<span id="L273"><span class="lineNum">     273</span>                 :             :     virtual bool isActiveFastOpenDisabled() const;</span>
+<span id="L274"><span class="lineNum">     274</span>                 :             : </span>
+<span id="L275"><span class="lineNum">     275</span>                 :             :     /**</span>
+<span id="L276"><span class="lineNum">     276</span>                 :             :      * TCP Fast Open, client: a suspected blackhole stops Fast Open for the time of</span>
+<span id="L277"><span class="lineNum">     277</span>                 :             :      * fastopenBlackholeTimeout, which doubles at each further blackhole, up to 64</span>
+<span id="L278"><span class="lineNum">     278</span>                 :             :      * times (Linux tcp_fastopen_active_should_disable()).</span>
+<span id="L279"><span class="lineNum">     279</span>                 :             :      */</span>
+<span id="L280"><span class="lineNum">     280</span>                 :             :     virtual void recordFastOpenBlackhole();</span>
+<span id="L281"><span class="lineNum">     281</span>                 :             : </span>
+<span id="L282"><span class="lineNum">     282</span>                 :             :     /** TCP Fast Open, client: a Fast Open SYN got through, so the next blackhole stops Fast Open for the first time again. */</span>
+<span id="L283"><span class="lineNum">     283</span>                 :             :     virtual void resetFastOpenBlackhole();</span>
+<span id="L284"><span class="lineNum">     284</span>                 :             : </span>
+<span id="L285"><span class="lineNum">     285</span>                 :             :     virtual void removeConnection(TcpConnection *conn);</span>
+<span id="L286"><span class="lineNum">     286</span>                 :             :     virtual void sendToIp(Packet *segment);</span>
+<span id="L287"><span class="lineNum">     287</span>                 :             :     virtual void sendToApp(cMessage *msg);</span>
+<span id="L288"><span class="lineNum">     288</span>                 :             : </span>
+<span id="L289"><span class="lineNum">     289</span>                 :             :     /**</span>
+<span id="L290"><span class="lineNum">     290</span>                 :             :      * To be called from TcpConnection when socket pair (key for TcpConnMap) changes</span>
+<span id="L291"><span class="lineNum">     291</span>                 :             :      * (e.g. becomes fully qualified).</span>
+<span id="L292"><span class="lineNum">     292</span>                 :             :      */</span>
+<span id="L293"><span class="lineNum">     293</span>                 :             :     virtual void updateSockPair(TcpConnection *conn, L3Address localAddr, L3Address remoteAddr, int localPort, int remotePort);</span>
+<span id="L294"><span class="lineNum">     294</span>                 :             : </span>
+<span id="L295"><span class="lineNum">     295</span>                 :             :     /**</span>
+<span id="L296"><span class="lineNum">     296</span>                 :             :      * Update conn's socket pair, and register newConn (which'll keep LISTENing).</span>
+<span id="L297"><span class="lineNum">     297</span>                 :             :      * Also, conn will get a new socketId (and newConn will live on with its old socketId).</span>
+<span id="L298"><span class="lineNum">     298</span>                 :             :      */</span>
+<span id="L299"><span class="lineNum">     299</span>                 :             :     virtual void addForkedConnection(TcpConnection *conn, TcpConnection *newConn, L3Address localAddr, L3Address remoteAddr, int localPort, int remotePort);</span>
+<span id="L300"><span class="lineNum">     300</span>                 :             : </span>
+<span id="L301"><span class="lineNum">     301</span>                 :             :     /**</span>
+<span id="L302"><span class="lineNum">     302</span>                 :             :      * To be called from TcpConnection: reserves an ephemeral port for the connection.</span>
+<span id="L303"><span class="lineNum">     303</span>                 :             :      */</span>
+<span id="L304"><span class="lineNum">     304</span>                 :             :     virtual ushort getEphemeralPort();</span>
+<span id="L305"><span class="lineNum">     305</span>                 :             : </span>
+<span id="L306"><span class="lineNum">     306</span>                 :             :     /**</span>
+<span id="L307"><span class="lineNum">     307</span>                 :             :      * To be called from TcpConnection: create a new send queue.</span>
+<span id="L308"><span class="lineNum">     308</span>                 :             :      */</span>
+<span id="L309"><span class="lineNum">     309</span>                 :             :     virtual TcpSendQueue *createSendQueue();</span>
+<span id="L310"><span class="lineNum">     310</span>                 :             : </span>
+<span id="L311"><span class="lineNum">     311</span>                 :             :     /**</span>
+<span id="L312"><span class="lineNum">     312</span>                 :             :      * To be called from TcpConnection: create a new receive queue.</span>
+<span id="L313"><span class="lineNum">     313</span>                 :             :      */</span>
+<span id="L314"><span class="lineNum">     314</span>                 :             :     virtual TcpReceiveQueue *createReceiveQueue();</span>
+<span id="L315"><span class="lineNum">     315</span>                 :             : </span>
+<span id="L316"><span class="lineNum">     316</span>                 :             :     // ILifeCycle:</span>
+<span id="L317"><span class="lineNum">     317</span>                 :             :     virtual void handleStartOperation(LifecycleOperation *operation) override;</span>
+<span id="L318"><span class="lineNum">     318</span>                 :             :     virtual void handleStopOperation(LifecycleOperation *operation) override;</span>
+<span id="L319"><span class="lineNum">     319</span>                 :             :     virtual void handleCrashOperation(LifecycleOperation *operation) override;</span>
+<span id="L320"><span class="lineNum">     320</span>                 :             : </span>
+<span id="L321"><span class="lineNum">     321</span>                 :             :     // called at shutdown/crash</span>
+<span id="L322"><span class="lineNum">     322</span>                 :             :     virtual void reset();</span>
+<span id="L323"><span class="lineNum">     323</span>                 :             : </span>
+<span id="L324"><span class="lineNum">     324</span>                 :             :     bool checkChecksum(Packet *pk);</span>
+<span id="L325"><span class="lineNum">     325</span>                 :<span class="tlaGNC">        1831 :     int getMsl() { return msl; }</span></span>
+<span id="L326"><span class="lineNum">     326</span>                 :             : };</span>
+<span id="L327"><span class="lineNum">     327</span>                 :             : </span>
+<span id="L328"><span class="lineNum">     328</span>                 :             : } // namespace tcp</span>
+<span id="L329"><span class="lineNum">     329</span>                 :             : } // namespace inet</span>
+<span id="L330"><span class="lineNum">     330</span>                 :             : </span>
+<span id="L331"><span class="lineNum">     331</span>                 :             : #endif</span>
+<span id="L332"><span class="lineNum">     332</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

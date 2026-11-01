@@ -1,0 +1,130 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - networklayer/mipv6/src/inet/networklayer/mipv6/MobilityHeaderProtocolDissector.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">networklayer/mipv6/src/inet/networklayer/mipv6</a> - MobilityHeaderProtocolDissector.cc<span style="font-size: 80%;"> (source / <a href="MobilityHeaderProtocolDissector.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">0.0&nbsp;%</td>
+            <td class="headerCovTableEntry">18</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryLo">0.0&nbsp;%</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryLo">0.0&nbsp;%</td>
+            <td class="headerCovTableEntry">20</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2018 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #include &quot;inet/networklayer/mipv6/MobilityHeaderProtocolDissector.h&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : </span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &quot;inet/common/Protocol.h&quot;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &quot;inet/common/packet/chunk/BytesChunk.h&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &quot;inet/common/packet/dissector/ProtocolDissectorRegistry.h&quot;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : #include &quot;inet/networklayer/mipv6/MobilityHeader_m.h&quot;</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : </span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : namespace inet {</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : </span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : Register_Protocol_Dissector(&amp;Protocol::mobileipv6, MobilityHeaderProtocolDissector);</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : </span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : void MobilityHeaderProtocolDissector::dissect(Packet *packet, const Protocol *protocol, ICallback&amp; callback) const</span>
+<span id="L20"><span class="lineNum">      20</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L21"><span class="lineNum">      21</span>                 :             :     // The Ipv6 dissector routes IP protocol 135 here (IP_PROT_IPv6EXT_MOB -&gt;</span>
+<span id="L22"><span class="lineNum">      22</span>                 :             :     // Protocol::mobileipv6). The MH Type field (3rd byte of the Mobility Header)</span>
+<span id="L23"><span class="lineNum">      23</span>                 :             :     // selects the concrete message, so pop that concrete subtype rather than the</span>
+<span id="L24"><span class="lineNum">      24</span>                 :             :     // MobilityHeader base: the coverage recorder keys on the requested pop type, and</span>
+<span id="L25"><span class="lineNum">      25</span>                 :             :     // the serializer's deserialize returns the matching subtype in either case.</span>
+<span id="L26"><span class="lineNum">      26</span>                 :<span class="tlaUNC">           0 :     uint8_t mhType = packet-&gt;peekDataAt&lt;BytesChunk&gt;(B(2), B(1))-&gt;getBytes()[0];</span></span>
+<span id="L27"><span class="lineNum">      27</span>                 :<span class="tlaUNC">           0 :     callback.startProtocolDataUnit(&amp;Protocol::mobileipv6);</span></span>
+<span id="L28"><span class="lineNum">      28</span>                 :<span class="tlaUNC">           0 :     switch (mhType) {</span></span>
+<span id="L29"><span class="lineNum">      29</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         case BINDING_REFRESH_REQUEST: callback.visitChunk(packet-&gt;popAtFront&lt;BindingRefreshRequest&gt;(), &amp;Protocol::mobileipv6); break;</span></span>
+<span id="L30"><span class="lineNum">      30</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         case HOME_TEST_INIT: callback.visitChunk(packet-&gt;popAtFront&lt;HomeTestInit&gt;(), &amp;Protocol::mobileipv6); break;</span></span>
+<span id="L31"><span class="lineNum">      31</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         case CARE_OF_TEST_INIT: callback.visitChunk(packet-&gt;popAtFront&lt;CareOfTestInit&gt;(), &amp;Protocol::mobileipv6); break;</span></span>
+<span id="L32"><span class="lineNum">      32</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         case HOME_TEST: callback.visitChunk(packet-&gt;popAtFront&lt;HomeTest&gt;(), &amp;Protocol::mobileipv6); break;</span></span>
+<span id="L33"><span class="lineNum">      33</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         case CARE_OF_TEST: callback.visitChunk(packet-&gt;popAtFront&lt;CareOfTest&gt;(), &amp;Protocol::mobileipv6); break;</span></span>
+<span id="L34"><span class="lineNum">      34</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         case BINDING_UPDATE: callback.visitChunk(packet-&gt;popAtFront&lt;BindingUpdate&gt;(), &amp;Protocol::mobileipv6); break;</span></span>
+<span id="L35"><span class="lineNum">      35</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         case BINDING_ACKNOWLEDGEMENT: callback.visitChunk(packet-&gt;popAtFront&lt;BindingAcknowledgement&gt;(), &amp;Protocol::mobileipv6); break;</span></span>
+<span id="L36"><span class="lineNum">      36</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         case BINDING_ERROR: callback.visitChunk(packet-&gt;popAtFront&lt;BindingError&gt;(), &amp;Protocol::mobileipv6); break;</span></span>
+<span id="L37"><span class="lineNum">      37</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         default: callback.visitChunk(packet-&gt;popAtFront&lt;MobilityHeader&gt;(), &amp;Protocol::mobileipv6); break;</span></span>
+<span id="L38"><span class="lineNum">      38</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L39"><span class="lineNum">      39</span>                 :             :     // the Mobility Header is a terminal (upper-layer) header; nothing should follow</span>
+<span id="L40"><span class="lineNum">      40</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (packet-&gt;getDataLength() &gt; b(0))</span></span>
+<span id="L41"><span class="lineNum">      41</span>                 :<span class="tlaUNC">           0 :         callback.dissectPacket(packet, nullptr);</span></span>
+<span id="L42"><span class="lineNum">      42</span>                 :<span class="tlaUNC">           0 :     callback.endProtocolDataUnit(&amp;Protocol::mobileipv6);</span></span>
+<span id="L43"><span class="lineNum">      43</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L44"><span class="lineNum">      44</span>                 :             : </span>
+<span id="L45"><span class="lineNum">      45</span>                 :             : } // namespace inet</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

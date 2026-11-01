@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - protocolelement/checksum/base/src/inet/protocolelement/checksum/base/ChecksumCheckerBase.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../index.html">top level</a> - <a href="index.html">protocolelement/checksum/base/src/inet/protocolelement/checksum/base</a> - ChecksumCheckerBase.cc<span style="font-size: 80%;"> (source / <a href="ChecksumCheckerBase.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">60.9&nbsp;%</td>
+            <td class="headerCovTableEntry">46</td>
+            <td class="headerCovTableEntry">28</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryLo">66.7&nbsp;%</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntry">4</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryLo">58.8&nbsp;%</td>
+            <td class="headerCovTableEntry">34</td>
+            <td class="headerCovTableEntry">20</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2020 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #include &quot;inet/protocolelement/checksum/base/ChecksumCheckerBase.h&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : </span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : </span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : namespace inet {</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : </span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : void ChecksumCheckerBase::initialize(int stage)</span>
+<span id="L14"><span class="lineNum">      14</span>                 :<span class="tlaGNC tlaBgGNC">       95652 : {</span></span>
+<span id="L15"><span class="lineNum">      15</span>                 :<span class="tlaGNC">       95652 :     PacketFilterBase::initialize(stage);</span></span>
+<span id="L16"><span class="lineNum">      16</span>         [<span class="tlaGBC" title="Branch 0 was taken 4043 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 91609 times"> + </span>]:<span class="tlaGNC">       95652 :     if (stage == INITSTAGE_LOCAL)</span></span>
+<span id="L17"><span class="lineNum">      17</span>                 :<span class="tlaGNC">        4043 :         checksumType = parseChecksumType(par(&quot;checksumType&quot;));</span></span>
+<span id="L18"><span class="lineNum">      18</span>                 :<span class="tlaGNC">       95652 : }</span></span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : </span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : bool ChecksumCheckerBase::checkDisabledChecksum(const Packet *packet, uint64_t checksum) const</span>
+<span id="L21"><span class="lineNum">      21</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L22"><span class="lineNum">      22</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (checksum != 0x0000)</span></span>
+<span id="L23"><span class="lineNum">      23</span>                 :<span class="tlaUNC">           0 :         throw cRuntimeError(&quot;Checksum value differs from expected&quot;);</span></span>
+<span id="L24"><span class="lineNum">      24</span>                 :<span class="tlaUNC">           0 :     return true;</span></span>
+<span id="L25"><span class="lineNum">      25</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L26"><span class="lineNum">      26</span>                 :             : </span>
+<span id="L27"><span class="lineNum">      27</span>                 :             : bool ChecksumCheckerBase::checkDeclaredCorrectChecksum(const Packet *packet, uint64_t checksum) const</span>
+<span id="L28"><span class="lineNum">      28</span>                 :<span class="tlaGNC tlaBgGNC">        6414 : {</span></span>
+<span id="L29"><span class="lineNum">      29</span>                 :<span class="tlaGNC">        6414 :     const auto&amp; data = packet-&gt;peekData();</span></span>
+<span id="L30"><span class="lineNum">      30</span> [<span class="tlaGBC" title="Branch 0 was taken 6414 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 6414 times"> + </span>]:<span class="tlaGNC">        6414 :     if (checksum != 0xC00D &amp;&amp; checksum != 0xC00DC00D)</span></span>
+<span id="L31"><span class="lineNum">      31</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         throw cRuntimeError(&quot;Checksum value differs from expected&quot;);</span></span>
+<span id="L32"><span class="lineNum">      32</span> [<span class="tlaGBC" title="Branch 0 was taken 6414 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 6413 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:<span class="tlaGNC tlaBgGNC">        6414 :     return data-&gt;isCorrect() &amp;&amp; !packet-&gt;hasBitError();</span></span>
+<span id="L33"><span class="lineNum">      33</span>                 :<span class="tlaGNC">        6414 : }</span></span>
+<span id="L34"><span class="lineNum">      34</span>                 :             : </span>
+<span id="L35"><span class="lineNum">      35</span>                 :             : bool ChecksumCheckerBase::checkDeclaredIncorrectChecksum(const Packet *packet, uint64_t checksum) const</span>
+<span id="L36"><span class="lineNum">      36</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L37"><span class="lineNum">      37</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (checksum != 0xBAAD &amp;&amp; checksum != 0xBAADBAAD)</span></span>
+<span id="L38"><span class="lineNum">      38</span>                 :<span class="tlaUNC">           0 :         throw cRuntimeError(&quot;Checksum value differs from expected&quot;);</span></span>
+<span id="L39"><span class="lineNum">      39</span>                 :<span class="tlaUNC">           0 :     return false;</span></span>
+<span id="L40"><span class="lineNum">      40</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L41"><span class="lineNum">      41</span>                 :             : </span>
+<span id="L42"><span class="lineNum">      42</span>                 :             : bool ChecksumCheckerBase::checkComputedChecksum(const Packet *packet, ChecksumType checksumType, uint64_t receivedChecksum) const</span>
+<span id="L43"><span class="lineNum">      43</span>                 :<span class="tlaGNC tlaBgGNC">     5278094 : {</span></span>
+<span id="L44"><span class="lineNum">      44</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 5278094 times"> + </span>]:<span class="tlaGNC">     5278094 :     if (receivedChecksum == 0)</span></span>
+<span id="L45"><span class="lineNum">      45</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         return true; //TODO questionable</span></span>
+<span id="L46"><span class="lineNum">      46</span>                 :<span class="tlaGNC tlaBgGNC">     5278094 :     else {</span></span>
+<span id="L47"><span class="lineNum">      47</span>                 :<span class="tlaGNC">     5278094 :         const auto&amp; data = packet-&gt;peekDataAsBytes();</span></span>
+<span id="L48"><span class="lineNum">      48</span>                 :<span class="tlaGNC">     5278094 :         auto bytes = data-&gt;getBytes();</span></span>
+<span id="L49"><span class="lineNum">      49</span>                 :<span class="tlaGNC">     5278094 :         size_t checksumSize = getChecksumSizeInBytes(checksumType);</span></span>
+<span id="L50"><span class="lineNum">      50</span>                 :<span class="tlaGNC">     5278094 :         uint64_t computedChecksum = inet::computeChecksum(bytes.data(), packet-&gt;getByteLength() - checksumSize, checksumType);</span></span>
+<span id="L51"><span class="lineNum">      51</span>                 :             :         // NOTE: the correct bit must be checked, because the data may not be corrupted precisely depending on the corruption mode</span>
+<span id="L52"><span class="lineNum">      52</span> [<span class="tlaGBC" title="Branch 0 was taken 5210129 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 67965 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 5210129 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">     5278094 :         return receivedChecksum == computedChecksum &amp;&amp; data-&gt;isCorrect() &amp;&amp; !packet-&gt;hasBitError();</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 5207392 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2737 times"> + </span>]
+<span id="L53"><span class="lineNum">      53</span>                 :<span class="tlaGNC">     5278094 :     }</span></span>
+<span id="L54"><span class="lineNum">      54</span>                 :<span class="tlaGNC">     5278094 : }</span></span>
+<span id="L55"><span class="lineNum">      55</span>                 :             : </span>
+<span id="L56"><span class="lineNum">      56</span>                 :             : bool ChecksumCheckerBase::checkChecksum(const Packet *packet, ChecksumMode checksumMode, ChecksumType checksumType, uint64_t checksum) const</span>
+<span id="L57"><span class="lineNum">      57</span>                 :<span class="tlaGNC">     5303991 : {</span></span>
+<span id="L58"><span class="lineNum">      58</span>                 :<span class="tlaGNC">     5303991 :     switch (checksumMode) {</span></span>
+<span id="L59"><span class="lineNum">      59</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 5303991 times"> + </span>]:<span class="tlaUNC tlaBgUNC">           0 :         case CHECKSUM_DISABLED:</span></span>
+<span id="L60"><span class="lineNum">      60</span>                 :<span class="tlaUNC">           0 :             return checkDisabledChecksum(packet, checksum);</span></span>
+<span id="L61"><span class="lineNum">      61</span>         [<span class="tlaGBC" title="Branch 0 was taken 6414 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5297577 times"> + </span>]:<span class="tlaGNC tlaBgGNC">        6414 :         case CHECKSUM_DECLARED_CORRECT:</span></span>
+<span id="L62"><span class="lineNum">      62</span>                 :<span class="tlaGNC">        6414 :             return checkDeclaredCorrectChecksum(packet, checksum);</span></span>
+<span id="L63"><span class="lineNum">      63</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 5303991 times"> + </span>]:<span class="tlaUNC tlaBgUNC">           0 :         case CHECKSUM_DECLARED_INCORRECT:</span></span>
+<span id="L64"><span class="lineNum">      64</span>                 :<span class="tlaUNC">           0 :             return checkDeclaredIncorrectChecksum(packet, checksum);</span></span>
+<span id="L65"><span class="lineNum">      65</span>         [<span class="tlaGBC" title="Branch 0 was taken 5297577 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 6414 times"> + </span>]:<span class="tlaGNC tlaBgGNC">     5297577 :         case CHECKSUM_COMPUTED:</span></span>
+<span id="L66"><span class="lineNum">      66</span>                 :<span class="tlaGNC">     5297577 :             return checkComputedChecksum(packet, checksumType, checksum);</span></span>
+<span id="L67"><span class="lineNum">      67</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 5303991 times"> + </span>]:<span class="tlaUNC tlaBgUNC">           0 :         default:</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :<span class="tlaUNC">           0 :             throw cRuntimeError(&quot;Unknown checksum mode: %d&quot;, (int)checksumMode);</span></span>
+<span id="L69"><span class="lineNum">      69</span>                 :<span class="tlaGNC tlaBgGNC">     5303991 :     }</span></span>
+<span id="L70"><span class="lineNum">      70</span>                 :<span class="tlaGNC">     5303991 : }</span></span>
+<span id="L71"><span class="lineNum">      71</span>                 :             : </span>
+<span id="L72"><span class="lineNum">      72</span>                 :             : } // namespace inet</span>
+<span id="L73"><span class="lineNum">      73</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

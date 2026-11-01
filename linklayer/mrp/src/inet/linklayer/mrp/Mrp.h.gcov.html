@@ -1,0 +1,336 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - linklayer/mrp/src/inet/linklayer/mrp/Mrp.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">linklayer/mrp/src/inet/linklayer/mrp</a> - Mrp.h<span style="font-size: 80%;"> (source / <a href="Mrp.h.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">50.0&nbsp;%</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntry">2</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryLo">50.0&nbsp;%</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntry">2</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2024 Daniel Zeitler</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : #ifndef __INET_MRP_H</span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #define __INET_MRP_H</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : </span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &quot;inet/common/lifecycle/ModuleOperations.h&quot;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &quot;inet/common/lifecycle/OperationalBase.h&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &quot;inet/common/Traced.h&quot;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : #include &quot;inet/linklayer/common/MacAddress.h&quot;</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : #include &quot;inet/linklayer/ethernet/common/MacForwardingTable.h&quot;</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : #include &quot;inet/linklayer/mrp/MrpMacForwardingTable.h&quot;</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : #include &quot;inet/networklayer/common/InterfaceTable.h&quot;</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : #include &quot;inet/linklayer/mrp/MrpInterfaceData.h&quot;</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : #include &quot;inet/linklayer/mrp/MrpRelay.h&quot;</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : #include &quot;inet/linklayer/mrp/MrpPdu_m.h&quot;</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : #include &quot;inet/linklayer/mrp/CfmContinuityCheckMessage_m.h&quot;</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             : </span>
+<span id="L22"><span class="lineNum">      22</span>                 :             : namespace inet {</span>
+<span id="L23"><span class="lineNum">      23</span>                 :             : </span>
+<span id="L24"><span class="lineNum">      24</span>                 :             : /**</span>
+<span id="L25"><span class="lineNum">      25</span>                 :             :  * Implements the base part of the MRP protocol, i.e. roles MRC, MRM and MRA.</span>
+<span id="L26"><span class="lineNum">      26</span>                 :             :  */</span>
+<span id="L27"><span class="lineNum">      27</span>                 :             : class INET_API Mrp: public OperationalBase, public cListener</span>
+<span id="L28"><span class="lineNum">      28</span>                 :             : {</span>
+<span id="L29"><span class="lineNum">      29</span>                 :             : public:</span>
+<span id="L30"><span class="lineNum">      30</span>                 :             :     enum FrameType : uint64_t {</span>
+<span id="L31"><span class="lineNum">      31</span>                 :             :         MC_RESERVED = 0x000001154E000000,</span>
+<span id="L32"><span class="lineNum">      32</span>                 :             :         MC_TEST = 0x000001154E000001,</span>
+<span id="L33"><span class="lineNum">      33</span>                 :             :         MC_CONTROL = 0x000001154E000002,</span>
+<span id="L34"><span class="lineNum">      34</span>                 :             :         MC_INTEST = 0x000001154E000003,</span>
+<span id="L35"><span class="lineNum">      35</span>                 :             :         MC_INCONTROL = 0x000001154E000004,</span>
+<span id="L36"><span class="lineNum">      36</span>                 :             :         MC_INTRANSFER = 0x000001154E000005,</span>
+<span id="L37"><span class="lineNum">      37</span>                 :             :     };</span>
+<span id="L38"><span class="lineNum">      38</span>                 :             : </span>
+<span id="L39"><span class="lineNum">      39</span>                 :             :     struct Uuid {</span>
+<span id="L40"><span class="lineNum">      40</span>                 :             :         uint64_t uuid0 = 0;</span>
+<span id="L41"><span class="lineNum">      41</span>                 :             :         uint64_t uuid1 = 0;</span>
+<span id="L42"><span class="lineNum">      42</span>                 :             :     };</span>
+<span id="L43"><span class="lineNum">      43</span>                 :             : </span>
+<span id="L44"><span class="lineNum">      44</span>                 :             :     enum RingState {</span>
+<span id="L45"><span class="lineNum">      45</span>                 :             :         OPEN = 0x0000,</span>
+<span id="L46"><span class="lineNum">      46</span>                 :             :         CLOSED = 0x0001,</span>
+<span id="L47"><span class="lineNum">      47</span>                 :             :         UNDEFINED = 0x0003,</span>
+<span id="L48"><span class="lineNum">      48</span>                 :             :     };</span>
+<span id="L49"><span class="lineNum">      49</span>                 :             : </span>
+<span id="L50"><span class="lineNum">      50</span>                 :             :     enum MrpRole {</span>
+<span id="L51"><span class="lineNum">      51</span>                 :             :         DISABLED = 0,</span>
+<span id="L52"><span class="lineNum">      52</span>                 :             :         CLIENT = 1,</span>
+<span id="L53"><span class="lineNum">      53</span>                 :             :         MANAGER = 2,</span>
+<span id="L54"><span class="lineNum">      54</span>                 :             :         MANAGER_AUTO_COMP = 3,</span>
+<span id="L55"><span class="lineNum">      55</span>                 :             :         MANAGER_AUTO = 4,</span>
+<span id="L56"><span class="lineNum">      56</span>                 :             :     };</span>
+<span id="L57"><span class="lineNum">      57</span>                 :             : </span>
+<span id="L58"><span class="lineNum">      58</span>                 :             :     enum MrpPriority : uint16_t {</span>
+<span id="L59"><span class="lineNum">      59</span>                 :             :         HIGHEST = 0x0000,</span>
+<span id="L60"><span class="lineNum">      60</span>                 :             :         HIGH = 0x4000,</span>
+<span id="L61"><span class="lineNum">      61</span>                 :             :         DEFAULT = 0x8000,</span>
+<span id="L62"><span class="lineNum">      62</span>                 :             :         MRAHIGHEST = 0x9000,</span>
+<span id="L63"><span class="lineNum">      63</span>                 :             :         MRADEFAULT = 0xA000,</span>
+<span id="L64"><span class="lineNum">      64</span>                 :             :         MRALOWEST = 0xFFFF,</span>
+<span id="L65"><span class="lineNum">      65</span>                 :             :     };</span>
+<span id="L66"><span class="lineNum">      66</span>                 :             : </span>
+<span id="L67"><span class="lineNum">      67</span>                 :             :     enum NodeState {</span>
+<span id="L68"><span class="lineNum">      68</span>                 :             :         POWER_ON,</span>
+<span id="L69"><span class="lineNum">      69</span>                 :             :         AC_STAT1, //waiting for the first Link Up at one of its ring ports, starting test monitoring of the ring</span>
+<span id="L70"><span class="lineNum">      70</span>                 :             : </span>
+<span id="L71"><span class="lineNum">      71</span>                 :             :         //Manager States</span>
+<span id="L72"><span class="lineNum">      72</span>                 :             :         PRM_UP, //only the primary ring port has a link. The MRM shall send MRP_Test frames periodically through both ring ports</span>
+<span id="L73"><span class="lineNum">      73</span>                 :             :         CHK_RO, //Check Ring, Ring Open State</span>
+<span id="L74"><span class="lineNum">      74</span>                 :             :         CHK_RC, //Check Ring, Ring Closed State</span>
+<span id="L75"><span class="lineNum">      75</span>                 :             : </span>
+<span id="L76"><span class="lineNum">      76</span>                 :             :         //Client States</span>
+<span id="L77"><span class="lineNum">      77</span>                 :             :         DE_IDLE, //Data Exchange Idle: This state shall be reached if only one ring port (primary) has a link and its port state is set to FORWARDING</span>
+<span id="L78"><span class="lineNum">      78</span>                 :             :         PT, //Pass Through: Temporary state while signaling link changes</span>
+<span id="L79"><span class="lineNum">      79</span>                 :             :         DE, //Data Exchange: Temporary state while signaling link changes</span>
+<span id="L80"><span class="lineNum">      80</span>                 :             :         PT_IDLE, //Pass Through Idle: both ring ports have a link and their port states are set to FORWARDING</span>
+<span id="L81"><span class="lineNum">      81</span>                 :             :     };</span>
+<span id="L82"><span class="lineNum">      82</span>                 :             : </span>
+<span id="L83"><span class="lineNum">      83</span>                 :             : protected:</span>
+<span id="L84"><span class="lineNum">      84</span>                 :             :     typedef std::map&lt;uint16_t, simtime_t&gt; FrameSentDatabase;  // test frame sequence -&gt; time sent</span>
+<span id="L85"><span class="lineNum">      85</span>                 :             :     typedef NetworkInterface::State LinkState;</span>
+<span id="L86"><span class="lineNum">      86</span>                 :             : </span>
+<span id="L87"><span class="lineNum">      87</span>                 :             :     const static uint16_t MRP_LT = 0x88E3;</span>
+<span id="L88"><span class="lineNum">      88</span>                 :             : </span>
+<span id="L89"><span class="lineNum">      89</span>                 :             :     bool visualize = false;</span>
+<span id="L90"><span class="lineNum">      90</span>                 :             :     Uuid domainID;</span>
+<span id="L91"><span class="lineNum">      91</span>                 :             :     int timingProfile;</span>
+<span id="L92"><span class="lineNum">      92</span>                 :             :     uint16_t vlanID = 0;</span>
+<span id="L93"><span class="lineNum">      93</span>                 :             :     uint8_t priority = 7;</span>
+<span id="L94"><span class="lineNum">      94</span>                 :             :     bool interconnectionLinkCheckAware = true;</span>
+<span id="L95"><span class="lineNum">      95</span>                 :             :     bool interconnectionRingCheckAware = true;</span>
+<span id="L96"><span class="lineNum">      96</span>                 :             :     bool enableLinkCheckOnRing = false;</span>
+<span id="L97"><span class="lineNum">      97</span>                 :             :     cPar *linkDetectionDelayPar;</span>
+<span id="L98"><span class="lineNum">      98</span>                 :             :     cPar *processingDelayPar;</span>
+<span id="L99"><span class="lineNum">      99</span>                 :             : </span>
+<span id="L100"><span class="lineNum">     100</span>                 :             :     Traced&lt;MrpRole&gt; role = DISABLED;</span>
+<span id="L101"><span class="lineNum">     101</span>                 :             :     Traced&lt;NodeState&gt; nodeState = POWER_ON;</span>
+<span id="L102"><span class="lineNum">     102</span>                 :             :     Traced&lt;RingState&gt; ringState = OPEN;</span>
+<span id="L103"><span class="lineNum">     103</span>                 :             : </span>
+<span id="L104"><span class="lineNum">     104</span>                 :             :     uint16_t transition = 0;</span>
+<span id="L105"><span class="lineNum">     105</span>                 :             :     uint16_t sequenceID = 0;</span>
+<span id="L106"><span class="lineNum">     106</span>                 :             :     uint16_t lastTopologyId = 0;</span>
+<span id="L107"><span class="lineNum">     107</span>                 :             :     MacAddress localBridgeAddress;</span>
+<span id="L108"><span class="lineNum">     108</span>                 :             :     int primaryRingPortId = -1; // interface Id</span>
+<span id="L109"><span class="lineNum">     109</span>                 :             :     int secondaryRingPortId = -1; // interface Id</span>
+<span id="L110"><span class="lineNum">     110</span>                 :             : </span>
+<span id="L111"><span class="lineNum">     111</span>                 :             :     //CCM</span>
+<span id="L112"><span class="lineNum">     112</span>                 :             :     int sequenceCCM1 = 0;</span>
+<span id="L113"><span class="lineNum">     113</span>                 :             :     int sequenceCCM2 = 0;</span>
+<span id="L114"><span class="lineNum">     114</span>                 :             : </span>
+<span id="L115"><span class="lineNum">     115</span>                 :             :     //Variables need for Manager</span>
+<span id="L116"><span class="lineNum">     116</span>                 :             :     bool addTest = false;</span>
+<span id="L117"><span class="lineNum">     117</span>                 :             :     bool nonblockingMrcSupported = true;  // &quot;Non-blocking MRC supported&quot;</span>
+<span id="L118"><span class="lineNum">     118</span>                 :             :     bool reactOnLinkChange = true;</span>
+<span id="L119"><span class="lineNum">     119</span>                 :             :     bool noTopologyChange = false;  // NO_TC variable</span>
+<span id="L120"><span class="lineNum">     120</span>                 :             :     MrpPriority localManagerPrio = DEFAULT;</span>
+<span id="L121"><span class="lineNum">     121</span>                 :             : </span>
+<span id="L122"><span class="lineNum">     122</span>                 :             :     //Variables needed for Automanager</span>
+<span id="L123"><span class="lineNum">     123</span>                 :             :     MacAddress hostBestMRMSourceAddress;</span>
+<span id="L124"><span class="lineNum">     124</span>                 :             :     MrpPriority hostBestMRMPriority;</span>
+<span id="L125"><span class="lineNum">     125</span>                 :             :     uint16_t monNReturn;</span>
+<span id="L126"><span class="lineNum">     126</span>                 :             :     uint16_t monNRmax = 5;</span>
+<span id="L127"><span class="lineNum">     127</span>                 :             :     cMessage *linkUpHysteresisTimer = nullptr; //LNKUP_HYST_TIMER_RUNNING</span>
+<span id="L128"><span class="lineNum">     128</span>                 :             : </span>
+<span id="L129"><span class="lineNum">     129</span>                 :             :     simtime_t linkDownInterval = SimTime(20, SIMTIME_MS); //MRP_LNKdownT</span>
+<span id="L130"><span class="lineNum">     130</span>                 :             :     simtime_t linkUpInterval = SimTime(20, SIMTIME_MS); //MRP_LNKupT</span>
+<span id="L131"><span class="lineNum">     131</span>                 :             :     simtime_t topologyChangeInterval; //MRP_TOPchgT</span>
+<span id="L132"><span class="lineNum">     132</span>                 :             :     simtime_t shortTestInterval; //MRP_TSTshortT</span>
+<span id="L133"><span class="lineNum">     133</span>                 :             :     simtime_t defaultTestInterval; //MRP_TSTdefaultT</span>
+<span id="L134"><span class="lineNum">     134</span>                 :             :     simtime_t ccmInterval = SimTime(10, SIMTIME_MS); // time in milliseconds. either 3.3 or 10 ms</span>
+<span id="L135"><span class="lineNum">     135</span>                 :             : </span>
+<span id="L136"><span class="lineNum">     136</span>                 :             :     uint16_t topologyChangeMaxRepeatCount = 3; //MRP_TOPNRmax</span>
+<span id="L137"><span class="lineNum">     137</span>                 :             :     uint16_t topologyChangeRepeatCount = 0; //MRP_TOPNReturn</span>
+<span id="L138"><span class="lineNum">     138</span>                 :             :     uint16_t testMaxRetransmissionCount = 0; //MRP_MRM_NRmax</span>
+<span id="L139"><span class="lineNum">     139</span>                 :             :     uint16_t testRetransmissionCount = 0; //MRP_MRM_NReturn</span>
+<span id="L140"><span class="lineNum">     140</span>                 :             :     uint16_t linkMaxChange = 4; //MRP_LNKNRmax</span>
+<span id="L141"><span class="lineNum">     141</span>                 :             :     uint16_t linkChangeCount; //MRP_LNKNReturn</span>
+<span id="L142"><span class="lineNum">     142</span>                 :             :     uint16_t testMonitoringCount; //MRP_TSTNRmax</span>
+<span id="L143"><span class="lineNum">     143</span>                 :             :     uint16_t testMonitoringExtendedCount = 15; //MRP_TSTExtNRmax</span>
+<span id="L144"><span class="lineNum">     144</span>                 :             : </span>
+<span id="L145"><span class="lineNum">     145</span>                 :             :     cMessage *linkDownTimer = nullptr;</span>
+<span id="L146"><span class="lineNum">     146</span>                 :             :     cMessage *linkUpTimer = nullptr;</span>
+<span id="L147"><span class="lineNum">     147</span>                 :             :     cMessage *fdbClearTimer = nullptr;</span>
+<span id="L148"><span class="lineNum">     148</span>                 :             :     cMessage *fdbClearDelay = nullptr;</span>
+<span id="L149"><span class="lineNum">     149</span>                 :             :     cMessage *topologyChangeTimer = nullptr;</span>
+<span id="L150"><span class="lineNum">     150</span>                 :             :     cMessage *testTimer = nullptr;</span>
+<span id="L151"><span class="lineNum">     151</span>                 :             :     cMessage *startUpTimer = nullptr;</span>
+<span id="L152"><span class="lineNum">     152</span>                 :             : </span>
+<span id="L153"><span class="lineNum">     153</span>                 :             :     opp_component_ptr&lt;cModule&gt; switchModule;</span>
+<span id="L154"><span class="lineNum">     154</span>                 :             :     ModuleRefByPar&lt;MrpMacForwardingTable&gt; mrpMacForwardingTable;</span>
+<span id="L155"><span class="lineNum">     155</span>                 :             :     ModuleRefByPar&lt;IInterfaceTable&gt; interfaceTable;</span>
+<span id="L156"><span class="lineNum">     156</span>                 :             :     ModuleRefByPar&lt;MrpRelay&gt; relay;</span>
+<span id="L157"><span class="lineNum">     157</span>                 :             : </span>
+<span id="L158"><span class="lineNum">     158</span>                 :             :     FrameSentDatabase testFrameSent;</span>
+<span id="L159"><span class="lineNum">     159</span>                 :             : </span>
+<span id="L160"><span class="lineNum">     160</span>                 :             :     simsignal_t ringPort1StateChangedSignal;</span>
+<span id="L161"><span class="lineNum">     161</span>                 :             :     simsignal_t ringPort2StateChangedSignal;</span>
+<span id="L162"><span class="lineNum">     162</span>                 :             :     simsignal_t topologyChangeAnnouncedSignal;</span>
+<span id="L163"><span class="lineNum">     163</span>                 :             :     simsignal_t fdbClearedSignal;</span>
+<span id="L164"><span class="lineNum">     164</span>                 :             :     simsignal_t linkChangeDetectedSignal;</span>
+<span id="L165"><span class="lineNum">     165</span>                 :             :     simsignal_t testFrameLatencySignal;</span>
+<span id="L166"><span class="lineNum">     166</span>                 :             : </span>
+<span id="L167"><span class="lineNum">     167</span>                 :             : public:</span>
+<span id="L168"><span class="lineNum">     168</span>                 :             :     typedef MrpInterfaceData::PortInfo PortInfo;</span>
+<span id="L169"><span class="lineNum">     169</span>                 :             : </span>
+<span id="L170"><span class="lineNum">     170</span>                 :             : protected:</span>
+<span id="L171"><span class="lineNum">     171</span>                 :             :     virtual void start();</span>
+<span id="L172"><span class="lineNum">     172</span>                 :             :     virtual void stop();</span>
+<span id="L173"><span class="lineNum">     173</span>                 :             :     virtual void initialize(int stage) override;</span>
+<span id="L174"><span class="lineNum">     174</span>                 :             :     virtual MrpRole parseMrpRole(const char *mrpRole) const;</span>
+<span id="L175"><span class="lineNum">     175</span>                 :             :     virtual void mrcInit();</span>
+<span id="L176"><span class="lineNum">     176</span>                 :             :     virtual void mrmInit();</span>
+<span id="L177"><span class="lineNum">     177</span>                 :             :     virtual void mraInit();</span>
+<span id="L178"><span class="lineNum">     178</span>                 :             :     virtual void initPortTable();</span>
+<span id="L179"><span class="lineNum">     179</span>                 :             :     virtual void initRingPort(int interfaceId, MrpInterfaceData::PortRole role, bool enableLinkCheck);</span>
+<span id="L180"><span class="lineNum">     180</span>                 :             :     virtual void startContinuityCheck();</span>
+<span id="L181"><span class="lineNum">     181</span>                 :             :     virtual void initInterfacedata(int interfaceId);</span>
+<span id="L182"><span class="lineNum">     182</span>                 :             :     virtual void toggleRingPorts();</span>
+<span id="L183"><span class="lineNum">     183</span>                 :             :     virtual void setPortRole(int interfaceId, MrpInterfaceData::PortRole role);</span>
+<span id="L184"><span class="lineNum">     184</span>                 :             :     virtual void setPortState(int interfaceId, MrpInterfaceData::PortState state);</span>
+<span id="L185"><span class="lineNum">     185</span>                 :             :     virtual MrpInterfaceData::PortState getPortState(int interfaceId) const;</span>
+<span id="L186"><span class="lineNum">     186</span>                 :             :     virtual MrpInterfaceData::PortRole getPortRole(int interfaceId) const;</span>
+<span id="L187"><span class="lineNum">     187</span>                 :             :     virtual NetworkInterface* getPortNetworkInterface(int interfaceId) const;</span>
+<span id="L188"><span class="lineNum">     188</span>                 :             :     virtual MrpInterfaceData* getPortInterfaceDataForUpdate(int interfaceId);</span>
+<span id="L189"><span class="lineNum">     189</span>                 :             :     virtual const MrpInterfaceData* getPortInterfaceData(int interfaceId) const;</span>
+<span id="L190"><span class="lineNum">     190</span>                 :             :     virtual void handleMrpPDU(Packet* packet);</span>
+<span id="L191"><span class="lineNum">     191</span>                 :             :     virtual void handleCfmContinuityCheckMessage(Packet* packet);</span>
+<span id="L192"><span class="lineNum">     192</span>                 :             :     virtual void handleDelayTimer(int ringPort, int field);</span>
+<span id="L193"><span class="lineNum">     193</span>                 :             :     virtual void handleTopologyChangeTimer();</span>
+<span id="L194"><span class="lineNum">     194</span>                 :             :     virtual void clearLocalFDB();</span>
+<span id="L195"><span class="lineNum">     195</span>                 :             :     virtual void clearLocalFDBDelayed();</span>
+<span id="L196"><span class="lineNum">     196</span>                 :             :     virtual bool isBetterThanOwnPrio(MrpPriority remotePrio, MacAddress remoteAddress);</span>
+<span id="L197"><span class="lineNum">     197</span>                 :             :     virtual bool isBetterThanBestPrio(MrpPriority remotePrio, MacAddress remoteAddress);</span>
+<span id="L198"><span class="lineNum">     198</span>                 :             :     virtual void handleTestTimer();</span>
+<span id="L199"><span class="lineNum">     199</span>                 :             :     virtual void handleLinkUpTimer();</span>
+<span id="L200"><span class="lineNum">     200</span>                 :             :     virtual void handleLinkDownTimer();</span>
+<span id="L201"><span class="lineNum">     201</span>                 :             :     virtual void handleContinuityCheckTimer(int ringPort);</span>
+<span id="L202"><span class="lineNum">     202</span>                 :             :     virtual void setupTestRingReq();</span>
+<span id="L203"><span class="lineNum">     203</span>                 :             :     virtual void setupTopologyChangeReq(simtime_t interval);</span>
+<span id="L204"><span class="lineNum">     204</span>                 :             :     virtual void setupContinuityCheck(int ringPort);</span>
+<span id="L205"><span class="lineNum">     205</span>                 :             :     virtual void testRingReq(simtime_t time);</span>
+<span id="L206"><span class="lineNum">     206</span>                 :             :     virtual void testMgrNackReq(int ringPort, MrpPriority managerPrio, MacAddress sourceAddress);</span>
+<span id="L207"><span class="lineNum">     207</span>                 :             :     virtual void testPropagateReq(int ringPort, MrpPriority managerPrio, MacAddress sourceAddress);</span>
+<span id="L208"><span class="lineNum">     208</span>                 :             :     virtual void topologyChangeReq(simtime_t time);</span>
+<span id="L209"><span class="lineNum">     209</span>                 :             :     virtual void linkChangeReq(int ringPort, LinkState linkState);</span>
+<span id="L210"><span class="lineNum">     210</span>                 :             :     virtual void setupLinkChangeReq(int ringPort, LinkState linkState, simtime_t time);</span>
+<span id="L211"><span class="lineNum">     211</span>                 :             :     virtual void testRingInd(int ringPort, MacAddress sourceAddress, MrpPriority managerPrio);</span>
+<span id="L212"><span class="lineNum">     212</span>                 :             :     virtual void topologyChangeInd(MacAddress sourceAddress, simtime_t time);</span>
+<span id="L213"><span class="lineNum">     213</span>                 :             :     virtual void linkChangeInd(LinkState linkState);</span>
+<span id="L214"><span class="lineNum">     214</span>                 :             :     virtual void testMgrNackInd(int ringPort, MacAddress sourceAddress, MrpPriority managerPrio, MacAddress bestMRMSourceAddress);</span>
+<span id="L215"><span class="lineNum">     215</span>                 :             :     virtual void testPropagateInd(int ringPort, MacAddress sourceAddress, MrpPriority managerPrio, MacAddress bestMRMSourceAddress, MrpPriority bestMRMPrio);</span>
+<span id="L216"><span class="lineNum">     216</span>                 :             :     virtual void mauTypeChangeInd(int ringPort, LinkState linkState);</span>
+<span id="L217"><span class="lineNum">     217</span>                 :             :     virtual void interconnTopologyChangeInd(MacAddress sourceAddress, simtime_t time, uint16_t inId, int ringPort, Packet* packet);</span>
+<span id="L218"><span class="lineNum">     218</span>                 :             :     virtual void interconnLinkChangeInd(uint16_t inId, LinkState linkState, int ringPort, Packet* packet);</span>
+<span id="L219"><span class="lineNum">     219</span>                 :             :     virtual void interconnLinkStatusPollInd(uint16_t inId, int ringPort, Packet* packet);</span>
+<span id="L220"><span class="lineNum">     220</span>                 :             :     virtual void interconnTestInd(MacAddress sourceAddress, int ringPort, uint16_t inId, Packet* packet);</span>
+<span id="L221"><span class="lineNum">     221</span>                 :             :     virtual void interconnForwardReq(int ringPort, Packet* packet);</span>
+<span id="L222"><span class="lineNum">     222</span>                 :             :     virtual void sendFrameReq(int portId, const MacAddress&amp; destinationAddress, const MacAddress&amp; sourceAddress, int prio, uint16_t lt, Packet* MRPPDU);</span>
+<span id="L223"><span class="lineNum">     223</span>                 :             :     virtual void sendCCM(int portId, Packet* ccm);</span>
+<span id="L224"><span class="lineNum">     224</span>                 :             :     virtual void clearFDB(simtime_t time);</span>
+<span id="L225"><span class="lineNum">     225</span>                 :             :     virtual void colorLink(NetworkInterface* ie, bool forwarding) const;</span>
+<span id="L226"><span class="lineNum">     226</span>                 :             :     virtual void refreshDisplay() const override;</span>
+<span id="L227"><span class="lineNum">     227</span>                 :             :     virtual std::string resolveDirective(char directive) const override;</span>
+<span id="L228"><span class="lineNum">     228</span>                 :             :     static const char *getMrpRoleName(MrpRole role, bool acronym);</span>
+<span id="L229"><span class="lineNum">     229</span>                 :             :     static const char *getNodeStateName(NodeState state);</span>
+<span id="L230"><span class="lineNum">     230</span>                 :             :     static const char *getRingStateName(RingState state);</span>
+<span id="L231"><span class="lineNum">     231</span>                 :             : </span>
+<span id="L232"><span class="lineNum">     232</span>                 :             : public:</span>
+<span id="L233"><span class="lineNum">     233</span>                 :             :     Mrp();</span>
+<span id="L234"><span class="lineNum">     234</span>                 :             :     virtual ~Mrp();</span>
+<span id="L235"><span class="lineNum">     235</span>                 :             :     virtual void handleStartOperation(LifecycleOperation *operation) override;</span>
+<span id="L236"><span class="lineNum">     236</span>                 :             :     virtual void handleStopOperation(LifecycleOperation *operation) override;</span>
+<span id="L237"><span class="lineNum">     237</span>                 :             :     virtual void handleCrashOperation(LifecycleOperation *operation) override;</span>
+<span id="L238"><span class="lineNum">     238</span>                 :             :     virtual void receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj, cObject *details) override;</span>
+<span id="L239"><span class="lineNum">     239</span>                 :             :     virtual void setTimingProfile(int maxRecoveryTime);</span>
+<span id="L240"><span class="lineNum">     240</span>                 :             :     virtual int resolveInterfaceIndex(int interfaceIndex);</span>
+<span id="L241"><span class="lineNum">     241</span>                 :             :     virtual void handleMessageWhenUp(cMessage *msg) override;</span>
+<span id="L242"><span class="lineNum">     242</span>                 :<span class="tlaGNC tlaBgGNC">       46776 :     virtual bool isInitializeStage(int stage) const override { return stage == INITSTAGE_LINK_LAYER; }</span></span>
+<span id="L243"><span class="lineNum">     243</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     virtual bool isModuleStartStage(int stage) const override { return stage == ModuleStartOperation::STAGE_LAST; }</span></span>
+<span id="L244"><span class="lineNum">     244</span>                 :<span class="tlaUNC">           0 :     virtual bool isModuleStopStage(int stage) const override { return stage == ModuleStopOperation::STAGE_LINK_LAYER; }</span></span>
+<span id="L245"><span class="lineNum">     245</span>                 :<span class="tlaGNC tlaBgGNC">       46776 :     virtual int numInitStages() const override { return NUM_INIT_STAGES; }</span></span>
+<span id="L246"><span class="lineNum">     246</span>                 :             : };</span>
+<span id="L247"><span class="lineNum">     247</span>                 :             : </span>
+<span id="L248"><span class="lineNum">     248</span>                 :             : } // namespace inet</span>
+<span id="L249"><span class="lineNum">     249</span>                 :             : </span>
+<span id="L250"><span class="lineNum">     250</span>                 :             : #endif</span>
+<span id="L251"><span class="lineNum">     251</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

@@ -1,0 +1,566 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - networklayer/pmipv6/src/inet/networklayer/pmipv6/Pmipv6.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">networklayer/pmipv6/src/inet/networklayer/pmipv6</a> - Pmipv6.cc<span style="font-size: 80%;"> (source / <a href="Pmipv6.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">70.1&nbsp;%</td>
+            <td class="headerCovTableEntry">354</td>
+            <td class="headerCovTableEntry">248</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryMed">83.3&nbsp;%</td>
+            <td class="headerCovTableEntry">18</td>
+            <td class="headerCovTableEntry">15</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryLo">45.5&nbsp;%</td>
+            <td class="headerCovTableEntry">132</td>
+            <td class="headerCovTableEntry">60</td>
+          </tr>
+                  <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2026 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : #include &quot;inet/networklayer/pmipv6/Pmipv6.h&quot;</span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : </span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : #include &lt;cstdlib&gt;</span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &lt;cstring&gt;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : </span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &quot;inet/common/IProtocolRegistrationListener.h&quot;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : #include &quot;inet/common/ModuleAccess.h&quot;</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : #include &quot;inet/common/Protocol.h&quot;</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : #include &quot;inet/common/ProtocolTag_m.h&quot;</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : #include &quot;inet/common/Simsignals.h&quot;</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : #include &quot;inet/common/packet/Message.h&quot;</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : #include &quot;inet/common/packet/Packet.h&quot;</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : #include &quot;inet/linklayer/common/InterfaceTag_m.h&quot;</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : #include &quot;inet/networklayer/common/HopLimitTag_m.h&quot;</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             : #include &quot;inet/networklayer/common/L3AddressResolver.h&quot;</span>
+<span id="L22"><span class="lineNum">      22</span>                 :             : #include &quot;inet/networklayer/common/L3AddressTag_m.h&quot;</span>
+<span id="L23"><span class="lineNum">      23</span>                 :             : #include &quot;inet/networklayer/common/NetworkInterface.h&quot;</span>
+<span id="L24"><span class="lineNum">      24</span>                 :             : #include &quot;inet/networklayer/contract/IInterfaceTable.h&quot;</span>
+<span id="L25"><span class="lineNum">      25</span>                 :             : #include &quot;inet/networklayer/icmpv6/Ipv6NeighbourDiscovery.h&quot;</span>
+<span id="L26"><span class="lineNum">      26</span>                 :             : #include &quot;inet/networklayer/ipv6/Ipv6InterfaceData.h&quot;</span>
+<span id="L27"><span class="lineNum">      27</span>                 :             : #include &quot;inet/networklayer/ipv6/Ipv6Route.h&quot;</span>
+<span id="L28"><span class="lineNum">      28</span>                 :             : #include &quot;inet/networklayer/ipv6/Ipv6RoutingTable.h&quot;</span>
+<span id="L29"><span class="lineNum">      29</span>                 :             : #include &quot;inet/networklayer/mipv6/MobilityHeader_m.h&quot;</span>
+<span id="L30"><span class="lineNum">      30</span>                 :             : #include &quot;inet/networklayer/mipv6/MobilityHeaderSerializer.h&quot;</span>
+<span id="L31"><span class="lineNum">      31</span>                 :             : </span>
+<span id="L32"><span class="lineNum">      32</span>                 :             : namespace inet {</span>
+<span id="L33"><span class="lineNum">      33</span>                 :             : </span>
+<span id="L34"><span class="lineNum">      34</span>                 :             : Define_Module(Pmipv6);</span>
+<span id="L35"><span class="lineNum">      35</span>                 :             : </span>
+<span id="L36"><span class="lineNum">      36</span>                 :             : Pmipv6::~Pmipv6()</span>
+<span id="L37"><span class="lineNum">      37</span>                 :<span class="tlaGNC tlaBgGNC">           3 : {</span></span>
+<span id="L38"><span class="lineNum">      38</span>                 :<span class="tlaGNC">           3 : }</span></span>
+<span id="L39"><span class="lineNum">      39</span>                 :             : </span>
+<span id="L40"><span class="lineNum">      40</span>                 :             : void Pmipv6::initialize(int stage)</span>
+<span id="L41"><span class="lineNum">      41</span>                 :<span class="tlaGNC">          72 : {</span></span>
+<span id="L42"><span class="lineNum">      42</span>                 :<span class="tlaGNC">          72 :     OperationalBase::initialize(stage);</span></span>
+<span id="L43"><span class="lineNum">      43</span>                 :             : </span>
+<span id="L44"><span class="lineNum">      44</span>         [<span class="tlaGBC" title="Branch 0 was taken 3 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 69 times"> + </span>]:<span class="tlaGNC">          72 :     if (stage == INITSTAGE_LOCAL) {</span></span>
+<span id="L45"><span class="lineNum">      45</span>                 :<span class="tlaGNC">           3 :         isLma = par(&quot;isLocalMobilityAnchor&quot;);</span></span>
+<span id="L46"><span class="lineNum">      46</span>                 :<span class="tlaGNC">           3 :         isMag = par(&quot;isMobileAccessGateway&quot;);</span></span>
+<span id="L47"><span class="lineNum">      47</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 3 times"> + </span>]:<span class="tlaGNC">           3 :         if (isLma == isMag)</span></span>
+<span id="L48"><span class="lineNum">      48</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             throw cRuntimeError(&quot;Pmipv6: exactly one of isLocalMobilityAnchor / isMobileAccessGateway must be set&quot;);</span></span>
+<span id="L49"><span class="lineNum">      49</span>                 :             : </span>
+<span id="L50"><span class="lineNum">      50</span>                 :<span class="tlaGNC tlaBgGNC">           3 :         bindingLifetime = par(&quot;bindingLifetime&quot;);</span></span>
+<span id="L51"><span class="lineNum">      51</span>                 :<span class="tlaGNC">           3 :         advValidLifetime = par(&quot;homeNetworkPrefixAdvValidLifetime&quot;);</span></span>
+<span id="L52"><span class="lineNum">      52</span>                 :<span class="tlaGNC">           3 :         advPreferredLifetime = par(&quot;homeNetworkPrefixAdvPreferredLifetime&quot;);</span></span>
+<span id="L53"><span class="lineNum">      53</span>                 :<span class="tlaGNC">           3 :         const char *lma = par(&quot;localMobilityAnchorAddress&quot;);</span></span>
+<span id="L54"><span class="lineNum">      54</span>         [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:<span class="tlaGNC">           3 :         if (lma[0])</span></span>
+<span id="L55"><span class="lineNum">      55</span>                 :<span class="tlaGNC">           2 :             localMobilityAnchorAddress = Ipv6Address(lma);</span></span>
+<span id="L56"><span class="lineNum">      56</span>                 :             : </span>
+<span id="L57"><span class="lineNum">      57</span>                 :<span class="tlaGNC">           3 :         cModule *host = getContainingNode(this);</span></span>
+<span id="L58"><span class="lineNum">      58</span>                 :<span class="tlaGNC">           3 :         rt6 = L3AddressResolver().getIpv6RoutingTableOf(host);</span></span>
+<span id="L59"><span class="lineNum">      59</span>                 :             : </span>
+<span id="L60"><span class="lineNum">      60</span>         [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:<span class="tlaGNC">           3 :         if (isMag) {</span></span>
+<span id="L61"><span class="lineNum">      61</span>                 :<span class="tlaGNC">           2 :             parseMobileNodeProfiles();</span></span>
+<span id="L62"><span class="lineNum">      62</span>                 :             :             // detect mobile nodes attaching to / leaving this access gateway's links</span>
+<span id="L63"><span class="lineNum">      63</span>                 :<span class="tlaGNC">           2 :             host-&gt;subscribe(l2ApAssociatedSignal, this);</span></span>
+<span id="L64"><span class="lineNum">      64</span>                 :<span class="tlaGNC">           2 :             host-&gt;subscribe(l2ApDisassociatedSignal, this);</span></span>
+<span id="L65"><span class="lineNum">      65</span>                 :<span class="tlaGNC">           2 :         }</span></span>
+<span id="L66"><span class="lineNum">      66</span>                 :             : </span>
+<span id="L67"><span class="lineNum">      67</span>                 :<span class="tlaGNC">           3 :         WATCH(magTunnelId);</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :<span class="tlaGNC">           3 :     }</span></span>
+<span id="L69"><span class="lineNum">      69</span>         [<span class="tlaGBC" title="Branch 0 was taken 3 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 66 times"> + </span>]:<span class="tlaGNC">          69 :     else if (stage == INITSTAGE_NETWORK_LAYER) {</span></span>
+<span id="L70"><span class="lineNum">      70</span>                 :<span class="tlaGNC">           3 :         ift.reference(this, &quot;interfaceTableModule&quot;, true);</span></span>
+<span id="L71"><span class="lineNum">      71</span>                 :<span class="tlaGNC">           3 :         ipv6nd.reference(this, &quot;ipv6NeighbourDiscoveryModule&quot;, true);</span></span>
+<span id="L72"><span class="lineNum">      72</span>                 :             :         // (both LMA and MAG are routers; forwarding is enabled by the node type)</span>
+<span id="L73"><span class="lineNum">      73</span>                 :             :         // receive Mobility Header messages (Proxy Binding Updates / Acknowledgements)</span>
+<span id="L74"><span class="lineNum">      74</span>                 :<span class="tlaGNC">           3 :         registerProtocol(Protocol::mobileipv6, gate(&quot;toIPv6&quot;), gate(&quot;fromIPv6&quot;));</span></span>
+<span id="L75"><span class="lineNum">      75</span>                 :<span class="tlaGNC">           3 :     }</span></span>
+<span id="L76"><span class="lineNum">      76</span>                 :<span class="tlaGNC">          72 : }</span></span>
+<span id="L77"><span class="lineNum">      77</span>                 :             : </span>
+<span id="L78"><span class="lineNum">      78</span>                 :             : void Pmipv6::handleMessageWhenUp(cMessage *msg)</span>
+<span id="L79"><span class="lineNum">      79</span>                 :<span class="tlaGNC">           4 : {</span></span>
+<span id="L80"><span class="lineNum">      80</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 4 times"> + </span>]:<span class="tlaGNC">           4 :     if (msg-&gt;isSelfMessage())</span></span>
+<span id="L81"><span class="lineNum">      81</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         throw cRuntimeError(&quot;Pmipv6: unexpected self-message&quot;);</span></span>
+<span id="L82"><span class="lineNum">      82</span>         [<span class="tlaGBC" title="Branch 0 was taken 4 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC tlaBgGNC">           4 :     else if (auto packet = dynamic_cast&lt;Packet *&gt;(msg)) {</span></span>
+<span id="L83"><span class="lineNum">      83</span>                 :<span class="tlaGNC">           4 :         auto protocolTag = packet-&gt;findTag&lt;PacketProtocolTag&gt;();</span></span>
+<span id="L84"><span class="lineNum">      84</span> [<span class="tlaGBC" title="Branch 0 was taken 4 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 4 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">           4 :         if (protocolTag &amp;&amp; protocolTag-&gt;getProtocol() == &amp;Protocol::mobileipv6)</span></span>
+<span id="L85"><span class="lineNum">      85</span>                 :<span class="tlaGNC">           4 :             processMobilityMessage(packet);</span></span>
+<span id="L86"><span class="lineNum">      86</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         else {</span></span>
+<span id="L87"><span class="lineNum">      87</span>                 :<span class="tlaUNC">           0 :             EV_WARN &lt;&lt; &quot;Discarding unexpected packet &quot; &lt;&lt; packet-&gt;getName() &lt;&lt; endl;</span></span>
+<span id="L88"><span class="lineNum">      88</span>                 :<span class="tlaUNC">           0 :             delete packet;</span></span>
+<span id="L89"><span class="lineNum">      89</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L90"><span class="lineNum">      90</span>                 :<span class="tlaGNC tlaBgGNC">           4 :     }</span></span>
+<span id="L91"><span class="lineNum">      91</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC tlaBgUNC">           0 :     else if (auto indication = dynamic_cast&lt;Indication *&gt;(msg)) {</span></span>
+<span id="L92"><span class="lineNum">      92</span>                 :<span class="tlaUNC">           0 :         EV_WARN &lt;&lt; &quot;Received an error indication (&quot; &lt;&lt; indication-&gt;getName() &lt;&lt; &quot;); ignoring it&quot; &lt;&lt; endl;</span></span>
+<span id="L93"><span class="lineNum">      93</span>                 :<span class="tlaUNC">           0 :         delete indication;</span></span>
+<span id="L94"><span class="lineNum">      94</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L95"><span class="lineNum">      95</span>                 :<span class="tlaUNC">           0 :     else</span></span>
+<span id="L96"><span class="lineNum">      96</span>                 :<span class="tlaUNC">           0 :         throw cRuntimeError(&quot;Pmipv6: unknown message '%s'&quot;, msg-&gt;getName());</span></span>
+<span id="L97"><span class="lineNum">      97</span>                 :<span class="tlaGNC tlaBgGNC">           4 : }</span></span>
+<span id="L98"><span class="lineNum">      98</span>                 :             : </span>
+<span id="L99"><span class="lineNum">      99</span>                 :             : void Pmipv6::processMobilityMessage(Packet *packet)</span>
+<span id="L100"><span class="lineNum">     100</span>                 :<span class="tlaGNC">           4 : {</span></span>
+<span id="L101"><span class="lineNum">     101</span>                 :<span class="tlaGNC">           4 :     auto mh = packet-&gt;peekAtFront&lt;MobilityHeader&gt;();</span></span>
+<span id="L102"><span class="lineNum">     102</span>                 :<span class="tlaGNC">           4 :     switch (mh-&gt;getMobilityHeaderType()) {</span></span>
+<span id="L103"><span class="lineNum">     103</span>         [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:<span class="tlaGNC">           2 :         case BINDING_UPDATE: {</span></span>
+<span id="L104"><span class="lineNum">     104</span>                 :<span class="tlaGNC">           2 :             auto bu = packet-&gt;peekAtFront&lt;BindingUpdate&gt;();</span></span>
+<span id="L105"><span class="lineNum">     105</span> [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">           2 :             if (isLma &amp;&amp; bu-&gt;getProxyRegistrationFlag())</span></span>
+<span id="L106"><span class="lineNum">     106</span>                 :<span class="tlaGNC">           2 :                 processProxyBindingUpdate(packet, bu.get());</span></span>
+<span id="L107"><span class="lineNum">     107</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             else</span></span>
+<span id="L108"><span class="lineNum">     108</span>                 :<span class="tlaUNC">           0 :                 EV_WARN &lt;&lt; &quot;Ignoring Binding Update (not a Proxy Binding Update for an LMA)&quot; &lt;&lt; endl;</span></span>
+<span id="L109"><span class="lineNum">     109</span>                 :<span class="tlaGNC tlaBgGNC">           2 :             break;</span></span>
+<span id="L110"><span class="lineNum">     110</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         }</span></span>
+<span id="L111"><span class="lineNum">     111</span>         [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:<span class="tlaGNC tlaBgGNC">           2 :         case BINDING_ACKNOWLEDGEMENT: {</span></span>
+<span id="L112"><span class="lineNum">     112</span>                 :<span class="tlaGNC">           2 :             auto ba = packet-&gt;peekAtFront&lt;BindingAcknowledgement&gt;();</span></span>
+<span id="L113"><span class="lineNum">     113</span> [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">           2 :             if (isMag &amp;&amp; ba-&gt;getProxyRegistrationFlag())</span></span>
+<span id="L114"><span class="lineNum">     114</span>                 :<span class="tlaGNC">           2 :                 processProxyBindingAcknowledgement(packet, ba.get());</span></span>
+<span id="L115"><span class="lineNum">     115</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             else</span></span>
+<span id="L116"><span class="lineNum">     116</span>                 :<span class="tlaUNC">           0 :                 EV_WARN &lt;&lt; &quot;Ignoring Binding Acknowledgement (not a Proxy Binding Acknowledgement for a MAG)&quot; &lt;&lt; endl;</span></span>
+<span id="L117"><span class="lineNum">     117</span>                 :<span class="tlaGNC tlaBgGNC">           2 :             break;</span></span>
+<span id="L118"><span class="lineNum">     118</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         }</span></span>
+<span id="L119"><span class="lineNum">     119</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 4 times"> + </span>]:<span class="tlaUNC">           0 :         default:</span></span>
+<span id="L120"><span class="lineNum">     120</span>                 :<span class="tlaUNC">           0 :             EV_WARN &lt;&lt; &quot;Ignoring unsupported Mobility Header type &quot; &lt;&lt; mh-&gt;getMobilityHeaderType() &lt;&lt; endl;</span></span>
+<span id="L121"><span class="lineNum">     121</span>                 :<span class="tlaUNC">           0 :             break;</span></span>
+<span id="L122"><span class="lineNum">     122</span>                 :<span class="tlaGNC tlaBgGNC">           4 :     }</span></span>
+<span id="L123"><span class="lineNum">     123</span>                 :<span class="tlaGNC">           4 :     delete packet;</span></span>
+<span id="L124"><span class="lineNum">     124</span>                 :<span class="tlaGNC">           4 : }</span></span>
+<span id="L125"><span class="lineNum">     125</span>                 :             : </span>
+<span id="L126"><span class="lineNum">     126</span>                 :             : //</span>
+<span id="L127"><span class="lineNum">     127</span>                 :             : // Common helpers</span>
+<span id="L128"><span class="lineNum">     128</span>                 :             : //</span>
+<span id="L129"><span class="lineNum">     129</span>                 :             : </span>
+<span id="L130"><span class="lineNum">     130</span>                 :             : void Pmipv6::sendMobilityMessage(Packet *packet, const Ipv6Address&amp; destAddress, const Ipv6Address&amp; srcAddress)</span>
+<span id="L131"><span class="lineNum">     131</span>                 :<span class="tlaGNC">           4 : {</span></span>
+<span id="L132"><span class="lineNum">     132</span>                 :<span class="tlaGNC">           4 :     packet-&gt;addTagIfAbsent&lt;DispatchProtocolReq&gt;()-&gt;setProtocol(&amp;Protocol::ipv6);</span></span>
+<span id="L133"><span class="lineNum">     133</span>                 :<span class="tlaGNC">           4 :     packet-&gt;addTagIfAbsent&lt;PacketProtocolTag&gt;()-&gt;setProtocol(&amp;Protocol::mobileipv6);</span></span>
+<span id="L134"><span class="lineNum">     134</span>                 :<span class="tlaGNC">           4 :     packet-&gt;addTagIfAbsent&lt;L3AddressReq&gt;()-&gt;setSrcAddress(srcAddress);</span></span>
+<span id="L135"><span class="lineNum">     135</span>                 :<span class="tlaGNC">           4 :     packet-&gt;addTagIfAbsent&lt;L3AddressReq&gt;()-&gt;setDestAddress(destAddress);</span></span>
+<span id="L136"><span class="lineNum">     136</span>                 :<span class="tlaGNC">           4 :     packet-&gt;addTagIfAbsent&lt;HopLimitReq&gt;()-&gt;setHopLimit(64);</span></span>
+<span id="L137"><span class="lineNum">     137</span>                 :<span class="tlaGNC">           4 :     send(packet, &quot;toIPv6&quot;);</span></span>
+<span id="L138"><span class="lineNum">     138</span>                 :<span class="tlaGNC">           4 : }</span></span>
+<span id="L139"><span class="lineNum">     139</span>                 :             : </span>
+<span id="L140"><span class="lineNum">     140</span>                 :             : Ipv6Address Pmipv6::getEgressAddressFor(const Ipv6Address&amp; destination)</span>
+<span id="L141"><span class="lineNum">     141</span>                 :<span class="tlaGNC">           4 : {</span></span>
+<span id="L142"><span class="lineNum">     142</span>         [<span class="tlaGBC" title="Branch 0 was taken 4 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">           4 :     if (const Ipv6Route *route = rt6-&gt;doLongestPrefixMatch(destination)) {</span></span>
+<span id="L143"><span class="lineNum">     143</span>         [<span class="tlaGBC" title="Branch 0 was taken 4 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">           4 :         if (NetworkInterface *ie = route-&gt;getInterface()) {</span></span>
+<span id="L144"><span class="lineNum">     144</span>                 :<span class="tlaGNC">           4 :             Ipv6Address addr = ie-&gt;getProtocolData&lt;Ipv6InterfaceData&gt;()-&gt;getPreferredAddress();</span></span>
+<span id="L145"><span class="lineNum">     145</span>         [<span class="tlaGBC" title="Branch 0 was taken 4 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">           4 :             if (!addr.isUnspecified())</span></span>
+<span id="L146"><span class="lineNum">     146</span>                 :<span class="tlaGNC">           4 :                 return addr;</span></span>
+<span id="L147"><span class="lineNum">     147</span>                 :<span class="tlaGNC">           4 :         }</span></span>
+<span id="L148"><span class="lineNum">     148</span>                 :<span class="tlaGNC">           4 :     }</span></span>
+<span id="L149"><span class="lineNum">     149</span>                 :             :     // fall back to the first global address on any interface</span>
+<span id="L150"><span class="lineNum">     150</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC tlaBgUNC">           0 :     for (int i = 0; i &lt; ift-&gt;getNumInterfaces(); i++) {</span></span>
+<span id="L151"><span class="lineNum">     151</span>                 :<span class="tlaUNC">           0 :         NetworkInterface *ie = ift-&gt;getInterface(i);</span></span>
+<span id="L152"><span class="lineNum">     152</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         if (auto ipv6Data = ie-&gt;findProtocolData&lt;Ipv6InterfaceData&gt;()) {</span></span>
+<span id="L153"><span class="lineNum">     153</span>                 :<span class="tlaUNC">           0 :             Ipv6Address addr = ipv6Data-&gt;getPreferredAddress();</span></span>
+<span id="L154"><span class="lineNum">     154</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             if (!addr.isUnspecified())</span></span>
+<span id="L155"><span class="lineNum">     155</span>                 :<span class="tlaUNC">           0 :                 return addr;</span></span>
+<span id="L156"><span class="lineNum">     156</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L157"><span class="lineNum">     157</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L158"><span class="lineNum">     158</span>                 :<span class="tlaUNC">           0 :     return Ipv6Address::UNSPECIFIED_ADDRESS;</span></span>
+<span id="L159"><span class="lineNum">     159</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L160"><span class="lineNum">     160</span>                 :             : </span>
+<span id="L161"><span class="lineNum">     161</span>                 :             : int Pmipv6::getOrCreateTunnel(const Ipv6Address&amp; localEndpoint, const Ipv6Address&amp; remoteEndpoint, std::map&lt;Ipv6Address, int&gt;&amp; tunnelMap)</span>
+<span id="L162"><span class="lineNum">     162</span>                 :<span class="tlaGNC tlaBgGNC">           2 : {</span></span>
+<span id="L163"><span class="lineNum">     163</span>                 :<span class="tlaGNC">           2 :     auto it = tunnelMap.find(remoteEndpoint);</span></span>
+<span id="L164"><span class="lineNum">     164</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:<span class="tlaGNC">           2 :     if (it != tunnelMap.end())</span></span>
+<span id="L165"><span class="lineNum">     165</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         return it-&gt;second;</span></span>
+<span id="L166"><span class="lineNum">     166</span>                 :<span class="tlaGNC tlaBgGNC">           2 :     NetworkInterface *tunnel = rt6-&gt;createTunnelNetworkInterface(localEndpoint, remoteEndpoint);</span></span>
+<span id="L167"><span class="lineNum">     167</span>                 :<span class="tlaGNC">           2 :     int id = tunnel-&gt;getInterfaceId();</span></span>
+<span id="L168"><span class="lineNum">     168</span>                 :<span class="tlaGNC">           2 :     tunnelMap[remoteEndpoint] = id;</span></span>
+<span id="L169"><span class="lineNum">     169</span>                 :<span class="tlaGNC">           2 :     EV_INFO &lt;&lt; &quot;Created PMIPv6 tunnel &quot; &lt;&lt; localEndpoint &lt;&lt; &quot; -&gt; &quot; &lt;&lt; remoteEndpoint</span></span>
+<span id="L170"><span class="lineNum">     170</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             &lt;&lt; &quot; (interface id &quot; &lt;&lt; id &lt;&lt; &quot;)&quot; &lt;&lt; endl;</span></span>
+<span id="L171"><span class="lineNum">     171</span>                 :<span class="tlaGNC tlaBgGNC">           2 :     return id;</span></span>
+<span id="L172"><span class="lineNum">     172</span>                 :<span class="tlaGNC">           2 : }</span></span>
+<span id="L173"><span class="lineNum">     173</span>                 :             : </span>
+<span id="L174"><span class="lineNum">     174</span>                 :             : //</span>
+<span id="L175"><span class="lineNum">     175</span>                 :             : // Local Mobility Anchor</span>
+<span id="L176"><span class="lineNum">     176</span>                 :             : //</span>
+<span id="L177"><span class="lineNum">     177</span>                 :             : </span>
+<span id="L178"><span class="lineNum">     178</span>                 :             : void Pmipv6::processProxyBindingUpdate(Packet *packet, const BindingUpdate *pbu)</span>
+<span id="L179"><span class="lineNum">     179</span>                 :<span class="tlaGNC">           2 : {</span></span>
+<span id="L180"><span class="lineNum">     180</span>                 :<span class="tlaGNC">           2 :     auto addresses = packet-&gt;getTag&lt;L3AddressInd&gt;();</span></span>
+<span id="L181"><span class="lineNum">     181</span>                 :<span class="tlaGNC">           2 :     Ipv6Address magAddress = addresses-&gt;getSrcAddress().toIpv6(); // Proxy care-of address</span></span>
+<span id="L182"><span class="lineNum">     182</span>                 :<span class="tlaGNC">           2 :     Ipv6Address lmaAddress = addresses-&gt;getDestAddress().toIpv6();</span></span>
+<span id="L183"><span class="lineNum">     183</span>                 :<span class="tlaGNC">           2 :     std::string mnId = pbu-&gt;getMobileNodeIdentifier();</span></span>
+<span id="L184"><span class="lineNum">     184</span>                 :<span class="tlaGNC">           2 :     Ipv6Address hnp = pbu-&gt;getHomeNetworkPrefix();</span></span>
+<span id="L185"><span class="lineNum">     185</span>                 :<span class="tlaGNC">           2 :     int hnpLen = pbu-&gt;getHomeNetworkPrefixLength();</span></span>
+<span id="L186"><span class="lineNum">     186</span>                 :<span class="tlaGNC">           2 :     unsigned int seq = pbu-&gt;getSequence();</span></span>
+<span id="L187"><span class="lineNum">     187</span>                 :<span class="tlaGNC">           2 :     unsigned int lifetime = pbu-&gt;getLifetime();</span></span>
+<span id="L188"><span class="lineNum">     188</span>                 :             : </span>
+<span id="L189"><span class="lineNum">     189</span>                 :<span class="tlaGNC">           2 :     EV_INFO &lt;&lt; &quot;LMA received Proxy Binding Update from MAG &quot; &lt;&lt; magAddress &lt;&lt; &quot; for MN '&quot; &lt;&lt; mnId</span></span>
+<span id="L190"><span class="lineNum">     190</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             &lt;&lt; &quot;' prefix &quot; &lt;&lt; hnp &lt;&lt; &quot;/&quot; &lt;&lt; hnpLen &lt;&lt; &quot; lifetime &quot; &lt;&lt; lifetime &lt;&lt; &quot;s&quot; &lt;&lt; endl;</span></span>
+<span id="L191"><span class="lineNum">     191</span>                 :             : </span>
+<span id="L192"><span class="lineNum">     192</span>                 :<span class="tlaGNC tlaBgGNC">           2 :     BaStatus status = BINDING_UPDATE_ACCEPTED;</span></span>
+<span id="L193"><span class="lineNum">     193</span>                 :<span class="tlaGNC">           2 :     auto it = bindingCache.find(mnId);</span></span>
+<span id="L194"><span class="lineNum">     194</span>                 :             : </span>
+<span id="L195"><span class="lineNum">     195</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:<span class="tlaGNC">           2 :     if (lifetime == 0) {</span></span>
+<span id="L196"><span class="lineNum">     196</span>                 :             :         // Deregistration. Only tear down if the request comes from the MAG that</span>
+<span id="L197"><span class="lineNum">     197</span>                 :             :         // currently serves the mobile node; otherwise this is a stale request</span>
+<span id="L198"><span class="lineNum">     198</span>                 :             :         // from a previous MAG after the node has already moved (handover race).</span>
+<span id="L199"><span class="lineNum">     199</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC tlaBgUNC">           0 :         if (it != bindingCache.end() &amp;&amp; it-&gt;second.servingMagAddress == magAddress) {</span></span>
+<span class="lineNum">        </span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L200"><span class="lineNum">     200</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             if (it-&gt;second.downlinkRoute)</span></span>
+<span id="L201"><span class="lineNum">     201</span>                 :<span class="tlaUNC">           0 :                 rt6-&gt;deleteRoute(it-&gt;second.downlinkRoute);</span></span>
+<span id="L202"><span class="lineNum">     202</span>                 :<span class="tlaUNC">           0 :             bindingCache.erase(it);</span></span>
+<span id="L203"><span class="lineNum">     203</span>                 :<span class="tlaUNC">           0 :             EV_INFO &lt;&lt; &quot;LMA removed binding for MN '&quot; &lt;&lt; mnId &lt;&lt; &quot;'&quot; &lt;&lt; endl;</span></span>
+<span id="L204"><span class="lineNum">     204</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L205"><span class="lineNum">     205</span>                 :<span class="tlaUNC">           0 :         else</span></span>
+<span id="L206"><span class="lineNum">     206</span>                 :<span class="tlaUNC">           0 :             EV_INFO &lt;&lt; &quot;LMA ignoring stale deregistration for MN '&quot; &lt;&lt; mnId &lt;&lt; &quot;'&quot; &lt;&lt; endl;</span></span>
+<span id="L207"><span class="lineNum">     207</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L208"><span class="lineNum">     208</span>                 :<span class="tlaGNC tlaBgGNC">           2 :     else {</span></span>
+<span id="L209"><span class="lineNum">     209</span>                 :             :         // Registration / re-registration / handover.</span>
+<span id="L210"><span class="lineNum">     210</span>                 :<span class="tlaGNC">           2 :         int tunnelId = getOrCreateTunnel(lmaAddress, magAddress, lmaTunnelByMag);</span></span>
+<span id="L211"><span class="lineNum">     211</span>                 :<span class="tlaGNC">           2 :         NetworkInterface *tunnel = ift-&gt;getInterfaceById(tunnelId);</span></span>
+<span id="L212"><span class="lineNum">     212</span>                 :             : </span>
+<span id="L213"><span class="lineNum">     213</span>                 :<span class="tlaGNC">           2 :         BindingCacheEntry&amp; entry = bindingCache[mnId];</span></span>
+<span id="L214"><span class="lineNum">     214</span> [<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">           2 :         bool retargeted = entry.downlinkRoute &amp;&amp; entry.tunnelInterfaceId != tunnelId;</span></span>
+<span id="L215"><span class="lineNum">     215</span>         [<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:<span class="tlaGNC">           2 :         if (retargeted) {</span></span>
+<span id="L216"><span class="lineNum">     216</span>                 :             :             // mobile node moved to a different MAG: re-point its prefix route</span>
+<span id="L217"><span class="lineNum">     217</span>                 :<span class="tlaGNC">           1 :             rt6-&gt;deleteRoute(entry.downlinkRoute);</span></span>
+<span id="L218"><span class="lineNum">     218</span>                 :<span class="tlaGNC">           1 :             entry.downlinkRoute = nullptr;</span></span>
+<span id="L219"><span class="lineNum">     219</span>                 :<span class="tlaGNC">           1 :             EV_INFO &lt;&lt; &quot;LMA handover: re-pointing prefix &quot; &lt;&lt; hnp &lt;&lt; &quot;/&quot; &lt;&lt; hnpLen</span></span>
+<span id="L220"><span class="lineNum">     220</span>                 :<span class="tlaUNC tlaBgUNC">           0 :                     &lt;&lt; &quot; toward MAG &quot; &lt;&lt; magAddress &lt;&lt; endl;</span></span>
+<span id="L221"><span class="lineNum">     221</span>                 :<span class="tlaGNC tlaBgGNC">           1 :         }</span></span>
+<span id="L222"><span class="lineNum">     222</span>         [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">           2 :         if (entry.downlinkRoute == nullptr) {</span></span>
+<span id="L223"><span class="lineNum">     223</span>                 :<span class="tlaGNC">           2 :             auto *route = new Ipv6Route(hnp, hnpLen, IRoute::MANUAL);</span></span>
+<span id="L224"><span class="lineNum">     224</span>                 :<span class="tlaGNC">           2 :             route-&gt;setInterface(tunnel);</span></span>
+<span id="L225"><span class="lineNum">     225</span>                 :<span class="tlaGNC">           2 :             route-&gt;setNextHop(Ipv6Address::UNSPECIFIED_ADDRESS);</span></span>
+<span id="L226"><span class="lineNum">     226</span>                 :<span class="tlaGNC">           2 :             route-&gt;setMetric(1);</span></span>
+<span id="L227"><span class="lineNum">     227</span>                 :<span class="tlaGNC">           2 :             rt6-&gt;addRoute(route);</span></span>
+<span id="L228"><span class="lineNum">     228</span>                 :<span class="tlaGNC">           2 :             entry.downlinkRoute = route;</span></span>
+<span id="L229"><span class="lineNum">     229</span>                 :<span class="tlaGNC">           2 :         }</span></span>
+<span id="L230"><span class="lineNum">     230</span>                 :<span class="tlaGNC">           2 :         entry.homeNetworkPrefix = hnp;</span></span>
+<span id="L231"><span class="lineNum">     231</span>                 :<span class="tlaGNC">           2 :         entry.homeNetworkPrefixLength = hnpLen;</span></span>
+<span id="L232"><span class="lineNum">     232</span>                 :<span class="tlaGNC">           2 :         entry.servingMagAddress = magAddress;</span></span>
+<span id="L233"><span class="lineNum">     233</span>                 :<span class="tlaGNC">           2 :         entry.sequenceNumber = seq;</span></span>
+<span id="L234"><span class="lineNum">     234</span>                 :<span class="tlaGNC">           2 :         entry.expiry = simTime() + lifetime;</span></span>
+<span id="L235"><span class="lineNum">     235</span>                 :<span class="tlaGNC">           2 :         entry.tunnelInterfaceId = tunnelId;</span></span>
+<span id="L236"><span class="lineNum">     236</span>                 :<span class="tlaGNC">           2 :     }</span></span>
+<span id="L237"><span class="lineNum">     237</span>                 :             : </span>
+<span id="L238"><span class="lineNum">     238</span>                 :             :     // Send the Proxy Binding Acknowledgement back to the MAG.</span>
+<span id="L239"><span class="lineNum">     239</span>                 :<span class="tlaGNC">           2 :     auto reply = new Packet(&quot;ProxyBindingAck&quot;);</span></span>
+<span id="L240"><span class="lineNum">     240</span>                 :<span class="tlaGNC">           2 :     const auto&amp; pba = makeShared&lt;BindingAcknowledgement&gt;();</span></span>
+<span id="L241"><span class="lineNum">     241</span>                 :<span class="tlaGNC">           2 :     pba-&gt;setMobilityHeaderType(BINDING_ACKNOWLEDGEMENT);</span></span>
+<span id="L242"><span class="lineNum">     242</span>                 :<span class="tlaGNC">           2 :     pba-&gt;setProxyRegistrationFlag(true);</span></span>
+<span id="L243"><span class="lineNum">     243</span>                 :<span class="tlaGNC">           2 :     pba-&gt;setStatus(status);</span></span>
+<span id="L244"><span class="lineNum">     244</span>                 :<span class="tlaGNC">           2 :     pba-&gt;setSequenceNumber(seq);</span></span>
+<span id="L245"><span class="lineNum">     245</span>                 :<span class="tlaGNC">           2 :     pba-&gt;setLifetime(lifetime);</span></span>
+<span id="L246"><span class="lineNum">     246</span>                 :<span class="tlaGNC">           2 :     pba-&gt;setMobileNodeIdentifier(mnId.c_str());</span></span>
+<span id="L247"><span class="lineNum">     247</span>                 :<span class="tlaGNC">           2 :     pba-&gt;setHomeNetworkPrefix(hnp);</span></span>
+<span id="L248"><span class="lineNum">     248</span>                 :<span class="tlaGNC">           2 :     pba-&gt;setHomeNetworkPrefixLength(hnpLen);</span></span>
+<span id="L249"><span class="lineNum">     249</span>                 :<span class="tlaGNC">           2 :     pba-&gt;setChunkLength(MobilityHeaderSerializer::getProxyBindingAcknowledgementLength(mnId.size()));</span></span>
+<span id="L250"><span class="lineNum">     250</span>                 :<span class="tlaGNC">           2 :     reply-&gt;insertAtFront(pba);</span></span>
+<span id="L251"><span class="lineNum">     251</span>                 :<span class="tlaGNC">           2 :     sendMobilityMessage(reply, magAddress, lmaAddress);</span></span>
+<span id="L252"><span class="lineNum">     252</span>                 :<span class="tlaGNC">           2 : }</span></span>
+<span id="L253"><span class="lineNum">     253</span>                 :             : </span>
+<span id="L254"><span class="lineNum">     254</span>                 :             : //</span>
+<span id="L255"><span class="lineNum">     255</span>                 :             : // Mobile Access Gateway</span>
+<span id="L256"><span class="lineNum">     256</span>                 :             : //</span>
+<span id="L257"><span class="lineNum">     257</span>                 :             : </span>
+<span id="L258"><span class="lineNum">     258</span>                 :             : void Pmipv6::parseMobileNodeProfiles()</span>
+<span id="L259"><span class="lineNum">     259</span>                 :<span class="tlaGNC">           2 : {</span></span>
+<span id="L260"><span class="lineNum">     260</span>                 :<span class="tlaGNC">           2 :     cXMLElement *root = par(&quot;mobileNodeProfiles&quot;);</span></span>
+<span id="L261"><span class="lineNum">     261</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:<span class="tlaGNC">           2 :     if (!root)</span></span>
+<span id="L262"><span class="lineNum">     262</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         return;</span></span>
+<span id="L263"><span class="lineNum">     263</span>         [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:<span class="tlaGNC tlaBgGNC">           2 :     for (cXMLElement *child : root-&gt;getChildrenByTagName(&quot;mobileNode&quot;)) {</span></span>
+<span id="L264"><span class="lineNum">     264</span>                 :<span class="tlaGNC">           2 :         MobileNodeProfile profile;</span></span>
+<span id="L265"><span class="lineNum">     265</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:<span class="tlaGNC">           2 :         if (const char *ai = child-&gt;getAttribute(&quot;accessInterface&quot;))</span></span>
+<span id="L266"><span class="lineNum">     266</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             profile.accessInterfaceName = ai;</span></span>
+<span id="L267"><span class="lineNum">     267</span>                 :<span class="tlaGNC tlaBgGNC">           2 :         const char *id = child-&gt;getAttribute(&quot;id&quot;);</span></span>
+<span id="L268"><span class="lineNum">     268</span>                 :<span class="tlaGNC">           2 :         const char *hnp = child-&gt;getAttribute(&quot;homeNetworkPrefix&quot;);</span></span>
+<span id="L269"><span class="lineNum">     269</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:<span class="tlaGNC">           2 :         if (!id || !hnp)</span></span>
+<span id="L270"><span class="lineNum">     270</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             throw cRuntimeError(&quot;Pmipv6: &lt;mobileNode&gt; needs at least 'id' and 'homeNetworkPrefix' attributes&quot;);</span></span>
+<span id="L271"><span class="lineNum">     271</span>                 :<span class="tlaGNC tlaBgGNC">           2 :         profile.mnIdentifier = id;</span></span>
+<span id="L272"><span class="lineNum">     272</span>                 :<span class="tlaGNC">           2 :         profile.homeNetworkPrefix = Ipv6Address(hnp);</span></span>
+<span id="L273"><span class="lineNum">     273</span>         [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">           2 :         if (const char *plen = child-&gt;getAttribute(&quot;prefixLength&quot;))</span></span>
+<span id="L274"><span class="lineNum">     274</span>                 :<span class="tlaGNC">           2 :             profile.homeNetworkPrefixLength = atoi(plen);</span></span>
+<span id="L275"><span class="lineNum">     275</span>                 :<span class="tlaGNC">           2 :         mobileNodeProfiles.push_back(profile);</span></span>
+<span id="L276"><span class="lineNum">     276</span>                 :<span class="tlaGNC">           2 :     }</span></span>
+<span id="L277"><span class="lineNum">     277</span>                 :<span class="tlaGNC">           2 : }</span></span>
+<span id="L278"><span class="lineNum">     278</span>                 :             : </span>
+<span id="L279"><span class="lineNum">     279</span>                 :             : const Pmipv6::MobileNodeProfile *Pmipv6::findProfileForInterface(NetworkInterface *accessInterface) const</span>
+<span id="L280"><span class="lineNum">     280</span>                 :<span class="tlaGNC">           2 : {</span></span>
+<span id="L281"><span class="lineNum">     281</span>                 :<span class="tlaGNC">           2 :     const char *name = accessInterface-&gt;getInterfaceName();</span></span>
+<span id="L282"><span class="lineNum">     282</span>                 :<span class="tlaGNC">           2 :     const MobileNodeProfile *wildcard = nullptr;</span></span>
+<span id="L283"><span class="lineNum">     283</span>         [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:<span class="tlaGNC">           2 :     for (const auto&amp; profile : mobileNodeProfiles) {</span></span>
+<span id="L284"><span class="lineNum">     284</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:<span class="tlaGNC">           2 :         if (profile.accessInterfaceName == name)</span></span>
+<span id="L285"><span class="lineNum">     285</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             return &amp;profile;</span></span>
+<span id="L286"><span class="lineNum">     286</span> [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC tlaBgGNC">           2 :         if (profile.accessInterfaceName.empty() &amp;&amp; wildcard == nullptr)</span></span>
+<span id="L287"><span class="lineNum">     287</span>                 :<span class="tlaGNC">           2 :             wildcard = &amp;profile;</span></span>
+<span id="L288"><span class="lineNum">     288</span>                 :<span class="tlaGNC">           2 :     }</span></span>
+<span id="L289"><span class="lineNum">     289</span>                 :<span class="tlaGNC">           2 :     return wildcard;</span></span>
+<span id="L290"><span class="lineNum">     290</span>                 :<span class="tlaGNC">           2 : }</span></span>
+<span id="L291"><span class="lineNum">     291</span>                 :             : </span>
+<span id="L292"><span class="lineNum">     292</span>                 :             : void Pmipv6::receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj, cObject *details)</span>
+<span id="L293"><span class="lineNum">     293</span>                 :<span class="tlaGNC">           2 : {</span></span>
+<span id="L294"><span class="lineNum">     294</span>                 :<span class="tlaGNC">           2 :     Enter_Method(&quot;%s&quot;, cComponent::getSignalName(signalID));</span></span>
+<span id="L295"><span class="lineNum">     295</span> [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaGNC">           2 :     if (signalID == l2ApAssociatedSignal || signalID == l2ApDisassociatedSignal) {</span></span>
+<span id="L296"><span class="lineNum">     296</span>                 :             :         // the signal is emitted by an access point management module; the access</span>
+<span id="L297"><span class="lineNum">     297</span>                 :             :         // link is the network interface containing it</span>
+<span id="L298"><span class="lineNum">     298</span>                 :<span class="tlaGNC">           2 :         NetworkInterface *accessInterface = getContainingNicModule(check_and_cast&lt;cModule *&gt;(source));</span></span>
+<span id="L299"><span class="lineNum">     299</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:<span class="tlaGNC">           2 :         if (accessInterface == nullptr)</span></span>
+<span id="L300"><span class="lineNum">     300</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             return;</span></span>
+<span id="L301"><span class="lineNum">     301</span>         [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC tlaBgGNC">           2 :         if (signalID == l2ApAssociatedSignal)</span></span>
+<span id="L302"><span class="lineNum">     302</span>                 :<span class="tlaGNC">           2 :             handleMobileNodeAttached(accessInterface);</span></span>
+<span id="L303"><span class="lineNum">     303</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         else</span></span>
+<span id="L304"><span class="lineNum">     304</span>                 :<span class="tlaUNC">           0 :             handleMobileNodeDetached(accessInterface);</span></span>
+<span id="L305"><span class="lineNum">     305</span>                 :<span class="tlaGNC tlaBgGNC">           2 :     }</span></span>
+<span id="L306"><span class="lineNum">     306</span>                 :<span class="tlaGNC">           2 : }</span></span>
+<span id="L307"><span class="lineNum">     307</span>                 :             : </span>
+<span id="L308"><span class="lineNum">     308</span>                 :             : void Pmipv6::handleMobileNodeAttached(NetworkInterface *accessInterface)</span>
+<span id="L309"><span class="lineNum">     309</span>                 :<span class="tlaGNC">           2 : {</span></span>
+<span id="L310"><span class="lineNum">     310</span>                 :<span class="tlaGNC">           2 :     const MobileNodeProfile *profile = findProfileForInterface(accessInterface);</span></span>
+<span id="L311"><span class="lineNum">     311</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:<span class="tlaGNC">           2 :     if (profile == nullptr) {</span></span>
+<span id="L312"><span class="lineNum">     312</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         EV_DETAIL &lt;&lt; &quot;No mobile-node profile for access interface &quot; &lt;&lt; accessInterface-&gt;getInterfaceName()</span></span>
+<span id="L313"><span class="lineNum">     313</span>                 :<span class="tlaUNC">           0 :                   &lt;&lt; &quot;; ignoring attachment&quot; &lt;&lt; endl;</span></span>
+<span id="L314"><span class="lineNum">     314</span>                 :<span class="tlaUNC">           0 :         return;</span></span>
+<span id="L315"><span class="lineNum">     315</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L316"><span class="lineNum">     316</span>                 :<span class="tlaGNC tlaBgGNC">           2 :     EV_INFO &lt;&lt; &quot;MAG: mobile node '&quot; &lt;&lt; profile-&gt;mnIdentifier &lt;&lt; &quot;' attached on &quot;</span></span>
+<span id="L317"><span class="lineNum">     317</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             &lt;&lt; accessInterface-&gt;getInterfaceName() &lt;&lt; &quot;; sending Proxy Binding Update&quot; &lt;&lt; endl;</span></span>
+<span id="L318"><span class="lineNum">     318</span>                 :             : </span>
+<span id="L319"><span class="lineNum">     319</span>                 :<span class="tlaGNC tlaBgGNC">           2 :     MagBinding&amp; binding = magBindings[profile-&gt;mnIdentifier];</span></span>
+<span id="L320"><span class="lineNum">     320</span>                 :<span class="tlaGNC">           2 :     binding.mnIdentifier = profile-&gt;mnIdentifier;</span></span>
+<span id="L321"><span class="lineNum">     321</span>                 :<span class="tlaGNC">           2 :     binding.homeNetworkPrefix = profile-&gt;homeNetworkPrefix;</span></span>
+<span id="L322"><span class="lineNum">     322</span>                 :<span class="tlaGNC">           2 :     binding.homeNetworkPrefixLength = profile-&gt;homeNetworkPrefixLength;</span></span>
+<span id="L323"><span class="lineNum">     323</span>                 :<span class="tlaGNC">           2 :     binding.accessInterfaceId = accessInterface-&gt;getInterfaceId();</span></span>
+<span id="L324"><span class="lineNum">     324</span>                 :<span class="tlaGNC">           2 :     binding.sequenceNumber++;</span></span>
+<span id="L325"><span class="lineNum">     325</span>                 :<span class="tlaGNC">           2 :     binding.registered = false;</span></span>
+<span id="L326"><span class="lineNum">     326</span>                 :<span class="tlaGNC">           2 :     sendProxyBindingUpdate(binding, bindingLifetime);</span></span>
+<span id="L327"><span class="lineNum">     327</span>                 :<span class="tlaGNC">           2 : }</span></span>
+<span id="L328"><span class="lineNum">     328</span>                 :             : </span>
+<span id="L329"><span class="lineNum">     329</span>                 :             : void Pmipv6::handleMobileNodeDetached(NetworkInterface *accessInterface)</span>
+<span id="L330"><span class="lineNum">     330</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L331"><span class="lineNum">     331</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     for (auto&amp; kv : magBindings) {</span></span>
+<span id="L332"><span class="lineNum">     332</span>                 :<span class="tlaUNC">           0 :         MagBinding&amp; binding = kv.second;</span></span>
+<span id="L333"><span class="lineNum">     333</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         if (binding.accessInterfaceId == accessInterface-&gt;getInterfaceId()) {</span></span>
+<span id="L334"><span class="lineNum">     334</span>                 :<span class="tlaUNC">           0 :             EV_INFO &lt;&lt; &quot;MAG: mobile node '&quot; &lt;&lt; binding.mnIdentifier &lt;&lt; &quot;' detached from &quot;</span></span>
+<span id="L335"><span class="lineNum">     335</span>                 :<span class="tlaUNC">           0 :                     &lt;&lt; accessInterface-&gt;getInterfaceName() &lt;&lt; &quot;; deregistering&quot; &lt;&lt; endl;</span></span>
+<span id="L336"><span class="lineNum">     336</span>                 :             :             // stop advertising the prefix and remove the local delivery route</span>
+<span id="L337"><span class="lineNum">     337</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             if (auto ipv6Data = accessInterface-&gt;findProtocolDataForUpdate&lt;Ipv6InterfaceData&gt;()) {</span></span>
+<span id="L338"><span class="lineNum">     338</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                 for (int i = 0; i &lt; ipv6Data-&gt;getNumAdvPrefixes(); i++) {</span></span>
+<span id="L339"><span class="lineNum">     339</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :                     if (ipv6Data-&gt;getAdvPrefix(i).prefix == binding.homeNetworkPrefix) {</span></span>
+<span id="L340"><span class="lineNum">     340</span>                 :<span class="tlaUNC">           0 :                         ipv6Data-&gt;removeAdvPrefix(i);</span></span>
+<span id="L341"><span class="lineNum">     341</span>                 :<span class="tlaUNC">           0 :                         break;</span></span>
+<span id="L342"><span class="lineNum">     342</span>                 :<span class="tlaUNC">           0 :                     }</span></span>
+<span id="L343"><span class="lineNum">     343</span>                 :<span class="tlaUNC">           0 :                 }</span></span>
+<span id="L344"><span class="lineNum">     344</span>                 :<span class="tlaUNC">           0 :             }</span></span>
+<span id="L345"><span class="lineNum">     345</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             if (binding.downlinkRoute) {</span></span>
+<span id="L346"><span class="lineNum">     346</span>                 :<span class="tlaUNC">           0 :                 rt6-&gt;deleteRoute(binding.downlinkRoute);</span></span>
+<span id="L347"><span class="lineNum">     347</span>                 :<span class="tlaUNC">           0 :                 binding.downlinkRoute = nullptr;</span></span>
+<span id="L348"><span class="lineNum">     348</span>                 :<span class="tlaUNC">           0 :             }</span></span>
+<span id="L349"><span class="lineNum">     349</span>                 :<span class="tlaUNC">           0 :             binding.sequenceNumber++;</span></span>
+<span id="L350"><span class="lineNum">     350</span>                 :<span class="tlaUNC">           0 :             sendProxyBindingUpdate(binding, 0); // lifetime 0 = deregistration</span></span>
+<span id="L351"><span class="lineNum">     351</span>                 :<span class="tlaUNC">           0 :             magBindings.erase(kv.first);</span></span>
+<span id="L352"><span class="lineNum">     352</span>                 :<span class="tlaUNC">           0 :             return;</span></span>
+<span id="L353"><span class="lineNum">     353</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L354"><span class="lineNum">     354</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L355"><span class="lineNum">     355</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L356"><span class="lineNum">     356</span>                 :             : </span>
+<span id="L357"><span class="lineNum">     357</span>                 :             : void Pmipv6::sendProxyBindingUpdate(MagBinding&amp; binding, simtime_t lifetime)</span>
+<span id="L358"><span class="lineNum">     358</span>                 :<span class="tlaGNC tlaBgGNC">           2 : {</span></span>
+<span id="L359"><span class="lineNum">     359</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:<span class="tlaGNC">           2 :     if (localMobilityAnchorAddress.isUnspecified())</span></span>
+<span id="L360"><span class="lineNum">     360</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         throw cRuntimeError(&quot;Pmipv6 MAG: localMobilityAnchorAddress is not configured&quot;);</span></span>
+<span id="L361"><span class="lineNum">     361</span>                 :<span class="tlaGNC tlaBgGNC">           2 :     Ipv6Address magAddress = getEgressAddressFor(localMobilityAnchorAddress);</span></span>
+<span id="L362"><span class="lineNum">     362</span>                 :             : </span>
+<span id="L363"><span class="lineNum">     363</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:<span class="tlaGNC">           2 :     auto packet = new Packet(lifetime == 0 ? &quot;ProxyBindingUpdate(dereg)&quot; : &quot;ProxyBindingUpdate&quot;);</span></span>
+<span id="L364"><span class="lineNum">     364</span>                 :<span class="tlaGNC">           2 :     const auto&amp; pbu = makeShared&lt;BindingUpdate&gt;();</span></span>
+<span id="L365"><span class="lineNum">     365</span>                 :<span class="tlaGNC">           2 :     pbu-&gt;setMobilityHeaderType(BINDING_UPDATE);</span></span>
+<span id="L366"><span class="lineNum">     366</span>                 :<span class="tlaGNC">           2 :     pbu-&gt;setProxyRegistrationFlag(true);</span></span>
+<span id="L367"><span class="lineNum">     367</span>                 :<span class="tlaGNC">           2 :     pbu-&gt;setAckFlag(true);</span></span>
+<span id="L368"><span class="lineNum">     368</span>                 :<span class="tlaGNC">           2 :     pbu-&gt;setHomeRegistrationFlag(true);</span></span>
+<span id="L369"><span class="lineNum">     369</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:<span class="tlaGNC">           2 :     pbu-&gt;setLifetime(lifetime.dbl() &lt; 0 ? 0 : (unsigned int)lifetime.dbl());</span></span>
+<span id="L370"><span class="lineNum">     370</span>                 :<span class="tlaGNC">           2 :     pbu-&gt;setSequence(binding.sequenceNumber);</span></span>
+<span id="L371"><span class="lineNum">     371</span>                 :<span class="tlaGNC">           2 :     pbu-&gt;setMobileNodeIdentifier(binding.mnIdentifier.c_str());</span></span>
+<span id="L372"><span class="lineNum">     372</span>                 :<span class="tlaGNC">           2 :     pbu-&gt;setHomeNetworkPrefix(binding.homeNetworkPrefix);</span></span>
+<span id="L373"><span class="lineNum">     373</span>                 :<span class="tlaGNC">           2 :     pbu-&gt;setHomeNetworkPrefixLength(binding.homeNetworkPrefixLength);</span></span>
+<span id="L374"><span class="lineNum">     374</span>                 :<span class="tlaGNC">           2 :     pbu-&gt;setHandoffIndicator(1);       // attachment over a new interface</span></span>
+<span id="L375"><span class="lineNum">     375</span>                 :<span class="tlaGNC">           2 :     pbu-&gt;setAccessTechnologyType(4);   // IEEE 802.11 (RFC 5213 access technology type)</span></span>
+<span id="L376"><span class="lineNum">     376</span>                 :<span class="tlaGNC">           2 :     pbu-&gt;setTimestampValue(0);         // ordered by sequence number in this model</span></span>
+<span id="L377"><span class="lineNum">     377</span>                 :<span class="tlaGNC">           2 :     pbu-&gt;setChunkLength(MobilityHeaderSerializer::getProxyBindingUpdateLength(binding.mnIdentifier.size()));</span></span>
+<span id="L378"><span class="lineNum">     378</span>                 :<span class="tlaGNC">           2 :     packet-&gt;insertAtFront(pbu);</span></span>
+<span id="L379"><span class="lineNum">     379</span>                 :<span class="tlaGNC">           2 :     sendMobilityMessage(packet, localMobilityAnchorAddress, magAddress);</span></span>
+<span id="L380"><span class="lineNum">     380</span>                 :<span class="tlaGNC">           2 : }</span></span>
+<span id="L381"><span class="lineNum">     381</span>                 :             : </span>
+<span id="L382"><span class="lineNum">     382</span>                 :             : void Pmipv6::ensureMagTunnel()</span>
+<span id="L383"><span class="lineNum">     383</span>                 :<span class="tlaGNC">           2 : {</span></span>
+<span id="L384"><span class="lineNum">     384</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:<span class="tlaGNC">           2 :     if (magTunnelId != -1)</span></span>
+<span id="L385"><span class="lineNum">     385</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         return;</span></span>
+<span id="L386"><span class="lineNum">     386</span>                 :<span class="tlaGNC tlaBgGNC">           2 :     Ipv6Address magAddress = getEgressAddressFor(localMobilityAnchorAddress);</span></span>
+<span id="L387"><span class="lineNum">     387</span>                 :<span class="tlaGNC">           2 :     NetworkInterface *tunnel = rt6-&gt;createTunnelNetworkInterface(magAddress, localMobilityAnchorAddress);</span></span>
+<span id="L388"><span class="lineNum">     388</span>                 :<span class="tlaGNC">           2 :     magTunnelId = tunnel-&gt;getInterfaceId();</span></span>
+<span id="L389"><span class="lineNum">     389</span>                 :             :     // route mobile-node uplink traffic (everything not on-link) into the tunnel to the LMA</span>
+<span id="L390"><span class="lineNum">     390</span>                 :<span class="tlaGNC">           2 :     magUplinkRoute = new Ipv6Route(Ipv6Address::UNSPECIFIED_ADDRESS, 0, IRoute::MANUAL);</span></span>
+<span id="L391"><span class="lineNum">     391</span>                 :<span class="tlaGNC">           2 :     magUplinkRoute-&gt;setInterface(tunnel);</span></span>
+<span id="L392"><span class="lineNum">     392</span>                 :<span class="tlaGNC">           2 :     magUplinkRoute-&gt;setNextHop(Ipv6Address::UNSPECIFIED_ADDRESS);</span></span>
+<span id="L393"><span class="lineNum">     393</span>                 :<span class="tlaGNC">           2 :     magUplinkRoute-&gt;setMetric(256);</span></span>
+<span id="L394"><span class="lineNum">     394</span>                 :<span class="tlaGNC">           2 :     rt6-&gt;addRoute(magUplinkRoute);</span></span>
+<span id="L395"><span class="lineNum">     395</span>                 :<span class="tlaGNC">           2 :     EV_INFO &lt;&lt; &quot;MAG: created tunnel &quot; &lt;&lt; magAddress &lt;&lt; &quot; -&gt; &quot; &lt;&lt; localMobilityAnchorAddress</span></span>
+<span id="L396"><span class="lineNum">     396</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             &lt;&lt; &quot; and default route into it (interface id &quot; &lt;&lt; magTunnelId &lt;&lt; &quot;)&quot; &lt;&lt; endl;</span></span>
+<span id="L397"><span class="lineNum">     397</span>                 :<span class="tlaGNC tlaBgGNC">           2 : }</span></span>
+<span id="L398"><span class="lineNum">     398</span>                 :             : </span>
+<span id="L399"><span class="lineNum">     399</span>                 :             : void Pmipv6::processProxyBindingAcknowledgement(Packet *packet, const BindingAcknowledgement *pba)</span>
+<span id="L400"><span class="lineNum">     400</span>                 :<span class="tlaGNC">           2 : {</span></span>
+<span id="L401"><span class="lineNum">     401</span>                 :<span class="tlaGNC">           2 :     std::string mnId = pba-&gt;getMobileNodeIdentifier();</span></span>
+<span id="L402"><span class="lineNum">     402</span>                 :<span class="tlaGNC">           2 :     BaStatus status = pba-&gt;getStatus();</span></span>
+<span id="L403"><span class="lineNum">     403</span>                 :<span class="tlaGNC">           2 :     unsigned int lifetime = pba-&gt;getLifetime();</span></span>
+<span id="L404"><span class="lineNum">     404</span>                 :             : </span>
+<span id="L405"><span class="lineNum">     405</span>                 :<span class="tlaGNC">           2 :     auto it = magBindings.find(mnId);</span></span>
+<span id="L406"><span class="lineNum">     406</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:<span class="tlaGNC">           2 :     if (it == magBindings.end()) {</span></span>
+<span id="L407"><span class="lineNum">     407</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         EV_INFO &lt;&lt; &quot;MAG: Proxy Binding Acknowledgement for unknown MN '&quot; &lt;&lt; mnId &lt;&lt; &quot;'; ignoring&quot; &lt;&lt; endl;</span></span>
+<span id="L408"><span class="lineNum">     408</span>                 :<span class="tlaUNC">           0 :         return;</span></span>
+<span id="L409"><span class="lineNum">     409</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L410"><span class="lineNum">     410</span>                 :<span class="tlaGNC tlaBgGNC">           2 :     MagBinding&amp; binding = it-&gt;second;</span></span>
+<span id="L411"><span class="lineNum">     411</span>                 :             : </span>
+<span id="L412"><span class="lineNum">     412</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:<span class="tlaGNC">           2 :     if (status != BINDING_UPDATE_ACCEPTED) {</span></span>
+<span id="L413"><span class="lineNum">     413</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         EV_WARN &lt;&lt; &quot;MAG: Proxy Binding Update for MN '&quot; &lt;&lt; mnId &lt;&lt; &quot;' rejected (status &quot; &lt;&lt; status &lt;&lt; &quot;)&quot; &lt;&lt; endl;</span></span>
+<span id="L414"><span class="lineNum">     414</span>                 :<span class="tlaUNC">           0 :         return;</span></span>
+<span id="L415"><span class="lineNum">     415</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L416"><span class="lineNum">     416</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:<span class="tlaGNC tlaBgGNC">           2 :     if (lifetime == 0) {</span></span>
+<span id="L417"><span class="lineNum">     417</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         EV_INFO &lt;&lt; &quot;MAG: deregistration acknowledged for MN '&quot; &lt;&lt; mnId &lt;&lt; &quot;'&quot; &lt;&lt; endl;</span></span>
+<span id="L418"><span class="lineNum">     418</span>                 :<span class="tlaUNC">           0 :         return;</span></span>
+<span id="L419"><span class="lineNum">     419</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L420"><span class="lineNum">     420</span>                 :             : </span>
+<span id="L421"><span class="lineNum">     421</span>                 :<span class="tlaGNC tlaBgGNC">           2 :     EV_INFO &lt;&lt; &quot;MAG: binding accepted for MN '&quot; &lt;&lt; mnId &lt;&lt; &quot;' prefix &quot; &lt;&lt; binding.homeNetworkPrefix</span></span>
+<span id="L422"><span class="lineNum">     422</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             &lt;&lt; &quot;/&quot; &lt;&lt; binding.homeNetworkPrefixLength &lt;&lt; endl;</span></span>
+<span id="L423"><span class="lineNum">     423</span>                 :             : </span>
+<span id="L424"><span class="lineNum">     424</span>                 :<span class="tlaGNC tlaBgGNC">           2 :     ensureMagTunnel();</span></span>
+<span id="L425"><span class="lineNum">     425</span>                 :             : </span>
+<span id="L426"><span class="lineNum">     426</span>                 :<span class="tlaGNC">           2 :     NetworkInterface *accessInterface = ift-&gt;getInterfaceById(binding.accessInterfaceId);</span></span>
+<span id="L427"><span class="lineNum">     427</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:<span class="tlaGNC">           2 :     if (accessInterface == nullptr) {</span></span>
+<span id="L428"><span class="lineNum">     428</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         EV_WARN &lt;&lt; &quot;MAG: access interface for MN '&quot; &lt;&lt; mnId &lt;&lt; &quot;' no longer exists&quot; &lt;&lt; endl;</span></span>
+<span id="L429"><span class="lineNum">     429</span>                 :<span class="tlaUNC">           0 :         return;</span></span>
+<span id="L430"><span class="lineNum">     430</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L431"><span class="lineNum">     431</span>                 :             : </span>
+<span id="L432"><span class="lineNum">     432</span>                 :             :     // route decapsulated downlink traffic for the mobile node out the access link</span>
+<span id="L433"><span class="lineNum">     433</span>         [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC tlaBgGNC">           2 :     if (binding.downlinkRoute == nullptr) {</span></span>
+<span id="L434"><span class="lineNum">     434</span>                 :<span class="tlaGNC">           2 :         auto *route = new Ipv6Route(binding.homeNetworkPrefix, binding.homeNetworkPrefixLength, IRoute::MANUAL);</span></span>
+<span id="L435"><span class="lineNum">     435</span>                 :<span class="tlaGNC">           2 :         route-&gt;setInterface(accessInterface);</span></span>
+<span id="L436"><span class="lineNum">     436</span>                 :<span class="tlaGNC">           2 :         route-&gt;setNextHop(Ipv6Address::UNSPECIFIED_ADDRESS);</span></span>
+<span id="L437"><span class="lineNum">     437</span>                 :<span class="tlaGNC">           2 :         route-&gt;setMetric(1);</span></span>
+<span id="L438"><span class="lineNum">     438</span>                 :<span class="tlaGNC">           2 :         rt6-&gt;addRoute(route);</span></span>
+<span id="L439"><span class="lineNum">     439</span>                 :<span class="tlaGNC">           2 :         binding.downlinkRoute = route;</span></span>
+<span id="L440"><span class="lineNum">     440</span>                 :<span class="tlaGNC">           2 :     }</span></span>
+<span id="L441"><span class="lineNum">     441</span>                 :             : </span>
+<span id="L442"><span class="lineNum">     442</span>                 :             :     // advertise the mobile node's home network prefix on the access link, so the</span>
+<span id="L443"><span class="lineNum">     443</span>                 :             :     // (unmodified) mobile node keeps its address via stateless autoconfiguration</span>
+<span id="L444"><span class="lineNum">     444</span>                 :<span class="tlaGNC">           2 :     auto ipv6Data = accessInterface-&gt;getProtocolDataForUpdate&lt;Ipv6InterfaceData&gt;();</span></span>
+<span id="L445"><span class="lineNum">     445</span>                 :<span class="tlaGNC">           2 :     bool alreadyAdvertised = false;</span></span>
+<span id="L446"><span class="lineNum">     446</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:<span class="tlaGNC">           2 :     for (int i = 0; i &lt; ipv6Data-&gt;getNumAdvPrefixes(); i++) {</span></span>
+<span id="L447"><span class="lineNum">     447</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC tlaBgUNC">           0 :         if (ipv6Data-&gt;getAdvPrefix(i).prefix == binding.homeNetworkPrefix) {</span></span>
+<span id="L448"><span class="lineNum">     448</span>                 :<span class="tlaUNC">           0 :             alreadyAdvertised = true;</span></span>
+<span id="L449"><span class="lineNum">     449</span>                 :<span class="tlaUNC">           0 :             break;</span></span>
+<span id="L450"><span class="lineNum">     450</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L451"><span class="lineNum">     451</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L452"><span class="lineNum">     452</span>         [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC tlaBgGNC">           2 :     if (!alreadyAdvertised) {</span></span>
+<span id="L453"><span class="lineNum">     453</span>                 :<span class="tlaGNC">           2 :         Ipv6InterfaceData::AdvPrefix advPrefix;</span></span>
+<span id="L454"><span class="lineNum">     454</span>                 :<span class="tlaGNC">           2 :         advPrefix.prefix = binding.homeNetworkPrefix;</span></span>
+<span id="L455"><span class="lineNum">     455</span>                 :<span class="tlaGNC">           2 :         advPrefix.prefixLength = binding.homeNetworkPrefixLength;</span></span>
+<span id="L456"><span class="lineNum">     456</span>                 :<span class="tlaGNC">           2 :         advPrefix.advOnLinkFlag = true;</span></span>
+<span id="L457"><span class="lineNum">     457</span>                 :<span class="tlaGNC">           2 :         advPrefix.advAutonomousFlag = true;</span></span>
+<span id="L458"><span class="lineNum">     458</span>                 :<span class="tlaGNC">           2 :         advPrefix.advValidLifetime = advValidLifetime;</span></span>
+<span id="L459"><span class="lineNum">     459</span>                 :<span class="tlaGNC">           2 :         advPrefix.advPreferredLifetime = advPreferredLifetime;</span></span>
+<span id="L460"><span class="lineNum">     460</span>                 :<span class="tlaGNC">           2 :         ipv6Data-&gt;addAdvPrefix(advPrefix);</span></span>
+<span id="L461"><span class="lineNum">     461</span>                 :<span class="tlaGNC">           2 :     }</span></span>
+<span id="L462"><span class="lineNum">     462</span>                 :             :     // push the prefix to the mobile node immediately rather than waiting for the next periodic RA</span>
+<span id="L463"><span class="lineNum">     463</span>                 :<span class="tlaGNC">           2 :     ipv6nd-&gt;sendUnsolicitedRa(accessInterface);</span></span>
+<span id="L464"><span class="lineNum">     464</span>                 :             : </span>
+<span id="L465"><span class="lineNum">     465</span>                 :<span class="tlaGNC">           2 :     binding.registered = true;</span></span>
+<span id="L466"><span class="lineNum">     466</span>                 :<span class="tlaGNC">           2 : }</span></span>
+<span id="L467"><span class="lineNum">     467</span>                 :             : </span>
+<span id="L468"><span class="lineNum">     468</span>                 :             : //</span>
+<span id="L469"><span class="lineNum">     469</span>                 :             : // Lifecycle</span>
+<span id="L470"><span class="lineNum">     470</span>                 :             : //</span>
+<span id="L471"><span class="lineNum">     471</span>                 :             : </span>
+<span id="L472"><span class="lineNum">     472</span>                 :             : void Pmipv6::handleStopOperation(LifecycleOperation *operation)</span>
+<span id="L473"><span class="lineNum">     473</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L474"><span class="lineNum">     474</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L475"><span class="lineNum">     475</span>                 :             : </span>
+<span id="L476"><span class="lineNum">     476</span>                 :             : void Pmipv6::handleCrashOperation(LifecycleOperation *operation)</span>
+<span id="L477"><span class="lineNum">     477</span>                 :<span class="tlaUNC">           0 : {</span></span>
+<span id="L478"><span class="lineNum">     478</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L479"><span class="lineNum">     479</span>                 :             : </span>
+<span id="L480"><span class="lineNum">     480</span>                 :             : } // namespace inet</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

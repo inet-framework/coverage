@@ -1,0 +1,415 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - common/packet/recorder/src/inet/common/packet/recorder/PcapngWriter.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../index.html">top level</a> - <a href="index.html">common/packet/recorder/src/inet/common/packet/recorder</a> - PcapngWriter.cc<span style="font-size: 80%;"> (source / <a href="PcapngWriter.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">95.7&nbsp;%</td>
+            <td class="headerCovTableEntry">233</td>
+            <td class="headerCovTableEntry">223</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">24</td>
+            <td class="headerCovTableEntry">24</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryMed">80.0&nbsp;%</td>
+            <td class="headerCovTableEntry">100</td>
+            <td class="headerCovTableEntry">80</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2020 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #include &quot;inet/common/packet/recorder/PcapngWriter.h&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : </span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &lt;cerrno&gt;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : </span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &quot;inet/common/INETUtils.h&quot;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : #include &quot;inet/common/ModuleAccess.h&quot;</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : #include &quot;inet/common/packet/chunk/BytesChunk.h&quot;</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : </span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : namespace inet {</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : </span>
+<span id="L18"><span class="lineNum">      18</span>                 :<span class="tlaGNC tlaBgGNC">         616 : #define PCAP_MAGIC    0x1a2b3c4d</span></span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : </span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : static int pad(int value, int multiplier = 4)</span>
+<span id="L21"><span class="lineNum">      21</span>                 :<span class="tlaGNC">     6634246 : {</span></span>
+<span id="L22"><span class="lineNum">      22</span>                 :<span class="tlaGNC">     6634246 :     return (multiplier - value % multiplier) % multiplier;</span></span>
+<span id="L23"><span class="lineNum">      23</span>                 :<span class="tlaGNC">     6634246 : }</span></span>
+<span id="L24"><span class="lineNum">      24</span>                 :             : </span>
+<span id="L25"><span class="lineNum">      25</span>                 :             : static int roundUp(int value, int multiplier = 4)</span>
+<span id="L26"><span class="lineNum">      26</span>                 :<span class="tlaGNC">     4426812 : {</span></span>
+<span id="L27"><span class="lineNum">      27</span>                 :<span class="tlaGNC">     4426812 :     return value + pad(value, multiplier);</span></span>
+<span id="L28"><span class="lineNum">      28</span>                 :<span class="tlaGNC">     4426812 : }</span></span>
+<span id="L29"><span class="lineNum">      29</span>                 :             : </span>
+<span id="L30"><span class="lineNum">      30</span>                 :             : template&lt;typename T&gt;</span>
+<span id="L31"><span class="lineNum">      31</span>                 :             : static void appendValue(std::vector&lt;uint8_t&gt;&amp; bytes, T value)</span>
+<span id="L32"><span class="lineNum">      32</span>                 :<span class="tlaGNC">    17686484 : {</span></span>
+<span id="L33"><span class="lineNum">      33</span>                 :<span class="tlaGNC">    17686484 :     auto valueBytes = reinterpret_cast&lt;const uint8_t *&gt;(&amp;value);</span></span>
+<span id="L34"><span class="lineNum">      34</span>                 :<span class="tlaGNC">    17686484 :     bytes.insert(bytes.end(), valueBytes, valueBytes + sizeof(value));</span></span>
+<span id="L35"><span class="lineNum">      35</span>                 :<span class="tlaGNC">    17686484 : }</span></span>
+<span id="L36"><span class="lineNum">      36</span>                 :             : </span>
+<span id="L37"><span class="lineNum">      37</span>                 :             : uint32_t PcapngPacketFlags::getValue() const</span>
+<span id="L38"><span class="lineNum">      38</span>                 :<span class="tlaGNC">     2207432 : {</span></span>
+<span id="L39"><span class="lineNum">      39</span>                 :<span class="tlaGNC">     2207432 :     uint32_t value = 0;</span></span>
+<span id="L40"><span class="lineNum">      40</span>                 :<span class="tlaGNC">     2207432 :     switch (direction) {</span></span>
+<span id="L41"><span class="lineNum">      41</span>         [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2207430 times"> + </span>]:<span class="tlaGNC">           2 :         case DIRECTION_UNDEFINED:</span></span>
+<span id="L42"><span class="lineNum">      42</span>                 :<span class="tlaGNC">           2 :             break;</span></span>
+<span id="L43"><span class="lineNum">      43</span>         [<span class="tlaGBC" title="Branch 0 was taken 1102473 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1104959 times"> + </span>]:<span class="tlaGNC">     1102473 :         case DIRECTION_INBOUND:</span></span>
+<span id="L44"><span class="lineNum">      44</span>                 :<span class="tlaGNC">     1102473 :             value |= 0b01;</span></span>
+<span id="L45"><span class="lineNum">      45</span>                 :<span class="tlaGNC">     1102473 :             break;</span></span>
+<span id="L46"><span class="lineNum">      46</span>         [<span class="tlaGBC" title="Branch 0 was taken 1104957 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1102475 times"> + </span>]:<span class="tlaGNC">     1104957 :         case DIRECTION_OUTBOUND:</span></span>
+<span id="L47"><span class="lineNum">      47</span>                 :<span class="tlaGNC">     1104957 :             value |= 0b10;</span></span>
+<span id="L48"><span class="lineNum">      48</span>                 :<span class="tlaGNC">     1104957 :             break;</span></span>
+<span id="L49"><span class="lineNum">      49</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2207432 times"> + </span>]:<span class="tlaUNC tlaBgUNC">           0 :         default:</span></span>
+<span id="L50"><span class="lineNum">      50</span>                 :<span class="tlaUNC">           0 :             throw cRuntimeError(&quot;Unknown direction value&quot;);</span></span>
+<span id="L51"><span class="lineNum">      51</span>                 :<span class="tlaGNC tlaBgGNC">     2207432 :     }</span></span>
+<span id="L52"><span class="lineNum">      52</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2207432 times"> + </span>]:<span class="tlaGNC">     2207432 :     if (receptionType &gt; PCAPNG_RECEPTION_PROMISCUOUS)</span></span>
+<span id="L53"><span class="lineNum">      53</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         throw cRuntimeError(&quot;Unknown PCAPng reception type: %d&quot;, receptionType);</span></span>
+<span id="L54"><span class="lineNum">      54</span>                 :<span class="tlaGNC tlaBgGNC">     2207432 :     value |= receptionType &lt;&lt; 2;</span></span>
+<span id="L55"><span class="lineNum">      55</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2207432 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaGBC" title="Branch 1 was taken 2207431 times"> + </span>]:<span class="tlaGNC">     2207432 :     if (fcsLength &lt; B(0) || fcsLength &gt; B(15))</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaGBC" title="Branch 1 was taken 2207431 times"> + </span>]
+<span id="L56"><span class="lineNum">      56</span>                 :<span class="tlaGNC">           1 :         throw cRuntimeError(&quot;The PCAPng FCS length of a packet must be between 0 and 15 bytes: %s&quot;, fcsLength.str().c_str());</span></span>
+<span id="L57"><span class="lineNum">      57</span>                 :<span class="tlaGNC">     2207431 :     value |= fcsLength.get&lt;B&gt;() &lt;&lt; 5;</span></span>
+<span id="L58"><span class="lineNum">      58</span>         [<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaGBC" title="Branch 1 was taken 2207430 times"> + </span>]:<span class="tlaGNC">     2207431 :     if ((linkLayerErrors &amp; 0x0000FFFF) != 0)</span></span>
+<span id="L59"><span class="lineNum">      59</span>                 :<span class="tlaGNC">           1 :         throw cRuntimeError(&quot;The PCAPng link-layer errors use bits 16-31 only: 0x%08x&quot;, linkLayerErrors);</span></span>
+<span id="L60"><span class="lineNum">      60</span>                 :<span class="tlaGNC">     2207430 :     value |= linkLayerErrors;</span></span>
+<span id="L61"><span class="lineNum">      61</span>                 :<span class="tlaGNC">     2207430 :     return value;</span></span>
+<span id="L62"><span class="lineNum">      62</span>                 :<span class="tlaGNC">     2207431 : }</span></span>
+<span id="L63"><span class="lineNum">      63</span>                 :             : </span>
+<span id="L64"><span class="lineNum">      64</span>                 :             : void PcapngOptions::addOption(uint16_t code, const std::vector&lt;uint8_t&gt;&amp; value)</span>
+<span id="L65"><span class="lineNum">      65</span>                 :<span class="tlaGNC">     2216869 : {</span></span>
+<span id="L66"><span class="lineNum">      66</span>         [<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaGBC" title="Branch 1 was taken 2216868 times"> + </span>]:<span class="tlaGNC">     2216869 :     if (value.size() &gt; UINT16_MAX)</span></span>
+<span id="L67"><span class="lineNum">      67</span>                 :<span class="tlaGNC">           1 :         throw cRuntimeError(&quot;The value of PCAPng option %d is longer than %d bytes&quot;, code, UINT16_MAX);</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :<span class="tlaGNC">     2216868 :     options.push_back({code, value});</span></span>
+<span id="L69"><span class="lineNum">      69</span>                 :<span class="tlaGNC">     2216868 : }</span></span>
+<span id="L70"><span class="lineNum">      70</span>                 :             : </span>
+<span id="L71"><span class="lineNum">      71</span>                 :             : void PcapngOptions::addString(uint16_t code, const std::string&amp; value)</span>
+<span id="L72"><span class="lineNum">      72</span>                 :<span class="tlaGNC">        3771 : {</span></span>
+<span id="L73"><span class="lineNum">      73</span>                 :<span class="tlaGNC">        3771 :     addOption(code, std::vector&lt;uint8_t&gt;(value.begin(), value.end()));</span></span>
+<span id="L74"><span class="lineNum">      74</span>                 :<span class="tlaGNC">        3771 : }</span></span>
+<span id="L75"><span class="lineNum">      75</span>                 :             : </span>
+<span id="L76"><span class="lineNum">      76</span>                 :             : void PcapngOptions::addUint8(uint16_t code, uint8_t value)</span>
+<span id="L77"><span class="lineNum">      77</span>                 :<span class="tlaGNC">        1897 : {</span></span>
+<span id="L78"><span class="lineNum">      78</span>                 :<span class="tlaGNC">        1897 :     addOption(code, {value});</span></span>
+<span id="L79"><span class="lineNum">      79</span>                 :<span class="tlaGNC">        1897 : }</span></span>
+<span id="L80"><span class="lineNum">      80</span>                 :             : </span>
+<span id="L81"><span class="lineNum">      81</span>                 :             : void PcapngOptions::addUint32(uint16_t code, uint32_t value)</span>
+<span id="L82"><span class="lineNum">      82</span>                 :<span class="tlaGNC">     2207430 : {</span></span>
+<span id="L83"><span class="lineNum">      83</span>                 :<span class="tlaGNC">     2207430 :     std::vector&lt;uint8_t&gt; bytes;</span></span>
+<span id="L84"><span class="lineNum">      84</span>                 :<span class="tlaGNC">     2207430 :     appendValue(bytes, value);</span></span>
+<span id="L85"><span class="lineNum">      85</span>                 :<span class="tlaGNC">     2207430 :     addOption(code, bytes);</span></span>
+<span id="L86"><span class="lineNum">      86</span>                 :<span class="tlaGNC">     2207430 : }</span></span>
+<span id="L87"><span class="lineNum">      87</span>                 :             : </span>
+<span id="L88"><span class="lineNum">      88</span>                 :             : void PcapngOptions::addUint64(uint16_t code, uint64_t value)</span>
+<span id="L89"><span class="lineNum">      89</span>                 :<span class="tlaGNC">           1 : {</span></span>
+<span id="L90"><span class="lineNum">      90</span>                 :<span class="tlaGNC">           1 :     std::vector&lt;uint8_t&gt; bytes;</span></span>
+<span id="L91"><span class="lineNum">      91</span>                 :<span class="tlaGNC">           1 :     appendValue(bytes, value);</span></span>
+<span id="L92"><span class="lineNum">      92</span>                 :<span class="tlaGNC">           1 :     addOption(code, bytes);</span></span>
+<span id="L93"><span class="lineNum">      93</span>                 :<span class="tlaGNC">           1 : }</span></span>
+<span id="L94"><span class="lineNum">      94</span>                 :             : </span>
+<span id="L95"><span class="lineNum">      95</span>                 :             : void PcapngInterfaceOptions::addIpv4Address(const Ipv4Address&amp; address, const Ipv4Address&amp; netmask)</span>
+<span id="L96"><span class="lineNum">      96</span>                 :<span class="tlaGNC">        1884 : {</span></span>
+<span id="L97"><span class="lineNum">      97</span>                 :<span class="tlaGNC">        1884 :     std::vector&lt;uint8_t&gt; bytes;</span></span>
+<span id="L98"><span class="lineNum">      98</span>         [<span class="tlaGBC" title="Branch 0 was taken 7536 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1884 times"> + </span>]:<span class="tlaGNC">        9420 :     for (int i = 0; i &lt; 4; i++) bytes.push_back(address.getDByte(i));</span></span>
+<span id="L99"><span class="lineNum">      99</span>         [<span class="tlaGBC" title="Branch 0 was taken 7536 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1884 times"> + </span>]:<span class="tlaGNC">        9420 :     for (int i = 0; i &lt; 4; i++) bytes.push_back(netmask.getDByte(i));</span></span>
+<span id="L100"><span class="lineNum">     100</span>                 :<span class="tlaGNC">        1884 :     addOption(PCAPNG_IF_IPV4ADDR, bytes);</span></span>
+<span id="L101"><span class="lineNum">     101</span>                 :<span class="tlaGNC">        1884 : }</span></span>
+<span id="L102"><span class="lineNum">     102</span>                 :             : </span>
+<span id="L103"><span class="lineNum">     103</span>                 :             : void PcapngInterfaceOptions::addMacAddress(const MacAddress&amp; address)</span>
+<span id="L104"><span class="lineNum">     104</span>                 :<span class="tlaGNC">        1884 : {</span></span>
+<span id="L105"><span class="lineNum">     105</span>                 :<span class="tlaGNC">        1884 :     uint8_t bytes[6];</span></span>
+<span id="L106"><span class="lineNum">     106</span>                 :<span class="tlaGNC">        1884 :     address.getAddressBytes(bytes);</span></span>
+<span id="L107"><span class="lineNum">     107</span>                 :<span class="tlaGNC">        1884 :     addOption(PCAPNG_IF_MACADDR, std::vector&lt;uint8_t&gt;(bytes, bytes + 6));</span></span>
+<span id="L108"><span class="lineNum">     108</span>                 :<span class="tlaGNC">        1884 : }</span></span>
+<span id="L109"><span class="lineNum">     109</span>                 :             : </span>
+<span id="L110"><span class="lineNum">     110</span>                 :             : void PcapngInterfaceOptions::addFcsLength(b fcsLength)</span>
+<span id="L111"><span class="lineNum">     111</span>                 :<span class="tlaGNC">           2 : {</span></span>
+<span id="L112"><span class="lineNum">     112</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:<span class="tlaGNC">           2 :     if (fcsLength &lt; b(0) || fcsLength &gt; b(UINT8_MAX))</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]
+<span id="L113"><span class="lineNum">     113</span>                 :<span class="tlaGNC">           1 :         throw cRuntimeError(&quot;The PCAPng FCS length of an interface must be between 0 and %d bits: %s&quot;, UINT8_MAX, fcsLength.str().c_str());</span></span>
+<span id="L114"><span class="lineNum">     114</span>                 :<span class="tlaGNC">           1 :     addUint8(PCAPNG_IF_FCSLEN, fcsLength.get&lt;b&gt;());</span></span>
+<span id="L115"><span class="lineNum">     115</span>                 :<span class="tlaGNC">           1 : }</span></span>
+<span id="L116"><span class="lineNum">     116</span>                 :             : </span>
+<span id="L117"><span class="lineNum">     117</span>                 :             : PcapngWriter::~PcapngWriter()</span>
+<span id="L118"><span class="lineNum">     118</span>                 :<span class="tlaGNC">         614 : {</span></span>
+<span id="L119"><span class="lineNum">     119</span>                 :<span class="tlaGNC">         614 :     PcapngWriter::close(); // NOTE: admitting that this will not call overridden methods from the destructor</span></span>
+<span id="L120"><span class="lineNum">     120</span>                 :<span class="tlaGNC">         614 : }</span></span>
+<span id="L121"><span class="lineNum">     121</span>                 :             : </span>
+<span id="L122"><span class="lineNum">     122</span>                 :             : void PcapngWriter::open(const char *filename, unsigned int snaplen, int timePrecision)</span>
+<span id="L123"><span class="lineNum">     123</span>                 :<span class="tlaGNC">         613 : {</span></span>
+<span id="L124"><span class="lineNum">     124</span>                 :<span class="tlaGNC">         613 :     open(filename);</span></span>
+<span id="L125"><span class="lineNum">     125</span>                 :<span class="tlaGNC">         613 :     this-&gt;snaplen = snaplen;</span></span>
+<span id="L126"><span class="lineNum">     126</span>                 :             : </span>
+<span id="L127"><span class="lineNum">     127</span>                 :             :     // TODO check validity of timePrecision</span>
+<span id="L128"><span class="lineNum">     128</span>                 :<span class="tlaGNC">         613 :     this-&gt;timePrecision = timePrecision;</span></span>
+<span id="L129"><span class="lineNum">     129</span>                 :             : </span>
+<span id="L130"><span class="lineNum">     130</span>                 :<span class="tlaGNC">         613 :     writeSectionHeaderBlock();</span></span>
+<span id="L131"><span class="lineNum">     131</span>                 :<span class="tlaGNC">         613 : }</span></span>
+<span id="L132"><span class="lineNum">     132</span>                 :             : </span>
+<span id="L133"><span class="lineNum">     133</span>                 :             : void PcapngWriter::open(const char *filename)</span>
+<span id="L134"><span class="lineNum">     134</span>                 :<span class="tlaGNC">         615 : {</span></span>
+<span id="L135"><span class="lineNum">     135</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 615 times"> + </span>]:<span class="tlaGNC">         615 :     if (opp_isempty(filename))</span></span>
+<span id="L136"><span class="lineNum">     136</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         throw cRuntimeError(&quot;Cannot open pcap file: file name is empty&quot;);</span></span>
+<span id="L137"><span class="lineNum">     137</span>                 :             : </span>
+<span id="L138"><span class="lineNum">     138</span>                 :<span class="tlaGNC tlaBgGNC">         615 :     inet::utils::makePathForFile(filename);</span></span>
+<span id="L139"><span class="lineNum">     139</span>                 :<span class="tlaGNC">         615 :     dumpfile = fopen(filename, &quot;wb&quot;);</span></span>
+<span id="L140"><span class="lineNum">     140</span>                 :<span class="tlaGNC">         615 :     fileName = filename;</span></span>
+<span id="L141"><span class="lineNum">     141</span>                 :             : </span>
+<span id="L142"><span class="lineNum">     142</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 615 times"> + </span>]:<span class="tlaGNC">         615 :     if (!dumpfile)</span></span>
+<span id="L143"><span class="lineNum">     143</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         throw cRuntimeError(&quot;Cannot open pcap file [%s] for writing: %s&quot;, filename, strerror(errno));</span></span>
+<span id="L144"><span class="lineNum">     144</span>                 :             : </span>
+<span id="L145"><span class="lineNum">     145</span>                 :<span class="tlaGNC tlaBgGNC">         615 :     flush = false;</span></span>
+<span id="L146"><span class="lineNum">     146</span>                 :<span class="tlaGNC">         615 :     hasSection = false;</span></span>
+<span id="L147"><span class="lineNum">     147</span>                 :<span class="tlaGNC">         615 :     interfaces.clear();</span></span>
+<span id="L148"><span class="lineNum">     148</span>                 :<span class="tlaGNC">         615 :     interfaceModuleIdAndLinkTypeToPcapngInterfaceId.clear();</span></span>
+<span id="L149"><span class="lineNum">     149</span>                 :<span class="tlaGNC">         615 :     linkTypeToPcapngInterfaceIdWithoutNetworkInterface.clear();</span></span>
+<span id="L150"><span class="lineNum">     150</span>                 :<span class="tlaGNC">         615 : }</span></span>
+<span id="L151"><span class="lineNum">     151</span>                 :             : </span>
+<span id="L152"><span class="lineNum">     152</span>                 :             : void PcapngWriter::writeBlock(uint32_t blockType, const std::vector&lt;uint8_t&gt;&amp; fields, const uint8_t *data, size_t dataLength, const PcapngOptions&amp; options)</span>
+<span id="L153"><span class="lineNum">     153</span>                 :<span class="tlaGNC">     2209945 : {</span></span>
+<span id="L154"><span class="lineNum">     154</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2209945 times"> + </span>]:<span class="tlaGNC">     2209945 :     if (!dumpfile)</span></span>
+<span id="L155"><span class="lineNum">     155</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         throw cRuntimeError(&quot;Cannot write block: pcap output file is not open&quot;);</span></span>
+<span id="L156"><span class="lineNum">     156</span>                 :             : </span>
+<span id="L157"><span class="lineNum">     157</span>                 :             :     // options</span>
+<span id="L158"><span class="lineNum">     158</span>                 :<span class="tlaGNC tlaBgGNC">     2209945 :     std::vector&lt;uint8_t&gt; optionBytes;</span></span>
+<span id="L159"><span class="lineNum">     159</span>         [<span class="tlaGBC" title="Branch 0 was taken 2209326 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 619 times"> + </span>]:<span class="tlaGNC">     2209945 :     if (!options.isEmpty()) {</span></span>
+<span id="L160"><span class="lineNum">     160</span>         [<span class="tlaGBC" title="Branch 0 was taken 2216867 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2209326 times"> + </span>]:<span class="tlaGNC">     2216867 :         for (const auto&amp; option : options.getOptions()) {</span></span>
+<span id="L161"><span class="lineNum">     161</span>                 :<span class="tlaGNC">     2216867 :             appendValue&lt;uint16_t&gt;(optionBytes, option.code);</span></span>
+<span id="L162"><span class="lineNum">     162</span>                 :<span class="tlaGNC">     2216867 :             appendValue&lt;uint16_t&gt;(optionBytes, option.value.size());</span></span>
+<span id="L163"><span class="lineNum">     163</span>                 :<span class="tlaGNC">     2216867 :             optionBytes.insert(optionBytes.end(), option.value.begin(), option.value.end());</span></span>
+<span id="L164"><span class="lineNum">     164</span>                 :<span class="tlaGNC">     2216867 :             optionBytes.resize(roundUp(optionBytes.size()));</span></span>
+<span id="L165"><span class="lineNum">     165</span>                 :<span class="tlaGNC">     2216867 :         }</span></span>
+<span id="L166"><span class="lineNum">     166</span>                 :             :         // end of options</span>
+<span id="L167"><span class="lineNum">     167</span>                 :<span class="tlaGNC">     2209326 :         optionBytes.resize(optionBytes.size() + 4);</span></span>
+<span id="L168"><span class="lineNum">     168</span>                 :<span class="tlaGNC">     2209326 :     }</span></span>
+<span id="L169"><span class="lineNum">     169</span>                 :             : </span>
+<span id="L170"><span class="lineNum">     170</span>                 :<span class="tlaGNC">     2209945 :     ASSERT(fields.size() % 4 == 0);</span></span>
+<span id="L171"><span class="lineNum">     171</span>                 :<span class="tlaGNC">     2209945 :     uint32_t blockTotalLength = 4 + 4 + fields.size() + roundUp(dataLength) + optionBytes.size() + 4;</span></span>
+<span id="L172"><span class="lineNum">     172</span>                 :             : </span>
+<span id="L173"><span class="lineNum">     173</span>                 :             :     // header</span>
+<span id="L174"><span class="lineNum">     174</span>                 :<span class="tlaGNC">     2209945 :     fwrite(&amp;blockType, sizeof(blockType), 1, dumpfile);</span></span>
+<span id="L175"><span class="lineNum">     175</span>                 :<span class="tlaGNC">     2209945 :     fwrite(&amp;blockTotalLength, sizeof(blockTotalLength), 1, dumpfile);</span></span>
+<span id="L176"><span class="lineNum">     176</span>                 :<span class="tlaGNC">     2209945 :     fwrite(fields.data(), fields.size(), 1, dumpfile);</span></span>
+<span id="L177"><span class="lineNum">     177</span>                 :             : </span>
+<span id="L178"><span class="lineNum">     178</span>         [<span class="tlaGBC" title="Branch 0 was taken 2207434 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2511 times"> + </span>]:<span class="tlaGNC">     2209945 :     if (dataLength != 0) {</span></span>
+<span id="L179"><span class="lineNum">     179</span>                 :             :         // data</span>
+<span id="L180"><span class="lineNum">     180</span>                 :<span class="tlaGNC">     2207434 :         fwrite(data, dataLength, 1, dumpfile);</span></span>
+<span id="L181"><span class="lineNum">     181</span>                 :             : </span>
+<span id="L182"><span class="lineNum">     182</span>                 :             :         // data padding</span>
+<span id="L183"><span class="lineNum">     183</span>                 :<span class="tlaGNC">     2207434 :         char padding[] = { 0, 0, 0, 0 };</span></span>
+<span id="L184"><span class="lineNum">     184</span>                 :<span class="tlaGNC">     2207434 :         fwrite(padding, pad(dataLength), 1, dumpfile);</span></span>
+<span id="L185"><span class="lineNum">     185</span>                 :<span class="tlaGNC">     2207434 :     }</span></span>
+<span id="L186"><span class="lineNum">     186</span>                 :             : </span>
+<span id="L187"><span class="lineNum">     187</span>                 :<span class="tlaGNC">     2209945 :     fwrite(optionBytes.data(), optionBytes.size(), 1, dumpfile);</span></span>
+<span id="L188"><span class="lineNum">     188</span>                 :             : </span>
+<span id="L189"><span class="lineNum">     189</span>                 :             :     // trailer</span>
+<span id="L190"><span class="lineNum">     190</span>                 :<span class="tlaGNC">     2209945 :     fwrite(&amp;blockTotalLength, sizeof(blockTotalLength), 1, dumpfile);</span></span>
+<span id="L191"><span class="lineNum">     191</span>                 :<span class="tlaGNC">     2209945 : }</span></span>
+<span id="L192"><span class="lineNum">     192</span>                 :             : </span>
+<span id="L193"><span class="lineNum">     193</span>                 :             : void PcapngWriter::writeSectionHeaderBlock(const PcapngSectionOptions&amp; options)</span>
+<span id="L194"><span class="lineNum">     194</span>                 :<span class="tlaGNC">         616 : {</span></span>
+<span id="L195"><span class="lineNum">     195</span>                 :<span class="tlaGNC">         616 :     std::vector&lt;uint8_t&gt; fields;</span></span>
+<span id="L196"><span class="lineNum">     196</span>                 :<span class="tlaGNC">         616 :     appendValue&lt;uint32_t&gt;(fields, PCAP_MAGIC);</span></span>
+<span id="L197"><span class="lineNum">     197</span>                 :<span class="tlaGNC">         616 :     appendValue&lt;uint16_t&gt;(fields, 1); // major version</span></span>
+<span id="L198"><span class="lineNum">     198</span>                 :<span class="tlaGNC">         616 :     appendValue&lt;uint16_t&gt;(fields, 0); // minor version</span></span>
+<span id="L199"><span class="lineNum">     199</span>                 :<span class="tlaGNC">         616 :     appendValue&lt;uint64_t&gt;(fields, -1L); // section length is not specified</span></span>
+<span id="L200"><span class="lineNum">     200</span>                 :<span class="tlaGNC">         616 :     writeBlock(PCAPNG_SECTION_HEADER_BLOCK, fields, nullptr, 0, options);</span></span>
+<span id="L201"><span class="lineNum">     201</span>                 :             : </span>
+<span id="L202"><span class="lineNum">     202</span>                 :             :     // interface IDs are unique only in their section</span>
+<span id="L203"><span class="lineNum">     203</span>                 :<span class="tlaGNC">         616 :     hasSection = true;</span></span>
+<span id="L204"><span class="lineNum">     204</span>                 :<span class="tlaGNC">         616 :     interfaces.clear();</span></span>
+<span id="L205"><span class="lineNum">     205</span>                 :<span class="tlaGNC">         616 :     interfaceModuleIdAndLinkTypeToPcapngInterfaceId.clear();</span></span>
+<span id="L206"><span class="lineNum">     206</span>                 :<span class="tlaGNC">         616 :     linkTypeToPcapngInterfaceIdWithoutNetworkInterface.clear();</span></span>
+<span id="L207"><span class="lineNum">     207</span>                 :<span class="tlaGNC">         616 : }</span></span>
+<span id="L208"><span class="lineNum">     208</span>                 :             : </span>
+<span id="L209"><span class="lineNum">     209</span>                 :             : int PcapngWriter::writeInterfaceDescriptionBlock(PcapLinkType linkType, unsigned int snaplen, int timePrecision, const PcapngInterfaceOptions&amp; options)</span>
+<span id="L210"><span class="lineNum">     210</span>                 :<span class="tlaGNC">        1897 : {</span></span>
+<span id="L211"><span class="lineNum">     211</span>         [<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaGBC" title="Branch 1 was taken 1896 times"> + </span>]:<span class="tlaGNC">        1897 :     if (!hasSection)</span></span>
+<span id="L212"><span class="lineNum">     212</span>                 :<span class="tlaGNC">           1 :         throw cRuntimeError(&quot;Cannot write interface: the PCAPng file has no section header block&quot;);</span></span>
+<span id="L213"><span class="lineNum">     213</span>         [<span class="tlaGBC" title="Branch 0 was taken 7537 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1895 times"> + </span>]:<span class="tlaGNC">        1896 :     for (const auto&amp; option : options.getOptions())</span></span>
+<span id="L214"><span class="lineNum">     214</span>         [<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaGBC" title="Branch 1 was taken 7536 times"> + </span>]:<span class="tlaGNC">        7537 :         if (option.code == PCAPNG_IF_TSRESOL)</span></span>
+<span id="L215"><span class="lineNum">     215</span>                 :<span class="tlaGNC">           1 :             throw cRuntimeError(&quot;Cannot write interface: the time precision gives the if_tsresol option&quot;);</span></span>
+<span id="L216"><span class="lineNum">     216</span>                 :<span class="tlaGNC">        1895 :     std::vector&lt;uint8_t&gt; fields;</span></span>
+<span id="L217"><span class="lineNum">     217</span>                 :<span class="tlaGNC">        1895 :     appendValue&lt;uint16_t&gt;(fields, linkType);</span></span>
+<span id="L218"><span class="lineNum">     218</span>                 :<span class="tlaGNC">        1895 :     appendValue&lt;uint16_t&gt;(fields, 0); // reserved</span></span>
+<span id="L219"><span class="lineNum">     219</span>                 :<span class="tlaGNC">        1895 :     appendValue&lt;uint32_t&gt;(fields, snaplen);</span></span>
+<span id="L220"><span class="lineNum">     220</span>                 :<span class="tlaGNC">        1895 :     PcapngInterfaceOptions interfaceOptions = options;</span></span>
+<span id="L221"><span class="lineNum">     221</span>                 :<span class="tlaGNC">        1895 :     interfaceOptions.addUint8(PCAPNG_IF_TSRESOL, timePrecision);</span></span>
+<span id="L222"><span class="lineNum">     222</span>                 :<span class="tlaGNC">        1895 :     writeBlock(PCAPNG_INTERFACE_DESCRIPTION_BLOCK, fields, nullptr, 0, interfaceOptions);</span></span>
+<span id="L223"><span class="lineNum">     223</span>                 :<span class="tlaGNC">        1895 :     interfaces.push_back({snaplen, timePrecision});</span></span>
+<span id="L224"><span class="lineNum">     224</span>                 :<span class="tlaGNC">        1895 :     return interfaces.size() - 1;</span></span>
+<span id="L225"><span class="lineNum">     225</span>                 :<span class="tlaGNC">        1896 : }</span></span>
+<span id="L226"><span class="lineNum">     226</span>                 :             : </span>
+<span id="L227"><span class="lineNum">     227</span>                 :             : void PcapngWriter::writeEnhancedPacketBlock(int interfaceId, simtime_t time, const uint8_t *data, size_t dataLength, size_t originalLength, const PcapngPacketOptions&amp; options)</span>
+<span id="L228"><span class="lineNum">     228</span>                 :<span class="tlaGNC">     2207437 : {</span></span>
+<span id="L229"><span class="lineNum">     229</span>         [<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaGBC" title="Branch 1 was taken 2207436 times"> + </span>]:<span class="tlaGNC">     2207437 :     if (!hasSection)</span></span>
+<span id="L230"><span class="lineNum">     230</span>                 :<span class="tlaGNC">           1 :         throw cRuntimeError(&quot;Cannot write packet: the PCAPng file has no section header block&quot;);</span></span>
+<span id="L231"><span class="lineNum">     231</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2207436 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaGBC" title="Branch 1 was taken 2207435 times"> + </span>]:<span class="tlaGNC">     2207436 :     if (interfaceId &lt; 0 || interfaceId &gt;= (int)interfaces.size())</span></span>
+<span id="L232"><span class="lineNum">     232</span>                 :<span class="tlaGNC">           1 :         throw cRuntimeError(&quot;Cannot write packet: the PCAPng section has no interface %d&quot;, interfaceId);</span></span>
+<span id="L233"><span class="lineNum">     233</span>         [<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaGBC" title="Branch 1 was taken 2207434 times"> + </span>]:<span class="tlaGNC">     2207435 :     if (originalLength &lt; dataLength)</span></span>
+<span id="L234"><span class="lineNum">     234</span>                 :<span class="tlaGNC">           1 :         throw cRuntimeError(&quot;Cannot write packet: the original length %zu is less than the data length %zu&quot;, originalLength, dataLength);</span></span>
+<span id="L235"><span class="lineNum">     235</span>                 :<span class="tlaGNC">     2207434 :     const auto&amp; interface = interfaces[interfaceId];</span></span>
+<span id="L236"><span class="lineNum">     236</span>         [<span class="tlaGBC" title="Branch 0 was taken 19 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2207415 times"> + </span>]:<span class="tlaGNC">     2207434 :     size_t capturedLength = interface.snaplen == 0 ? dataLength : std::min&lt;size_t&gt;(dataLength, interface.snaplen);</span></span>
+<span id="L237"><span class="lineNum">     237</span>                 :<span class="tlaGNC">     2207434 :     ASSERT(time &gt;= SIMTIME_ZERO);</span></span>
+<span id="L238"><span class="lineNum">     238</span>                 :<span class="tlaGNC">     2207434 :     uint64_t timestamp = time.inUnit(static_cast&lt;SimTimeUnit&gt;(-interface.timePrecision));</span></span>
+<span id="L239"><span class="lineNum">     239</span>                 :<span class="tlaGNC">     2207434 :     std::vector&lt;uint8_t&gt; fields;</span></span>
+<span id="L240"><span class="lineNum">     240</span>                 :<span class="tlaGNC">     2207434 :     appendValue&lt;uint32_t&gt;(fields, interfaceId);</span></span>
+<span id="L241"><span class="lineNum">     241</span>                 :<span class="tlaGNC">     2207434 :     appendValue&lt;uint32_t&gt;(fields, timestamp &gt;&gt; 32);</span></span>
+<span id="L242"><span class="lineNum">     242</span>                 :<span class="tlaGNC">     2207434 :     appendValue&lt;uint32_t&gt;(fields, timestamp &amp; 0xFFFFFFFFLLU);</span></span>
+<span id="L243"><span class="lineNum">     243</span>                 :<span class="tlaGNC">     2207434 :     appendValue&lt;uint32_t&gt;(fields, capturedLength);</span></span>
+<span id="L244"><span class="lineNum">     244</span>                 :<span class="tlaGNC">     2207434 :     appendValue&lt;uint32_t&gt;(fields, originalLength);</span></span>
+<span id="L245"><span class="lineNum">     245</span>                 :<span class="tlaGNC">     2207434 :     writeBlock(PCAPNG_ENHANCED_PACKET_BLOCK, fields, data, capturedLength, options);</span></span>
+<span id="L246"><span class="lineNum">     246</span>                 :             : </span>
+<span id="L247"><span class="lineNum">     247</span>         [<span class="tlaGBC" title="Branch 0 was taken 38806 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2168628 times"> + </span>]:<span class="tlaGNC">     2207434 :     if (flush)</span></span>
+<span id="L248"><span class="lineNum">     248</span>                 :<span class="tlaGNC">       38806 :         fflush(dumpfile);</span></span>
+<span id="L249"><span class="lineNum">     249</span>                 :<span class="tlaGNC">     2207434 : }</span></span>
+<span id="L250"><span class="lineNum">     250</span>                 :             : </span>
+<span id="L251"><span class="lineNum">     251</span>                 :             : int PcapngWriter::writeInterface(NetworkInterface *networkInterface, PcapLinkType linkType)</span>
+<span id="L252"><span class="lineNum">     252</span>                 :<span class="tlaGNC">        1890 : {</span></span>
+<span id="L253"><span class="lineNum">     253</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 21 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 21 times"> + </span>]:<span class="tlaGNC">        1890 :     EV_INFO &lt;&lt; &quot;Writing interface to file&quot; &lt;&lt; EV_FIELD(fileName) &lt;&lt; EV_FIELD(networkInterface) &lt;&lt; EV_ENDL;</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 21 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 21 times"> + </span>]
+<span id="L254"><span class="lineNum">     254</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1890 times"> + </span>]:<span class="tlaGNC">        1890 :     if (!dumpfile)</span></span>
+<span id="L255"><span class="lineNum">     255</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         throw cRuntimeError(&quot;Cannot write interface: pcap output file is not open&quot;);</span></span>
+<span id="L256"><span class="lineNum">     256</span>                 :             : </span>
+<span id="L257"><span class="lineNum">     257</span>                 :<span class="tlaGNC tlaBgGNC">        1890 :     PcapngInterfaceOptions options;</span></span>
+<span id="L258"><span class="lineNum">     258</span>         [<span class="tlaGBC" title="Branch 0 was taken 1883 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 7 times"> + </span>]:<span class="tlaGNC">        1890 :     if (networkInterface != nullptr) {</span></span>
+<span id="L259"><span class="lineNum">     259</span>                 :<span class="tlaGNC">        1883 :         options.addName(networkInterface-&gt;getInterfaceName());</span></span>
+<span id="L260"><span class="lineNum">     260</span>                 :<span class="tlaGNC">        1883 :         std::string fullPath = networkInterface-&gt;getInterfaceFullPath();</span></span>
+<span id="L261"><span class="lineNum">     261</span>                 :<span class="tlaGNC">        1883 :         options.addDescription(fullPath.substr(fullPath.find('.') + 1));</span></span>
+<span id="L262"><span class="lineNum">     262</span>                 :<span class="tlaGNC">        1883 :         options.addMacAddress(networkInterface-&gt;getMacAddress());</span></span>
+<span id="L263"><span class="lineNum">     263</span>                 :<span class="tlaGNC">        1883 :         options.addIpv4Address(networkInterface-&gt;getIpv4Address(), networkInterface-&gt;getIpv4Netmask());</span></span>
+<span id="L264"><span class="lineNum">     264</span>                 :<span class="tlaGNC">        1883 :     }</span></span>
+<span id="L265"><span class="lineNum">     265</span>                 :<span class="tlaGNC">        1890 :     return writeInterfaceDescriptionBlock(linkType, snaplen, timePrecision, options);</span></span>
+<span id="L266"><span class="lineNum">     266</span>                 :<span class="tlaGNC">        1890 : }</span></span>
+<span id="L267"><span class="lineNum">     267</span>                 :             : </span>
+<span id="L268"><span class="lineNum">     268</span>                 :             : void PcapngWriter::writePacket(simtime_t stime, const Packet *packet, b frontOffset, b backOffset, Direction direction, NetworkInterface *networkInterface, PcapLinkType linkType)</span>
+<span id="L269"><span class="lineNum">     269</span>                 :<span class="tlaGNC">     2207430 : {</span></span>
+<span id="L270"><span class="lineNum">     270</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 31 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 31 times"> + </span>]:<span class="tlaGNC">     2207430 :     EV_INFO &lt;&lt; &quot;Writing packet to file&quot; &lt;&lt; EV_FIELD(fileName) &lt;&lt; EV_FIELD(packet) &lt;&lt; EV_ENDL;</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 31 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 31 times"> + </span>]
+<span id="L271"><span class="lineNum">     271</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2207430 times"> + </span>]:<span class="tlaGNC">     2207430 :     if (!dumpfile)</span></span>
+<span id="L272"><span class="lineNum">     272</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         throw cRuntimeError(&quot;Cannot write frame: pcap output file is not open&quot;);</span></span>
+<span id="L273"><span class="lineNum">     273</span>                 :             : </span>
+<span id="L274"><span class="lineNum">     274</span>                 :             :     // an interface description has one link type, so each link type of an interface needs its own</span>
+<span id="L275"><span class="lineNum">     275</span>                 :<span class="tlaGNC tlaBgGNC">     2207430 :     int pcapngInterfaceId;</span></span>
+<span id="L276"><span class="lineNum">     276</span>         [<span class="tlaGBC" title="Branch 0 was taken 9 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2207421 times"> + </span>]:<span class="tlaGNC">     2207430 :     if (networkInterface == nullptr) {</span></span>
+<span id="L277"><span class="lineNum">     277</span>                 :<span class="tlaGNC">           9 :         auto it = linkTypeToPcapngInterfaceIdWithoutNetworkInterface.find(linkType);</span></span>
+<span id="L278"><span class="lineNum">     278</span>         [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 7 times"> + </span>]:<span class="tlaGNC">           9 :         if (it != linkTypeToPcapngInterfaceIdWithoutNetworkInterface.end())</span></span>
+<span id="L279"><span class="lineNum">     279</span>                 :<span class="tlaGNC">           2 :             pcapngInterfaceId = it-&gt;second;</span></span>
+<span id="L280"><span class="lineNum">     280</span>                 :<span class="tlaGNC">           7 :         else {</span></span>
+<span id="L281"><span class="lineNum">     281</span>                 :<span class="tlaGNC">           7 :             pcapngInterfaceId = writeInterface(nullptr, linkType);</span></span>
+<span id="L282"><span class="lineNum">     282</span>                 :<span class="tlaGNC">           7 :             linkTypeToPcapngInterfaceIdWithoutNetworkInterface[linkType] = pcapngInterfaceId;</span></span>
+<span id="L283"><span class="lineNum">     283</span>                 :<span class="tlaGNC">           7 :         }</span></span>
+<span id="L284"><span class="lineNum">     284</span>                 :<span class="tlaGNC">           9 :     }</span></span>
+<span id="L285"><span class="lineNum">     285</span>                 :<span class="tlaGNC">     2207421 :     else {</span></span>
+<span id="L286"><span class="lineNum">     286</span>                 :<span class="tlaGNC">     2207421 :         auto interfaceKey = std::make_pair(networkInterface-&gt;getId(), linkType);</span></span>
+<span id="L287"><span class="lineNum">     287</span>                 :<span class="tlaGNC">     2207421 :         auto it = interfaceModuleIdAndLinkTypeToPcapngInterfaceId.find(interfaceKey);</span></span>
+<span id="L288"><span class="lineNum">     288</span>         [<span class="tlaGBC" title="Branch 0 was taken 2205538 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1883 times"> + </span>]:<span class="tlaGNC">     2207421 :         if (it != interfaceModuleIdAndLinkTypeToPcapngInterfaceId.end())</span></span>
+<span id="L289"><span class="lineNum">     289</span>                 :<span class="tlaGNC">     2205538 :             pcapngInterfaceId = it-&gt;second;</span></span>
+<span id="L290"><span class="lineNum">     290</span>                 :<span class="tlaGNC">        1883 :         else {</span></span>
+<span id="L291"><span class="lineNum">     291</span>                 :<span class="tlaGNC">        1883 :             pcapngInterfaceId = writeInterface(networkInterface, linkType);</span></span>
+<span id="L292"><span class="lineNum">     292</span>                 :<span class="tlaGNC">        1883 :             interfaceModuleIdAndLinkTypeToPcapngInterfaceId[interfaceKey] = pcapngInterfaceId;</span></span>
+<span id="L293"><span class="lineNum">     293</span>                 :<span class="tlaGNC">        1883 :         }</span></span>
+<span id="L294"><span class="lineNum">     294</span>                 :<span class="tlaGNC">     2207421 :     }</span></span>
+<span id="L295"><span class="lineNum">     295</span>                 :             : </span>
+<span id="L296"><span class="lineNum">     296</span>                 :<span class="tlaGNC">     2207430 :     PcapngPacketOptions options;</span></span>
+<span id="L297"><span class="lineNum">     297</span>                 :             :     // the receiver of a frame with bit errors finds a wrong frame check sequence</span>
+<span id="L298"><span class="lineNum">     298</span>         [<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaGBC" title="Branch 1 was taken 2207429 times"> + </span>]:<span class="tlaGNC">     2207430 :     uint32_t linkLayerErrors = packet-&gt;hasBitError() ? PCAPNG_ERROR_CRC : 0;</span></span>
+<span id="L299"><span class="lineNum">     299</span> [<span class="tlaGBC" title="Branch 0 was taken 2207429 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:<span class="tlaGNC">     2207430 :     if (direction != DIRECTION_UNDEFINED || linkLayerErrors != 0) {</span></span>
+<span id="L300"><span class="lineNum">     300</span>                 :<span class="tlaGNC">     2207429 :         PcapngPacketFlags flags;</span></span>
+<span id="L301"><span class="lineNum">     301</span>                 :<span class="tlaGNC">     2207429 :         flags.direction = direction;</span></span>
+<span id="L302"><span class="lineNum">     302</span>                 :<span class="tlaGNC">     2207429 :         flags.linkLayerErrors = linkLayerErrors;</span></span>
+<span id="L303"><span class="lineNum">     303</span>                 :<span class="tlaGNC">     2207429 :         options.addFlags(flags);</span></span>
+<span id="L304"><span class="lineNum">     304</span>                 :<span class="tlaGNC">     2207429 :     }</span></span>
+<span id="L305"><span class="lineNum">     305</span>                 :             : </span>
+<span id="L306"><span class="lineNum">     306</span>                 :<span class="tlaGNC">     2207430 :     b originalLength = packet-&gt;getDataLength() - frontOffset - backOffset;</span></span>
+<span id="L307"><span class="lineNum">     307</span>         [<span class="tlaGBC" title="Branch 0 was taken 16 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2207414 times"> + </span>]:<span class="tlaGNC">     2207430 :     b capturedLength = snaplen == 0 ? originalLength : std::min(originalLength, b(B(snaplen)));</span></span>
+<span id="L308"><span class="lineNum">     308</span>         [<span class="tlaGBC" title="Branch 0 was taken 2207430 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">     2207430 :     if (capturedLength != b(0)) {</span></span>
+<span id="L309"><span class="lineNum">     309</span>                 :<span class="tlaGNC">     2207430 :         auto data = packet-&gt;peekDataAt&lt;BytesChunk&gt;(frontOffset, capturedLength);</span></span>
+<span id="L310"><span class="lineNum">     310</span>                 :<span class="tlaGNC">     2207430 :         const auto&amp; bytes = data-&gt;getBytes();</span></span>
+<span id="L311"><span class="lineNum">     311</span>                 :<span class="tlaGNC">     2207430 :         writeEnhancedPacketBlock(pcapngInterfaceId, stime, bytes.data(), bytes.size(), originalLength.get&lt;B&gt;(), options);</span></span>
+<span id="L312"><span class="lineNum">     312</span>                 :<span class="tlaGNC">     2207430 :     }</span></span>
+<span id="L313"><span class="lineNum">     313</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     else</span></span>
+<span id="L314"><span class="lineNum">     314</span>                 :<span class="tlaUNC">           0 :         writeEnhancedPacketBlock(pcapngInterfaceId, stime, nullptr, 0, originalLength.get&lt;B&gt;(), options);</span></span>
+<span id="L315"><span class="lineNum">     315</span>                 :<span class="tlaGNC tlaBgGNC">     2207430 : }</span></span>
+<span id="L316"><span class="lineNum">     316</span>                 :             : </span>
+<span id="L317"><span class="lineNum">     317</span>                 :             : void PcapngWriter::close()</span>
+<span id="L318"><span class="lineNum">     318</span>                 :<span class="tlaGNC">        1229 : {</span></span>
+<span id="L319"><span class="lineNum">     319</span>         [<span class="tlaGBC" title="Branch 0 was taken 615 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 614 times"> + </span>]:<span class="tlaGNC">        1229 :     if (dumpfile) {</span></span>
+<span id="L320"><span class="lineNum">     320</span>                 :<span class="tlaGNC">         615 :         fclose(dumpfile);</span></span>
+<span id="L321"><span class="lineNum">     321</span>                 :<span class="tlaGNC">         615 :         dumpfile = nullptr;</span></span>
+<span id="L322"><span class="lineNum">     322</span>                 :<span class="tlaGNC">         615 :     }</span></span>
+<span id="L323"><span class="lineNum">     323</span>                 :<span class="tlaGNC">        1229 : }</span></span>
+<span id="L324"><span class="lineNum">     324</span>                 :             : </span>
+<span id="L325"><span class="lineNum">     325</span>                 :             : } // namespace inet</span>
+<span id="L326"><span class="lineNum">     326</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

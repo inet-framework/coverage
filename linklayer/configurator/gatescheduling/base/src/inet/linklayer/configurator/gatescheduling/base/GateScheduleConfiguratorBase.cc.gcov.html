@@ -1,0 +1,422 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - linklayer/configurator/gatescheduling/base/src/inet/linklayer/configurator/gatescheduling/base/GateScheduleConfiguratorBase.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../../../index.html">top level</a> - <a href="index.html">linklayer/configurator/gatescheduling/base/src/inet/linklayer/configurator/gatescheduling/base</a> - GateScheduleConfiguratorBase.cc<span style="font-size: 80%;"> (source / <a href="GateScheduleConfiguratorBase.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">98.6&nbsp;%</td>
+            <td class="headerCovTableEntry">282</td>
+            <td class="headerCovTableEntry">278</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">16</td>
+            <td class="headerCovTableEntry">16</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryLo">56.0&nbsp;%</td>
+            <td class="headerCovTableEntry">184</td>
+            <td class="headerCovTableEntry">103</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2013 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #include &quot;inet/linklayer/configurator/gatescheduling/base/GateScheduleConfiguratorBase.h&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : </span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &quot;inet/common/PatternMatcher.h&quot;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &quot;inet/queueing/gate/PeriodicGate.h&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : </span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : namespace inet {</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : </span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : void GateScheduleConfiguratorBase::initialize(int stage)</span>
+<span id="L16"><span class="lineNum">      16</span>                 :<span class="tlaGNC tlaBgGNC">         120 : {</span></span>
+<span id="L17"><span class="lineNum">      17</span>         [<span class="tlaGBC" title="Branch 0 was taken 5 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 115 times"> + </span>]:<span class="tlaGNC">         120 :     if (stage == INITSTAGE_LOCAL) {</span></span>
+<span id="L18"><span class="lineNum">      18</span>                 :<span class="tlaGNC">           5 :         gateCycleDuration = par(&quot;gateCycleDuration&quot;);</span></span>
+<span id="L19"><span class="lineNum">      19</span>                 :<span class="tlaGNC">           5 :         configuration = check_and_cast&lt;cValueArray *&gt;(par(&quot;configuration&quot;).objectValue());</span></span>
+<span id="L20"><span class="lineNum">      20</span>                 :<span class="tlaGNC">           5 :     }</span></span>
+<span id="L21"><span class="lineNum">      21</span>         [<span class="tlaGBC" title="Branch 0 was taken 5 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 110 times"> + </span>]:<span class="tlaGNC">         115 :     else if (stage == INITSTAGE_GATE_SCHEDULE_CONFIGURATION) {</span></span>
+<span id="L22"><span class="lineNum">      22</span>                 :<span class="tlaGNC">           5 :         computeConfiguration();</span></span>
+<span id="L23"><span class="lineNum">      23</span>                 :<span class="tlaGNC">           5 :         configureGateScheduling();</span></span>
+<span id="L24"><span class="lineNum">      24</span>                 :<span class="tlaGNC">           5 :         configureApplicationOffsets();</span></span>
+<span id="L25"><span class="lineNum">      25</span>                 :<span class="tlaGNC">           5 :     }</span></span>
+<span id="L26"><span class="lineNum">      26</span>                 :<span class="tlaGNC">         120 : }</span></span>
+<span id="L27"><span class="lineNum">      27</span>                 :             : </span>
+<span id="L28"><span class="lineNum">      28</span>                 :             : void GateScheduleConfiguratorBase::handleParameterChange(const char *name)</span>
+<span id="L29"><span class="lineNum">      29</span>                 :<span class="tlaGNC">           2 : {</span></span>
+<span id="L30"><span class="lineNum">      30</span>         [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">           2 :     if (!strcmp(name, &quot;configuration&quot;)) {</span></span>
+<span id="L31"><span class="lineNum">      31</span>                 :<span class="tlaGNC">           2 :         configuration = check_and_cast&lt;cValueArray *&gt;(par(&quot;configuration&quot;).objectValue());</span></span>
+<span id="L32"><span class="lineNum">      32</span>                 :<span class="tlaGNC">           2 :         clearConfiguration();</span></span>
+<span id="L33"><span class="lineNum">      33</span>                 :<span class="tlaGNC">           2 :         computeConfiguration();</span></span>
+<span id="L34"><span class="lineNum">      34</span>                 :<span class="tlaGNC">           2 :         configureGateScheduling();</span></span>
+<span id="L35"><span class="lineNum">      35</span>                 :<span class="tlaGNC">           2 :         configureApplicationOffsets();</span></span>
+<span id="L36"><span class="lineNum">      36</span>                 :<span class="tlaGNC">           2 :     }</span></span>
+<span id="L37"><span class="lineNum">      37</span>                 :<span class="tlaGNC">           2 : }</span></span>
+<span id="L38"><span class="lineNum">      38</span>                 :             : </span>
+<span id="L39"><span class="lineNum">      39</span>                 :             : void GateScheduleConfiguratorBase::clearConfiguration()</span>
+<span id="L40"><span class="lineNum">      40</span>                 :<span class="tlaGNC">           7 : {</span></span>
+<span id="L41"><span class="lineNum">      41</span>         [<span class="tlaGBC" title="Branch 0 was taken 7 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">           7 :     if (topology != nullptr)</span></span>
+<span id="L42"><span class="lineNum">      42</span>                 :<span class="tlaGNC">           7 :         topology-&gt;clear();</span></span>
+<span id="L43"><span class="lineNum">      43</span>                 :<span class="tlaGNC">           7 :     delete gateSchedulingInput;</span></span>
+<span id="L44"><span class="lineNum">      44</span>                 :<span class="tlaGNC">           7 :     gateSchedulingInput = nullptr;</span></span>
+<span id="L45"><span class="lineNum">      45</span>                 :<span class="tlaGNC">           7 :     delete gateSchedulingOutput;</span></span>
+<span id="L46"><span class="lineNum">      46</span>                 :<span class="tlaGNC">           7 :     gateSchedulingOutput = nullptr;</span></span>
+<span id="L47"><span class="lineNum">      47</span>                 :<span class="tlaGNC">           7 : }</span></span>
+<span id="L48"><span class="lineNum">      48</span>                 :             : </span>
+<span id="L49"><span class="lineNum">      49</span>                 :             : void GateScheduleConfiguratorBase::computeConfiguration()</span>
+<span id="L50"><span class="lineNum">      50</span>                 :<span class="tlaGNC">           7 : {</span></span>
+<span id="L51"><span class="lineNum">      51</span>                 :<span class="tlaGNC">           7 :     long startTime = clock();</span></span>
+<span id="L52"><span class="lineNum">      52</span>                 :<span class="tlaGNC">           7 :     delete topology;</span></span>
+<span id="L53"><span class="lineNum">      53</span>                 :<span class="tlaGNC">           7 :     topology = new Topology();</span></span>
+<span id="L54"><span class="lineNum">      54</span>                 :<span class="tlaGNC">           7 :     TIME(extractTopology(*topology));</span></span>
+<span id="L55"><span class="lineNum">      55</span>                 :<span class="tlaGNC">           7 :     TIME(gateSchedulingInput = createGateSchedulingInput());</span></span>
+<span id="L56"><span class="lineNum">      56</span>                 :<span class="tlaGNC">           7 :     TIME(gateSchedulingOutput = computeGateScheduling(*gateSchedulingInput));</span></span>
+<span id="L57"><span class="lineNum">      57</span>                 :<span class="tlaGNC">           7 :     printElapsedTime(&quot;computeConfiguration&quot;, startTime);</span></span>
+<span id="L58"><span class="lineNum">      58</span>                 :<span class="tlaGNC">           7 : }</span></span>
+<span id="L59"><span class="lineNum">      59</span>                 :             : </span>
+<span id="L60"><span class="lineNum">      60</span>                 :             : GateScheduleConfiguratorBase::Input *GateScheduleConfiguratorBase::createGateSchedulingInput() const</span>
+<span id="L61"><span class="lineNum">      61</span>                 :<span class="tlaGNC">           7 : {</span></span>
+<span id="L62"><span class="lineNum">      62</span>                 :<span class="tlaGNC">           7 :     auto input = new Input();</span></span>
+<span id="L63"><span class="lineNum">      63</span>                 :<span class="tlaGNC">           7 :     addDevices(*input);</span></span>
+<span id="L64"><span class="lineNum">      64</span>                 :<span class="tlaGNC">           7 :     addSwitches(*input);</span></span>
+<span id="L65"><span class="lineNum">      65</span>                 :<span class="tlaGNC">           7 :     addPorts(*input);</span></span>
+<span id="L66"><span class="lineNum">      66</span>                 :<span class="tlaGNC">           7 :     addFlows(*input);</span></span>
+<span id="L67"><span class="lineNum">      67</span>                 :<span class="tlaGNC">           7 :     return input;</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :<span class="tlaGNC">           7 : }</span></span>
+<span id="L69"><span class="lineNum">      69</span>                 :             : </span>
+<span id="L70"><span class="lineNum">      70</span>                 :             : void GateScheduleConfiguratorBase::addDevices(Input&amp; input) const</span>
+<span id="L71"><span class="lineNum">      71</span>                 :<span class="tlaGNC">           7 : {</span></span>
+<span id="L72"><span class="lineNum">      72</span>         [<span class="tlaGBC" title="Branch 0 was taken 74 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 7 times"> + </span>]:<span class="tlaGNC">          81 :     for (int i = 0; i &lt; topology-&gt;getNumNodes(); i++) {</span></span>
+<span id="L73"><span class="lineNum">      73</span>                 :<span class="tlaGNC">          74 :         auto node = (Node *)topology-&gt;getNode(i);</span></span>
+<span id="L74"><span class="lineNum">      74</span>         [<span class="tlaGBC" title="Branch 0 was taken 46 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 28 times"> + </span>]:<span class="tlaGNC">          74 :         if (!isBridgeNode(node)) {</span></span>
+<span id="L75"><span class="lineNum">      75</span>                 :<span class="tlaGNC">          46 :             auto device = new Input::Device();</span></span>
+<span id="L76"><span class="lineNum">      76</span>                 :<span class="tlaGNC">          46 :             device-&gt;module = node-&gt;module;</span></span>
+<span id="L77"><span class="lineNum">      77</span>                 :<span class="tlaGNC">          46 :             input.devices.push_back(device);</span></span>
+<span id="L78"><span class="lineNum">      78</span>                 :<span class="tlaGNC">          46 :             input.networkNodes.push_back(device);</span></span>
+<span id="L79"><span class="lineNum">      79</span>                 :<span class="tlaGNC">          46 :         }</span></span>
+<span id="L80"><span class="lineNum">      80</span>                 :<span class="tlaGNC">          74 :     }</span></span>
+<span id="L81"><span class="lineNum">      81</span>                 :<span class="tlaGNC">           7 : }</span></span>
+<span id="L82"><span class="lineNum">      82</span>                 :             : </span>
+<span id="L83"><span class="lineNum">      83</span>                 :             : void GateScheduleConfiguratorBase::addSwitches(Input&amp; input) const</span>
+<span id="L84"><span class="lineNum">      84</span>                 :<span class="tlaGNC">           7 : {</span></span>
+<span id="L85"><span class="lineNum">      85</span>         [<span class="tlaGBC" title="Branch 0 was taken 74 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 7 times"> + </span>]:<span class="tlaGNC">          81 :     for (int i = 0; i &lt; topology-&gt;getNumNodes(); i++) {</span></span>
+<span id="L86"><span class="lineNum">      86</span>                 :<span class="tlaGNC">          74 :         auto node = (Node *)topology-&gt;getNode(i);</span></span>
+<span id="L87"><span class="lineNum">      87</span>         [<span class="tlaGBC" title="Branch 0 was taken 28 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 46 times"> + </span>]:<span class="tlaGNC">          74 :         if (isBridgeNode(node)) {</span></span>
+<span id="L88"><span class="lineNum">      88</span>                 :<span class="tlaGNC">          28 :             auto switch_ = new Input::Switch();</span></span>
+<span id="L89"><span class="lineNum">      89</span>                 :<span class="tlaGNC">          28 :             switch_-&gt;module = node-&gt;module;</span></span>
+<span id="L90"><span class="lineNum">      90</span>                 :<span class="tlaGNC">          28 :             input.switches.push_back(switch_);</span></span>
+<span id="L91"><span class="lineNum">      91</span>                 :<span class="tlaGNC">          28 :             input.networkNodes.push_back(switch_);</span></span>
+<span id="L92"><span class="lineNum">      92</span>                 :<span class="tlaGNC">          28 :         }</span></span>
+<span id="L93"><span class="lineNum">      93</span>                 :<span class="tlaGNC">          74 :     }</span></span>
+<span id="L94"><span class="lineNum">      94</span>                 :<span class="tlaGNC">           7 : }</span></span>
+<span id="L95"><span class="lineNum">      95</span>                 :             : </span>
+<span id="L96"><span class="lineNum">      96</span>                 :             : void GateScheduleConfiguratorBase::addPorts(Input&amp; input) const</span>
+<span id="L97"><span class="lineNum">      97</span>                 :<span class="tlaGNC">           7 : {</span></span>
+<span id="L98"><span class="lineNum">      98</span>         [<span class="tlaGBC" title="Branch 0 was taken 74 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 7 times"> + </span>]:<span class="tlaGNC">          81 :     for (int i = 0; i &lt; topology-&gt;getNumNodes(); i++) {</span></span>
+<span id="L99"><span class="lineNum">      99</span>                 :<span class="tlaGNC">          74 :         auto node = (Node *)topology-&gt;getNode(i);</span></span>
+<span id="L100"><span class="lineNum">     100</span>                 :<span class="tlaGNC">          74 :         auto networkNode = input.getNetworkNode(node-&gt;module);</span></span>
+<span id="L101"><span class="lineNum">     101</span>         [<span class="tlaGBC" title="Branch 0 was taken 200 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 74 times"> + </span>]:<span class="tlaGNC">         200 :         for (auto interface : node-&gt;interfaces) {</span></span>
+<span id="L102"><span class="lineNum">     102</span>                 :<span class="tlaGNC">         200 :             auto networkInterface = interface-&gt;networkInterface;</span></span>
+<span id="L103"><span class="lineNum">     103</span>         [<span class="tlaGBC" title="Branch 0 was taken 154 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 46 times"> + </span>]:<span class="tlaGNC">         200 :             if (!networkInterface-&gt;isLoopback()) {</span></span>
+<span id="L104"><span class="lineNum">     104</span>                 :<span class="tlaGNC">         154 :                 auto subqueue = networkInterface-&gt;findModuleByPath(&quot;.macLayer.queue.queue[0]&quot;);</span></span>
+<span id="L105"><span class="lineNum">     105</span>                 :<span class="tlaGNC">         154 :                 auto port = new Input::Port();</span></span>
+<span id="L106"><span class="lineNum">     106</span>         [<span class="tlaGBC" title="Branch 0 was taken 112 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 42 times"> + </span>]:<span class="tlaGNC">         154 :                 port-&gt;numGates = subqueue != nullptr ? subqueue-&gt;getVectorSize() : -1;</span></span>
+<span id="L107"><span class="lineNum">     107</span>                 :<span class="tlaGNC">         154 :                 port-&gt;module = interface-&gt;networkInterface;</span></span>
+<span id="L108"><span class="lineNum">     108</span>                 :<span class="tlaGNC">         154 :                 port-&gt;datarate = bps(interface-&gt;networkInterface-&gt;getDatarate());</span></span>
+<span id="L109"><span class="lineNum">     109</span>                 :<span class="tlaGNC">         154 :                 auto channel = dynamic_cast&lt;cDatarateChannel *&gt;(interface-&gt;networkInterface-&gt;getTxTransmissionChannel());</span></span>
+<span id="L110"><span class="lineNum">     110</span>         [<span class="tlaGBC" title="Branch 0 was taken 154 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">         154 :                 if (channel != nullptr)</span></span>
+<span id="L111"><span class="lineNum">     111</span>                 :<span class="tlaGNC">         154 :                     port-&gt;propagationTime = channel-&gt;getDelay();</span></span>
+<span id="L112"><span class="lineNum">     112</span>                 :<span class="tlaGNC">         154 :                 port-&gt;maxPacketLength = B(interface-&gt;networkInterface-&gt;getMtu());</span></span>
+<span id="L113"><span class="lineNum">     113</span>                 :<span class="tlaGNC">         154 :                 port-&gt;guardBand = (port-&gt;maxPacketLength / port-&gt;datarate).get&lt;s&gt;();</span></span>
+<span id="L114"><span class="lineNum">     114</span>                 :<span class="tlaGNC">         154 :                 port-&gt;maxCycleTime = gateCycleDuration;</span></span>
+<span id="L115"><span class="lineNum">     115</span>                 :<span class="tlaGNC">         154 :                 port-&gt;maxSlotDuration = gateCycleDuration;</span></span>
+<span id="L116"><span class="lineNum">     116</span>                 :<span class="tlaGNC">         154 :                 port-&gt;cutthroughSwitchingEnabled = true; // TODO: extract from network interface!</span></span>
+<span id="L117"><span class="lineNum">     117</span>                 :<span class="tlaGNC">         154 :                 port-&gt;startNode = networkNode;</span></span>
+<span id="L118"><span class="lineNum">     118</span>                 :<span class="tlaGNC">         154 :                 networkNode-&gt;ports.push_back(port);</span></span>
+<span id="L119"><span class="lineNum">     119</span>                 :<span class="tlaGNC">         154 :                 input.ports.push_back(port);</span></span>
+<span id="L120"><span class="lineNum">     120</span>                 :<span class="tlaGNC">         154 :             }</span></span>
+<span id="L121"><span class="lineNum">     121</span>                 :<span class="tlaGNC">         200 :         }</span></span>
+<span id="L122"><span class="lineNum">     122</span>                 :<span class="tlaGNC">          74 :     }</span></span>
+<span id="L123"><span class="lineNum">     123</span>         [<span class="tlaGBC" title="Branch 0 was taken 74 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 7 times"> + </span>]:<span class="tlaGNC">          74 :     for (auto networkNode : input.networkNodes) {</span></span>
+<span id="L124"><span class="lineNum">     124</span>                 :<span class="tlaGNC">          74 :         auto node = check_and_cast&lt;Node *&gt;(topology-&gt;getNodeFor(networkNode-&gt;module));</span></span>
+<span id="L125"><span class="lineNum">     125</span>         [<span class="tlaGBC" title="Branch 0 was taken 154 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 74 times"> + </span>]:<span class="tlaGNC">         154 :         for (auto port : networkNode-&gt;ports) {</span></span>
+<span id="L126"><span class="lineNum">     126</span>                 :<span class="tlaGNC">         154 :             auto networkInterface = check_and_cast&lt;NetworkInterface *&gt;(port-&gt;module);</span></span>
+<span id="L127"><span class="lineNum">     127</span>                 :<span class="tlaGNC">         154 :             auto link = findLinkOut(findInterface(node, networkInterface));</span></span>
+<span id="L128"><span class="lineNum">     128</span>                 :<span class="tlaGNC">         154 :             auto linkOut = findLinkOut(node, networkInterface-&gt;getNodeOutputGateId());</span></span>
+<span id="L129"><span class="lineNum">     129</span>         [<span class="tlaGBC" title="Branch 0 was taken 154 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">         154 :             if (linkOut != nullptr) {</span></span>
+<span id="L130"><span class="lineNum">     130</span>                 :<span class="tlaGNC">         154 :                 auto remoteNode = check_and_cast&lt;Node *&gt;(linkOut-&gt;getLinkOutRemoteNode());</span></span>
+<span id="L131"><span class="lineNum">     131</span>                 :<span class="tlaGNC">        1629 :                 port-&gt;endNode = *std::find_if(input.networkNodes.begin(), input.networkNodes.end(), [&amp;] (const auto&amp; networkNode) {</span></span>
+<span id="L132"><span class="lineNum">     132</span>                 :<span class="tlaGNC">        1629 :                     return networkNode-&gt;module == remoteNode-&gt;module;</span></span>
+<span id="L133"><span class="lineNum">     133</span>                 :<span class="tlaGNC">        1629 :                 });</span></span>
+<span id="L134"><span class="lineNum">     134</span>                 :<span class="tlaGNC">        2599 :                 port-&gt;otherPort = *std::find_if(input.ports.begin(), input.ports.end(), [&amp;] (const auto&amp; otherPort) {</span></span>
+<span id="L135"><span class="lineNum">     135</span>                 :<span class="tlaGNC">        2599 :                     return otherPort-&gt;module == link-&gt;destinationInterface-&gt;networkInterface;</span></span>
+<span id="L136"><span class="lineNum">     136</span>                 :<span class="tlaGNC">        2599 :                 });</span></span>
+<span id="L137"><span class="lineNum">     137</span>                 :<span class="tlaGNC">         154 :                 ASSERT(port-&gt;endNode);</span></span>
+<span id="L138"><span class="lineNum">     138</span>                 :<span class="tlaGNC">         154 :                 ASSERT(port-&gt;otherPort);</span></span>
+<span id="L139"><span class="lineNum">     139</span>                 :<span class="tlaGNC">         154 :             }</span></span>
+<span id="L140"><span class="lineNum">     140</span>                 :<span class="tlaGNC">         154 :         }</span></span>
+<span id="L141"><span class="lineNum">     141</span>                 :<span class="tlaGNC">          74 :     }</span></span>
+<span id="L142"><span class="lineNum">     142</span>                 :<span class="tlaGNC">           7 : }</span></span>
+<span id="L143"><span class="lineNum">     143</span>                 :             : </span>
+<span id="L144"><span class="lineNum">     144</span>                 :             : void GateScheduleConfiguratorBase::addFlows(Input&amp; input) const</span>
+<span id="L145"><span class="lineNum">     145</span>                 :<span class="tlaGNC">           7 : {</span></span>
+<span id="L146"><span class="lineNum">     146</span>                 :<span class="tlaGNC">           7 :     int flowIndex = 0;</span></span>
+<span id="L147"><span class="lineNum">     147</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaGNC">           7 :     EV_DEBUG &lt;&lt; &quot;Computing flows from configuration&quot; &lt;&lt; EV_FIELD(configuration) &lt;&lt; EV_ENDL;</span></span>
+<span id="L148"><span class="lineNum">     148</span>         [<span class="tlaGBC" title="Branch 0 was taken 26 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 7 times"> + </span>]:<span class="tlaGNC">          33 :     for (int k = 0; k &lt; configuration-&gt;size(); k++) {</span></span>
+<span id="L149"><span class="lineNum">     149</span>                 :<span class="tlaGNC">          26 :         auto entry = check_and_cast&lt;cValueMap *&gt;(configuration-&gt;get(k).objectValue());</span></span>
+<span id="L150"><span class="lineNum">     150</span>         [<span class="tlaGBC" title="Branch 0 was taken 352 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 26 times"> + </span>]:<span class="tlaGNC">         378 :         for (int i = 0; i &lt; topology-&gt;getNumNodes(); i++) {</span></span>
+<span id="L151"><span class="lineNum">     151</span>                 :<span class="tlaGNC">         352 :             auto sourceNode = (Node *)topology-&gt;getNode(i);</span></span>
+<span id="L152"><span class="lineNum">     152</span>                 :<span class="tlaGNC">         352 :             cModule *source = sourceNode-&gt;module;</span></span>
+<span id="L153"><span class="lineNum">     153</span>         [<span class="tlaGBC" title="Branch 0 was taken 6214 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 352 times"> + </span>]:<span class="tlaGNC">        6566 :             for (int j = 0; j &lt; topology-&gt;getNumNodes(); j++) {</span></span>
+<span id="L154"><span class="lineNum">     154</span>                 :<span class="tlaGNC">        6214 :                 auto destinationNode = (Node *)topology-&gt;getNode(j);</span></span>
+<span id="L155"><span class="lineNum">     155</span>                 :<span class="tlaGNC">        6214 :                 cModule *destination = destinationNode-&gt;module;</span></span>
+<span id="L156"><span class="lineNum">     156</span>                 :<span class="tlaGNC">        6214 :                 PatternMatcher sourceMatcher(entry-&gt;get(&quot;source&quot;).stringValue(), true, false, false);</span></span>
+<span id="L157"><span class="lineNum">     157</span>                 :<span class="tlaGNC">        6214 :                 PatternMatcher destinationMatcher(entry-&gt;get(&quot;destination&quot;).stringValue(), true, false, false);</span></span>
+<span id="L158"><span class="lineNum">     158</span> [<span class="tlaGBC" title="Branch 0 was taken 352 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5862 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 22 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 6192 times"> + </span>]:<span class="tlaGNC">        6214 :                 if (sourceMatcher.matches(sourceNode-&gt;module-&gt;getFullPath().c_str()) &amp;&amp;</span></span>
+<span id="L159"><span class="lineNum">     159</span>         [<span class="tlaGBC" title="Branch 0 was taken 22 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 330 times"> + </span>]:<span class="tlaGNC">        6214 :                     destinationMatcher.matches(destinationNode-&gt;module-&gt;getFullPath().c_str()))</span></span>
+<span id="L160"><span class="lineNum">     160</span>                 :<span class="tlaGNC">          22 :                 {</span></span>
+<span id="L161"><span class="lineNum">     161</span>                 :<span class="tlaGNC">          22 :                     int pcp = entry-&gt;get(&quot;pcp&quot;).intValue();</span></span>
+<span id="L162"><span class="lineNum">     162</span>                 :<span class="tlaGNC">          22 :                     int gateIndex = entry-&gt;get(&quot;gateIndex&quot;).intValue();</span></span>
+<span id="L163"><span class="lineNum">     163</span>                 :<span class="tlaGNC">          22 :                     b packetLength = b(entry-&gt;get(&quot;packetLength&quot;).doubleValueInUnit(&quot;b&quot;));</span></span>
+<span id="L164"><span class="lineNum">     164</span>         [<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaGBC" title="Branch 1 was taken 21 times"> + </span>]:<span class="tlaGNC">          22 :                     b cutthroughSwitchingHeaderSize = entry-&gt;containsKey(&quot;cutthroughSwitchingHeaderSize&quot;) ? b(entry-&gt;get(&quot;cutthroughSwitchingHeaderSize&quot;).doubleValueInUnit(&quot;b&quot;)) : b(0);</span></span>
+<span id="L165"><span class="lineNum">     165</span>                 :<span class="tlaGNC">          22 :                     simtime_t packetInterval = entry-&gt;get(&quot;packetInterval&quot;).doubleValueInUnit(&quot;s&quot;);</span></span>
+<span id="L166"><span class="lineNum">     166</span>         [<span class="tlaGBC" title="Branch 0 was taken 21 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:<span class="tlaGNC">          22 :                     simtime_t maxLatency = entry-&gt;containsKey(&quot;maxLatency&quot;) ? entry-&gt;get(&quot;maxLatency&quot;).doubleValueInUnit(&quot;s&quot;) : -1;</span></span>
+<span id="L167"><span class="lineNum">     167</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 22 times"> + </span>]:<span class="tlaGNC">          22 :                     simtime_t maxJitter = entry-&gt;containsKey(&quot;maxJitter&quot;) ? entry-&gt;get(&quot;maxJitter&quot;).doubleValueInUnit(&quot;s&quot;) : 0;</span></span>
+<span id="L168"><span class="lineNum">     168</span>                 :<span class="tlaGNC">          22 :                     bps datarate = packetLength / s(packetInterval.dbl());</span></span>
+<span id="L169"><span class="lineNum">     169</span>                 :<span class="tlaGNC">          22 :                     auto startDevice = input.getDevice(source);</span></span>
+<span id="L170"><span class="lineNum">     170</span>                 :<span class="tlaGNC">          22 :                     auto endDevice = input.getDevice(destination);</span></span>
+<span id="L171"><span class="lineNum">     171</span>                 :<span class="tlaGNC">          22 :                     auto startApplication = new Input::Application();</span></span>
+<span id="L172"><span class="lineNum">     172</span>                 :<span class="tlaGNC">          22 :                     auto startApplicationModule = startDevice-&gt;module-&gt;getModuleByPath((std::string(&quot;.&quot;) + std::string(entry-&gt;get(&quot;application&quot;).stringValue())).c_str());</span></span>
+<span id="L173"><span class="lineNum">     173</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 22 times"> + </span>]:<span class="tlaGNC">          22 :                     if (startApplicationModule == nullptr)</span></span>
+<span id="L174"><span class="lineNum">     174</span>                 :<span class="tlaUNC tlaBgUNC">           0 :                         throw cRuntimeError(&quot;Cannot find flow start application, path = %s&quot;, entry-&gt;get(&quot;application&quot;).stringValue());</span></span>
+<span id="L175"><span class="lineNum">     175</span>                 :<span class="tlaGNC tlaBgGNC">          22 :                     startApplication-&gt;module = startApplicationModule;</span></span>
+<span id="L176"><span class="lineNum">     176</span>                 :<span class="tlaGNC">          22 :                     startApplication-&gt;device = startDevice;</span></span>
+<span id="L177"><span class="lineNum">     177</span>                 :<span class="tlaGNC">          22 :                     startApplication-&gt;pcp = pcp;</span></span>
+<span id="L178"><span class="lineNum">     178</span>                 :<span class="tlaGNC">          22 :                     startApplication-&gt;packetLength = packetLength;</span></span>
+<span id="L179"><span class="lineNum">     179</span>                 :<span class="tlaGNC">          22 :                     startApplication-&gt;packetInterval = packetInterval;</span></span>
+<span id="L180"><span class="lineNum">     180</span>                 :<span class="tlaGNC">          22 :                     startApplication-&gt;maxLatency = maxLatency;</span></span>
+<span id="L181"><span class="lineNum">     181</span>                 :<span class="tlaGNC">          22 :                     startApplication-&gt;maxJitter = maxJitter;</span></span>
+<span id="L182"><span class="lineNum">     182</span>                 :<span class="tlaGNC">          22 :                     input.applications.push_back(startApplication);</span></span>
+<span id="L183"><span class="lineNum">     183</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaGNC">          22 :                     EV_DEBUG &lt;&lt; &quot;Adding flow from configuration&quot; &lt;&lt; EV_FIELD(source) &lt;&lt; EV_FIELD(destination) &lt;&lt; EV_FIELD(pcp) &lt;&lt; EV_FIELD(packetLength) &lt;&lt; EV_FIELD(packetInterval, packetInterval.ustr()) &lt;&lt; EV_FIELD(datarate) &lt;&lt; EV_FIELD(maxLatency, maxLatency.ustr()) &lt;&lt; EV_FIELD(maxJitter, maxJitter.ustr()) &lt;&lt; EV_ENDL;</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L184"><span class="lineNum">     184</span>                 :<span class="tlaGNC">          22 :                     auto flow = new Input::Flow();</span></span>
+<span id="L185"><span class="lineNum">     185</span>         [<span class="tlaGBC" title="Branch 0 was taken 10 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 12 times"> + </span>]:<span class="tlaGNC">          22 :                     flow-&gt;name = entry-&gt;containsKey(&quot;name&quot;) ? entry-&gt;get(&quot;name&quot;).stringValue() : (std::string(&quot;flow&quot;) + std::to_string(flowIndex++)).c_str();</span></span>
+<span id="L186"><span class="lineNum">     186</span>                 :<span class="tlaGNC">          22 :                     flow-&gt;gateIndex = gateIndex;</span></span>
+<span id="L187"><span class="lineNum">     187</span>                 :<span class="tlaGNC">          22 :                     flow-&gt;cutthroughSwitchingHeaderSize = cutthroughSwitchingHeaderSize;</span></span>
+<span id="L188"><span class="lineNum">     188</span>                 :<span class="tlaGNC">          22 :                     flow-&gt;startApplication = startApplication;</span></span>
+<span id="L189"><span class="lineNum">     189</span>                 :<span class="tlaGNC">          22 :                     flow-&gt;endDevice = endDevice;</span></span>
+<span id="L190"><span class="lineNum">     190</span>                 :<span class="tlaGNC">          22 :                     cValueArray *pathFragments;</span></span>
+<span id="L191"><span class="lineNum">     191</span>         [<span class="tlaGBC" title="Branch 0 was taken 10 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 12 times"> + </span>]:<span class="tlaGNC">          22 :                     if (entry-&gt;containsKey(&quot;pathFragments&quot;))</span></span>
+<span id="L192"><span class="lineNum">     192</span>                 :<span class="tlaGNC">          10 :                         pathFragments = check_and_cast&lt;cValueArray *&gt;(entry-&gt;get(&quot;pathFragments&quot;).objectValue());</span></span>
+<span id="L193"><span class="lineNum">     193</span>                 :<span class="tlaGNC">          12 :                     else {</span></span>
+<span id="L194"><span class="lineNum">     194</span>                 :<span class="tlaGNC">          12 :                         auto pathFragment = new cValueArray();</span></span>
+<span id="L195"><span class="lineNum">     195</span>         [<span class="tlaGBC" title="Branch 0 was taken 48 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 12 times"> + </span>]:<span class="tlaGNC">          12 :                         for (auto node : computeShortestNodePath(sourceNode, destinationNode))</span></span>
+<span id="L196"><span class="lineNum">     196</span>                 :<span class="tlaGNC">          48 :                             pathFragment-&gt;add(node-&gt;module-&gt;getFullName());</span></span>
+<span id="L197"><span class="lineNum">     197</span>                 :<span class="tlaGNC">          12 :                         pathFragments = new cValueArray();</span></span>
+<span id="L198"><span class="lineNum">     198</span>                 :<span class="tlaGNC">          12 :                         pathFragments-&gt;add(pathFragment);</span></span>
+<span id="L199"><span class="lineNum">     199</span>                 :<span class="tlaGNC">          12 :                     }</span></span>
+<span id="L200"><span class="lineNum">     200</span>         [<span class="tlaGBC" title="Branch 0 was taken 42 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 22 times"> + </span>]:<span class="tlaGNC">          64 :                     for (int l = 0; l &lt; pathFragments-&gt;size(); l++) {</span></span>
+<span id="L201"><span class="lineNum">     201</span>                 :<span class="tlaGNC">          42 :                         auto path = new Input::PathFragment();</span></span>
+<span id="L202"><span class="lineNum">     202</span>                 :<span class="tlaGNC">          42 :                         auto pathFragment = check_and_cast&lt;cValueArray *&gt;(pathFragments-&gt;get(l).objectValue());</span></span>
+<span id="L203"><span class="lineNum">     203</span>         [<span class="tlaGBC" title="Branch 0 was taken 125 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 42 times"> + </span>]:<span class="tlaGNC">         167 :                         for (int m = 0; m &lt; pathFragment-&gt;size(); m++) {</span></span>
+<span id="L204"><span class="lineNum">     204</span>         [<span class="tlaGBC" title="Branch 0 was taken 1105 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        1105 :                             for (auto networkNode : input.networkNodes) {</span></span>
+<span id="L205"><span class="lineNum">     205</span>                 :<span class="tlaGNC">        1105 :                                 auto name = pathFragment-&gt;get(m).stdstringValue();</span></span>
+<span id="L206"><span class="lineNum">     206</span>                 :<span class="tlaGNC">        1105 :                                 auto index = name.find('.');</span></span>
+<span id="L207"><span class="lineNum">     207</span>         [<span class="tlaGBC" title="Branch 0 was taken 187 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 918 times"> + </span>]:<span class="tlaGNC">        1105 :                                 auto nodeName = index != std::string::npos ? name.substr(0, index) : name;</span></span>
+<span id="L208"><span class="lineNum">     208</span>         [<span class="tlaGBC" title="Branch 0 was taken 187 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 918 times"> + </span>]:<span class="tlaGNC">        1105 :                                 auto interfaceName = index != std::string::npos ? name.substr(index + 1) : &quot;&quot;;</span></span>
+<span id="L209"><span class="lineNum">     209</span>         [<span class="tlaGBC" title="Branch 0 was taken 125 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 980 times"> + </span>]:<span class="tlaGNC">        1105 :                                 if (networkNode-&gt;module-&gt;getFullName() == nodeName) {</span></span>
+<span id="L210"><span class="lineNum">     210</span>         [<span class="tlaGBC" title="Branch 0 was taken 83 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 42 times"> + </span>]:<span class="tlaGNC">         125 :                                     if (m != pathFragment-&gt;size() - 1) {</span></span>
+<span id="L211"><span class="lineNum">     211</span>                 :<span class="tlaGNC">          83 :                                         auto startNode = networkNode;</span></span>
+<span id="L212"><span class="lineNum">     212</span>                 :<span class="tlaGNC">          83 :                                         auto endNodeName = pathFragment-&gt;get(m + 1).stdstringValue();</span></span>
+<span id="L213"><span class="lineNum">     213</span>                 :<span class="tlaGNC">          83 :                                         auto index = endNodeName.find('.');</span></span>
+<span id="L214"><span class="lineNum">     214</span>         [<span class="tlaGBC" title="Branch 0 was taken 6 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 77 times"> + </span>]:<span class="tlaGNC">          83 :                                         endNodeName = index != std::string::npos ? endNodeName.substr(0, index) : endNodeName;</span></span>
+<span id="L215"><span class="lineNum">     215</span>                 :<span class="tlaGNC">         182 :                                         auto outputPort = *std::find_if(startNode-&gt;ports.begin(), startNode-&gt;ports.end(), [&amp;] (const auto&amp; port) {</span></span>
+<span id="L216"><span class="lineNum">     216</span> [<span class="tlaGBC" title="Branch 0 was taken 85 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 97 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 77 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 8 times"> + </span>]:<span class="tlaGNC">         182 :                                             return port-&gt;endNode-&gt;module-&gt;getFullName() == endNodeName &amp;&amp; (interfaceName == &quot;&quot; || interfaceName == check_and_cast&lt;NetworkInterface *&gt;(port-&gt;module)-&gt;getInterfaceName());</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 6 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]
+<span id="L217"><span class="lineNum">     217</span>                 :<span class="tlaGNC">         182 :                                         });</span></span>
+<span id="L218"><span class="lineNum">     218</span>                 :<span class="tlaGNC">          83 :                                         path-&gt;outputPorts.push_back(outputPort);</span></span>
+<span id="L219"><span class="lineNum">     219</span>                 :<span class="tlaGNC">          83 :                                         path-&gt;inputPorts.push_back(outputPort-&gt;otherPort);</span></span>
+<span id="L220"><span class="lineNum">     220</span>                 :<span class="tlaGNC">          83 :                                     }</span></span>
+<span id="L221"><span class="lineNum">     221</span>                 :<span class="tlaGNC">         125 :                                     path-&gt;networkNodes.push_back(networkNode);</span></span>
+<span id="L222"><span class="lineNum">     222</span>                 :<span class="tlaGNC">         125 :                                     break;</span></span>
+<span id="L223"><span class="lineNum">     223</span>                 :<span class="tlaGNC">         125 :                                 }</span></span>
+<span id="L224"><span class="lineNum">     224</span>                 :<span class="tlaGNC">        1105 :                             }</span></span>
+<span id="L225"><span class="lineNum">     225</span>                 :<span class="tlaGNC">         125 :                         }</span></span>
+<span id="L226"><span class="lineNum">     226</span>                 :<span class="tlaGNC">          42 :                         flow-&gt;pathFragments.push_back(path);</span></span>
+<span id="L227"><span class="lineNum">     227</span>                 :<span class="tlaGNC">          42 :                     }</span></span>
+<span id="L228"><span class="lineNum">     228</span>         [<span class="tlaGBC" title="Branch 0 was taken 12 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 10 times"> + </span>]:<span class="tlaGNC">          22 :                     if (!entry-&gt;containsKey(&quot;pathFragments&quot;))</span></span>
+<span id="L229"><span class="lineNum">     229</span>                 :<span class="tlaGNC">          12 :                         delete pathFragments;</span></span>
+<span id="L230"><span class="lineNum">     230</span>                 :<span class="tlaGNC">          22 :                     input.flows.push_back(flow);</span></span>
+<span id="L231"><span class="lineNum">     231</span>                 :<span class="tlaGNC">          22 :                 }</span></span>
+<span id="L232"><span class="lineNum">     232</span>                 :<span class="tlaGNC">        6214 :             }</span></span>
+<span id="L233"><span class="lineNum">     233</span>                 :<span class="tlaGNC">         352 :         }</span></span>
+<span id="L234"><span class="lineNum">     234</span>                 :<span class="tlaGNC">          26 :     }</span></span>
+<span id="L235"><span class="lineNum">     235</span>                 :<span class="tlaGNC">          39 :     std::sort(input.flows.begin(), input.flows.end(), [] (const Input::Flow *r1, const Input::Flow *r2) {</span></span>
+<span id="L236"><span class="lineNum">     236</span>                 :<span class="tlaGNC">          37 :         return r1-&gt;startApplication-&gt;pcp &gt; r2-&gt;startApplication-&gt;pcp;</span></span>
+<span id="L237"><span class="lineNum">     237</span>                 :<span class="tlaGNC">          37 :     });</span></span>
+<span id="L238"><span class="lineNum">     238</span>                 :<span class="tlaGNC">           7 : }</span></span>
+<span id="L239"><span class="lineNum">     239</span>                 :             : </span>
+<span id="L240"><span class="lineNum">     240</span>                 :             : void GateScheduleConfiguratorBase::configureGateScheduling()</span>
+<span id="L241"><span class="lineNum">     241</span>                 :<span class="tlaGNC">           7 : {</span></span>
+<span id="L242"><span class="lineNum">     242</span>         [<span class="tlaGBC" title="Branch 0 was taken 74 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 7 times"> + </span>]:<span class="tlaGNC">          81 :     for (int i = 0; i &lt; topology-&gt;getNumNodes(); i++) {</span></span>
+<span id="L243"><span class="lineNum">     243</span>                 :<span class="tlaGNC">          74 :         auto node = (Node *)topology-&gt;getNode(i);</span></span>
+<span id="L244"><span class="lineNum">     244</span>                 :<span class="tlaGNC">          74 :         auto networkNode = node-&gt;module;</span></span>
+<span id="L245"><span class="lineNum">     245</span>         [<span class="tlaGBC" title="Branch 0 was taken 200 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 74 times"> + </span>]:<span class="tlaGNC">         200 :         for (auto interface : node-&gt;interfaces) {</span></span>
+<span id="L246"><span class="lineNum">     246</span>                 :<span class="tlaGNC">         200 :             auto queue = interface-&gt;networkInterface-&gt;findModuleByPath(&quot;.macLayer.queue&quot;);</span></span>
+<span id="L247"><span class="lineNum">     247</span>         [<span class="tlaGBC" title="Branch 0 was taken 154 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 46 times"> + </span>]:<span class="tlaGNC">         200 :             if (queue != nullptr) {</span></span>
+<span id="L248"><span class="lineNum">     248</span>         [<span class="tlaGBC" title="Branch 0 was taken 1884 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 154 times"> + </span>]:<span class="tlaGNC">        2038 :                 for (cModule::SubmoduleIterator it(queue); !it.end(); ++it) {</span></span>
+<span id="L249"><span class="lineNum">     249</span>                 :<span class="tlaGNC">        1884 :                     cModule *gate = *it;</span></span>
+<span id="L250"><span class="lineNum">     250</span>         [<span class="tlaGBC" title="Branch 0 was taken 564 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1320 times"> + </span>]:<span class="tlaGNC">        1884 :                     if (dynamic_cast&lt;queueing::PeriodicGate *&gt;(gate) != nullptr)</span></span>
+<span id="L251"><span class="lineNum">     251</span>                 :<span class="tlaGNC">         564 :                         configureGateScheduling(networkNode, gate, interface);</span></span>
+<span id="L252"><span class="lineNum">     252</span>                 :<span class="tlaGNC">        1884 :                 }</span></span>
+<span id="L253"><span class="lineNum">     253</span>                 :<span class="tlaGNC">         154 :             }</span></span>
+<span id="L254"><span class="lineNum">     254</span>                 :<span class="tlaGNC">         200 :         }</span></span>
+<span id="L255"><span class="lineNum">     255</span>                 :<span class="tlaGNC">          74 :     }</span></span>
+<span id="L256"><span class="lineNum">     256</span>                 :<span class="tlaGNC">           7 : }</span></span>
+<span id="L257"><span class="lineNum">     257</span>                 :             : </span>
+<span id="L258"><span class="lineNum">     258</span>                 :             : void GateScheduleConfiguratorBase::configureGateScheduling(cModule *networkNode, cModule *gate, Interface *interface)</span>
+<span id="L259"><span class="lineNum">     259</span>                 :<span class="tlaGNC">         564 : {</span></span>
+<span id="L260"><span class="lineNum">     260</span>                 :<span class="tlaGNC">         564 :     auto networkInterface = interface-&gt;networkInterface;</span></span>
+<span id="L261"><span class="lineNum">     261</span>                 :<span class="tlaGNC">         564 :     simtime_t offset = 0;</span></span>
+<span id="L262"><span class="lineNum">     262</span>                 :<span class="tlaGNC">         564 :     simtime_t slotEnd = 0;</span></span>
+<span id="L263"><span class="lineNum">     263</span>                 :<span class="tlaGNC">         564 :     int gateIndex = gate-&gt;getIndex();</span></span>
+<span id="L264"><span class="lineNum">     264</span>                 :<span class="tlaGNC">         564 :     auto port = gateSchedulingInput-&gt;getPort(networkInterface);</span></span>
+<span id="L265"><span class="lineNum">     265</span>                 :<span class="tlaGNC">         564 :     auto it = gateSchedulingOutput-&gt;gateSchedules.find(port);</span></span>
+<span id="L266"><span class="lineNum">     266</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 564 times"> + </span>]:<span class="tlaGNC">         564 :     if (it == gateSchedulingOutput-&gt;gateSchedules.end())</span></span>
+<span id="L267"><span class="lineNum">     267</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         throw cRuntimeError(&quot;Cannot find schedule for interface, interface = %s&quot;, networkInterface-&gt;getInterfaceFullPath().c_str());</span></span>
+<span id="L268"><span class="lineNum">     268</span>                 :<span class="tlaGNC tlaBgGNC">         564 :     auto&amp; schedules = it-&gt;second;</span></span>
+<span id="L269"><span class="lineNum">     269</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 564 times"> + </span>]:<span class="tlaGNC">         564 :     if (gateIndex &gt;= (int)schedules.size())</span></span>
+<span id="L270"><span class="lineNum">     270</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         throw cRuntimeError(&quot;Cannot find schedule for traffic class, interface = %s, gate index = %d&quot;, port-&gt;module-&gt;getFullPath().c_str(), gateIndex);</span></span>
+<span id="L271"><span class="lineNum">     271</span>                 :<span class="tlaGNC tlaBgGNC">         564 :     auto schedule = schedules[gateIndex];</span></span>
+<span id="L272"><span class="lineNum">     272</span>                 :<span class="tlaGNC">         564 :     bool initiallyOpen = !schedule-&gt;open;</span></span>
+<span id="L273"><span class="lineNum">     273</span>                 :<span class="tlaGNC">         564 :     cValueArray *durations = new cValueArray();</span></span>
+<span id="L274"><span class="lineNum">     274</span>         [<span class="tlaGBC" title="Branch 0 was taken 134 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 564 times"> + </span>]:<span class="tlaGNC">         617 :     for (auto&amp; slot : schedule-&gt;slots) {</span></span>
+<span id="L275"><span class="lineNum">     275</span>                 :<span class="tlaGNC">         134 :         simtime_t slotStart = slot.start;</span></span>
+<span id="L276"><span class="lineNum">     276</span>                 :<span class="tlaGNC">         134 :         simtime_t slotDuration = slot.duration;</span></span>
+<span id="L277"><span class="lineNum">     277</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 134 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 134 times"> + </span>]:<span class="tlaGNC">         134 :         if (slotStart &lt; 0 || slotStart + slotDuration &gt; gateCycleDuration)</span></span>
+<span class="lineNum">        </span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 134 times"> + </span>]
+<span id="L278"><span class="lineNum">     278</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             throw cRuntimeError(&quot;Invalid slot start and/or duration&quot;);</span></span>
+<span id="L279"><span class="lineNum">     279</span>         [<span class="tlaGBC" title="Branch 0 was taken 3 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 131 times"> + </span>]:<span class="tlaGNC tlaBgGNC">         134 :         if (slotStart == 0)</span></span>
+<span id="L280"><span class="lineNum">     280</span>                 :<span class="tlaGNC">           3 :             initiallyOpen = schedule-&gt;open;</span></span>
+<span id="L281"><span class="lineNum">     281</span>                 :<span class="tlaGNC">         131 :         else {</span></span>
+<span id="L282"><span class="lineNum">     282</span>                 :<span class="tlaGNC">         131 :             simtime_t duration = slotStart - slotEnd;</span></span>
+<span id="L283"><span class="lineNum">     283</span>                 :<span class="tlaGNC">         131 :             ASSERT(duration &gt;= 0);</span></span>
+<span id="L284"><span class="lineNum">     284</span>                 :<span class="tlaGNC">         131 :             durations-&gt;add(cValue(duration.dbl(), &quot;s&quot;));</span></span>
+<span id="L285"><span class="lineNum">     285</span>                 :<span class="tlaGNC">         131 :         }</span></span>
+<span id="L286"><span class="lineNum">     286</span>                 :<span class="tlaGNC">         134 :         durations-&gt;add(cValue(slotDuration.dbl(), &quot;s&quot;));</span></span>
+<span id="L287"><span class="lineNum">     287</span>                 :<span class="tlaGNC">         134 :         slotEnd = slotStart + slotDuration;</span></span>
+<span id="L288"><span class="lineNum">     288</span>                 :<span class="tlaGNC">         134 :     }</span></span>
+<span id="L289"><span class="lineNum">     289</span>                 :<span class="tlaGNC">         564 :     simtime_t remainingDuration = schedule-&gt;cycleDuration - slotEnd;</span></span>
+<span id="L290"><span class="lineNum">     290</span>         [<span class="tlaGBC" title="Branch 0 was taken 21 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 543 times"> + </span>]:<span class="tlaGNC">         564 :     if (slotEnd != 0) {</span></span>
+<span id="L291"><span class="lineNum">     291</span>         [<span class="tlaGBC" title="Branch 0 was taken 19 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:<span class="tlaGNC">          21 :         if (remainingDuration != 0)</span></span>
+<span id="L292"><span class="lineNum">     292</span>                 :<span class="tlaGNC">          19 :             durations-&gt;add(cValue(remainingDuration.dbl(), &quot;s&quot;));</span></span>
+<span id="L293"><span class="lineNum">     293</span>         [<span class="tlaGBC" title="Branch 0 was taken 20 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:<span class="tlaGNC">          21 :         if (durations-&gt;size() % 2 != 0) {</span></span>
+<span id="L294"><span class="lineNum">     294</span>         [<span class="tlaGBC" title="Branch 0 was taken 20 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">          20 :             if (durations-&gt;size() &gt; 1) {</span></span>
+<span id="L295"><span class="lineNum">     295</span>                 :<span class="tlaGNC">          20 :                 double delta = durations-&gt;get(durations-&gt;size() - 1).doubleValueInUnit(&quot;s&quot;);</span></span>
+<span id="L296"><span class="lineNum">     296</span>                 :<span class="tlaGNC">          20 :                 durations-&gt;set(0, cValue(durations-&gt;get(0).doubleValueInUnit(&quot;s&quot;) + delta, &quot;s&quot;));</span></span>
+<span id="L297"><span class="lineNum">     297</span>                 :<span class="tlaGNC">          20 :                 offset += delta;</span></span>
+<span id="L298"><span class="lineNum">     298</span>                 :<span class="tlaGNC">          20 :             }</span></span>
+<span id="L299"><span class="lineNum">     299</span>                 :<span class="tlaGNC">          20 :             durations-&gt;erase(durations-&gt;size() - 1);</span></span>
+<span id="L300"><span class="lineNum">     300</span>                 :<span class="tlaGNC">          20 :         }</span></span>
+<span id="L301"><span class="lineNum">     301</span>                 :<span class="tlaGNC">          21 :     }</span></span>
+<span id="L302"><span class="lineNum">     302</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaGNC">         564 :     EV_DEBUG &lt;&lt; &quot;Configuring gate scheduling parameters&quot; &lt;&lt; EV_FIELD(networkNode) &lt;&lt; EV_FIELD(networkInterface) &lt;&lt; EV_FIELD(gate) &lt;&lt; EV_FIELD(initiallyOpen) &lt;&lt; EV_FIELD(offset) &lt;&lt; EV_FIELD(durations) &lt;&lt; EV_ENDL;</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L303"><span class="lineNum">     303</span>                 :<span class="tlaGNC">         564 :     gate-&gt;par(&quot;initiallyOpen&quot;) = initiallyOpen;</span></span>
+<span id="L304"><span class="lineNum">     304</span>                 :<span class="tlaGNC">         564 :     gate-&gt;par(&quot;offset&quot;) = offset.dbl();</span></span>
+<span id="L305"><span class="lineNum">     305</span>                 :<span class="tlaGNC">         564 :     cPar&amp; durationsPar = gate-&gt;par(&quot;durations&quot;);</span></span>
+<span id="L306"><span class="lineNum">     306</span>                 :<span class="tlaGNC">         564 :     durationsPar.copyIfShared();</span></span>
+<span id="L307"><span class="lineNum">     307</span>                 :<span class="tlaGNC">         564 :     durationsPar.setObjectValue(durations);</span></span>
+<span id="L308"><span class="lineNum">     308</span>                 :<span class="tlaGNC">         564 : }</span></span>
+<span id="L309"><span class="lineNum">     309</span>                 :             : </span>
+<span id="L310"><span class="lineNum">     310</span>                 :             : void GateScheduleConfiguratorBase::configureApplicationOffsets()</span>
+<span id="L311"><span class="lineNum">     311</span>                 :<span class="tlaGNC">           7 : {</span></span>
+<span id="L312"><span class="lineNum">     312</span>         [<span class="tlaGBC" title="Branch 0 was taken 22 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 7 times"> + </span>]:<span class="tlaGNC">          23 :     for (auto&amp; it : gateSchedulingOutput-&gt;applicationStartTimes) {</span></span>
+<span id="L313"><span class="lineNum">     313</span>                 :<span class="tlaGNC">          22 :         auto startOffset = it.second;</span></span>
+<span id="L314"><span class="lineNum">     314</span>                 :<span class="tlaGNC">          22 :         auto applicationModule = it.first-&gt;module;</span></span>
+<span id="L315"><span class="lineNum">     315</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaGNC">          22 :         EV_DEBUG &lt;&lt; &quot;Setting initial packet production offset for application source&quot; &lt;&lt; EV_FIELD(applicationModule) &lt;&lt; EV_FIELD(startOffset) &lt;&lt; EV_ENDL;</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L316"><span class="lineNum">     316</span>                 :<span class="tlaGNC">          22 :         auto sourceModule = applicationModule-&gt;getSubmodule(&quot;source&quot;);</span></span>
+<span id="L317"><span class="lineNum">     317</span>                 :<span class="tlaGNC">          22 :         sourceModule-&gt;par(&quot;initialProductionOffset&quot;) = startOffset.dbl();</span></span>
+<span id="L318"><span class="lineNum">     318</span>                 :<span class="tlaGNC">          22 :     }</span></span>
+<span id="L319"><span class="lineNum">     319</span>                 :<span class="tlaGNC">           7 : }</span></span>
+<span id="L320"><span class="lineNum">     320</span>                 :             : </span>
+<span id="L321"><span class="lineNum">     321</span>                 :             : } // namespace inet</span>
+<span id="L322"><span class="lineNum">     322</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

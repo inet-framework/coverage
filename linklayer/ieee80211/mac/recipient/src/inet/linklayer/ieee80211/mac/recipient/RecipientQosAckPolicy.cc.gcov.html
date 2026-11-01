@@ -1,0 +1,192 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - linklayer/ieee80211/mac/recipient/src/inet/linklayer/ieee80211/mac/recipient/RecipientQosAckPolicy.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../../../index.html">top level</a> - <a href="index.html">linklayer/ieee80211/mac/recipient/src/inet/linklayer/ieee80211/mac/recipient</a> - RecipientQosAckPolicy.cc<span style="font-size: 80%;"> (source / <a href="RecipientQosAckPolicy.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">94.4&nbsp;%</td>
+            <td class="headerCovTableEntry">36</td>
+            <td class="headerCovTableEntry">34</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntry">8</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryMed">85.7&nbsp;%</td>
+            <td class="headerCovTableEntry">14</td>
+            <td class="headerCovTableEntry">12</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2016 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #include &quot;inet/linklayer/ieee80211/mac/recipient/RecipientQosAckPolicy.h&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : </span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &quot;inet/common/ModuleAccess.h&quot;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : </span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : namespace inet {</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : namespace ieee80211 {</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : </span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : Define_Module(RecipientQosAckPolicy);</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : </span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : void RecipientQosAckPolicy::initialize(int stage)</span>
+<span id="L18"><span class="lineNum">      18</span>                 :<span class="tlaGNC tlaBgGNC">       23920 : {</span></span>
+<span id="L19"><span class="lineNum">      19</span>                 :<span class="tlaGNC">       23920 :     ModeSetListener::initialize(stage);</span></span>
+<span id="L20"><span class="lineNum">      20</span>         [<span class="tlaGBC" title="Branch 0 was taken 999 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 22921 times"> + </span>]:<span class="tlaGNC">       23920 :     if (stage == INITSTAGE_LOCAL) {</span></span>
+<span id="L21"><span class="lineNum">      21</span>                 :<span class="tlaGNC">         999 :         rateSelection = check_and_cast&lt;IQosRateSelection *&gt;(getModuleByPath(par(&quot;rateSelectionModule&quot;)));</span></span>
+<span id="L22"><span class="lineNum">      22</span>                 :<span class="tlaGNC">         999 :     }</span></span>
+<span id="L23"><span class="lineNum">      23</span>                 :<span class="tlaGNC">       23920 : }</span></span>
+<span id="L24"><span class="lineNum">      24</span>                 :             : </span>
+<span id="L25"><span class="lineNum">      25</span>                 :             : simtime_t RecipientQosAckPolicy::computeBasicBlockAckDuration(Packet *packet, const Ptr&lt;const Ieee80211BlockAckReq&gt;&amp; blockAckReq) const</span>
+<span id="L26"><span class="lineNum">      26</span>                 :<span class="tlaGNC">       23434 : {</span></span>
+<span id="L27"><span class="lineNum">      27</span>                 :<span class="tlaGNC">       23434 :     return rateSelection-&gt;computeResponseBlockAckFrameMode(packet, blockAckReq, ResponseQueryRole::RESPOND)-&gt;getDuration(LENGTH_BASIC_BLOCKACK);</span></span>
+<span id="L28"><span class="lineNum">      28</span>                 :<span class="tlaGNC">       23434 : }</span></span>
+<span id="L29"><span class="lineNum">      29</span>                 :             : </span>
+<span id="L30"><span class="lineNum">      30</span>                 :             : simtime_t RecipientQosAckPolicy::computeAckDuration(Packet *packet, const Ptr&lt;const Ieee80211DataOrMgmtHeader&gt;&amp; dataOrMgmtHeader) const</span>
+<span id="L31"><span class="lineNum">      31</span>                 :<span class="tlaGNC">      237801 : {</span></span>
+<span id="L32"><span class="lineNum">      32</span>                 :<span class="tlaGNC">      237801 :     return rateSelection-&gt;computeResponseAckFrameMode(packet, dataOrMgmtHeader, ResponseQueryRole::RESPOND)-&gt;getDuration(LENGTH_ACK);</span></span>
+<span id="L33"><span class="lineNum">      33</span>                 :<span class="tlaGNC">      237801 : }</span></span>
+<span id="L34"><span class="lineNum">      34</span>                 :             : </span>
+<span id="L35"><span class="lineNum">      35</span>                 :             : //</span>
+<span id="L36"><span class="lineNum">      36</span>                 :             : // The cases when an ACK frame can be generated are shown in the frame exchange sequences listed in</span>
+<span id="L37"><span class="lineNum">      37</span>                 :             : // Annex G. On receipt of a management frame of subtype Action NoAck, a STA shall not send an ACK frame</span>
+<span id="L38"><span class="lineNum">      38</span>                 :             : // in response.</span>
+<span id="L39"><span class="lineNum">      39</span>                 :             : //</span>
+<span id="L40"><span class="lineNum">      40</span>                 :             : bool RecipientQosAckPolicy::isAckNeeded(const Ptr&lt;const Ieee80211DataOrMgmtHeader&gt;&amp; header) const</span>
+<span id="L41"><span class="lineNum">      41</span>                 :<span class="tlaGNC">     2132886 : {</span></span>
+<span id="L42"><span class="lineNum">      42</span>                 :             :     // TODO add mgmt frame NoAck check</span>
+<span id="L43"><span class="lineNum">      43</span>         [<span class="tlaGBC" title="Branch 0 was taken 2055620 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 77266 times"> + </span>]:<span class="tlaGNC">     2132886 :     if (auto dataHeader = dynamicPtrCast&lt;const Ieee80211DataHeader&gt;(header))</span></span>
+<span id="L44"><span class="lineNum">      44</span>         [<span class="tlaGBC" title="Branch 0 was taken 336694 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1718926 times"> + </span>]:<span class="tlaGNC">     2055620 :         if (dataHeader-&gt;getAckPolicy() != NORMAL_ACK)</span></span>
+<span id="L45"><span class="lineNum">      45</span>                 :<span class="tlaGNC">      336694 :             return false;</span></span>
+<span id="L46"><span class="lineNum">      46</span>                 :<span class="tlaGNC">     1796192 :     return !header-&gt;getReceiverAddress().isMulticast();</span></span>
+<span id="L47"><span class="lineNum">      47</span>                 :<span class="tlaGNC">     2132886 : }</span></span>
+<span id="L48"><span class="lineNum">      48</span>                 :             : </span>
+<span id="L49"><span class="lineNum">      49</span>                 :             : //</span>
+<span id="L50"><span class="lineNum">      50</span>                 :             : // If the immediate Block Ack policy is used, the recipient shall respond to a</span>
+<span id="L51"><span class="lineNum">      51</span>                 :             : // Basic BlockAckReq frame with a Basic BlockAck frame.</span>
+<span id="L52"><span class="lineNum">      52</span>                 :             : // TODO</span>
+<span id="L53"><span class="lineNum">      53</span>                 :             : // If the delayed Block Ack policy is used, the recipient shall respond to a Basic BlockAckReq frame with an</span>
+<span id="L54"><span class="lineNum">      54</span>                 :             : // ACK frame. The recipient shall then send its Basic BlockAck response in a subsequently obtained TXOP.</span>
+<span id="L55"><span class="lineNum">      55</span>                 :             : // Once the contents of the Basic BlockAck frame have been prepared, the recipient shall send this frame in the</span>
+<span id="L56"><span class="lineNum">      56</span>                 :             : // earliest possible TXOP using the highest priority AC. The originator shall respond with an ACK frame upon</span>
+<span id="L57"><span class="lineNum">      57</span>                 :             : // receipt of the Basic BlockAck frame. If delayed Block Ack policy is used and if the HC is the recipient, then</span>
+<span id="L58"><span class="lineNum">      58</span>                 :             : // the HC may respond with a +CF-Ack frame if the Basic BlockAckReq frame is the final frame of the polled</span>
+<span id="L59"><span class="lineNum">      59</span>                 :             : // TXOP’s frame exchange. If delayed Block Ack policy is used and if the HC is the originator, then the HC may</span>
+<span id="L60"><span class="lineNum">      60</span>                 :             : // respond with a +CF-Ack frame if the Basic BlockAck frame is the final frame of the TXOP’s frame exchange.</span>
+<span id="L61"><span class="lineNum">      61</span>                 :             : //</span>
+<span id="L62"><span class="lineNum">      62</span>                 :             : bool RecipientQosAckPolicy::isBlockAckNeeded(const Ptr&lt;const Ieee80211BlockAckReq&gt;&amp; blockAckReq, RecipientBlockAckAgreement *agreement) const</span>
+<span id="L63"><span class="lineNum">      63</span>                 :<span class="tlaGNC">       23614 : {</span></span>
+<span id="L64"><span class="lineNum">      64</span> [<span class="tlaGBC" title="Branch 0 was taken 23432 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 182 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 23614 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">       23614 :     if (dynamicPtrCast&lt;const Ieee80211BasicBlockAckReq&gt;(blockAckReq) || dynamicPtrCast&lt;const Ieee80211CompressedBlockAckReq&gt;(blockAckReq)) {</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 182 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span id="L65"><span class="lineNum">      65</span>                 :<span class="tlaGNC">       23614 :         return agreement != nullptr;</span></span>
+<span id="L66"><span class="lineNum">      66</span>                 :             :         // TODO The Basic BlockAckReq frame shall be discarded if all MSDUs referenced by this</span>
+<span id="L67"><span class="lineNum">      67</span>                 :             :         // frame have been discarded from the transmit buffer due to expiry of their lifetime limit.</span>
+<span id="L68"><span class="lineNum">      68</span>                 :<span class="tlaGNC">       23614 :     }</span></span>
+<span id="L69"><span class="lineNum">      69</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     else</span></span>
+<span id="L70"><span class="lineNum">      70</span>                 :<span class="tlaUNC">           0 :         throw cRuntimeError(&quot;Unsupported BlockAckReq&quot;);</span></span>
+<span id="L71"><span class="lineNum">      71</span>                 :<span class="tlaGNC tlaBgGNC">       23614 : }</span></span>
+<span id="L72"><span class="lineNum">      72</span>                 :             : </span>
+<span id="L73"><span class="lineNum">      73</span>                 :             : //</span>
+<span id="L74"><span class="lineNum">      74</span>                 :             : // 8.2.5.7 Setting for control response frames</span>
+<span id="L75"><span class="lineNum">      75</span>                 :             : // For an ACK frame, the Duration/ID field is set to the value obtained from the Duration/ID field of the frame</span>
+<span id="L76"><span class="lineNum">      76</span>                 :             : // that elicited the response minus the time, in microseconds between the end of the PPDU carrying the frame</span>
+<span id="L77"><span class="lineNum">      77</span>                 :             : // that elicited the response and the end of the PPDU carrying the ACK frame.</span>
+<span id="L78"><span class="lineNum">      78</span>                 :             : //</span>
+<span id="L79"><span class="lineNum">      79</span>                 :             : simtime_t RecipientQosAckPolicy::computeAckDurationField(Packet *packet, const Ptr&lt;const Ieee80211DataOrMgmtHeader&gt;&amp; header) const</span>
+<span id="L80"><span class="lineNum">      80</span>                 :<span class="tlaGNC">      237801 : {</span></span>
+<span id="L81"><span class="lineNum">      81</span>                 :<span class="tlaGNC">      237801 :     simtime_t duration = header-&gt;getDurationField() - modeSet-&gt;getSifsTime() - computeAckDuration(packet, header);</span></span>
+<span id="L82"><span class="lineNum">      82</span>         [<span class="tlaGBC" title="Branch 0 was taken 233 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 237568 times"> + </span>]:<span class="tlaGNC">      237801 :     return duration &lt; 0 ? 0 : duration;</span></span>
+<span id="L83"><span class="lineNum">      83</span>                 :<span class="tlaGNC">      237801 : }</span></span>
+<span id="L84"><span class="lineNum">      84</span>                 :             : </span>
+<span id="L85"><span class="lineNum">      85</span>                 :             : //</span>
+<span id="L86"><span class="lineNum">      86</span>                 :             : // For a BlockAck frame transmitted in response to a BlockAckReq frame or transmitted in response to a frame</span>
+<span id="L87"><span class="lineNum">      87</span>                 :             : // containing an implicit Block Ack request, the Duration/ID field is set to the value obtained from the</span>
+<span id="L88"><span class="lineNum">      88</span>                 :             : // Duration/ID field of the frame that elicited the response minus the time, in microseconds, between the end of</span>
+<span id="L89"><span class="lineNum">      89</span>                 :             : // the PPDU carrying the frame that elicited the response and the end of the PPDU carrying the BlockAck</span>
+<span id="L90"><span class="lineNum">      90</span>                 :             : // frame.</span>
+<span id="L91"><span class="lineNum">      91</span>                 :             : //</span>
+<span id="L92"><span class="lineNum">      92</span>                 :             : simtime_t RecipientQosAckPolicy::computeBasicBlockAckDurationField(Packet *packet, const Ptr&lt;const Ieee80211BasicBlockAckReq&gt;&amp; basicBlockAckReq) const</span>
+<span id="L93"><span class="lineNum">      93</span>                 :<span class="tlaGNC">       23434 : {</span></span>
+<span id="L94"><span class="lineNum">      94</span>                 :<span class="tlaGNC">       23434 :     return basicBlockAckReq-&gt;getDurationField() - modeSet-&gt;getSifsTime() - computeBasicBlockAckDuration(packet, basicBlockAckReq);</span></span>
+<span id="L95"><span class="lineNum">      95</span>                 :<span class="tlaGNC">       23434 : }</span></span>
+<span id="L96"><span class="lineNum">      96</span>                 :             : </span>
+<span id="L97"><span class="lineNum">      97</span>                 :             : simtime_t RecipientQosAckPolicy::computeCompressedBlockAckDurationField(Packet *packet, const Ptr&lt;const Ieee80211CompressedBlockAckReq&gt;&amp; blockAckReq) const</span>
+<span id="L98"><span class="lineNum">      98</span>                 :<span class="tlaGNC">         184 : {</span></span>
+<span id="L99"><span class="lineNum">      99</span>                 :             :     // IEEE Std 802.11-2024, 9.2.5.6: subtract the actual response airtime and SIFS.</span>
+<span id="L100"><span class="lineNum">     100</span>                 :<span class="tlaGNC">         184 :     auto airtime = rateSelection-&gt;computeResponseBlockAckFrameMode(packet, blockAckReq, ResponseQueryRole::RESPOND)-&gt;getDuration(LENGTH_COMPRESSED_BLOCKACK);</span></span>
+<span id="L101"><span class="lineNum">     101</span>                 :<span class="tlaGNC">         184 :     return std::max(SIMTIME_ZERO, blockAckReq-&gt;getDurationField() - modeSet-&gt;getSifsTime() - airtime);</span></span>
+<span id="L102"><span class="lineNum">     102</span>                 :<span class="tlaGNC">         184 : }</span></span>
+<span id="L103"><span class="lineNum">     103</span>                 :             : </span>
+<span id="L104"><span class="lineNum">     104</span>                 :             : } /* namespace ieee80211 */</span>
+<span id="L105"><span class="lineNum">     105</span>                 :             : } /* namespace inet */</span>
+<span id="L106"><span class="lineNum">     106</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

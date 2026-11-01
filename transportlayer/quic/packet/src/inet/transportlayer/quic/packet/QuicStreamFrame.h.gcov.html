@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - transportlayer/quic/packet/src/inet/transportlayer/quic/packet/QuicStreamFrame.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../index.html">top level</a> - <a href="index.html">transportlayer/quic/packet/src/inet/transportlayer/quic/packet</a> - QuicStreamFrame.h<span style="font-size: 80%;"> (source / <a href="QuicStreamFrame.h.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">12</td>
+            <td class="headerCovTableEntry">12</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntry">4</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2019-2024 Timo Völker, Ekaterina Volodina</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : // Copyright (C) 2025 OpenSim Ltd.</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : //</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : //</span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #ifndef INET_APPLICATIONS_QUIC_PACKET_QUICSTREAMFRAME_H_</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : #define INET_APPLICATIONS_QUIC_PACKET_QUICSTREAMFRAME_H_</span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : </span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &quot;QuicFrame.h&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &quot;../stream/Stream.h&quot;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : </span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : namespace inet {</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : namespace quic {</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : </span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : class QuicStreamFrame: public QuicFrame {</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : public:</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             :     QuicStreamFrame(Stream *stream);</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             :     virtual ~QuicStreamFrame();</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             : </span>
+<span id="L22"><span class="lineNum">      22</span>                 :             :     virtual void setHeader(Ptr&lt;const FrameHeader&gt; header) override;</span>
+<span id="L23"><span class="lineNum">      23</span>                 :             :     virtual size_t getDataSize() override;</span>
+<span id="L24"><span class="lineNum">      24</span>                 :             :     virtual Ptr&lt;const Chunk&gt; getData() override;</span>
+<span id="L25"><span class="lineNum">      25</span>                 :             :     virtual void setData(Ptr&lt;const Chunk&gt; data) override;</span>
+<span id="L26"><span class="lineNum">      26</span>                 :             :     virtual void onFrameLost() override;</span>
+<span id="L27"><span class="lineNum">      27</span>                 :             :     virtual void onFrameAcked() override;</span>
+<span id="L28"><span class="lineNum">      28</span>                 :             :     virtual bool equals(const QuicFrame *other) override;</span>
+<span id="L29"><span class="lineNum">      29</span>                 :<span class="tlaGNC tlaBgGNC">      210480 :     virtual bool hasData() override {</span></span>
+<span id="L30"><span class="lineNum">      30</span>                 :<span class="tlaGNC">      210480 :         return true;</span></span>
+<span id="L31"><span class="lineNum">      31</span>                 :<span class="tlaGNC">      210480 :     }</span></span>
+<span id="L32"><span class="lineNum">      32</span>                 :<span class="tlaGNC">          44 :     virtual Ptr&lt;const StreamFrameHeader&gt; getStreamHeader() {</span></span>
+<span id="L33"><span class="lineNum">      33</span>                 :<span class="tlaGNC">          44 :         return streamHeader;</span></span>
+<span id="L34"><span class="lineNum">      34</span>                 :<span class="tlaGNC">          44 :     }</span></span>
+<span id="L35"><span class="lineNum">      35</span>                 :<span class="tlaGNC">      210480 :     virtual void setStream(Stream *stream) {</span></span>
+<span id="L36"><span class="lineNum">      36</span>                 :<span class="tlaGNC">      210480 :         this-&gt;stream = stream;</span></span>
+<span id="L37"><span class="lineNum">      37</span>                 :<span class="tlaGNC">      210480 :     }</span></span>
+<span id="L38"><span class="lineNum">      38</span>                 :<span class="tlaGNC">          22 :     virtual Stream *getStream() {</span></span>
+<span id="L39"><span class="lineNum">      39</span>                 :<span class="tlaGNC">          22 :         return this-&gt;stream;</span></span>
+<span id="L40"><span class="lineNum">      40</span>                 :<span class="tlaGNC">          22 :     }</span></span>
+<span id="L41"><span class="lineNum">      41</span>                 :             : </span>
+<span id="L42"><span class="lineNum">      42</span>                 :             : private:</span>
+<span id="L43"><span class="lineNum">      43</span>                 :             :     Stream *stream;</span>
+<span id="L44"><span class="lineNum">      44</span>                 :             :     Ptr&lt;const StreamFrameHeader&gt; streamHeader;</span>
+<span id="L45"><span class="lineNum">      45</span>                 :             : };</span>
+<span id="L46"><span class="lineNum">      46</span>                 :             : </span>
+<span id="L47"><span class="lineNum">      47</span>                 :             : } /* namespace quic */</span>
+<span id="L48"><span class="lineNum">      48</span>                 :             : } /* namespace inet */</span>
+<span id="L49"><span class="lineNum">      49</span>                 :             : </span>
+<span id="L50"><span class="lineNum">      50</span>                 :             : #endif /* INET_APPLICATIONS_QUIC_PACKET_QUICSTREAMFRAME_H_ */</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

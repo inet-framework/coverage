@@ -1,0 +1,250 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - physicallayer/wireless/ieee80211/packetlevel/src/inet/physicallayer/wireless/ieee80211/packetlevel/Ieee80211Transmitter.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../../../index.html">top level</a> - <a href="index.html">physicallayer/wireless/ieee80211/packetlevel/src/inet/physicallayer/wireless/ieee80211/packetlevel</a> - Ieee80211Transmitter.cc<span style="font-size: 80%;"> (source / <a href="Ieee80211Transmitter.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">94.4&nbsp;%</td>
+            <td class="headerCovTableEntry">108</td>
+            <td class="headerCovTableEntry">102</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">12</td>
+            <td class="headerCovTableEntry">12</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryLo">67.1&nbsp;%</td>
+            <td class="headerCovTableEntry">76</td>
+            <td class="headerCovTableEntry">51</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2013 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #include &quot;inet/physicallayer/wireless/ieee80211/packetlevel/Ieee80211Transmitter.h&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : </span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &quot;inet/mobility/contract/IMobility.h&quot;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &quot;inet/physicallayer/wireless/common/analogmodel/scalar/ScalarTransmitterAnalogModel.h&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &quot;inet/physicallayer/wireless/common/contract/packetlevel/IRadio.h&quot;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : #include &quot;inet/physicallayer/wireless/common/contract/packetlevel/RadioControlInfo_m.h&quot;</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : #include &quot;inet/physicallayer/wireless/common/contract/packetlevel/SignalTag_m.h&quot;</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : #include &quot;inet/physicallayer/wireless/ieee80211/packetlevel/Ieee80211PhyHeader_m.h&quot;</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : #include &quot;inet/physicallayer/wireless/ieee80211/packetlevel/Ieee80211Radio.h&quot;</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : #include &quot;inet/physicallayer/wireless/ieee80211/packetlevel/Ieee80211Tag_m.h&quot;</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : #include &quot;inet/physicallayer/wireless/ieee80211/packetlevel/Ieee80211Transmission.h&quot;</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : </span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : namespace inet {</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             : </span>
+<span id="L22"><span class="lineNum">      22</span>                 :             : namespace physicallayer {</span>
+<span id="L23"><span class="lineNum">      23</span>                 :             : </span>
+<span id="L24"><span class="lineNum">      24</span>                 :             : Define_Module(Ieee80211Transmitter);</span>
+<span id="L25"><span class="lineNum">      25</span>                 :             : </span>
+<span id="L26"><span class="lineNum">      26</span>                 :             : Ieee80211Transmitter::~Ieee80211Transmitter()</span>
+<span id="L27"><span class="lineNum">      27</span>                 :<span class="tlaGNC tlaBgGNC">        2963 : {</span></span>
+<span id="L28"><span class="lineNum">      28</span>                 :<span class="tlaGNC">        2963 :     delete channel;</span></span>
+<span id="L29"><span class="lineNum">      29</span>                 :<span class="tlaGNC">        2963 : }</span></span>
+<span id="L30"><span class="lineNum">      30</span>                 :             : </span>
+<span id="L31"><span class="lineNum">      31</span>                 :             : void Ieee80211Transmitter::initialize(int stage)</span>
+<span id="L32"><span class="lineNum">      32</span>                 :<span class="tlaGNC">       71031 : {</span></span>
+<span id="L33"><span class="lineNum">      33</span>                 :<span class="tlaGNC">       71031 :     FlatTransmitterBase::initialize(stage);</span></span>
+<span id="L34"><span class="lineNum">      34</span>         [<span class="tlaGBC" title="Branch 0 was taken 2962 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 68069 times"> + </span>]:<span class="tlaGNC">       71031 :     if (stage == INITSTAGE_LOCAL) {</span></span>
+<span id="L35"><span class="lineNum">      35</span>                 :<span class="tlaGNC">        2962 :         const char *opMode = par(&quot;opMode&quot;);</span></span>
+<span id="L36"><span class="lineNum">      36</span>         [<span class="tlaGBC" title="Branch 0 was taken 2962 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        2962 :         setModeSet(*opMode ? Ieee80211ModeSet::getModeSet(opMode) : nullptr);</span></span>
+<span id="L37"><span class="lineNum">      37</span>                 :<span class="tlaGNC">        2962 :         const char *bandName = par(&quot;bandName&quot;);</span></span>
+<span id="L38"><span class="lineNum">      38</span>         [<span class="tlaGBC" title="Branch 0 was taken 2962 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        2962 :         setBand(*bandName != '\0' ? Ieee80211CompliantBands::getBand(bandName) : nullptr);</span></span>
+<span id="L39"><span class="lineNum">      39</span> [<span class="tlaGBC" title="Branch 0 was taken 2962 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 1841 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1121 times"> + </span>]:<span class="tlaGNC">        2962 :         setMode(modeSet != nullptr ? (bitrate != bps(-1) ? modeSet-&gt;getMode(bitrate, bandwidth) : modeSet-&gt;getFastestMode()) : nullptr);</span></span>
+<span id="L40"><span class="lineNum">      40</span>                 :<span class="tlaGNC">        2962 :         int channelNumber = par(&quot;channelNumber&quot;);</span></span>
+<span id="L41"><span class="lineNum">      41</span>         [<span class="tlaGBC" title="Branch 0 was taken 2960 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:<span class="tlaGNC">        2962 :         if (channelNumber != -1)</span></span>
+<span id="L42"><span class="lineNum">      42</span>                 :<span class="tlaGNC">        2960 :             setChannelNumber(channelNumber);</span></span>
+<span id="L43"><span class="lineNum">      43</span>                 :<span class="tlaGNC">        2962 :     }</span></span>
+<span id="L44"><span class="lineNum">      44</span>                 :<span class="tlaGNC">       71031 : }</span></span>
+<span id="L45"><span class="lineNum">      45</span>                 :             : </span>
+<span id="L46"><span class="lineNum">      46</span>                 :             : const IIeee80211Mode *Ieee80211Transmitter::computeTransmissionMode(const Packet *packet) const</span>
+<span id="L47"><span class="lineNum">      47</span>                 :<span class="tlaGNC">     4242170 : {</span></span>
+<span id="L48"><span class="lineNum">      48</span>                 :<span class="tlaGNC">     4242170 :     const IIeee80211Mode *transmissionMode;</span></span>
+<span id="L49"><span class="lineNum">      49</span>                 :<span class="tlaGNC">     4242170 :     const auto&amp; modeReq = const_cast&lt;Packet *&gt;(packet)-&gt;findTag&lt;Ieee80211ModeReq&gt;();</span></span>
+<span id="L50"><span class="lineNum">      50</span>                 :<span class="tlaGNC">     4242170 :     const auto&amp; bitrateReq = const_cast&lt;Packet *&gt;(packet)-&gt;findTag&lt;SignalBitrateReq&gt;();</span></span>
+<span id="L51"><span class="lineNum">      51</span>         [<span class="tlaGBC" title="Branch 0 was taken 4086279 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 155891 times"> + </span>]:<span class="tlaGNC">     4242170 :     if (modeReq != nullptr) {</span></span>
+<span id="L52"><span class="lineNum">      52</span> [<span class="tlaGBC" title="Branch 0 was taken 4086275 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 4086275 times"> + </span>]:<span class="tlaGNC">     4086279 :         if (modeSet != nullptr &amp;&amp; !modeSet-&gt;containsMode(modeReq-&gt;getMode()))</span></span>
+<span id="L53"><span class="lineNum">      53</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             throw cRuntimeError(&quot;Unsupported mode requested&quot;);</span></span>
+<span id="L54"><span class="lineNum">      54</span>                 :<span class="tlaGNC tlaBgGNC">     4086279 :         transmissionMode = modeReq-&gt;getMode();</span></span>
+<span id="L55"><span class="lineNum">      55</span>                 :<span class="tlaGNC">     4086279 :     }</span></span>
+<span id="L56"><span class="lineNum">      56</span> [<span class="tlaGBC" title="Branch 0 was taken 155891 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 155891 times"> + </span>]:<span class="tlaGNC">      155891 :     else if (modeSet != nullptr &amp;&amp; bitrateReq != nullptr)</span></span>
+<span id="L57"><span class="lineNum">      57</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         transmissionMode = modeSet-&gt;getMode(bitrateReq-&gt;getDataBitrate());</span></span>
+<span id="L58"><span class="lineNum">      58</span>                 :<span class="tlaGNC tlaBgGNC">      155891 :     else</span></span>
+<span id="L59"><span class="lineNum">      59</span>                 :<span class="tlaGNC">      155891 :         transmissionMode = mode;</span></span>
+<span id="L60"><span class="lineNum">      60</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 4242170 times"> + </span>]:<span class="tlaGNC">     4242170 :     if (transmissionMode == nullptr)</span></span>
+<span id="L61"><span class="lineNum">      61</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         throw cRuntimeError(&quot;Transmission mode is undefined&quot;);</span></span>
+<span id="L62"><span class="lineNum">      62</span>                 :<span class="tlaGNC tlaBgGNC">     4242170 :     return transmissionMode;</span></span>
+<span id="L63"><span class="lineNum">      63</span>                 :<span class="tlaGNC">     4242170 : }</span></span>
+<span id="L64"><span class="lineNum">      64</span>                 :             : </span>
+<span id="L65"><span class="lineNum">      65</span>                 :             : const Ieee80211Channel *Ieee80211Transmitter::computeTransmissionChannel(const Packet *packet) const</span>
+<span id="L66"><span class="lineNum">      66</span>                 :<span class="tlaGNC">     4241696 : {</span></span>
+<span id="L67"><span class="lineNum">      67</span>                 :<span class="tlaGNC">     4241696 :     const Ieee80211Channel *transmissionChannel;</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :<span class="tlaGNC">     4241696 :     const auto&amp; channelReq = const_cast&lt;Packet *&gt;(packet)-&gt;findTag&lt;Ieee80211ChannelReq&gt;();</span></span>
+<span id="L69"><span class="lineNum">      69</span>         [<span class="tlaGBC" title="Branch 0 was taken 2120849 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2120847 times"> + </span>]:<span class="tlaGNC">     4241696 :     transmissionChannel = channelReq != nullptr ? channelReq-&gt;getChannel() : channel;</span></span>
+<span id="L70"><span class="lineNum">      70</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 4241696 times"> + </span>]:<span class="tlaGNC">     4241696 :     if (transmissionChannel == nullptr)</span></span>
+<span id="L71"><span class="lineNum">      71</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         throw cRuntimeError(&quot;Transmission channel is undefined&quot;);</span></span>
+<span id="L72"><span class="lineNum">      72</span>                 :<span class="tlaGNC tlaBgGNC">     4241696 :     return transmissionChannel;</span></span>
+<span id="L73"><span class="lineNum">      73</span>                 :<span class="tlaGNC">     4241696 : }</span></span>
+<span id="L74"><span class="lineNum">      74</span>                 :             : </span>
+<span id="L75"><span class="lineNum">      75</span>                 :             : void Ieee80211Transmitter::setModeSet(const Ieee80211ModeSet *modeSet)</span>
+<span id="L76"><span class="lineNum">      76</span>                 :<span class="tlaGNC">        2964 : {</span></span>
+<span id="L77"><span class="lineNum">      77</span>         [<span class="tlaGBC" title="Branch 0 was taken 2963 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:<span class="tlaGNC">        2964 :     if (this-&gt;modeSet != modeSet) {</span></span>
+<span id="L78"><span class="lineNum">      78</span>                 :<span class="tlaGNC">        2963 :         this-&gt;modeSet = modeSet;</span></span>
+<span id="L79"><span class="lineNum">      79</span>         [<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaGBC" title="Branch 1 was taken 2962 times"> + </span>]:<span class="tlaGNC">        2963 :         if (mode != nullptr)</span></span>
+<span id="L80"><span class="lineNum">      80</span>         [<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">           1 :             mode = modeSet != nullptr ? modeSet-&gt;getMode(mode-&gt;getDataMode()-&gt;getNetBitrate()) : nullptr;</span></span>
+<span id="L81"><span class="lineNum">      81</span>                 :<span class="tlaGNC">        2963 :     }</span></span>
+<span id="L82"><span class="lineNum">      82</span>                 :<span class="tlaGNC">        2964 : }</span></span>
+<span id="L83"><span class="lineNum">      83</span>                 :             : </span>
+<span id="L84"><span class="lineNum">      84</span>                 :             : void Ieee80211Transmitter::setMode(const IIeee80211Mode *mode)</span>
+<span id="L85"><span class="lineNum">      85</span>                 :<span class="tlaGNC">        2964 : {</span></span>
+<span id="L86"><span class="lineNum">      86</span>         [<span class="tlaGBC" title="Branch 0 was taken 2964 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        2964 :     if (this-&gt;mode != mode) {</span></span>
+<span id="L87"><span class="lineNum">      87</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2964 times"> + </span>]:<span class="tlaGNC">        2964 :         if (modeSet-&gt;findMode(mode-&gt;getDataMode()-&gt;getNetBitrate(), mode-&gt;getDataMode()-&gt;getBandwidth()) == nullptr)</span></span>
+<span id="L88"><span class="lineNum">      88</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             throw cRuntimeError(&quot;Invalid mode&quot;);</span></span>
+<span id="L89"><span class="lineNum">      89</span>                 :<span class="tlaGNC tlaBgGNC">        2964 :         this-&gt;mode = mode;</span></span>
+<span id="L90"><span class="lineNum">      90</span>                 :<span class="tlaGNC">        2964 :     }</span></span>
+<span id="L91"><span class="lineNum">      91</span>                 :<span class="tlaGNC">        2964 : }</span></span>
+<span id="L92"><span class="lineNum">      92</span>                 :             : </span>
+<span id="L93"><span class="lineNum">      93</span>                 :             : void Ieee80211Transmitter::setBand(const IIeee80211Band *band)</span>
+<span id="L94"><span class="lineNum">      94</span>                 :<span class="tlaGNC">        2965 : {</span></span>
+<span id="L95"><span class="lineNum">      95</span>         [<span class="tlaGBC" title="Branch 0 was taken 2965 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        2965 :     if (this-&gt;band != band) {</span></span>
+<span id="L96"><span class="lineNum">      96</span>                 :<span class="tlaGNC">        2965 :         this-&gt;band = band;</span></span>
+<span id="L97"><span class="lineNum">      97</span>         [<span class="tlaGBC" title="Branch 0 was taken 3 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2962 times"> + </span>]:<span class="tlaGNC">        2965 :         if (channel != nullptr)</span></span>
+<span id="L98"><span class="lineNum">      98</span>                 :<span class="tlaGNC">           3 :             setChannel(new Ieee80211Channel(band, channel-&gt;getChannelNumber()));</span></span>
+<span id="L99"><span class="lineNum">      99</span>                 :<span class="tlaGNC">        2965 :     }</span></span>
+<span id="L100"><span class="lineNum">     100</span>                 :<span class="tlaGNC">        2965 : }</span></span>
+<span id="L101"><span class="lineNum">     101</span>                 :             : </span>
+<span id="L102"><span class="lineNum">     102</span>                 :             : void Ieee80211Transmitter::setChannel(const Ieee80211Channel *channel)</span>
+<span id="L103"><span class="lineNum">     103</span>                 :<span class="tlaGNC">        3260 : {</span></span>
+<span id="L104"><span class="lineNum">     104</span>         [<span class="tlaGBC" title="Branch 0 was taken 3260 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        3260 :     if (this-&gt;channel != channel) {</span></span>
+<span id="L105"><span class="lineNum">     105</span>                 :<span class="tlaGNC">        3260 :         delete this-&gt;channel;</span></span>
+<span id="L106"><span class="lineNum">     106</span>                 :<span class="tlaGNC">        3260 :         this-&gt;channel = channel;</span></span>
+<span id="L107"><span class="lineNum">     107</span>                 :<span class="tlaGNC">        3260 :         this-&gt;band = channel-&gt;getBand();</span></span>
+<span id="L108"><span class="lineNum">     108</span>                 :<span class="tlaGNC">        3260 :         setCenterFrequency(channel-&gt;getCenterFrequency());</span></span>
+<span id="L109"><span class="lineNum">     109</span>                 :<span class="tlaGNC">        3260 :     }</span></span>
+<span id="L110"><span class="lineNum">     110</span>                 :<span class="tlaGNC">        3260 : }</span></span>
+<span id="L111"><span class="lineNum">     111</span>                 :             : </span>
+<span id="L112"><span class="lineNum">     112</span>                 :             : void Ieee80211Transmitter::setChannelNumber(int channelNumber)</span>
+<span id="L113"><span class="lineNum">     113</span>                 :<span class="tlaGNC">        8119 : {</span></span>
+<span id="L114"><span class="lineNum">     114</span> [<span class="tlaGBC" title="Branch 0 was taken 2961 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5158 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 292 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4866 times"> + </span>]:<span class="tlaGNC">        8119 :     if (channel == nullptr || channelNumber != channel-&gt;getChannelNumber())</span></span>
+<span id="L115"><span class="lineNum">     115</span>                 :<span class="tlaGNC">        3253 :         setChannel(new Ieee80211Channel(band, channelNumber));</span></span>
+<span id="L116"><span class="lineNum">     116</span>                 :<span class="tlaGNC">        8119 : }</span></span>
+<span id="L117"><span class="lineNum">     117</span>                 :             : </span>
+<span id="L118"><span class="lineNum">     118</span>                 :             : bool Ieee80211Transmitter::isHtChannelWidthSupported(Hz channelWidth) const</span>
+<span id="L119"><span class="lineNum">     119</span>                 :<span class="tlaGNC">        1038 : {</span></span>
+<span id="L120"><span class="lineNum">     120</span>                 :             :     // The packet-level PHY currently represents only the primary channel.</span>
+<span id="L121"><span class="lineNum">     121</span>                 :             :     // Until a primary/secondary compound channel determines the analog-model</span>
+<span id="L122"><span class="lineNum">     122</span>                 :             :     // center frequency, advertising a 40 MHz HT width would be false.</span>
+<span id="L123"><span class="lineNum">     123</span> [<span class="tlaGBC" title="Branch 0 was taken 519 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 519 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 519 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        1038 :     return channelWidth == MHz(20) &amp;&amp; modeSet != nullptr &amp;&amp; modeSet-&gt;getHtSupportedChannelWidths().count(channelWidth) != 0;</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 519 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span id="L124"><span class="lineNum">     124</span>                 :<span class="tlaGNC">        1038 : }</span></span>
+<span id="L125"><span class="lineNum">     125</span>                 :             : </span>
+<span id="L126"><span class="lineNum">     126</span>                 :             : std::ostream&amp; Ieee80211Transmitter::printToStream(std::ostream&amp; stream, int level, int evFlags) const</span>
+<span id="L127"><span class="lineNum">     127</span>                 :<span class="tlaGNC">     1015847 : {</span></span>
+<span id="L128"><span class="lineNum">     128</span>                 :<span class="tlaGNC">     1015847 :     stream &lt;&lt; &quot;Ieee80211Transmitter&quot;;</span></span>
+<span id="L129"><span class="lineNum">     129</span>         [<span class="tlaGBC" title="Branch 0 was taken 496 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1015351 times"> + </span>]:<span class="tlaGNC">     1015847 :     if (level &lt;= PRINT_LEVEL_TRACE)</span></span>
+<span id="L130"><span class="lineNum">     130</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 496 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 496 times"> + </span>]:<span class="tlaGNC">         496 :         stream &lt;&lt; EV_FIELD(modeSet, printFieldToString(modeSet, level + 1, evFlags))</span></span>
+<span id="L131"><span class="lineNum">     131</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 496 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 496 times"> + </span>]:<span class="tlaGNC">         496 :                &lt;&lt; EV_FIELD(band, printFieldToString(band, level + 1, evFlags));</span></span>
+<span id="L132"><span class="lineNum">     132</span>         [<span class="tlaGBC" title="Branch 0 was taken 1015847 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">     1015847 :     if (level &lt;= PRINT_LEVEL_INFO)</span></span>
+<span id="L133"><span class="lineNum">     133</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1015847 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1015847 times"> + </span>]:<span class="tlaGNC">     1015847 :         stream &lt;&lt; EV_FIELD(mode, printFieldToString(mode, level + 1, evFlags))</span></span>
+<span id="L134"><span class="lineNum">     134</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1015847 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1015847 times"> + </span>]:<span class="tlaGNC">     1015847 :                &lt;&lt; EV_FIELD(channel, printFieldToString(channel, level + 1, evFlags));</span></span>
+<span id="L135"><span class="lineNum">     135</span>                 :<span class="tlaGNC">     1015847 :     return FlatTransmitterBase::printToStream(stream, level);</span></span>
+<span id="L136"><span class="lineNum">     136</span>                 :<span class="tlaGNC">     1015847 : }</span></span>
+<span id="L137"><span class="lineNum">     137</span>                 :             : </span>
+<span id="L138"><span class="lineNum">     138</span>                 :             : const ITransmission *Ieee80211Transmitter::createTransmission(const IRadio *transmitter, const Packet *packet, simtime_t startTime) const</span>
+<span id="L139"><span class="lineNum">     139</span>                 :<span class="tlaGNC">     2120816 : {</span></span>
+<span id="L140"><span class="lineNum">     140</span>                 :<span class="tlaGNC">     2120816 :     auto phyHeader = Ieee80211Radio::peekIeee80211PhyHeaderAtFront(packet);</span></span>
+<span id="L141"><span class="lineNum">     141</span>                 :<span class="tlaGNC">     2120816 :     const IIeee80211Mode *transmissionMode = computeTransmissionMode(packet);</span></span>
+<span id="L142"><span class="lineNum">     142</span>                 :<span class="tlaGNC">     2120816 :     const Ieee80211Channel *transmissionChannel = computeTransmissionChannel(packet);</span></span>
+<span id="L143"><span class="lineNum">     143</span>                 :<span class="tlaGNC">     2120816 :     W transmissionPower = computeTransmissionPower(packet);</span></span>
+<span id="L144"><span class="lineNum">     144</span>                 :<span class="tlaGNC">     2120816 :     Hz transmissionBandwidth = transmissionMode-&gt;getDataMode()-&gt;getBandwidth();</span></span>
+<span id="L145"><span class="lineNum">     145</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2120816 times"> + </span>]:<span class="tlaGNC">     2120816 :     if (transmissionMode-&gt;getDataMode()-&gt;getNumberOfSpatialStreams() &gt; transmitter-&gt;getAntenna()-&gt;getNumAntennas())</span></span>
+<span id="L146"><span class="lineNum">     146</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         throw cRuntimeError(&quot;Number of spatial streams is higher than the number of antennas&quot;);</span></span>
+<span id="L147"><span class="lineNum">     147</span>                 :<span class="tlaGNC tlaBgGNC">     2120816 :     const simtime_t duration = transmissionMode-&gt;getDuration(B(phyHeader-&gt;getLengthField()));</span></span>
+<span id="L148"><span class="lineNum">     148</span>                 :<span class="tlaGNC">     2120816 :     const simtime_t endTime = startTime + duration;</span></span>
+<span id="L149"><span class="lineNum">     149</span>                 :<span class="tlaGNC">     2120816 :     IMobility *mobility = transmitter-&gt;getAntenna()-&gt;getMobility();</span></span>
+<span id="L150"><span class="lineNum">     150</span>                 :<span class="tlaGNC">     2120816 :     const Coord&amp; startPosition = mobility-&gt;getCurrentPosition();</span></span>
+<span id="L151"><span class="lineNum">     151</span>                 :<span class="tlaGNC">     2120816 :     const Coord&amp; endPosition = mobility-&gt;getCurrentPosition();</span></span>
+<span id="L152"><span class="lineNum">     152</span>                 :<span class="tlaGNC">     2120816 :     const Quaternion&amp; startOrientation = mobility-&gt;getCurrentAngularPosition();</span></span>
+<span id="L153"><span class="lineNum">     153</span>                 :<span class="tlaGNC">     2120816 :     const Quaternion&amp; endOrientation = mobility-&gt;getCurrentAngularPosition();</span></span>
+<span id="L154"><span class="lineNum">     154</span>                 :<span class="tlaGNC">     2120816 :     const simtime_t preambleDuration = transmissionMode-&gt;getPreambleMode()-&gt;getDuration();</span></span>
+<span id="L155"><span class="lineNum">     155</span>                 :<span class="tlaGNC">     2120816 :     const simtime_t headerDuration = transmissionMode-&gt;getHeaderMode()-&gt;getDuration();</span></span>
+<span id="L156"><span class="lineNum">     156</span>                 :<span class="tlaGNC">     2120816 :     const simtime_t dataDuration = duration - headerDuration - preambleDuration;</span></span>
+<span id="L157"><span class="lineNum">     157</span>                 :<span class="tlaGNC">     2120816 :     auto analogModel = getAnalogModel()-&gt;createAnalogModel(preambleDuration, headerDuration, dataDuration, centerFrequency, transmissionBandwidth, transmissionPower);</span></span>
+<span id="L158"><span class="lineNum">     158</span>                 :<span class="tlaGNC">     2120816 :     return new Ieee80211Transmission(transmitter, packet, startTime, endTime, preambleDuration, headerDuration, dataDuration, startPosition, endPosition, startOrientation, endOrientation, nullptr, nullptr, nullptr, nullptr, analogModel, transmissionMode, transmissionChannel);</span></span>
+<span id="L159"><span class="lineNum">     159</span>                 :<span class="tlaGNC">     2120816 : }</span></span>
+<span id="L160"><span class="lineNum">     160</span>                 :             : </span>
+<span id="L161"><span class="lineNum">     161</span>                 :             : } // namespace physicallayer</span>
+<span id="L162"><span class="lineNum">     162</span>                 :             : </span>
+<span id="L163"><span class="lineNum">     163</span>                 :             : } // namespace inet</span>
+<span id="L164"><span class="lineNum">     164</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

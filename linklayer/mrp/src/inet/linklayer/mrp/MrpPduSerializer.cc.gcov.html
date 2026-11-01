@@ -1,0 +1,399 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - linklayer/mrp/src/inet/linklayer/mrp/MrpPduSerializer.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">linklayer/mrp/src/inet/linklayer/mrp</a> - MrpPduSerializer.cc<span style="font-size: 80%;"> (source / <a href="MrpPduSerializer.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">38.5&nbsp;%</td>
+            <td class="headerCovTableEntry">265</td>
+            <td class="headerCovTableEntry">102</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryLo">50.0&nbsp;%</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntry">3</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryLo">45.8&nbsp;%</td>
+            <td class="headerCovTableEntry">72</td>
+            <td class="headerCovTableEntry">33</td>
+          </tr>
+                  <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2024 Daniel Zeitler</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : #include &quot;inet/linklayer/mrp/MrpPduSerializer.h&quot;</span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : </span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : #include &quot;inet/common/packet/serializer/ChunkSerializerRegistry.h&quot;</span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &quot;inet/linklayer/mrp/MrpPdu_m.h&quot;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : </span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : namespace inet {</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : </span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : Register_Serializer(MrpTlvHeader, MrpTlvSerializer);</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : Register_Serializer(MrpEnd, MrpTlvSerializer);</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : Register_Serializer(MrpTest, MrpTlvSerializer);</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : Register_Serializer(MrpTopologyChange, MrpTlvSerializer);</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : Register_Serializer(MrpLinkChange, MrpTlvSerializer);</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : Register_Serializer(MrpInTest, MrpTlvSerializer);</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : Register_Serializer(MrpInLinkChange, MrpTlvSerializer);</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             : Register_Serializer(MrpInLinkStatusPoll, MrpTlvSerializer);</span>
+<span id="L22"><span class="lineNum">      22</span>                 :             : Register_Serializer(MrpInTopologyChange, MrpTlvSerializer);</span>
+<span id="L23"><span class="lineNum">      23</span>                 :             : Register_Serializer(MrpCommon, MrpTlvSerializer);</span>
+<span id="L24"><span class="lineNum">      24</span>                 :             : Register_Serializer(MrpOption, MrpTlvSerializer);</span>
+<span id="L25"><span class="lineNum">      25</span>                 :             : Register_Serializer(MrpSubTlvHeader, MrpSubTlvSerializer);</span>
+<span id="L26"><span class="lineNum">      26</span>                 :             : Register_Serializer(MrpManufacturerFkt, MrpSubTlvSerializer);</span>
+<span id="L27"><span class="lineNum">      27</span>                 :             : Register_Serializer(MrpSubTlvTest, MrpSubTlvSerializer);</span>
+<span id="L28"><span class="lineNum">      28</span>                 :             : Register_Serializer(MrpVersion, MrpVersionFieldSerializer);</span>
+<span id="L29"><span class="lineNum">      29</span>                 :             : </span>
+<span id="L30"><span class="lineNum">      30</span>                 :             : void MrpVersionFieldSerializer::serializeFields(MemoryOutputStream&amp; stream, const Ptr&lt;const Chunk&gt;&amp; chunk) const</span>
+<span id="L31"><span class="lineNum">      31</span>                 :<span class="tlaGNC tlaBgGNC">      120763 : {</span></span>
+<span id="L32"><span class="lineNum">      32</span>                 :<span class="tlaGNC">      120763 :     const auto &amp;version = staticPtrCast&lt;const MrpVersion&gt;(chunk);</span></span>
+<span id="L33"><span class="lineNum">      33</span>                 :<span class="tlaGNC">      120763 :     stream.writeUint16Be(version-&gt;getVersion());</span></span>
+<span id="L34"><span class="lineNum">      34</span>                 :<span class="tlaGNC">      120763 : }</span></span>
+<span id="L35"><span class="lineNum">      35</span>                 :             : </span>
+<span id="L36"><span class="lineNum">      36</span>                 :             : void MrpTlvSerializer::serializeFields(MemoryOutputStream&amp; stream, const Ptr&lt;const Chunk&gt;&amp; chunk) const</span>
+<span id="L37"><span class="lineNum">      37</span>                 :<span class="tlaGNC">      515981 : {</span></span>
+<span id="L38"><span class="lineNum">      38</span>                 :<span class="tlaGNC">      515981 :     const auto &amp;tlv = staticPtrCast&lt;const MrpTlvHeader&gt;(chunk);</span></span>
+<span id="L39"><span class="lineNum">      39</span>                 :<span class="tlaGNC">      515981 :     stream.writeUint8(tlv-&gt;getHeaderType());</span></span>
+<span id="L40"><span class="lineNum">      40</span>                 :<span class="tlaGNC">      515981 :     stream.writeUint8(tlv-&gt;getValueLength());</span></span>
+<span id="L41"><span class="lineNum">      41</span>                 :             : </span>
+<span id="L42"><span class="lineNum">      42</span>                 :<span class="tlaGNC">      515981 :     switch (tlv-&gt;getHeaderType()) {</span></span>
+<span id="L43"><span class="lineNum">      43</span>         [<span class="tlaGBC" title="Branch 0 was taken 120763 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 395218 times"> + </span>]:<span class="tlaGNC">      120763 :     case END:</span></span>
+<span id="L44"><span class="lineNum">      44</span>                 :<span class="tlaGNC">      120763 :         break;</span></span>
+<span id="L45"><span class="lineNum">      45</span>                 :             : </span>
+<span id="L46"><span class="lineNum">      46</span>         [<span class="tlaGBC" title="Branch 0 was taken 120763 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 395218 times"> + </span>]:<span class="tlaGNC">      120763 :     case COMMON: {</span></span>
+<span id="L47"><span class="lineNum">      47</span>                 :<span class="tlaGNC">      120763 :         const auto &amp;common = staticPtrCast&lt;const MrpCommon&gt;(chunk);</span></span>
+<span id="L48"><span class="lineNum">      48</span>                 :<span class="tlaGNC">      120763 :         stream.writeUint16Be(common-&gt;getSequenceID());</span></span>
+<span id="L49"><span class="lineNum">      49</span>                 :<span class="tlaGNC">      120763 :         stream.writeUint64Be(common-&gt;getUuid0());</span></span>
+<span id="L50"><span class="lineNum">      50</span>                 :<span class="tlaGNC">      120763 :         stream.writeUint64Be(common-&gt;getUuid1());</span></span>
+<span id="L51"><span class="lineNum">      51</span>                 :<span class="tlaGNC">      120763 :         break;</span></span>
+<span id="L52"><span class="lineNum">      52</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     }</span></span>
+<span id="L53"><span class="lineNum">      53</span>         [<span class="tlaGBC" title="Branch 0 was taken 223250 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 292731 times"> + </span>]:<span class="tlaGNC tlaBgGNC">      223250 :     case TEST: {</span></span>
+<span id="L54"><span class="lineNum">      54</span>                 :<span class="tlaGNC">      223250 :         const auto &amp;tf = staticPtrCast&lt;const MrpTest&gt;(chunk);</span></span>
+<span id="L55"><span class="lineNum">      55</span>                 :<span class="tlaGNC">      223250 :         stream.writeUint16Be(tf-&gt;getPrio());</span></span>
+<span id="L56"><span class="lineNum">      56</span>                 :<span class="tlaGNC">      223250 :         stream.writeMacAddress(tf-&gt;getSa());</span></span>
+<span id="L57"><span class="lineNum">      57</span>                 :<span class="tlaGNC">      223250 :         stream.writeUint16Be(tf-&gt;getPortRole());</span></span>
+<span id="L58"><span class="lineNum">      58</span>                 :<span class="tlaGNC">      223250 :         stream.writeUint16Be(tf-&gt;getRingState());</span></span>
+<span id="L59"><span class="lineNum">      59</span>                 :<span class="tlaGNC">      223250 :         stream.writeUint16Be(tf-&gt;getTransition());</span></span>
+<span id="L60"><span class="lineNum">      60</span>                 :<span class="tlaGNC">      223250 :         stream.writeUint32Be(tf-&gt;getTimeStamp());</span></span>
+<span id="L61"><span class="lineNum">      61</span>                 :<span class="tlaGNC">      223250 :         break;</span></span>
+<span id="L62"><span class="lineNum">      62</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     }</span></span>
+<span id="L63"><span class="lineNum">      63</span>         [<span class="tlaGBC" title="Branch 0 was taken 5272 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 510709 times"> + </span>]:<span class="tlaGNC tlaBgGNC">        5272 :     case TOPOLOGYCHANGE: {</span></span>
+<span id="L64"><span class="lineNum">      64</span>                 :<span class="tlaGNC">        5272 :         const auto &amp;tcf = staticPtrCast&lt;const MrpTopologyChange&gt;(chunk);</span></span>
+<span id="L65"><span class="lineNum">      65</span>                 :<span class="tlaGNC">        5272 :         stream.writeUint16Be(tcf-&gt;getPrio());</span></span>
+<span id="L66"><span class="lineNum">      66</span>                 :<span class="tlaGNC">        5272 :         stream.writeMacAddress(tcf-&gt;getSa());</span></span>
+<span id="L67"><span class="lineNum">      67</span>                 :<span class="tlaGNC">        5272 :         stream.writeUint16Be(tcf-&gt;getInterval());</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :<span class="tlaGNC">        5272 :         break;</span></span>
+<span id="L69"><span class="lineNum">      69</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     }</span></span>
+<span id="L70"><span class="lineNum">      70</span>         [<span class="tlaGBC" title="Branch 0 was taken 752 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 515229 times"> + </span>]:<span class="tlaGNC tlaBgGNC">         752 :     case LINKDOWN:</span></span>
+<span id="L71"><span class="lineNum">      71</span>         [<span class="tlaGBC" title="Branch 0 was taken 2013 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 513968 times"> + </span>]:<span class="tlaGNC">        2765 :     case LINKUP: {</span></span>
+<span id="L72"><span class="lineNum">      72</span>                 :<span class="tlaGNC">        2765 :         const auto &amp;lcf = staticPtrCast&lt;const MrpLinkChange&gt;(chunk);</span></span>
+<span id="L73"><span class="lineNum">      73</span>                 :<span class="tlaGNC">        2765 :         stream.writeMacAddress(lcf-&gt;getSa());</span></span>
+<span id="L74"><span class="lineNum">      74</span>                 :<span class="tlaGNC">        2765 :         stream.writeUint16Be(lcf-&gt;getPortRole());</span></span>
+<span id="L75"><span class="lineNum">      75</span>                 :<span class="tlaGNC">        2765 :         stream.writeUint16Be(lcf-&gt;getInterval());</span></span>
+<span id="L76"><span class="lineNum">      76</span>                 :<span class="tlaGNC">        2765 :         stream.writeUint16Be(lcf-&gt;getBlocked());</span></span>
+<span id="L77"><span class="lineNum">      77</span>                 :<span class="tlaGNC">        2765 :         stream.writeUint16Be(lcf-&gt;getReserved());</span></span>
+<span id="L78"><span class="lineNum">      78</span>                 :<span class="tlaGNC">        2765 :         break;</span></span>
+<span id="L79"><span class="lineNum">      79</span>                 :<span class="tlaGNC">         752 :     }</span></span>
+<span id="L80"><span class="lineNum">      80</span>         [<span class="tlaGBC" title="Branch 0 was taken 7800 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 508181 times"> + </span>]:<span class="tlaGNC">        7800 :     case INTEST: {</span></span>
+<span id="L81"><span class="lineNum">      81</span>                 :<span class="tlaGNC">        7800 :         const auto &amp;itf = staticPtrCast&lt;const MrpInTest&gt;(chunk);</span></span>
+<span id="L82"><span class="lineNum">      82</span>                 :<span class="tlaGNC">        7800 :         stream.writeUint16Be(itf-&gt;getInID());</span></span>
+<span id="L83"><span class="lineNum">      83</span>                 :<span class="tlaGNC">        7800 :         stream.writeMacAddress(itf-&gt;getSa());</span></span>
+<span id="L84"><span class="lineNum">      84</span>                 :<span class="tlaGNC">        7800 :         stream.writeUint16Be(itf-&gt;getPortRole());</span></span>
+<span id="L85"><span class="lineNum">      85</span>                 :<span class="tlaGNC">        7800 :         stream.writeUint16Be(itf-&gt;getInState());</span></span>
+<span id="L86"><span class="lineNum">      86</span>                 :<span class="tlaGNC">        7800 :         stream.writeUint16Be(itf-&gt;getTransition());</span></span>
+<span id="L87"><span class="lineNum">      87</span>                 :<span class="tlaGNC">        7800 :         stream.writeUint32Be(itf-&gt;getTimeStamp());</span></span>
+<span id="L88"><span class="lineNum">      88</span>                 :<span class="tlaGNC">        7800 :         break;</span></span>
+<span id="L89"><span class="lineNum">      89</span>                 :<span class="tlaGNC">         752 :     }</span></span>
+<span id="L90"><span class="lineNum">      90</span>         [<span class="tlaGBC" title="Branch 0 was taken 220 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 515761 times"> + </span>]:<span class="tlaGNC">         220 :     case INTOPOLOGYCHANGE: {</span></span>
+<span id="L91"><span class="lineNum">      91</span>                 :<span class="tlaGNC">         220 :         const auto &amp;itcf = staticPtrCast&lt;const MrpInTopologyChange&gt;(chunk);</span></span>
+<span id="L92"><span class="lineNum">      92</span>                 :<span class="tlaGNC">         220 :         stream.writeMacAddress(itcf-&gt;getSa());</span></span>
+<span id="L93"><span class="lineNum">      93</span>                 :<span class="tlaGNC">         220 :         stream.writeUint16Be(itcf-&gt;getInID());</span></span>
+<span id="L94"><span class="lineNum">      94</span>                 :<span class="tlaGNC">         220 :         stream.writeUint16Be(itcf-&gt;getInterval());</span></span>
+<span id="L95"><span class="lineNum">      95</span>                 :<span class="tlaGNC">         220 :         break;</span></span>
+<span id="L96"><span class="lineNum">      96</span>                 :<span class="tlaGNC">         752 :     }</span></span>
+<span id="L97"><span class="lineNum">      97</span>         [<span class="tlaGBC" title="Branch 0 was taken 177 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 515804 times"> + </span>]:<span class="tlaGNC">         177 :     case INLINKDOWN:</span></span>
+<span id="L98"><span class="lineNum">      98</span>         [<span class="tlaGBC" title="Branch 0 was taken 1542 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 514439 times"> + </span>]:<span class="tlaGNC">        1719 :     case INLINKUP: {</span></span>
+<span id="L99"><span class="lineNum">      99</span>                 :<span class="tlaGNC">        1719 :         const auto &amp;ilc = staticPtrCast&lt;const MrpInLinkChange&gt;(chunk);</span></span>
+<span id="L100"><span class="lineNum">     100</span>                 :<span class="tlaGNC">        1719 :         stream.writeMacAddress(ilc-&gt;getSa());</span></span>
+<span id="L101"><span class="lineNum">     101</span>                 :<span class="tlaGNC">        1719 :         stream.writeUint16Be(ilc-&gt;getPortRole());</span></span>
+<span id="L102"><span class="lineNum">     102</span>                 :<span class="tlaGNC">        1719 :         stream.writeUint16Be(ilc-&gt;getInID());</span></span>
+<span id="L103"><span class="lineNum">     103</span>                 :<span class="tlaGNC">        1719 :         stream.writeUint16Be(ilc-&gt;getInterval());</span></span>
+<span id="L104"><span class="lineNum">     104</span>                 :<span class="tlaGNC">        1719 :         stream.writeUint16Be(ilc-&gt;getLinkInfo());</span></span>
+<span id="L105"><span class="lineNum">     105</span>                 :<span class="tlaGNC">        1719 :         break;</span></span>
+<span id="L106"><span class="lineNum">     106</span>                 :<span class="tlaGNC">         177 :     }</span></span>
+<span id="L107"><span class="lineNum">     107</span>         [<span class="tlaGBC" title="Branch 0 was taken 324 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 515657 times"> + </span>]:<span class="tlaGNC">         324 :     case INLINKSTATUSPOLL: {</span></span>
+<span id="L108"><span class="lineNum">     108</span>                 :<span class="tlaGNC">         324 :         const auto &amp;ilsp = staticPtrCast&lt;const MrpInLinkStatusPoll&gt;(chunk);</span></span>
+<span id="L109"><span class="lineNum">     109</span>                 :<span class="tlaGNC">         324 :         stream.writeMacAddress(ilsp-&gt;getSa());</span></span>
+<span id="L110"><span class="lineNum">     110</span>                 :<span class="tlaGNC">         324 :         stream.writeUint16Be(ilsp-&gt;getPortRole());</span></span>
+<span id="L111"><span class="lineNum">     111</span>                 :<span class="tlaGNC">         324 :         stream.writeUint16Be(ilsp-&gt;getInID());</span></span>
+<span id="L112"><span class="lineNum">     112</span>                 :<span class="tlaGNC">         324 :         break;</span></span>
+<span id="L113"><span class="lineNum">     113</span>                 :<span class="tlaGNC">         177 :     }</span></span>
+<span id="L114"><span class="lineNum">     114</span>         [<span class="tlaGBC" title="Branch 0 was taken 33105 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 482876 times"> + </span>]:<span class="tlaGNC">       33105 :     case OPTION: {</span></span>
+<span id="L115"><span class="lineNum">     115</span>                 :<span class="tlaGNC">       33105 :         const auto &amp;oh = staticPtrCast&lt;const MrpOption&gt;(chunk);</span></span>
+<span id="L116"><span class="lineNum">     116</span>                 :<span class="tlaGNC">       33105 :         stream.writeUint24Be(oh-&gt;getOuiType());</span></span>
+<span id="L117"><span class="lineNum">     117</span>                 :<span class="tlaGNC">       33105 :         stream.writeUint8(oh-&gt;getEd1Type());</span></span>
+<span id="L118"><span class="lineNum">     118</span>                 :<span class="tlaGNC">       33105 :         break;</span></span>
+<span id="L119"><span class="lineNum">     119</span>                 :<span class="tlaGNC">         177 :     }</span></span>
+<span id="L120"><span class="lineNum">     120</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 515981 times"> + </span>]:<span class="tlaUNC tlaBgUNC">           0 :     default:</span></span>
+<span id="L121"><span class="lineNum">     121</span>                 :<span class="tlaUNC">           0 :         throw cRuntimeError(&quot;Unknown Header TYPE value: %d&quot;,</span></span>
+<span id="L122"><span class="lineNum">     122</span>                 :<span class="tlaUNC">           0 :                 static_cast&lt;int&gt;(tlv-&gt;getHeaderType()));</span></span>
+<span id="L123"><span class="lineNum">     123</span>                 :             : </span>
+<span id="L124"><span class="lineNum">     124</span>                 :<span class="tlaGNC tlaBgGNC">      515981 :     }</span></span>
+<span id="L125"><span class="lineNum">     125</span>                 :             : </span>
+<span id="L126"><span class="lineNum">     126</span>                 :<span class="tlaGNC">      515981 : }</span></span>
+<span id="L127"><span class="lineNum">     127</span>                 :             : </span>
+<span id="L128"><span class="lineNum">     128</span>                 :             : void MrpSubTlvSerializer::serializeFields(MemoryOutputStream&amp; stream, const Ptr&lt;const Chunk&gt;&amp; chunk) const</span>
+<span id="L129"><span class="lineNum">     129</span>                 :<span class="tlaGNC">       33105 : {</span></span>
+<span id="L130"><span class="lineNum">     130</span>                 :<span class="tlaGNC">       33105 :     const auto &amp;subTlv = staticPtrCast&lt;const MrpSubTlvHeader&gt;(chunk);</span></span>
+<span id="L131"><span class="lineNum">     131</span>                 :<span class="tlaGNC">       33105 :     stream.writeUint8(subTlv-&gt;getSubType());</span></span>
+<span id="L132"><span class="lineNum">     132</span>                 :<span class="tlaGNC">       33105 :     stream.writeUint8(subTlv-&gt;getSubHeaderLength());</span></span>
+<span id="L133"><span class="lineNum">     133</span>                 :             : </span>
+<span id="L134"><span class="lineNum">     134</span>                 :<span class="tlaGNC">       33105 :     switch (subTlv-&gt;getSubType()) {</span></span>
+<span id="L135"><span class="lineNum">     135</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 33105 times"> + </span>]:<span class="tlaUNC tlaBgUNC">           0 :     case RESERVED: //fallthrough to Automgr</span></span>
+<span id="L136"><span class="lineNum">     136</span>         [<span class="tlaGBC" title="Branch 0 was taken 32869 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 236 times"> + </span>]:<span class="tlaGNC tlaBgGNC">       32869 :     case AUTOMGR:</span></span>
+<span id="L137"><span class="lineNum">     137</span>                 :<span class="tlaGNC">       32869 :         break;</span></span>
+<span id="L138"><span class="lineNum">     138</span>         [<span class="tlaGBC" title="Branch 0 was taken 136 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 32969 times"> + </span>]:<span class="tlaGNC">         136 :     case TEST_MGR_NACK: //fallthrough to Test_PROPAGATE</span></span>
+<span id="L139"><span class="lineNum">     139</span>         [<span class="tlaGBC" title="Branch 0 was taken 100 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 33005 times"> + </span>]:<span class="tlaGNC">         236 :     case TEST_PROPAGATE: {</span></span>
+<span id="L140"><span class="lineNum">     140</span>                 :<span class="tlaGNC">         236 :         const auto &amp;stf = staticPtrCast&lt;const MrpSubTlvTest&gt;(chunk);</span></span>
+<span id="L141"><span class="lineNum">     141</span>                 :<span class="tlaGNC">         236 :         stream.writeUint16Be(stf-&gt;getPrio());</span></span>
+<span id="L142"><span class="lineNum">     142</span>                 :<span class="tlaGNC">         236 :         stream.writeMacAddress(stf-&gt;getSa());</span></span>
+<span id="L143"><span class="lineNum">     143</span>                 :<span class="tlaGNC">         236 :         stream.writeUint16Be(stf-&gt;getOtherMRMPrio());</span></span>
+<span id="L144"><span class="lineNum">     144</span>                 :<span class="tlaGNC">         236 :         stream.writeMacAddress(stf-&gt;getOtherMRMSa());</span></span>
+<span id="L145"><span class="lineNum">     145</span>                 :<span class="tlaGNC">         236 :         break;</span></span>
+<span id="L146"><span class="lineNum">     146</span>                 :<span class="tlaGNC">         136 :     }</span></span>
+<span id="L147"><span class="lineNum">     147</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 33105 times"> + </span>]:<span class="tlaUNC tlaBgUNC">           0 :     default:</span></span>
+<span id="L148"><span class="lineNum">     148</span>                 :<span class="tlaUNC">           0 :         throw cRuntimeError(&quot;Unknown Header TYPE value: %d&quot;,</span></span>
+<span id="L149"><span class="lineNum">     149</span>                 :<span class="tlaUNC">           0 :                 static_cast&lt;int&gt;(subTlv-&gt;getSubType()));</span></span>
+<span id="L150"><span class="lineNum">     150</span>                 :<span class="tlaGNC tlaBgGNC">       33105 :     }</span></span>
+<span id="L151"><span class="lineNum">     151</span>                 :<span class="tlaGNC">       33105 : }</span></span>
+<span id="L152"><span class="lineNum">     152</span>                 :             : </span>
+<span id="L153"><span class="lineNum">     153</span>                 :             : const Ptr&lt;Chunk&gt; MrpVersionFieldSerializer::deserializeFields(MemoryInputStream&amp; stream, const std::type_info&amp;) const</span>
+<span id="L154"><span class="lineNum">     154</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L155"><span class="lineNum">     155</span>                 :<span class="tlaUNC">           0 :     auto mrpVersion = makeShared&lt;MrpVersion&gt;();</span></span>
+<span id="L156"><span class="lineNum">     156</span>                 :<span class="tlaUNC">           0 :     mrpVersion-&gt;setVersion(stream.readUint16Be());</span></span>
+<span id="L157"><span class="lineNum">     157</span>                 :<span class="tlaUNC">           0 :     return mrpVersion;</span></span>
+<span id="L158"><span class="lineNum">     158</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L159"><span class="lineNum">     159</span>                 :             : </span>
+<span id="L160"><span class="lineNum">     160</span>                 :             : const Ptr&lt;Chunk&gt; MrpTlvSerializer::deserializeFields(MemoryInputStream&amp; stream, const std::type_info&amp;) const</span>
+<span id="L161"><span class="lineNum">     161</span>                 :<span class="tlaUNC">           0 : {</span></span>
+<span id="L162"><span class="lineNum">     162</span>                 :<span class="tlaUNC">           0 :     auto headerType = static_cast&lt;TlvHeaderType&gt;(stream.readUint8());</span></span>
+<span id="L163"><span class="lineNum">     163</span>                 :<span class="tlaUNC">           0 :     uint8_t headerLength = stream.readUint8();</span></span>
+<span id="L164"><span class="lineNum">     164</span>                 :<span class="tlaUNC">           0 :     Ptr&lt;MrpTlvHeader&gt; tlvReturnValue;</span></span>
+<span id="L165"><span class="lineNum">     165</span>                 :             : </span>
+<span id="L166"><span class="lineNum">     166</span>                 :<span class="tlaUNC">           0 :     switch (headerType) {</span></span>
+<span id="L167"><span class="lineNum">     167</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     case END: {</span></span>
+<span id="L168"><span class="lineNum">     168</span>                 :<span class="tlaUNC">           0 :         auto tlv = makeShared&lt;MrpTlvHeader&gt;();</span></span>
+<span id="L169"><span class="lineNum">     169</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setHeaderType(headerType);</span></span>
+<span id="L170"><span class="lineNum">     170</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setValueLength(headerLength);</span></span>
+<span id="L171"><span class="lineNum">     171</span>                 :<span class="tlaUNC">           0 :         return tlv;</span></span>
+<span id="L172"><span class="lineNum">     172</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L173"><span class="lineNum">     173</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     case COMMON: {</span></span>
+<span id="L174"><span class="lineNum">     174</span>                 :<span class="tlaUNC">           0 :         auto tlv = makeShared&lt;MrpCommon&gt;();</span></span>
+<span id="L175"><span class="lineNum">     175</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setHeaderType(headerType);</span></span>
+<span id="L176"><span class="lineNum">     176</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setValueLength(headerLength);</span></span>
+<span id="L177"><span class="lineNum">     177</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setSequenceID(stream.readUint16Be());</span></span>
+<span id="L178"><span class="lineNum">     178</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setUuid0(stream.readUint64Be());</span></span>
+<span id="L179"><span class="lineNum">     179</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setUuid1(stream.readUint64Be());</span></span>
+<span id="L180"><span class="lineNum">     180</span>                 :<span class="tlaUNC">           0 :         tlvReturnValue = tlv;</span></span>
+<span id="L181"><span class="lineNum">     181</span>                 :<span class="tlaUNC">           0 :         break;</span></span>
+<span id="L182"><span class="lineNum">     182</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L183"><span class="lineNum">     183</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     case TEST: {</span></span>
+<span id="L184"><span class="lineNum">     184</span>                 :<span class="tlaUNC">           0 :         auto tlv = makeShared&lt;MrpTest&gt;();</span></span>
+<span id="L185"><span class="lineNum">     185</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setHeaderType(headerType);</span></span>
+<span id="L186"><span class="lineNum">     186</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setValueLength(headerLength);</span></span>
+<span id="L187"><span class="lineNum">     187</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setPrio(stream.readUint16Be());</span></span>
+<span id="L188"><span class="lineNum">     188</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setSa(stream.readMacAddress());</span></span>
+<span id="L189"><span class="lineNum">     189</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setPortRole(stream.readUint16Be());</span></span>
+<span id="L190"><span class="lineNum">     190</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setRingState(stream.readUint16Be());</span></span>
+<span id="L191"><span class="lineNum">     191</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setTransition(stream.readUint16Be());</span></span>
+<span id="L192"><span class="lineNum">     192</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setTimeStamp(stream.readUint32Be());</span></span>
+<span id="L193"><span class="lineNum">     193</span>                 :<span class="tlaUNC">           0 :         tlvReturnValue = tlv;</span></span>
+<span id="L194"><span class="lineNum">     194</span>                 :<span class="tlaUNC">           0 :         break;</span></span>
+<span id="L195"><span class="lineNum">     195</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L196"><span class="lineNum">     196</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     case TOPOLOGYCHANGE: {</span></span>
+<span id="L197"><span class="lineNum">     197</span>                 :<span class="tlaUNC">           0 :         auto tlv = makeShared&lt;MrpTopologyChange&gt;();</span></span>
+<span id="L198"><span class="lineNum">     198</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setHeaderType(headerType);</span></span>
+<span id="L199"><span class="lineNum">     199</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setValueLength(headerLength);</span></span>
+<span id="L200"><span class="lineNum">     200</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setPrio(stream.readUint16Be());</span></span>
+<span id="L201"><span class="lineNum">     201</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setSa(stream.readMacAddress());</span></span>
+<span id="L202"><span class="lineNum">     202</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setInterval(stream.readUint16Be());</span></span>
+<span id="L203"><span class="lineNum">     203</span>                 :<span class="tlaUNC">           0 :         tlvReturnValue = tlv;</span></span>
+<span id="L204"><span class="lineNum">     204</span>                 :<span class="tlaUNC">           0 :         break;</span></span>
+<span id="L205"><span class="lineNum">     205</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L206"><span class="lineNum">     206</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     case LINKDOWN:</span></span>
+<span id="L207"><span class="lineNum">     207</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     case LINKUP: {</span></span>
+<span id="L208"><span class="lineNum">     208</span>                 :<span class="tlaUNC">           0 :         auto tlv = makeShared&lt;MrpLinkChange&gt;();</span></span>
+<span id="L209"><span class="lineNum">     209</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setHeaderType(headerType);</span></span>
+<span id="L210"><span class="lineNum">     210</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setValueLength(headerLength);</span></span>
+<span id="L211"><span class="lineNum">     211</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setSa(stream.readMacAddress());</span></span>
+<span id="L212"><span class="lineNum">     212</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setPortRole(stream.readUint16Be());</span></span>
+<span id="L213"><span class="lineNum">     213</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setInterval(stream.readUint16Be());</span></span>
+<span id="L214"><span class="lineNum">     214</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setBlocked(stream.readUint16Be());</span></span>
+<span id="L215"><span class="lineNum">     215</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setReserved(stream.readUint16Be());</span></span>
+<span id="L216"><span class="lineNum">     216</span>                 :<span class="tlaUNC">           0 :         tlvReturnValue = tlv;</span></span>
+<span id="L217"><span class="lineNum">     217</span>                 :<span class="tlaUNC">           0 :         break;</span></span>
+<span id="L218"><span class="lineNum">     218</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L219"><span class="lineNum">     219</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     case INTEST: {</span></span>
+<span id="L220"><span class="lineNum">     220</span>                 :<span class="tlaUNC">           0 :         auto tlv = makeShared&lt;MrpInTest&gt;();</span></span>
+<span id="L221"><span class="lineNum">     221</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setHeaderType(headerType);</span></span>
+<span id="L222"><span class="lineNum">     222</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setValueLength(headerLength);</span></span>
+<span id="L223"><span class="lineNum">     223</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setInID(stream.readUint16Be());</span></span>
+<span id="L224"><span class="lineNum">     224</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setSa(stream.readMacAddress());</span></span>
+<span id="L225"><span class="lineNum">     225</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setPortRole(stream.readUint16Be());</span></span>
+<span id="L226"><span class="lineNum">     226</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setInState(stream.readUint16Be());</span></span>
+<span id="L227"><span class="lineNum">     227</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setTransition(stream.readUint16Be());</span></span>
+<span id="L228"><span class="lineNum">     228</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setTimeStamp(stream.readUint32Be());</span></span>
+<span id="L229"><span class="lineNum">     229</span>                 :<span class="tlaUNC">           0 :         tlvReturnValue = tlv;</span></span>
+<span id="L230"><span class="lineNum">     230</span>                 :<span class="tlaUNC">           0 :         break;</span></span>
+<span id="L231"><span class="lineNum">     231</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L232"><span class="lineNum">     232</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     case INTOPOLOGYCHANGE: {</span></span>
+<span id="L233"><span class="lineNum">     233</span>                 :<span class="tlaUNC">           0 :         auto tlv = makeShared&lt;MrpInTopologyChange&gt;();</span></span>
+<span id="L234"><span class="lineNum">     234</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setHeaderType(headerType);</span></span>
+<span id="L235"><span class="lineNum">     235</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setValueLength(headerLength);</span></span>
+<span id="L236"><span class="lineNum">     236</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setSa(stream.readMacAddress());</span></span>
+<span id="L237"><span class="lineNum">     237</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setInID(stream.readUint16Be());</span></span>
+<span id="L238"><span class="lineNum">     238</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setInterval(stream.readUint16Be());</span></span>
+<span id="L239"><span class="lineNum">     239</span>                 :<span class="tlaUNC">           0 :         tlvReturnValue = tlv;</span></span>
+<span id="L240"><span class="lineNum">     240</span>                 :<span class="tlaUNC">           0 :         break;</span></span>
+<span id="L241"><span class="lineNum">     241</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L242"><span class="lineNum">     242</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     case INLINKDOWN:</span></span>
+<span id="L243"><span class="lineNum">     243</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     case INLINKUP: {</span></span>
+<span id="L244"><span class="lineNum">     244</span>                 :<span class="tlaUNC">           0 :         auto tlv = makeShared&lt;MrpInLinkChange&gt;();</span></span>
+<span id="L245"><span class="lineNum">     245</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setHeaderType(headerType);</span></span>
+<span id="L246"><span class="lineNum">     246</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setValueLength(headerLength);</span></span>
+<span id="L247"><span class="lineNum">     247</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setSa(stream.readMacAddress());</span></span>
+<span id="L248"><span class="lineNum">     248</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setPortRole(stream.readUint16Be());</span></span>
+<span id="L249"><span class="lineNum">     249</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setInID(stream.readUint16Be());</span></span>
+<span id="L250"><span class="lineNum">     250</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setInterval(stream.readUint16Be());</span></span>
+<span id="L251"><span class="lineNum">     251</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setLinkInfo(stream.readUint16Be());</span></span>
+<span id="L252"><span class="lineNum">     252</span>                 :<span class="tlaUNC">           0 :         tlvReturnValue = tlv;</span></span>
+<span id="L253"><span class="lineNum">     253</span>                 :<span class="tlaUNC">           0 :         break;</span></span>
+<span id="L254"><span class="lineNum">     254</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L255"><span class="lineNum">     255</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     case INLINKSTATUSPOLL: {</span></span>
+<span id="L256"><span class="lineNum">     256</span>                 :<span class="tlaUNC">           0 :         auto tlv = makeShared&lt;MrpInLinkStatusPoll&gt;();</span></span>
+<span id="L257"><span class="lineNum">     257</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setHeaderType(headerType);</span></span>
+<span id="L258"><span class="lineNum">     258</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setValueLength(headerLength);</span></span>
+<span id="L259"><span class="lineNum">     259</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setSa(stream.readMacAddress());</span></span>
+<span id="L260"><span class="lineNum">     260</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setPortRole(stream.readUint16Be());</span></span>
+<span id="L261"><span class="lineNum">     261</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setInID(stream.readUint16Be());</span></span>
+<span id="L262"><span class="lineNum">     262</span>                 :<span class="tlaUNC">           0 :         tlvReturnValue = tlv;</span></span>
+<span id="L263"><span class="lineNum">     263</span>                 :<span class="tlaUNC">           0 :         break;</span></span>
+<span id="L264"><span class="lineNum">     264</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L265"><span class="lineNum">     265</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     case OPTION: {</span></span>
+<span id="L266"><span class="lineNum">     266</span>                 :<span class="tlaUNC">           0 :         auto tlv = makeShared&lt;MrpOption&gt;();</span></span>
+<span id="L267"><span class="lineNum">     267</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setHeaderType(headerType);</span></span>
+<span id="L268"><span class="lineNum">     268</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setValueLength(headerLength);</span></span>
+<span id="L269"><span class="lineNum">     269</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setOuiType(static_cast&lt;MrpOuiType&gt;(stream.readUint24Be()));</span></span>
+<span id="L270"><span class="lineNum">     270</span>                 :<span class="tlaUNC">           0 :         tlv-&gt;setEd1Type(stream.readUint8());</span></span>
+<span id="L271"><span class="lineNum">     271</span>                 :<span class="tlaUNC">           0 :         tlvReturnValue = tlv;</span></span>
+<span id="L272"><span class="lineNum">     272</span>                 :<span class="tlaUNC">           0 :         break;</span></span>
+<span id="L273"><span class="lineNum">     273</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L274"><span class="lineNum">     274</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     default:</span></span>
+<span id="L275"><span class="lineNum">     275</span>                 :<span class="tlaUNC">           0 :         throw cRuntimeError(&quot;Unknown Header TYPE value: %d&quot;,</span></span>
+<span id="L276"><span class="lineNum">     276</span>                 :<span class="tlaUNC">           0 :                 static_cast&lt;int&gt;(headerType));</span></span>
+<span id="L277"><span class="lineNum">     277</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L278"><span class="lineNum">     278</span>                 :             : </span>
+<span id="L279"><span class="lineNum">     279</span>                 :<span class="tlaUNC">           0 :     return tlvReturnValue;</span></span>
+<span id="L280"><span class="lineNum">     280</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L281"><span class="lineNum">     281</span>                 :             : </span>
+<span id="L282"><span class="lineNum">     282</span>                 :             : const Ptr&lt;Chunk&gt; MrpSubTlvSerializer::deserializeFields(MemoryInputStream&amp; stream, const std::type_info&amp;) const</span>
+<span id="L283"><span class="lineNum">     283</span>                 :<span class="tlaUNC">           0 : {</span></span>
+<span id="L284"><span class="lineNum">     284</span>                 :<span class="tlaUNC">           0 :     auto subType = static_cast&lt;SubTlvHeaderType&gt;(stream.readUint8());</span></span>
+<span id="L285"><span class="lineNum">     285</span>                 :<span class="tlaUNC">           0 :     switch (subType) {</span></span>
+<span id="L286"><span class="lineNum">     286</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     case RESERVED: {</span></span>
+<span id="L287"><span class="lineNum">     287</span>                 :<span class="tlaUNC">           0 :         auto subTlv = makeShared&lt;MrpManufacturerFkt&gt;();</span></span>
+<span id="L288"><span class="lineNum">     288</span>                 :<span class="tlaUNC">           0 :         subTlv-&gt;setSubType(subType);</span></span>
+<span id="L289"><span class="lineNum">     289</span>                 :<span class="tlaUNC">           0 :         subTlv-&gt;setSubHeaderLength(stream.readUint8());</span></span>
+<span id="L290"><span class="lineNum">     290</span>                 :<span class="tlaUNC">           0 :         return subTlv;</span></span>
+<span id="L291"><span class="lineNum">     291</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L292"><span class="lineNum">     292</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     case AUTOMGR: {</span></span>
+<span id="L293"><span class="lineNum">     293</span>                 :<span class="tlaUNC">           0 :         auto subTlv = makeShared&lt;MrpSubTlvHeader&gt;();</span></span>
+<span id="L294"><span class="lineNum">     294</span>                 :<span class="tlaUNC">           0 :         subTlv-&gt;setSubType(subType);</span></span>
+<span id="L295"><span class="lineNum">     295</span>                 :<span class="tlaUNC">           0 :         subTlv-&gt;setSubHeaderLength(stream.readUint8());</span></span>
+<span id="L296"><span class="lineNum">     296</span>                 :<span class="tlaUNC">           0 :         return subTlv;</span></span>
+<span id="L297"><span class="lineNum">     297</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L298"><span class="lineNum">     298</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     case TEST_MGR_NACK:</span></span>
+<span id="L299"><span class="lineNum">     299</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     case TEST_PROPAGATE: {</span></span>
+<span id="L300"><span class="lineNum">     300</span>                 :<span class="tlaUNC">           0 :         auto subTlv = makeShared&lt;MrpSubTlvTest&gt;();</span></span>
+<span id="L301"><span class="lineNum">     301</span>                 :<span class="tlaUNC">           0 :         subTlv-&gt;setSubType(subType);</span></span>
+<span id="L302"><span class="lineNum">     302</span>                 :<span class="tlaUNC">           0 :         subTlv-&gt;setSubHeaderLength(stream.readUint8());</span></span>
+<span id="L303"><span class="lineNum">     303</span>                 :<span class="tlaUNC">           0 :         subTlv-&gt;setPrio(stream.readUint16Be());</span></span>
+<span id="L304"><span class="lineNum">     304</span>                 :<span class="tlaUNC">           0 :         subTlv-&gt;setSa(stream.readMacAddress());</span></span>
+<span id="L305"><span class="lineNum">     305</span>                 :<span class="tlaUNC">           0 :         subTlv-&gt;setOtherMRMPrio(stream.readUint16Be());</span></span>
+<span id="L306"><span class="lineNum">     306</span>                 :<span class="tlaUNC">           0 :         subTlv-&gt;setOtherMRMSa(stream.readMacAddress());</span></span>
+<span id="L307"><span class="lineNum">     307</span>                 :<span class="tlaUNC">           0 :         return subTlv;</span></span>
+<span id="L308"><span class="lineNum">     308</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L309"><span class="lineNum">     309</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     default:</span></span>
+<span id="L310"><span class="lineNum">     310</span>                 :<span class="tlaUNC">           0 :         throw cRuntimeError(&quot;Unknown Header TYPE value: %d&quot;, static_cast&lt;int&gt;(subType));</span></span>
+<span id="L311"><span class="lineNum">     311</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L312"><span class="lineNum">     312</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L313"><span class="lineNum">     313</span>                 :             : </span>
+<span id="L314"><span class="lineNum">     314</span>                 :             : } // namespace inet</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

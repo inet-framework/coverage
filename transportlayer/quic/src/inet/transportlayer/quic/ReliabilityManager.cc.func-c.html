@@ -1,0 +1,252 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - transportlayer/quic/src/inet/transportlayer/quic/ReliabilityManager.cc - functions</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">transportlayer/quic/src/inet/transportlayer/quic</a> - ReliabilityManager.cc<span style="font-size: 80%;"> (<a href="ReliabilityManager.cc.gcov.html">source</a> / functions)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">97.2&nbsp;%</td>
+            <td class="headerCovTableEntry">425</td>
+            <td class="headerCovTableEntry">413</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">24</td>
+            <td class="headerCovTableEntry">24</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryMed">87.2&nbsp;%</td>
+            <td class="headerCovTableEntry">180</td>
+            <td class="headerCovTableEntry">157</td>
+          </tr>
+                  <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <center>
+          <table cellpadding=1 cellspacing=1 border=0>
+            <tr><td><br></td></tr>
+            <tr>
+              <td class="tableHead">Function Name <span  title="Click to sort table by function name" class="tableHeadSort"><a href="ReliabilityManager.cc.func.html"><img src="../../../../../../updown.png" width=10 height=14 alt="Sort by function name" title="Click to sort table by function name" border=0></a></span></td>
+              
+              <td class="tableHead">Hit count <span  title="Click to sort table by function hit count" class="tableHeadSort"><img src="../../../../../../glass.png" width=10 height=14 alt="Sort by function hit count" title="Click to sort table by function hit count" border=0></span></td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="ReliabilityManager.cc.gcov.html#L542">inet::quic::ReliabilityManager::getAckElicitingSentPackets(inet::quic::PacketNumberSpace)</a></td>
+              
+              <td class="coverFnHi">49</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="ReliabilityManager.cc.gcov.html#L14">inet::quic::ReliabilityManager::ReliabilityManager(inet::quic::Connection*, inet::quic::TransportParameters*, inet::quic::ReceivedPacketsAccountant*, inet::quic::ICongestionController*, inet::quic::Statistics*)</a></td>
+              
+              <td class="coverFnHi">136</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="ReliabilityManager.cc.gcov.html#L45">inet::quic::ReliabilityManager::~ReliabilityManager()</a></td>
+              
+              <td class="coverFnHi">136</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="ReliabilityManager.cc.gcov.html#L586">inet::quic::ReliabilityManager::getReducePacketSizeTime()</a></td>
+              
+              <td class="coverFnHi">227</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="ReliabilityManager.cc.gcov.html#L379">inet::quic::ReliabilityManager::onLossDetectionTimeout()</a></td>
+              
+              <td class="coverFnHi">652</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="ReliabilityManager.cc.gcov.html#L596">inet::quic::ReliabilityManager::reducePacketSize(int, int)</a></td>
+              
+              <td class="coverFnHi">748</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="ReliabilityManager.cc.gcov.html#L473">inet::quic::ReliabilityManager::inPersistentCongestion(std::vector&lt;inet::quic::QuicPacket*, std::allocator&lt;inet::quic::QuicPacket*&gt; &gt;*, inet::quic::QuicPacket*&amp;)</a></td>
+              
+              <td class="coverFnHi">1495</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="ReliabilityManager.cc.gcov.html#L563">inet::quic::ReliabilityManager::onPacketsLost(std::vector&lt;inet::quic::QuicPacket*, std::allocator&lt;inet::quic::QuicPacket*&gt; &gt;*)</a></td>
+              
+              <td class="coverFnHi">1495</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="ReliabilityManager.cc.gcov.html#L233">inet::quic::ReliabilityManager::updateRtt(unsigned long)</a></td>
+              
+              <td class="coverFnHi">127203</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="ReliabilityManager.cc.gcov.html#L223">inet::quic::ReliabilityManager::includesAckEliciting(std::vector&lt;inet::quic::QuicPacket*, std::allocator&lt;inet::quic::QuicPacket*&gt; &gt;*)</a></td>
+              
+              <td class="coverFnHi">167038</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="ReliabilityManager.cc.gcov.html#L185">inet::quic::ReliabilityManager::detectAndRemoveAckedPackets(inet::IntrusivePtr&lt;inet::quic::AckFrameHeader const&gt; const&amp;, inet::quic::PacketNumberSpace)</a></td>
+              
+              <td class="coverFnHi">167039</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="ReliabilityManager.cc.gcov.html#L120">inet::quic::ReliabilityManager::onAckReceived(inet::IntrusivePtr&lt;inet::quic::AckFrameHeader const&gt; const&amp;, inet::quic::PacketNumberSpace)</a></td>
+              
+              <td class="coverFnHi">167039</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="ReliabilityManager.cc.gcov.html#L554">inet::quic::ReliabilityManager::getSentPacket(inet::quic::PacketNumberSpace, unsigned long)</a></td>
+              
+              <td class="coverFnHi">167121</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="ReliabilityManager.cc.gcov.html#L419">inet::quic::ReliabilityManager::detectAndRemoveLostPackets(inet::quic::PacketNumberSpace)</a></td>
+              
+              <td class="coverFnHi">167638</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="ReliabilityManager.cc.gcov.html#L208">inet::quic::ReliabilityManager::moveNewlyAckedPackets(std::vector&lt;inet::quic::QuicPacket*, std::allocator&lt;inet::quic::QuicPacket*&gt; &gt;*, unsigned long, unsigned long, inet::quic::PacketNumberSpace)</a></td>
+              
+              <td class="coverFnHi">167666</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="ReliabilityManager.cc.gcov.html#L267">inet::quic::ReliabilityManager::onPacketAcked(inet::quic::QuicPacket*)</a></td>
+              
+              <td class="coverFnHi">307554</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="ReliabilityManager.cc.gcov.html#L302">inet::quic::ReliabilityManager::getPtoTimeAndSpace(inet::quic::PacketNumberSpace*)</a></td>
+              
+              <td class="coverFnHi">334962</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="ReliabilityManager.cc.gcov.html#L292">inet::quic::ReliabilityManager::getPtoDuration(inet::quic::PacketNumberSpace)</a></td>
+              
+              <td class="coverFnHi">335071</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="ReliabilityManager.cc.gcov.html#L73">inet::quic::ReliabilityManager::deleteOldNonInFlightPackets()</a></td>
+              
+              <td class="coverFnHi">335874</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="ReliabilityManager.cc.gcov.html#L92">inet::quic::ReliabilityManager::onPacketSent(inet::quic::QuicPacket*, inet::quic::PacketNumberSpace)</a></td>
+              
+              <td class="coverFnHi">335874</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="ReliabilityManager.cc.gcov.html#L532">inet::quic::ReliabilityManager::areAckElicitingPacketsInFlight()</a></td>
+              
+              <td class="coverFnHi">375643</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="ReliabilityManager.cc.gcov.html#L346">inet::quic::ReliabilityManager::setLossDetectionTimer()</a></td>
+              
+              <td class="coverFnHi">379625</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="ReliabilityManager.cc.gcov.html#L276">inet::quic::ReliabilityManager::getLossTimeAndSpace(inet::quic::PacketNumberSpace*)</a></td>
+              
+              <td class="coverFnHi">380277</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="ReliabilityManager.cc.gcov.html#L521">inet::quic::ReliabilityManager::areAckElicitingPacketsInFlight(inet::quic::PacketNumberSpace)</a></td>
+              
+              <td class="coverFnHi">2131206</td>
+              
+              
+            </tr>
+          </table>
+          <br>
+          </center>
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

@@ -1,0 +1,298 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - common/packet/src/inet/common/packet/ChunkQueue.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">common/packet/src/inet/common/packet</a> - ChunkQueue.h<span style="font-size: 80%;"> (source / <a href="ChunkQueue.h.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">36.8&nbsp;%</td>
+            <td class="headerCovTableEntry">38</td>
+            <td class="headerCovTableEntry">14</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryLo">36.4&nbsp;%</td>
+            <td class="headerCovTableEntry">22</td>
+            <td class="headerCovTableEntry">8</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryLo">33.3&nbsp;%</td>
+            <td class="headerCovTableEntry">24</td>
+            <td class="headerCovTableEntry">8</td>
+          </tr>
+                  <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2020 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #ifndef __INET_CHUNKQUEUE_H</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : #define __INET_CHUNKQUEUE_H</span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : </span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &quot;inet/common/packet/chunk/BitsChunk.h&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &quot;inet/common/packet/chunk/BytesChunk.h&quot;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : #include &quot;inet/common/packet/chunk/EmptyChunk.h&quot;</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : </span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : namespace inet {</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : </span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : /**</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             :  * This class represents a first in, first out queue of chunks. It is mainly</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             :  * useful for application and protocol buffers where the incoming chunks are</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             :  * guaranteed to be in order.</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             :  *</span>
+<span id="L22"><span class="lineNum">      22</span>                 :             :  * Internally, queues stores the data in different kind of chunks. See the</span>
+<span id="L23"><span class="lineNum">      23</span>                 :             :  * Chunk class and its subclasses for details. All chunks are immutable in a</span>
+<span id="L24"><span class="lineNum">      24</span>                 :             :  * queue. Chunks are automatically merged as they are pushed into the queue,</span>
+<span id="L25"><span class="lineNum">      25</span>                 :             :  * and they are also shared among queues when duplicating.</span>
+<span id="L26"><span class="lineNum">      26</span>                 :             :  *</span>
+<span id="L27"><span class="lineNum">      27</span>                 :             :  * In general, this class supports the following operations:</span>
+<span id="L28"><span class="lineNum">      28</span>                 :             :  *  - push at the tail and pop at the head</span>
+<span id="L29"><span class="lineNum">      29</span>                 :             :  *  - query the length</span>
+<span id="L30"><span class="lineNum">      30</span>                 :             :  *  - serialize to and deserialize from a sequence of bits or bytes</span>
+<span id="L31"><span class="lineNum">      31</span>                 :             :  *  - copy to a new queue</span>
+<span id="L32"><span class="lineNum">      32</span>                 :             :  *  - convert to a human readable string</span>
+<span id="L33"><span class="lineNum">      33</span>                 :             :  */</span>
+<span id="L34"><span class="lineNum">      34</span>                 :             : class INET_API ChunkQueue : public cNamedObject</span>
+<span id="L35"><span class="lineNum">      35</span>                 :             : {</span>
+<span id="L36"><span class="lineNum">      36</span>                 :             :     friend class ChunkQueueDescriptor;</span>
+<span id="L37"><span class="lineNum">      37</span>                 :             : </span>
+<span id="L38"><span class="lineNum">      38</span>                 :             :   protected:</span>
+<span id="L39"><span class="lineNum">      39</span>                 :             :     b pushedLength = b(0);</span>
+<span id="L40"><span class="lineNum">      40</span>                 :             :     b poppedLength = b(0);</span>
+<span id="L41"><span class="lineNum">      41</span>                 :             :     /**</span>
+<span id="L42"><span class="lineNum">      42</span>                 :             :      * This chunk is always immutable to allow arbitrary peeking. Nevertheless</span>
+<span id="L43"><span class="lineNum">      43</span>                 :             :      * it's reused if possible to allow efficient merging with newly added chunks.</span>
+<span id="L44"><span class="lineNum">      44</span>                 :             :      */</span>
+<span id="L45"><span class="lineNum">      45</span>                 :             :     Ptr&lt;const Chunk&gt; content;</span>
+<span id="L46"><span class="lineNum">      46</span>                 :             :     Chunk::Iterator iterator;</span>
+<span id="L47"><span class="lineNum">      47</span>                 :             : </span>
+<span id="L48"><span class="lineNum">      48</span>                 :             :   protected:</span>
+<span id="L49"><span class="lineNum">      49</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     const Chunk *getContent() const { return content.get(); } // only for class descriptor</span></span>
+<span id="L50"><span class="lineNum">      50</span>                 :             : </span>
+<span id="L51"><span class="lineNum">      51</span>                 :<span class="tlaUNC">           0 :     bool isIteratorConsistent(const Chunk::Iterator&amp; iterator) {</span></span>
+<span id="L52"><span class="lineNum">      52</span>                 :<span class="tlaUNC">           0 :         Chunk::Iterator copy(iterator);</span></span>
+<span id="L53"><span class="lineNum">      53</span>                 :<span class="tlaUNC">           0 :         content-&gt;seekIterator(copy, iterator.getPosition());</span></span>
+<span id="L54"><span class="lineNum">      54</span>                 :<span class="tlaUNC">           0 :         return iterator.getPosition() == copy.getPosition() &amp;&amp; (iterator.getIndex() == -1 || iterator.getIndex() == copy.getIndex());</span></span>
+<span id="L55"><span class="lineNum">      55</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L56"><span class="lineNum">      56</span>                 :             : </span>
+<span id="L57"><span class="lineNum">      57</span>                 :             :     void remove(b length);</span>
+<span id="L58"><span class="lineNum">      58</span>                 :             :     void moveIteratorOrRemove(b length);</span>
+<span id="L59"><span class="lineNum">      59</span>                 :             : </span>
+<span id="L60"><span class="lineNum">      60</span>                 :             :   public:</span>
+<span id="L61"><span class="lineNum">      61</span>                 :             :     /** @name Constructors, destructors and duplication related functions */</span>
+<span id="L62"><span class="lineNum">      62</span>                 :             :     //@{</span>
+<span id="L63"><span class="lineNum">      63</span>                 :             :     ChunkQueue(const char *name = nullptr, const Ptr&lt;const Chunk&gt;&amp; content = makeShared&lt;EmptyChunk&gt;());</span>
+<span id="L64"><span class="lineNum">      64</span>                 :             :     ChunkQueue(const ChunkQueue&amp; other);</span>
+<span id="L65"><span class="lineNum">      65</span>                 :             : </span>
+<span id="L66"><span class="lineNum">      66</span>                 :<span class="tlaUNC">           0 :     virtual ChunkQueue *dup() const override { return new ChunkQueue(*this); }</span></span>
+<span id="L67"><span class="lineNum">      67</span>                 :             :     //@}</span>
+<span id="L68"><span class="lineNum">      68</span>                 :             : </span>
+<span id="L69"><span class="lineNum">      69</span>                 :             :     /** @name Length querying related functions */</span>
+<span id="L70"><span class="lineNum">      70</span>                 :             :     //@{</span>
+<span id="L71"><span class="lineNum">      71</span>                 :             :     /**</span>
+<span id="L72"><span class="lineNum">      72</span>                 :             :      * Returns the total length of data currently available in the queue.</span>
+<span id="L73"><span class="lineNum">      73</span>                 :             :      */</span>
+<span id="L74"><span class="lineNum">      74</span>                 :<span class="tlaGNC tlaBgGNC">     3667352 :     b getLength() const { return content-&gt;getChunkLength() - iterator.getPosition(); }</span></span>
+<span id="L75"><span class="lineNum">      75</span>                 :             : </span>
+<span id="L76"><span class="lineNum">      76</span>                 :             :     /**</span>
+<span id="L77"><span class="lineNum">      77</span>                 :             :      * Returns the total length of data pushed into the queue so far.</span>
+<span id="L78"><span class="lineNum">      78</span>                 :             :      */</span>
+<span id="L79"><span class="lineNum">      79</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     b getPushedLength() const { return pushedLength; }</span></span>
+<span id="L80"><span class="lineNum">      80</span>                 :             : </span>
+<span id="L81"><span class="lineNum">      81</span>                 :             :     /**</span>
+<span id="L82"><span class="lineNum">      82</span>                 :             :      * Returns the total length of data popped from the queue so far.</span>
+<span id="L83"><span class="lineNum">      83</span>                 :             :      */</span>
+<span id="L84"><span class="lineNum">      84</span>                 :<span class="tlaUNC">           0 :     b getPoppedLength() const { return poppedLength; }</span></span>
+<span id="L85"><span class="lineNum">      85</span>                 :             :     //@}</span>
+<span id="L86"><span class="lineNum">      86</span>                 :             : </span>
+<span id="L87"><span class="lineNum">      87</span>                 :             :     /** @name Querying data related functions */</span>
+<span id="L88"><span class="lineNum">      88</span>                 :             :     //@{</span>
+<span id="L89"><span class="lineNum">      89</span>                 :             :     /**</span>
+<span id="L90"><span class="lineNum">      90</span>                 :             :      * Returns the designated data from the head of the queue as an immutable</span>
+<span id="L91"><span class="lineNum">      91</span>                 :             :      * chunk in its current representation. If the length is unspecified, then</span>
+<span id="L92"><span class="lineNum">      92</span>                 :             :      * the length of the result is chosen according to the internal representation.</span>
+<span id="L93"><span class="lineNum">      93</span>                 :             :      */</span>
+<span id="L94"><span class="lineNum">      94</span>                 :             :     const Ptr&lt;const Chunk&gt; peek(b length = b(-1), int flags = 0) const;</span>
+<span id="L95"><span class="lineNum">      95</span>                 :             : </span>
+<span id="L96"><span class="lineNum">      96</span>                 :             :     /**</span>
+<span id="L97"><span class="lineNum">      97</span>                 :             :      * Returns the designated data at the given offset as an immutable chunk in</span>
+<span id="L98"><span class="lineNum">      98</span>                 :             :      * its current representation. If the length is unspecified, then the length</span>
+<span id="L99"><span class="lineNum">      99</span>                 :             :      * of the result is chosen according to the internal representation.</span>
+<span id="L100"><span class="lineNum">     100</span>                 :             :      */</span>
+<span id="L101"><span class="lineNum">     101</span>                 :             :     const Ptr&lt;const Chunk&gt; peekAt(b offset, b length, int flags = 0) const;</span>
+<span id="L102"><span class="lineNum">     102</span>                 :             : </span>
+<span id="L103"><span class="lineNum">     103</span>                 :             :     /**</span>
+<span id="L104"><span class="lineNum">     104</span>                 :             :      * Returns true if the designated data is available at the head of the queue</span>
+<span id="L105"><span class="lineNum">     105</span>                 :             :      * in the requested representation. If the length is unspecified, then the</span>
+<span id="L106"><span class="lineNum">     106</span>                 :             :      * length of the result is chosen according to the internal representation.</span>
+<span id="L107"><span class="lineNum">     107</span>                 :             :      */</span>
+<span id="L108"><span class="lineNum">     108</span>                 :             :     template&lt;typename T&gt;</span>
+<span id="L109"><span class="lineNum">     109</span>                 :<span class="tlaGNC tlaBgGNC">       10530 :     bool has(b length = b(-1)) const {</span></span>
+<span id="L110"><span class="lineNum">     110</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaGBC" title="Branch 0 was taken 10530 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">       10530 :         return content-&gt;has&lt;T&gt;(iterator, length == b(-1) ? Chunk::unspecifiedLength : length);</span></span>
+<span id="L111"><span class="lineNum">     111</span>                 :<span class="tlaGNC">       10530 :     }</span></span>
+<span id="L112"><span class="lineNum">     112</span>                 :             : </span>
+<span id="L113"><span class="lineNum">     113</span>                 :             :     /**</span>
+<span id="L114"><span class="lineNum">     114</span>                 :             :      * Returns the designated data from the head of the queue as an immutable</span>
+<span id="L115"><span class="lineNum">     115</span>                 :             :      * chunk in the requested representation. If the length is unspecified, then</span>
+<span id="L116"><span class="lineNum">     116</span>                 :             :      * the length of the result is chosen according to the internal representation.</span>
+<span id="L117"><span class="lineNum">     117</span>                 :             :      */</span>
+<span id="L118"><span class="lineNum">     118</span>                 :             :     template&lt;typename T&gt;</span>
+<span id="L119"><span class="lineNum">     119</span>                 :<span class="tlaGNC">      350101 :     const Ptr&lt;const T&gt; peek(b length = b(-1), int flags = 0) const {</span></span>
+<span id="L120"><span class="lineNum">     120</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 5611 times"> + </span>]:<span class="tlaGNC">      350101 :         return content-&gt;peek&lt;T&gt;(iterator, length == b(-1) ? Chunk::unspecifiedLength : length, flags);</span></span>
+<span class="lineNum">        </span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 249618 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 94872 times"> + </span>]
+<span id="L121"><span class="lineNum">     121</span>                 :<span class="tlaGNC">      350101 :     }</span></span>
+<span id="L122"><span class="lineNum">     122</span>                 :             : </span>
+<span id="L123"><span class="lineNum">     123</span>                 :             :     /**</span>
+<span id="L124"><span class="lineNum">     124</span>                 :             :      * Returns the designated data at the given offset as an immutable chunk in</span>
+<span id="L125"><span class="lineNum">     125</span>                 :             :      * the requested representation. If the length is unspecified, then the</span>
+<span id="L126"><span class="lineNum">     126</span>                 :             :      * length of the result is chosen according to the internal representation.</span>
+<span id="L127"><span class="lineNum">     127</span>                 :             :      */</span>
+<span id="L128"><span class="lineNum">     128</span>                 :             :     template&lt;typename T&gt;</span>
+<span id="L129"><span class="lineNum">     129</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     const Ptr&lt;const T&gt; peekAt(b offset, b length = b(-1), int flags = 0) const {</span></span>
+<span id="L130"><span class="lineNum">     130</span>                 :<span class="tlaUNC">           0 :         CHUNK_CHECK_USAGE(b(0) &lt;= offset &amp;&amp; offset &lt;= getLength(), &quot;offset is out of range&quot;);</span></span>
+<span id="L131"><span class="lineNum">     131</span>                 :<span class="tlaUNC">           0 :         CHUNK_CHECK_USAGE(b(-1) &lt;= length &amp;&amp; offset + length &lt;= getLength(), &quot;length is invalid&quot;);</span></span>
+<span id="L132"><span class="lineNum">     132</span>                 :<span class="tlaUNC">           0 :         return content-&gt;peek&lt;T&gt;(Chunk::Iterator(true, iterator.getPosition() + offset, -1), length == b(-1) ? Chunk::unspecifiedLength : length, flags);</span></span>
+<span id="L133"><span class="lineNum">     133</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L134"><span class="lineNum">     134</span>                 :             : </span>
+<span id="L135"><span class="lineNum">     135</span>                 :             :     /**</span>
+<span id="L136"><span class="lineNum">     136</span>                 :             :      * Returns all data in the queue in the current representation. The length</span>
+<span id="L137"><span class="lineNum">     137</span>                 :             :      * of the returned chunk is the same as the value returned by getLength().</span>
+<span id="L138"><span class="lineNum">     138</span>                 :             :      */</span>
+<span id="L139"><span class="lineNum">     139</span>                 :<span class="tlaUNC">           0 :     const Ptr&lt;const Chunk&gt; peekAll(int flags = 0) const {</span></span>
+<span id="L140"><span class="lineNum">     140</span>                 :<span class="tlaUNC">           0 :         return peekAt(b(0), getLength(), flags);</span></span>
+<span id="L141"><span class="lineNum">     141</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L142"><span class="lineNum">     142</span>                 :             : </span>
+<span id="L143"><span class="lineNum">     143</span>                 :             :     /**</span>
+<span id="L144"><span class="lineNum">     144</span>                 :             :      * Returns all data in the queue in the as a sequence of bits. The length</span>
+<span id="L145"><span class="lineNum">     145</span>                 :             :      * of the returned chunk is the same as the value returned by getLength().</span>
+<span id="L146"><span class="lineNum">     146</span>                 :             :      */</span>
+<span id="L147"><span class="lineNum">     147</span>                 :<span class="tlaUNC">           0 :     const Ptr&lt;const BitsChunk&gt; peekAllAsBits(int flags = 0) const {</span></span>
+<span id="L148"><span class="lineNum">     148</span>                 :<span class="tlaUNC">           0 :         return peekAt&lt;BitsChunk&gt;(b(0), getLength(), flags);</span></span>
+<span id="L149"><span class="lineNum">     149</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L150"><span class="lineNum">     150</span>                 :             : </span>
+<span id="L151"><span class="lineNum">     151</span>                 :             :     /**</span>
+<span id="L152"><span class="lineNum">     152</span>                 :             :      * Returns all data in the queue in the as a sequence of bytes. The length</span>
+<span id="L153"><span class="lineNum">     153</span>                 :             :      * of the returned chunk is the same as the value returned by getLength().</span>
+<span id="L154"><span class="lineNum">     154</span>                 :             :      */</span>
+<span id="L155"><span class="lineNum">     155</span>                 :<span class="tlaUNC">           0 :     const Ptr&lt;const BytesChunk&gt; peekAllAsBytes(int flags = 0) const {</span></span>
+<span id="L156"><span class="lineNum">     156</span>                 :<span class="tlaUNC">           0 :         return peekAt&lt;BytesChunk&gt;(b(0), getLength(), flags);</span></span>
+<span id="L157"><span class="lineNum">     157</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L158"><span class="lineNum">     158</span>                 :             :     //@}</span>
+<span id="L159"><span class="lineNum">     159</span>                 :             : </span>
+<span id="L160"><span class="lineNum">     160</span>                 :             :     /** @name Removing data related functions */</span>
+<span id="L161"><span class="lineNum">     161</span>                 :             :     //@{</span>
+<span id="L162"><span class="lineNum">     162</span>                 :             :     /**</span>
+<span id="L163"><span class="lineNum">     163</span>                 :             :      * Pops the designated data and returns it as an immutable chunk in its</span>
+<span id="L164"><span class="lineNum">     164</span>                 :             :      * current representation. If the length is unspecified, then the length of</span>
+<span id="L165"><span class="lineNum">     165</span>                 :             :      * the result is chosen according to the internal representation.</span>
+<span id="L166"><span class="lineNum">     166</span>                 :             :      */</span>
+<span id="L167"><span class="lineNum">     167</span>                 :             :     const Ptr&lt;const Chunk&gt; pop(b length = b(-1), int flags = 0);</span>
+<span id="L168"><span class="lineNum">     168</span>                 :             : </span>
+<span id="L169"><span class="lineNum">     169</span>                 :             :     /**</span>
+<span id="L170"><span class="lineNum">     170</span>                 :             :      * Pops the designated data from the head of the queue and returns it as</span>
+<span id="L171"><span class="lineNum">     171</span>                 :             :      * an immutable chunk in the requested representation. If the length is</span>
+<span id="L172"><span class="lineNum">     172</span>                 :             :      * unspecified, then the length of the result is chosen according to the</span>
+<span id="L173"><span class="lineNum">     173</span>                 :             :      * internal representation.</span>
+<span id="L174"><span class="lineNum">     174</span>                 :             :      */</span>
+<span id="L175"><span class="lineNum">     175</span>                 :             :     template&lt;typename T&gt;</span>
+<span id="L176"><span class="lineNum">     176</span>                 :<span class="tlaGNC tlaBgGNC">      100483 :     const Ptr&lt;const T&gt; pop(b length = b(-1), int flags = 0) {</span></span>
+<span id="L177"><span class="lineNum">     177</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaGBC" title="Branch 0 was taken 5611 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">      100483 :         const auto&amp; chunk = peek&lt;T&gt;(length == b(-1) ? Chunk::unspecifiedLength : length, flags);</span></span>
+<span class="lineNum">        </span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 94872 times"> + </span>]
+<span id="L178"><span class="lineNum">     178</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaGBC" title="Branch 0 was taken 5611 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">      100483 :         if (chunk != nullptr)</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 94872 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span id="L179"><span class="lineNum">     179</span>                 :<span class="tlaGNC">      100483 :             moveIteratorOrRemove(chunk-&gt;getChunkLength());</span></span>
+<span id="L180"><span class="lineNum">     180</span>                 :<span class="tlaGNC">      100483 :         return chunk;</span></span>
+<span id="L181"><span class="lineNum">     181</span>                 :<span class="tlaGNC">      100483 :     }</span></span>
+<span id="L182"><span class="lineNum">     182</span>                 :             : </span>
+<span id="L183"><span class="lineNum">     183</span>                 :             :     /**</span>
+<span id="L184"><span class="lineNum">     184</span>                 :             :      * Erases all data from the queue.</span>
+<span id="L185"><span class="lineNum">     185</span>                 :             :      */</span>
+<span id="L186"><span class="lineNum">     186</span>                 :             :     void clear();</span>
+<span id="L187"><span class="lineNum">     187</span>                 :             :     //@}</span>
+<span id="L188"><span class="lineNum">     188</span>                 :             : </span>
+<span id="L189"><span class="lineNum">     189</span>                 :             :     /** @name Filling with data related functions */</span>
+<span id="L190"><span class="lineNum">     190</span>                 :             :     //@{</span>
+<span id="L191"><span class="lineNum">     191</span>                 :             :     /**</span>
+<span id="L192"><span class="lineNum">     192</span>                 :             :      * Inserts the provided chunk at the tail of the queue.</span>
+<span id="L193"><span class="lineNum">     193</span>                 :             :      */</span>
+<span id="L194"><span class="lineNum">     194</span>                 :             :     void push(const Ptr&lt;const Chunk&gt;&amp; chunk);</span>
+<span id="L195"><span class="lineNum">     195</span>                 :             :     //@}</span>
+<span id="L196"><span class="lineNum">     196</span>                 :             : </span>
+<span id="L197"><span class="lineNum">     197</span>                 :             :     /**</span>
+<span id="L198"><span class="lineNum">     198</span>                 :             :      * Returns a human readable string representation.</span>
+<span id="L199"><span class="lineNum">     199</span>                 :             :      */</span>
+<span id="L200"><span class="lineNum">     200</span>                 :             :     virtual std::string str() const override;</span>
+<span id="L201"><span class="lineNum">     201</span>                 :             : };</span>
+<span id="L202"><span class="lineNum">     202</span>                 :             : </span>
+<span id="L203"><span class="lineNum">     203</span>                 :<span class="tlaUNC tlaBgUNC">           0 : inline std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os, const ChunkQueue *queue) { return os &lt;&lt; queue-&gt;str(); }</span></span>
+<span id="L204"><span class="lineNum">     204</span>                 :             : </span>
+<span id="L205"><span class="lineNum">     205</span>                 :<span class="tlaGNC tlaBgGNC">          34 : inline std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os, const ChunkQueue&amp; queue) { return os &lt;&lt; queue.str(); }</span></span>
+<span id="L206"><span class="lineNum">     206</span>                 :             : </span>
+<span id="L207"><span class="lineNum">     207</span>                 :             : } // namespace</span>
+<span id="L208"><span class="lineNum">     208</span>                 :             : </span>
+<span id="L209"><span class="lineNum">     209</span>                 :             : #endif</span>
+<span id="L210"><span class="lineNum">     210</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

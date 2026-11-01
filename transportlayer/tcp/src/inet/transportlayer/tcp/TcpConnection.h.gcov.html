@@ -1,0 +1,878 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - transportlayer/tcp/src/inet/transportlayer/tcp/TcpConnection.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">transportlayer/tcp/src/inet/transportlayer/tcp</a> - TcpConnection.h<span style="font-size: 80%;"> (source / <a href="TcpConnection.h.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">73.5&nbsp;%</td>
+            <td class="headerCovTableEntry">34</td>
+            <td class="headerCovTableEntry">25</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryLo">64.0&nbsp;%</td>
+            <td class="headerCovTableEntry">25</td>
+            <td class="headerCovTableEntry">16</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2004 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : // Copyright (C) 2009-2010 Thomas Reschka</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // Copyright (C) 2010 OpenSim Ltd.</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : //</span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : </span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : #ifndef __INET_TCPCONNECTION_H</span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #define __INET_TCPCONNECTION_H</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : </span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &lt;climits&gt;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : #include &lt;deque&gt;</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : #include &lt;map&gt;</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : </span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : #include &quot;inet/common/SimpleModule.h&quot;</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : #include &quot;inet/networklayer/common/IcmpType_m.h&quot;</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : #include &quot;inet/networklayer/common/Icmpv6Type_m.h&quot;</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : #include &quot;inet/networklayer/common/L3Address.h&quot;</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : #include &quot;inet/transportlayer/tcp/Tcp.h&quot;</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             : #include &quot;inet/transportlayer/tcp/TcpConnectionState_m.h&quot;</span>
+<span id="L22"><span class="lineNum">      22</span>                 :             : #include &quot;inet/transportlayer/tcp_common/TcpHeader.h&quot;</span>
+<span id="L23"><span class="lineNum">      23</span>                 :             : </span>
+<span id="L24"><span class="lineNum">      24</span>                 :             : namespace inet {</span>
+<span id="L25"><span class="lineNum">      25</span>                 :             : </span>
+<span id="L26"><span class="lineNum">      26</span>                 :             : class TcpCommand;</span>
+<span id="L27"><span class="lineNum">      27</span>                 :             : class TcpOpenCommand;</span>
+<span id="L28"><span class="lineNum">      28</span>                 :             : </span>
+<span id="L29"><span class="lineNum">      29</span>                 :             : namespace tcp {</span>
+<span id="L30"><span class="lineNum">      30</span>                 :             : </span>
+<span id="L31"><span class="lineNum">      31</span>                 :             : class TcpSackRexmitQueue;</span>
+<span id="L32"><span class="lineNum">      32</span>                 :             : class TcpAlgorithm;</span>
+<span id="L33"><span class="lineNum">      33</span>                 :             : </span>
+<span id="L34"><span class="lineNum">      34</span>                 :             : /** @name Timeout values */</span>
+<span id="L35"><span class="lineNum">      35</span>                 :             : //@{</span>
+<span id="L36"><span class="lineNum">      36</span>                 :<span class="tlaGNC tlaBgGNC">         109 : #define TCP_TIMEOUT_DEFERRED_SYN        75  // 75 seconds: a deferred SYN of Fast Open waits so long for a SEND</span></span>
+<span id="L37"><span class="lineNum">      37</span>                 :             : #define TCP_TIMEOUT_FIN_WAIT_2        600  // 10 minutes</span>
+<span id="L38"><span class="lineNum">      38</span>                 :             : //@}</span>
+<span id="L39"><span class="lineNum">      39</span>                 :             : </span>
+<span id="L40"><span class="lineNum">      40</span>                 :             : // the values of state-&gt;ecnMode, from the tcpEcnMode parameter</span>
+<span id="L41"><span class="lineNum">      41</span>                 :<span class="tlaGNC">        6756 : #define TCP_ECN_MODE_OFF              0</span></span>
+<span id="L42"><span class="lineNum">      42</span>                 :<span class="tlaGNC">        4478 : #define TCP_ECN_MODE_PASSIVE          1</span></span>
+<span id="L43"><span class="lineNum">      43</span>                 :<span class="tlaGNC">        3036 : #define TCP_ECN_MODE_RFC3168          2</span></span>
+<span id="L44"><span class="lineNum">      44</span>                 :<span class="tlaGNC">        8512 : #define TCP_ECN_MODE_ACCECN           3</span></span>
+<span id="L45"><span class="lineNum">      45</span>                 :<span class="tlaGNC">        2590 : #define TCP_ECN_MODE_ACCECN_PASSIVE   4</span></span>
+<span id="L46"><span class="lineNum">      46</span>                 :<span class="tlaGNC">          55 : #define TFO_BLACKHOLE_REXMIT_COUNT    2   // TCP Fast Open: the retransmission of a Fast Open SYN that suggests a black hole (the third transmission; Linux takes the fourth)</span></span>
+<span id="L47"><span class="lineNum">      47</span>                 :<span class="tlaGNC">     2393178 : #define TCP_MAX_WIN                   65535lu  // 65535 bytes, largest value (16 bit) for (unscaled) window size</span></span>
+<span id="L48"><span class="lineNum">      48</span>                 :             : #define TCP_MAX_WIN_SCALED            0x3fffffffL // 2^30-1 bytes, largest value for scaled window size</span>
+<span id="L49"><span class="lineNum">      49</span>                 :             : #define MAX_SACK_BLOCKS               60  // will only be used with SACK</span>
+<span id="L50"><span class="lineNum">      50</span>                 :<span class="tlaGNC">      869810 : #define PAWS_IDLE_TIME_THRESH         (24 * 24 * 3600)  // 24 days in seconds (RFC 7323 section 5.5)</span></span>
+<span id="L51"><span class="lineNum">      51</span>                 :             : </span>
+<span id="L52"><span class="lineNum">      52</span>                 :             : /**</span>
+<span id="L53"><span class="lineNum">      53</span>                 :             :  * Manages a TCP connection. This class itself implements the TCP state</span>
+<span id="L54"><span class="lineNum">      54</span>                 :             :  * machine as well as handling control PDUs (SYN, SYN+ACK, RST, FIN, etc.),</span>
+<span id="L55"><span class="lineNum">      55</span>                 :             :  * timers (2MSL, SYN-REXMIT, FIN-WAIT-2) and events (OPEN, SEND, etc)</span>
+<span id="L56"><span class="lineNum">      56</span>                 :             :  * associated with TCP state changes.</span>
+<span id="L57"><span class="lineNum">      57</span>                 :             :  *</span>
+<span id="L58"><span class="lineNum">      58</span>                 :             :  * The implementation largely follows the functional specification at the end</span>
+<span id="L59"><span class="lineNum">      59</span>                 :             :  * of RFC 9293. Code comments extensively quote RFC 9293 to make it easier</span>
+<span id="L60"><span class="lineNum">      60</span>                 :             :  * to understand.</span>
+<span id="L61"><span class="lineNum">      61</span>                 :             :  *</span>
+<span id="L62"><span class="lineNum">      62</span>                 :             :  * TcpConnection objects are not used alone -- they are instantiated and managed</span>
+<span id="L63"><span class="lineNum">      63</span>                 :             :  * by a TCP module.</span>
+<span id="L64"><span class="lineNum">      64</span>                 :             :  *</span>
+<span id="L65"><span class="lineNum">      65</span>                 :             :  * TcpConnection &quot;outsources&quot; several tasks to objects subclassed from</span>
+<span id="L66"><span class="lineNum">      66</span>                 :             :  * TcpSendQueue, TcpReceiveQueue and TcpAlgorithm; see overview of this</span>
+<span id="L67"><span class="lineNum">      67</span>                 :             :  * with TCP documentation.</span>
+<span id="L68"><span class="lineNum">      68</span>                 :             :  *</span>
+<span id="L69"><span class="lineNum">      69</span>                 :             :  * Connection variables (TCB) are kept in TcpStateVariables. TcpAlgorithm</span>
+<span id="L70"><span class="lineNum">      70</span>                 :             :  * implementations can extend TcpStateVariables to add their own stuff</span>
+<span id="L71"><span class="lineNum">      71</span>                 :             :  * (see TcpAlgorithm::createStateVariables() factory method.)</span>
+<span id="L72"><span class="lineNum">      72</span>                 :             :  *</span>
+<span id="L73"><span class="lineNum">      73</span>                 :             :  * The &quot;entry points&quot; of TCPConnnection from TCP are:</span>
+<span id="L74"><span class="lineNum">      74</span>                 :             :  *  - processTimer(cMessage *msg): handle self-messages which belong to the connection</span>
+<span id="L75"><span class="lineNum">      75</span>                 :             :  *  - processTCPSegment(TcpHeader *tcpSeg, Address srcAddr, Address destAddr):</span>
+<span id="L76"><span class="lineNum">      76</span>                 :             :  *    handle segment arrivals</span>
+<span id="L77"><span class="lineNum">      77</span>                 :             :  *  - processAppCommand(cMessage *msg): process commands which arrive from the</span>
+<span id="L78"><span class="lineNum">      78</span>                 :             :  *    application (TCP_C_xxx)</span>
+<span id="L79"><span class="lineNum">      79</span>                 :             :  *</span>
+<span id="L80"><span class="lineNum">      80</span>                 :             :  * All three methods follow a common structure:</span>
+<span id="L81"><span class="lineNum">      81</span>                 :             :  *</span>
+<span id="L82"><span class="lineNum">      82</span>                 :             :  *  -# dispatch to specific methods. For example, processAppCommand() invokes</span>
+<span id="L83"><span class="lineNum">      83</span>                 :             :  *     one of process_OPEN_ACTIVE(), process_OPEN_PASSIVE() or process_SEND(),</span>
+<span id="L84"><span class="lineNum">      84</span>                 :             :  *     etc., and processTCPSegment() dispatches to processSegmentInListen(),</span>
+<span id="L85"><span class="lineNum">      85</span>                 :             :  *     processSegmentInSynSent() or processSegment1stThru8th().</span>
+<span id="L86"><span class="lineNum">      86</span>                 :             :  *     Those methods will do the REAL JOB.</span>
+<span id="L87"><span class="lineNum">      87</span>                 :             :  *  -# after they return, we'll know the state machine event (TcpEventCode,</span>
+<span id="L88"><span class="lineNum">      88</span>                 :             :  *     TCP_E_xxx) for sure, so we can:</span>
+<span id="L89"><span class="lineNum">      89</span>                 :             :  *  -# invoke performStateTransition() which executes the necessary state</span>
+<span id="L90"><span class="lineNum">      90</span>                 :             :  *     transition (for example, TCP_E_RCV_SYN will take the state machine</span>
+<span id="L91"><span class="lineNum">      91</span>                 :             :  *     from TCP_S_LISTEN to TCP_S_SYN_RCVD). No other actions are taken</span>
+<span id="L92"><span class="lineNum">      92</span>                 :             :  *     in this step.</span>
+<span id="L93"><span class="lineNum">      93</span>                 :             :  *  -# if there was a state change (for example, we entered the</span>
+<span id="L94"><span class="lineNum">      94</span>                 :             :  *     TCP_S_ESTABLISHED state), performStateTransition() invokes stateEntered(),</span>
+<span id="L95"><span class="lineNum">      95</span>                 :             :  *     which performs some necessary housekeeping (cancel the SYN-REXMIT timer).</span>
+<span id="L96"><span class="lineNum">      96</span>                 :             :  *</span>
+<span id="L97"><span class="lineNum">      97</span>                 :             :  * When the CLOSED state is reached, TCP will delete the TcpConnection object.</span>
+<span id="L98"><span class="lineNum">      98</span>                 :             :  *</span>
+<span id="L99"><span class="lineNum">      99</span>                 :             :  */</span>
+<span id="L100"><span class="lineNum">     100</span>                 :             : class INET_API TcpConnection : public SimpleModule</span>
+<span id="L101"><span class="lineNum">     101</span>                 :             : {</span>
+<span id="L102"><span class="lineNum">     102</span>                 :             :   protected:</span>
+<span id="L103"><span class="lineNum">     103</span>                 :             :     static simsignal_t sndNxtSignal; // sent seqNo</span>
+<span id="L104"><span class="lineNum">     104</span>                 :             :     // connection identification by apps: socketId</span>
+<span id="L105"><span class="lineNum">     105</span>                 :             :     int socketId = -1; // identifies connection within the app</span>
+<span id="L106"><span class="lineNum">     106</span>                 :             : </span>
+<span id="L107"><span class="lineNum">     107</span>                 :             :     int listeningSocketId = -1; // identifies listening connection within the app</span>
+<span id="L108"><span class="lineNum">     108</span>                 :             : </span>
+<span id="L109"><span class="lineNum">     109</span>                 :             :     // socket pair</span>
+<span id="L110"><span class="lineNum">     110</span>                 :             :     L3Address localAddr;</span>
+<span id="L111"><span class="lineNum">     111</span>                 :             :     L3Address remoteAddr;</span>
+<span id="L112"><span class="lineNum">     112</span>                 :             :     int localPort = -1;</span>
+<span id="L113"><span class="lineNum">     113</span>                 :             :     int remotePort = -1;</span>
+<span id="L114"><span class="lineNum">     114</span>                 :             : </span>
+<span id="L115"><span class="lineNum">     115</span>                 :             :     // TCP options for this connection</span>
+<span id="L116"><span class="lineNum">     116</span>                 :             :     int ttl = -1;</span>
+<span id="L117"><span class="lineNum">     117</span>                 :             :     short dscp = -1;</span>
+<span id="L118"><span class="lineNum">     118</span>                 :             :     short tos = -1;</span>
+<span id="L119"><span class="lineNum">     119</span>                 :             :     bool autoRead = true;</span>
+<span id="L120"><span class="lineNum">     120</span>                 :             :     bool peerClosedSentUp = false;</span>
+<span id="L121"><span class="lineNum">     121</span>                 :             :     bool fullClose = false; // the application closed without halfClose: it will not read again (Linux close(), an orphaned socket)</span>
+<span id="L122"><span class="lineNum">     122</span>                 :             :     bool timeWaitSocket = false; // the connection is where Linux keeps only a time-wait socket: TIME_WAIT, and FIN_WAIT_2 after a full close</span>
+<span id="L123"><span class="lineNum">     123</span>                 :             :     L3Address listenAddr; // the local address of the listening socket of this connection (unspecified: each address), for the pending Fast Open limit of the listener</span>
+<span id="L124"><span class="lineNum">     124</span>                 :             :     long maxByteCountRequested = 0;  // from READ requests</span>
+<span id="L125"><span class="lineNum">     125</span>                 :             : </span>
+<span id="L126"><span class="lineNum">     126</span>                 :             :     Tcp *tcpMain = nullptr; // Tcp module</span>
+<span id="L127"><span class="lineNum">     127</span>                 :             : </span>
+<span id="L128"><span class="lineNum">     128</span>                 :             :     // TCP state machine</span>
+<span id="L129"><span class="lineNum">     129</span>                 :             :     cFSM fsm;</span>
+<span id="L130"><span class="lineNum">     130</span>                 :             : </span>
+<span id="L131"><span class="lineNum">     131</span>                 :             :     // variables associated with TCP state</span>
+<span id="L132"><span class="lineNum">     132</span>                 :             :     TcpStateVariables *state = nullptr;</span>
+<span id="L133"><span class="lineNum">     133</span>                 :             : </span>
+<span id="L134"><span class="lineNum">     134</span>                 :             :     // TCP queues</span>
+<span id="L135"><span class="lineNum">     135</span>                 :             :     TcpSendQueue *sendQueue = nullptr;</span>
+<span id="L136"><span class="lineNum">     136</span>                 :             :     TcpReceiveQueue *receiveQueue = nullptr;</span>
+<span id="L137"><span class="lineNum">     137</span>                 :             :     TcpSackRexmitQueue *rexmitQueue = nullptr;</span>
+<span id="L138"><span class="lineNum">     138</span>                 :             : </span>
+<span id="L139"><span class="lineNum">     139</span>                 :             :     // TCP behavior in data transfer state</span>
+<span id="L140"><span class="lineNum">     140</span>                 :             :     TcpAlgorithm *tcpAlgorithm = nullptr;</span>
+<span id="L141"><span class="lineNum">     141</span>                 :             : </span>
+<span id="L142"><span class="lineNum">     142</span>                 :             :     // timers</span>
+<span id="L143"><span class="lineNum">     143</span>                 :             :     cMessage *the2MSLTimer = nullptr;</span>
+<span id="L144"><span class="lineNum">     144</span>                 :             :     cMessage *deferredSynTimer = nullptr;</span>
+<span id="L145"><span class="lineNum">     145</span>                 :             :     cMessage *finWait2Timer = nullptr;</span>
+<span id="L146"><span class="lineNum">     146</span>                 :             :     cMessage *synRexmitTimer = nullptr; // for retransmitting SYN and SYN+ACK</span>
+<span id="L147"><span class="lineNum">     147</span>                 :             :     cMessage *rackReoTimer = nullptr; // RACK reordering timer (Linux ICSK_TIME_REO_TIMEOUT): fires when a not-yet-lost segment's RACK.rtt+reo_wnd deadline matures between ACKs</span>
+<span id="L148"><span class="lineNum">     148</span>                 :             : </span>
+<span id="L149"><span class="lineNum">     149</span>                 :             :     bool sendingWindowProbe = false; // sendProbe() sends a window probe, which gets no ECT and no CWR (RFC 3168 section 6.1.6)</span>
+<span id="L150"><span class="lineNum">     150</span>                 :             : </span>
+<span id="L151"><span class="lineNum">     151</span>                 :             :     // statistics</span>
+<span id="L152"><span class="lineNum">     152</span>                 :             :     long rcvdSegments = 0;</span>
+<span id="L153"><span class="lineNum">     153</span>                 :             :     long sentSegments = 0;</span>
+<span id="L154"><span class="lineNum">     154</span>                 :             :     uint32_t lastRcvdSeqNo = 0;</span>
+<span id="L155"><span class="lineNum">     155</span>                 :             :     uint32_t lastSentAck = 0;</span>
+<span id="L156"><span class="lineNum">     156</span>                 :             : </span>
+<span id="L157"><span class="lineNum">     157</span>                 :             :     // The receive buffer in the accounting of Linux, for windowShrinkAllowed: each</span>
+<span id="L158"><span class="lineNum">     158</span>                 :             :     // received data segment costs the truesize of its skb (sk_rmem_alloc), until the</span>
+<span id="L159"><span class="lineNum">     159</span>                 :             :     // application reads all of it, and the window counts the free buffer at the ratio</span>
+<span id="L160"><span class="lineNum">     160</span>                 :             :     // of payload to truesize (scaling_ratio of tcp_measure_rcv_mss())</span>
+<span id="L161"><span class="lineNum">     161</span>                 :             :     std::deque&lt;std::pair&lt;uint32_t, uint32_t&gt;&gt; rcvSkbChain; // the unread received segments: payload bytes and truesize</span>
+<span id="L162"><span class="lineNum">     162</span>                 :             :     uint64_t rcvBufOccupancy = 0; // the sum of the truesizes in rcvSkbChain</span>
+<span id="L163"><span class="lineNum">     163</span>                 :             :     uint8_t rcvScalingRatio = 128; // payload / truesize, in units of 1/256 (Linux TCP_DEFAULT_SCALING_RATIO)</span>
+<span id="L164"><span class="lineNum">     164</span>                 :             :     uint32_t rcvMssEstimate = 536; // the estimate of the received MSS that gates the ratio (Linux icsk_ack.rcv_mss)</span>
+<span id="L165"><span class="lineNum">     165</span>                 :             :     uint32_t rcvqSpace = 0; // windowAutoTuning: the first offer, which bounds the receive space of Linux (rcvq_space.space of tcp_init_buffer_space(), at most 10 MSS); INET has no DRS that grows it</span>
+<span id="L166"><span class="lineNum">     166</span>                 :             :     uint32_t oooHighestEnd = 0; // the end of the highest out-of-order data (Linux ooo_last_skb)</span>
+<span id="L167"><span class="lineNum">     167</span>                 :             :     // the advertised window and the receive buffer of this connection from its open</span>
+<span id="L168"><span class="lineNum">     168</span>                 :             :     // command (TcpSocket::setAdvertisedWindow(), setReceiveBufferSize()); -1: the</span>
+<span id="L169"><span class="lineNum">     169</span>                 :             :     // parameters of the Tcp module (D-4 of the staged landing: a socket option is</span>
+<span id="L170"><span class="lineNum">     170</span>                 :             :     // not a module parameter)</span>
+<span id="L171"><span class="lineNum">     171</span>                 :             :     int socketAdvertisedWindow = -1;</span>
+<span id="L172"><span class="lineNum">     172</span>                 :             :     int socketReceiveBufferSize = -1;</span>
+<span id="L173"><span class="lineNum">     173</span>                 :             :     int socketSynRetries = -1; // the SYN retries of this connection (TcpSocket::setSynRetries()); -1: the parameter</span>
+<span id="L174"><span class="lineNum">     174</span>                 :             :     // MSG_ZEROCOPY: the pending completions, by the sequence number that ends the data</span>
+<span id="L175"><span class="lineNum">     175</span>                 :             :     // of each zero-copy SEND, and the id of the next one (per connection from 0, as the</span>
+<span id="L176"><span class="lineNum">     176</span>                 :             :     // ids of Linux SO_ZEROCOPY)</span>
+<span id="L177"><span class="lineNum">     177</span>                 :             :     std::map&lt;uint32_t, uint32_t&gt; zerocopySeqNums;</span>
+<span id="L178"><span class="lineNum">     178</span>                 :             :     uint32_t nextZerocopyId = 0;</span>
+<span id="L179"><span class="lineNum">     179</span>                 :             :     // MSG_EOR: the record boundaries, that is the sequence numbers that end the data of</span>
+<span id="L180"><span class="lineNum">     180</span>                 :             :     // each SEND with TcpSendEorReq, in sequence order. No segment spans a boundary.</span>
+<span id="L181"><span class="lineNum">     181</span>                 :             :     std::deque&lt;uint32_t&gt; eorSeqNums;</span>
+<span id="L182"><span class="lineNum">     182</span>                 :             :     // pushSegmentsOnWriteBoundary: the sequence numbers that end a segment with PSH, in</span>
+<span id="L183"><span class="lineNum">     183</span>                 :             :     // sequence order: the end of each write without MSG_MORE and of the data of a Fast</span>
+<span id="L184"><span class="lineNum">     184</span>                 :             :     // Open SYN (pushSeqNums), and the marks of forced_push() (forcedPushSeqNums)</span>
+<span id="L185"><span class="lineNum">     185</span>                 :             :     std::deque&lt;uint32_t&gt; pushSeqNums;</span>
+<span id="L186"><span class="lineNum">     186</span>                 :             :     std::deque&lt;uint32_t&gt; forcedPushSeqNums;</span>
+<span id="L187"><span class="lineNum">     187</span>                 :             :     // SO_TIMESTAMPING: the delivered data carries the time of its delivery</span>
+<span id="L188"><span class="lineNum">     188</span>                 :             :     // (TcpRxTimestampInd), as TcpSetTimestampingCommand asks; a member, because the</span>
+<span id="L189"><span class="lineNum">     189</span>                 :             :     // command can come before the open</span>
+<span id="L190"><span class="lineNum">     190</span>                 :             :     bool rxTimestampingEnabled = false;</span>
+<span id="L191"><span class="lineNum">     191</span>                 :             :     // TCP_NOTSENT_LOWAT from TcpSetNotsentLowatCommand, which can come before the open;</span>
+<span id="L192"><span class="lineNum">     192</span>                 :             :     // INT_MIN: no command, so the notsentLowat parameter</span>
+<span id="L193"><span class="lineNum">     193</span>                 :             :     int notsentLowatSockopt = INT_MIN;</span>
+<span id="L194"><span class="lineNum">     194</span>                 :             :     // the application writer waits for space in the send buffer (Linux SOCK_NOSPACE), as</span>
+<span id="L195"><span class="lineNum">     195</span>                 :             :     // TcpSetWriterBlockedCommand tells; it drives the send buffer limited time</span>
+<span id="L196"><span class="lineNum">     196</span>                 :             :     bool writerBlocked = false;</span>
+<span id="L197"><span class="lineNum">     197</span>                 :             :     // the application owns the connection (Linux sk-&gt;sk_socket): false for a connection</span>
+<span id="L198"><span class="lineNum">     198</span>                 :             :     // that the application did not accept yet, as TcpSetOwnedCommand tells</span>
+<span id="L199"><span class="lineNum">     199</span>                 :             :     bool appOwned = true;</span>
+<span id="L200"><span class="lineNum">     200</span>                 :             :     // an accepted segment ends beyond the right edge of the last offered window</span>
+<span id="L201"><span class="lineNum">     201</span>                 :             :     // (acceptBeyondBufferAtEmptyQueue); adaptiveDelayedAcks then sends no ACK at once</span>
+<span id="L202"><span class="lineNum">     202</span>                 :             :     bool overWindowAcceptPending = false;</span>
+<span id="L203"><span class="lineNum">     203</span>                 :             :     // SO_KEEPALIVE of this connection (TcpSocket::setKeepAlive()), also from before the</span>
+<span id="L204"><span class="lineNum">     204</span>                 :             :     // open; -1: the keepAliveEnabled parameter</span>
+<span id="L205"><span class="lineNum">     205</span>                 :             :     int keepAliveSockopt = -1;</span>
+<span id="L206"><span class="lineNum">     206</span>                 :             :     // TCP_NODELAY of this connection (TcpSocket::setNoDelay()), also from before the</span>
+<span id="L207"><span class="lineNum">     207</span>                 :             :     // open; -1: the nagleEnabled parameter</span>
+<span id="L208"><span class="lineNum">     208</span>                 :             :     int noDelaySockopt = -1;</span>
+<span id="L209"><span class="lineNum">     209</span>                 :             :     // TCP_MAXSEG of this connection (TcpSocket::setMaxSeg()), also from before the open;</span>
+<span id="L210"><span class="lineNum">     210</span>                 :             :     // -1: the mss parameter alone</span>
+<span id="L211"><span class="lineNum">     211</span>                 :             :     int maxSegSockopt = -1;</span>
+<span id="L212"><span class="lineNum">     212</span>                 :             :     // mss = -1: snd_mss takes the MSS of the address family when the peer is known</span>
+<span id="L213"><span class="lineNum">     213</span>                 :             :     // (resolveAddressFamilyMss())</span>
+<span id="L214"><span class="lineNum">     214</span>                 :             :     bool mssFromAddressFamily = false;</span>
+<span id="L215"><span class="lineNum">     215</span>                 :             :     // the route MTU of this connection (TcpSocket::setPathMtu()), also from before the</span>
+<span id="L216"><span class="lineNum">     216</span>                 :             :     // open; 0: the pathMtu parameter</span>
+<span id="L217"><span class="lineNum">     217</span>                 :             :     int pathMtuSockopt = 0;</span>
+<span id="L218"><span class="lineNum">     218</span>                 :             :     // TCP_CORK of this connection (TcpSocket::setCork()), also from before the open; -1: off</span>
+<span id="L219"><span class="lineNum">     219</span>                 :             :     int corkSockopt = -1;</span>
+<span id="L220"><span class="lineNum">     220</span>                 :             :     int rcvBufSockopt = -1; // SO_RCVBUF of the open connection (TcpSetRcvBufCommand); -1: none</span>
+<span id="L221"><span class="lineNum">     221</span>                 :             : </span>
+<span id="L222"><span class="lineNum">     222</span>                 :             :   protected:</span>
+<span id="L223"><span class="lineNum">     223</span>                 :             :     /** @name FSM transitions: analysing events and executing state transitions */</span>
+<span id="L224"><span class="lineNum">     224</span>                 :             :     //@{</span>
+<span id="L225"><span class="lineNum">     225</span>                 :             :     /** Maps app command codes (msg kind of app command msgs) to TCP_E_xxx event codes */</span>
+<span id="L226"><span class="lineNum">     226</span>                 :             :     virtual TcpEventCode preanalyseAppCommandEvent(int commandCode);</span>
+<span id="L227"><span class="lineNum">     227</span>                 :             :     /** Implemements the pure TCP state machine */</span>
+<span id="L228"><span class="lineNum">     228</span>                 :             :     virtual bool performStateTransition(const TcpEventCode&amp; event);</span>
+<span id="L229"><span class="lineNum">     229</span>                 :             :     /** Perform cleanup necessary when entering a new state, e.g. cancelling timers */</span>
+<span id="L230"><span class="lineNum">     230</span>                 :             :     virtual void stateEntered(int state, int oldState, TcpEventCode event);</span>
+<span id="L231"><span class="lineNum">     231</span>                 :             :     //@}</span>
+<span id="L232"><span class="lineNum">     232</span>                 :             : </span>
+<span id="L233"><span class="lineNum">     233</span>                 :             :     /** @name Processing app commands. Invoked from processAppCommand(). */</span>
+<span id="L234"><span class="lineNum">     234</span>                 :             :     //@{</span>
+<span id="L235"><span class="lineNum">     235</span>                 :             :     virtual void process_OPEN_ACTIVE(TcpEventCode&amp; event, TcpCommand *tcpCommand, cMessage *msg);</span>
+<span id="L236"><span class="lineNum">     236</span>                 :             :     virtual void process_OPEN_PASSIVE(TcpEventCode&amp; event, TcpCommand *tcpCommand, cMessage *msg);</span>
+<span id="L237"><span class="lineNum">     237</span>                 :             :     virtual void process_ACCEPT(TcpEventCode&amp; event, TcpCommand *tcpCommand, cMessage *msg);</span>
+<span id="L238"><span class="lineNum">     238</span>                 :             :     virtual void process_SEND(TcpEventCode&amp; event, TcpCommand *tcpCommand, cMessage *msg);</span>
+<span id="L239"><span class="lineNum">     239</span>                 :             :     virtual void process_CLOSE(TcpEventCode&amp; event, TcpCommand *tcpCommand, cMessage *msg);</span>
+<span id="L240"><span class="lineNum">     240</span>                 :             :     virtual void process_ABORT(TcpEventCode&amp; event, TcpCommand *tcpCommand, cMessage *msg);</span>
+<span id="L241"><span class="lineNum">     241</span>                 :             :     virtual void process_DESTROY(TcpEventCode&amp; event, TcpCommand *tcpCommand, cMessage *msg);</span>
+<span id="L242"><span class="lineNum">     242</span>                 :             :     virtual void process_STATUS(TcpEventCode&amp; event, TcpCommand *tcpCommand, cMessage *msg);</span>
+<span id="L243"><span class="lineNum">     243</span>                 :             :     virtual void process_QUEUE_BYTES_LIMIT(TcpEventCode&amp; event, TcpCommand *tcpCommand, cMessage *msg);</span>
+<span id="L244"><span class="lineNum">     244</span>                 :             :     virtual void process_READ_REQUEST(TcpEventCode&amp; event, TcpCommand *tcpCommand, cMessage *msg);</span>
+<span id="L245"><span class="lineNum">     245</span>                 :             :     virtual void process_OPTIONS(TcpEventCode&amp; event, TcpCommand *tcpCommand, cMessage *msg);</span>
+<span id="L246"><span class="lineNum">     246</span>                 :             :     //@}</span>
+<span id="L247"><span class="lineNum">     247</span>                 :             : </span>
+<span id="L248"><span class="lineNum">     248</span>                 :             :     /** @name Processing TCP segment arrivals. Invoked from processTCPSegment(). */</span>
+<span id="L249"><span class="lineNum">     249</span>                 :             :     //@{</span>
+<span id="L250"><span class="lineNum">     250</span>                 :             :     /**</span>
+<span id="L251"><span class="lineNum">     251</span>                 :             :      * Shortcut to process most common case as fast as possible. Returns false</span>
+<span id="L252"><span class="lineNum">     252</span>                 :             :      * if segment requires normal (slow) route.</span>
+<span id="L253"><span class="lineNum">     253</span>                 :             :      */</span>
+<span id="L254"><span class="lineNum">     254</span>                 :             :     virtual bool tryFastRoute(const Ptr&lt;const TcpHeader&gt;&amp; tcpHeader);</span>
+<span id="L255"><span class="lineNum">     255</span>                 :             :     /**</span>
+<span id="L256"><span class="lineNum">     256</span>                 :             :      * Process incoming TCP segment. Returns a specific event code (e.g. TCP_E_RCV_SYN)</span>
+<span id="L257"><span class="lineNum">     257</span>                 :             :      * which will drive the state machine.</span>
+<span id="L258"><span class="lineNum">     258</span>                 :             :      */</span>
+<span id="L259"><span class="lineNum">     259</span>                 :             :     virtual TcpEventCode process_RCV_SEGMENT(Packet *tcpSegment, const Ptr&lt;const TcpHeader&gt;&amp; tcpHeader, L3Address src, L3Address dest);</span>
+<span id="L260"><span class="lineNum">     260</span>                 :             :     virtual TcpEventCode processSegmentInListen(Packet *tcpSegment, const Ptr&lt;const TcpHeader&gt;&amp; tcpHeader, L3Address src, L3Address dest);</span>
+<span id="L261"><span class="lineNum">     261</span>                 :             :     virtual TcpEventCode processSynInListen(Packet *tcpSegment, const Ptr&lt;const TcpHeader&gt;&amp; tcpHeader, L3Address srcAddr, L3Address destAddr);</span>
+<span id="L262"><span class="lineNum">     262</span>                 :             :     virtual TcpEventCode processSegmentInSynSent(Packet *tcpSegment, const Ptr&lt;const TcpHeader&gt;&amp; tcpHeader, L3Address src, L3Address dest);</span>
+<span id="L263"><span class="lineNum">     263</span>                 :             :     virtual TcpEventCode processSegment1stThru8th(Packet *tcpSegment, const Ptr&lt;const TcpHeader&gt;&amp; tcpHeader);</span>
+<span id="L264"><span class="lineNum">     264</span>                 :             :     virtual TcpEventCode processRstInSynReceived(const Ptr&lt;const TcpHeader&gt;&amp; tcpHeader);</span>
+<span id="L265"><span class="lineNum">     265</span>                 :             :     virtual bool processAckInEstabEtc(Packet *tcpSegment, const Ptr&lt;const TcpHeader&gt;&amp; tcpHeader);</span>
+<span id="L266"><span class="lineNum">     266</span>                 :             :     //@}</span>
+<span id="L267"><span class="lineNum">     267</span>                 :             : </span>
+<span id="L268"><span class="lineNum">     268</span>                 :             :     /** @name Processing of TCP options. Invoked from readHeaderOptions(). Return value indicates whether the option was valid. */</span>
+<span id="L269"><span class="lineNum">     269</span>                 :             :     //@{</span>
+<span id="L270"><span class="lineNum">     270</span>                 :             :     virtual bool processMSSOption(const Ptr&lt;const TcpHeader&gt;&amp; tcpHeader, const TcpOptionMaxSegmentSize&amp; option);</span>
+<span id="L271"><span class="lineNum">     271</span>                 :             :     /** RFC 9293 MUST-15: without an MSS option in the SYN of the peer, use the default send MSS of its address family. */</span>
+<span id="L272"><span class="lineNum">     272</span>                 :             :     virtual void applyDefaultSendMss(const Ptr&lt;const TcpHeader&gt;&amp; tcpHeader, const L3Address&amp; peerAddr);</span>
+<span id="L273"><span class="lineNum">     273</span>                 :             :     virtual bool processWSOption(const Ptr&lt;const TcpHeader&gt;&amp; tcpHeader, const TcpOptionWindowScale&amp; option);</span>
+<span id="L274"><span class="lineNum">     274</span>                 :             :     virtual bool processSACKPermittedOption(const Ptr&lt;const TcpHeader&gt;&amp; tcpHeader, const TcpOptionSackPermitted&amp; option);</span>
+<span id="L275"><span class="lineNum">     275</span>                 :             :     virtual bool processTSOption(const Ptr&lt;const TcpHeader&gt;&amp; tcpHeader, const TcpOptionTimestamp&amp; option);</span>
+<span id="L276"><span class="lineNum">     276</span>                 :             :     virtual bool processFastOpenOption(const Ptr&lt;const TcpHeader&gt;&amp; tcpHeader, const TcpOptionTcpFastOpen&amp; option);</span>
+<span id="L277"><span class="lineNum">     277</span>                 :             :     virtual bool processFastOpenExpOption(const Ptr&lt;const TcpHeader&gt;&amp; tcpHeader, const TcpOptionTcpFastOpenExp&amp; option);</span>
+<span id="L278"><span class="lineNum">     278</span>                 :             :     //@}</span>
+<span id="L279"><span class="lineNum">     279</span>                 :             : </span>
+<span id="L280"><span class="lineNum">     280</span>                 :             :     /** TCP Fast Open (RFC 7413): processes the cookie of a Fast Open option of a SYN or a SYN-ACK. */</span>
+<span id="L281"><span class="lineNum">     281</span>                 :             :     virtual bool processFastOpenCookieBytes(const std::vector&lt;uint8_t&gt;&amp; cookie);</span>
+<span id="L282"><span class="lineNum">     282</span>                 :             : </span>
+<span id="L283"><span class="lineNum">     283</span>                 :             :     /** @name Processing timeouts. Invoked from processTimer(). */</span>
+<span id="L284"><span class="lineNum">     284</span>                 :             :     //@{</span>
+<span id="L285"><span class="lineNum">     285</span>                 :             :     virtual void process_TIMEOUT_2MSL();</span>
+<span id="L286"><span class="lineNum">     286</span>                 :             :     virtual void process_TIMEOUT_CONN_ESTAB();</span>
+<span id="L287"><span class="lineNum">     287</span>                 :             :     virtual void process_TIMEOUT_FIN_WAIT_2();</span>
+<span id="L288"><span class="lineNum">     288</span>                 :             :     virtual void process_TIMEOUT_SYN_REXMIT(TcpEventCode&amp; event);</span>
+<span id="L289"><span class="lineNum">     289</span>                 :             : </span>
+<span id="L290"><span class="lineNum">     290</span>                 :             :     /**</span>
+<span id="L291"><span class="lineNum">     291</span>                 :             :      * rackReoTimer expired: re-run RACK loss detection (time has advanced, so</span>
+<span id="L292"><span class="lineNum">     292</span>                 :             :      * pending deadlines may have matured) and let the recovery strategy react</span>
+<span id="L293"><span class="lineNum">     293</span>                 :             :      * (enter fast recovery / retransmit) via ITcpRecovery::reoTimeout().</span>
+<span id="L294"><span class="lineNum">     294</span>                 :             :      */</span>
+<span id="L295"><span class="lineNum">     295</span>                 :             :     virtual void processRackReoTimeout();</span>
+<span id="L296"><span class="lineNum">     296</span>                 :             :     //@}</span>
+<span id="L297"><span class="lineNum">     297</span>                 :             : </span>
+<span id="L298"><span class="lineNum">     298</span>                 :             :   public:</span>
+<span id="L299"><span class="lineNum">     299</span>                 :             :     /**</span>
+<span id="L300"><span class="lineNum">     300</span>                 :             :      * (Re)arms the RACK reordering timer for the given delay, or cancels it when</span>
+<span id="L301"><span class="lineNum">     301</span>                 :             :      * delay is negative. Called by the recovery strategy from RACK loss detection.</span>
+<span id="L302"><span class="lineNum">     302</span>                 :             :      */</span>
+<span id="L303"><span class="lineNum">     303</span>                 :             :     virtual void rescheduleRackReoTimer(simtime_t delay);</span>
+<span id="L304"><span class="lineNum">     304</span>                 :             : </span>
+<span id="L305"><span class="lineNum">     305</span>                 :             :     /**</span>
+<span id="L306"><span class="lineNum">     306</span>                 :             :      * Maps INET's independent loss-recovery bools onto Linux's tcp_ca_state</span>
+<span id="L307"><span class="lineNum">     307</span>                 :             :      * ordinals (TCP_CA_Open=0, Disorder=1, CWR=2, Recovery=3, Loss=4), for</span>
+<span id="L308"><span class="lineNum">     308</span>                 :             :      * TcpStatusInfo::caState.</span>
+<span id="L309"><span class="lineNum">     309</span>                 :             :      */</span>
+<span id="L310"><span class="lineNum">     310</span>                 :             :     virtual int deriveLinuxCaState() const;</span>
+<span id="L311"><span class="lineNum">     311</span>                 :             : </span>
+<span id="L312"><span class="lineNum">     312</span>                 :             :     /**</span>
+<span id="L313"><span class="lineNum">     313</span>                 :             :      * The sequence number from which the advertised window and the bytes in flight</span>
+<span id="L314"><span class="lineNum">     314</span>                 :             :      * count the data: snd_una, but the first data byte while a TCP Fast Open</span>
+<span id="L315"><span class="lineNum">     315</span>                 :             :      * server sends data in SYN_RCVD. Its SYN-ACK is then not acknowledged, and</span>
+<span id="L316"><span class="lineNum">     316</span>                 :             :      * snd_una stays at the ISS, but the SYN-ACK is not data (Linux starts the</span>
+<span id="L317"><span class="lineNum">     317</span>                 :             :      * child socket at snd_una = ISS+1).</span>
+<span id="L318"><span class="lineNum">     318</span>                 :             :      */</span>
+<span id="L319"><span class="lineNum">     319</span>                 :             :     virtual uint32_t getDataSndUna() const;</span>
+<span id="L320"><span class="lineNum">     320</span>                 :             : </span>
+<span id="L321"><span class="lineNum">     321</span>                 :             :     /**</span>
+<span id="L322"><span class="lineNum">     322</span>                 :             :      * Returns whether the last accepted segment ended beyond the right edge of the</span>
+<span id="L323"><span class="lineNum">     323</span>                 :             :      * last offered window, and clears that mark. Linux sends no immediate ACK for</span>
+<span id="L324"><span class="lineNum">     324</span>                 :             :      * such a segment (rcv_neg_window).</span>
+<span id="L325"><span class="lineNum">     325</span>                 :             :      */</span>
+<span id="L326"><span class="lineNum">     326</span>                 :<span class="tlaGNC">        7391 :     bool takeOverWindowAccept() { bool b = overWindowAcceptPending; overWindowAcceptPending = false; return b; }</span></span>
+<span id="L327"><span class="lineNum">     327</span>                 :             : </span>
+<span id="L328"><span class="lineNum">     328</span>                 :             :     /**</span>
+<span id="L329"><span class="lineNum">     329</span>                 :             :      * Sends the partial segment that TCP_CORK or MSG_MORE holds: at an uncork, at</span>
+<span id="L330"><span class="lineNum">     330</span>                 :             :      * TCP_NODELAY, and at the cork timer, which also asks for PSH (forcePush).</span>
+<span id="L331"><span class="lineNum">     331</span>                 :             :      */</span>
+<span id="L332"><span class="lineNum">     332</span>                 :             :     virtual void flushCorkedData(bool forcePush);</span>
+<span id="L333"><span class="lineNum">     333</span>                 :             : </span>
+<span id="L334"><span class="lineNum">     334</span>                 :             :     /**</span>
+<span id="L335"><span class="lineNum">     335</span>                 :             :      * MSG_EOR: the last record boundary after snd_nxt and before the given sequence</span>
+<span id="L336"><span class="lineNum">     336</span>                 :             :      * number, or snd_nxt if there is none.</span>
+<span id="L337"><span class="lineNum">     337</span>                 :             :      */</span>
+<span id="L338"><span class="lineNum">     338</span>                 :             :     virtual uint32_t getLastRecordBoundaryBefore(uint32_t seq) const;</span>
+<span id="L339"><span class="lineNum">     339</span>                 :             : </span>
+<span id="L340"><span class="lineNum">     340</span>                 :             :     /** MSG_ZEROCOPY: notifies the application of each zero-copy SEND whose data went out */</span>
+<span id="L341"><span class="lineNum">     341</span>                 :             :     virtual void notifyZerocopyCompletions();</span>
+<span id="L342"><span class="lineNum">     342</span>                 :             : </span>
+<span id="L343"><span class="lineNum">     343</span>                 :             :     /**</span>
+<span id="L344"><span class="lineNum">     344</span>                 :             :      * pushSegmentsOnWriteBoundary: the number of segments that Linux gives the NIC as</span>
+<span id="L345"><span class="lineNum">     345</span>                 :             :      * one GSO burst (tcp_write_xmit(), tcp_tso_autosize()), at the given congestion</span>
+<span id="L346"><span class="lineNum">     346</span>                 :             :      * window and bytes in flight.</span>
+<span id="L347"><span class="lineNum">     347</span>                 :             :      */</span>
+<span id="L348"><span class="lineNum">     348</span>                 :             :     virtual uint32_t getGsoBurstSegments(uint32_t congestionWindow, uint32_t bytesInFlight, uint32_t effectiveMss) const;</span>
+<span id="L349"><span class="lineNum">     349</span>                 :             : </span>
+<span id="L350"><span class="lineNum">     350</span>                 :             :   protected:</span>
+<span id="L351"><span class="lineNum">     351</span>                 :             : </span>
+<span id="L352"><span class="lineNum">     352</span>                 :             :     /** Utility: clone a listening connection. Used for forking. */</span>
+<span id="L353"><span class="lineNum">     353</span>                 :             :     virtual TcpConnection *cloneListeningConnection();</span>
+<span id="L354"><span class="lineNum">     354</span>                 :             : </span>
+<span id="L355"><span class="lineNum">     355</span>                 :             :     virtual void initClonedConnection(TcpConnection *listenerConn);</span>
+<span id="L356"><span class="lineNum">     356</span>                 :             : </span>
+<span id="L357"><span class="lineNum">     357</span>                 :             :     /** Utility: creates send/receive queues and tcpAlgorithm */</span>
+<span id="L358"><span class="lineNum">     358</span>                 :             :     virtual void initConnection(TcpOpenCommand *openCmd);</span>
+<span id="L359"><span class="lineNum">     359</span>                 :             : </span>
+<span id="L360"><span class="lineNum">     360</span>                 :             :     /** Utility: creates the submodule `algorithm` of the NED type that tcpAlgorithmClass names */</span>
+<span id="L361"><span class="lineNum">     361</span>                 :             :     virtual TcpAlgorithm *createTcpAlgorithm(const char *tcpAlgorithmClass);</span>
+<span id="L362"><span class="lineNum">     362</span>                 :             : </span>
+<span id="L363"><span class="lineNum">     363</span>                 :             :     /** Utility: set snd_mss, rcv_wnd and sack in newly created state variables block */</span>
+<span id="L364"><span class="lineNum">     364</span>                 :             :     virtual void configureStateVariables();</span>
+<span id="L365"><span class="lineNum">     365</span>                 :             : </span>
+<span id="L366"><span class="lineNum">     366</span>                 :             :     /** Utility: generates ISS and initializes corresponding state variables */</span>
+<span id="L367"><span class="lineNum">     367</span>                 :             :     virtual void selectInitialSeqNum();</span>
+<span id="L368"><span class="lineNum">     368</span>                 :             : </span>
+<span id="L369"><span class="lineNum">     369</span>                 :             :     /** Utility: check if segment is acceptable (all bytes are in receive window) */</span>
+<span id="L370"><span class="lineNum">     370</span>                 :             :     virtual bool isSegmentAcceptable(Packet *tcpSegment, const Ptr&lt;const TcpHeader&gt;&amp; tcpHeader) const;</span>
+<span id="L371"><span class="lineNum">     371</span>                 :             : </span>
+<span id="L372"><span class="lineNum">     372</span>                 :             :     /** Utility: send SYN */</span>
+<span id="L373"><span class="lineNum">     373</span>                 :             :     virtual void sendSyn();</span>
+<span id="L374"><span class="lineNum">     374</span>                 :             : </span>
+<span id="L375"><span class="lineNum">     375</span>                 :             :     /** Utility: send SYN+ACK */</span>
+<span id="L376"><span class="lineNum">     376</span>                 :             :     virtual void sendSynAck();</span>
+<span id="L377"><span class="lineNum">     377</span>                 :             : </span>
+<span id="L378"><span class="lineNum">     378</span>                 :             :     /** Utility: readHeaderOptions (Currently only EOL, NOP, MSS, WS, SACK_PERMITTED, SACK and TS are implemented) */</span>
+<span id="L379"><span class="lineNum">     379</span>                 :             :     virtual void readHeaderOptions(const Ptr&lt;const TcpHeader&gt;&amp; tcpHeader);</span>
+<span id="L380"><span class="lineNum">     380</span>                 :             : </span>
+<span id="L381"><span class="lineNum">     381</span>                 :             :     /** Utility: writeHeaderOptions (Currently only EOL, NOP, MSS, WS, SACK_PERMITTED, SACK and TS are implemented) */</span>
+<span id="L382"><span class="lineNum">     382</span>                 :             :     virtual TcpHeader writeHeaderOptions(const Ptr&lt;TcpHeader&gt;&amp; tcpHeader);</span>
+<span id="L383"><span class="lineNum">     383</span>                 :             : </span>
+<span id="L384"><span class="lineNum">     384</span>                 :             :     /** Utility: adds SACKs to segments header options field */</span>
+<span id="L385"><span class="lineNum">     385</span>                 :             :     virtual TcpHeader addSacks(const Ptr&lt;TcpHeader&gt;&amp; tcpHeader);</span>
+<span id="L386"><span class="lineNum">     386</span>                 :             : </span>
+<span id="L387"><span class="lineNum">     387</span>                 :             :     /** Utility: get TSval from segments TS header option */</span>
+<span id="L388"><span class="lineNum">     388</span>                 :             :     virtual uint32_t getTSval(const Ptr&lt;const TcpHeader&gt;&amp; tcpHeader) const;</span>
+<span id="L389"><span class="lineNum">     389</span>                 :             : </span>
+<span id="L390"><span class="lineNum">     390</span>                 :             :     /** Utility: sets TS.Recent from an acceptable segment (RFC 7323 section 5.3, R3) */</span>
+<span id="L391"><span class="lineNum">     391</span>                 :             :     virtual void updateTsRecent(const Ptr&lt;const TcpHeader&gt;&amp; tcpHeader);</span>
+<span id="L392"><span class="lineNum">     392</span>                 :             : </span>
+<span id="L393"><span class="lineNum">     393</span>                 :             :     /** Utility: the TS option of the segment, or nullptr */</span>
+<span id="L394"><span class="lineNum">     394</span>                 :             :     virtual const TcpOptionTimestamp *findTSOption(const Ptr&lt;const TcpHeader&gt;&amp; tcpHeader) const;</span>
+<span id="L395"><span class="lineNum">     395</span>                 :             : </span>
+<span id="L396"><span class="lineNum">     396</span>                 :             :     /** Utility: get TSecr from segments TS header option */</span>
+<span id="L397"><span class="lineNum">     397</span>                 :             :     virtual uint32_t getTSecr(const Ptr&lt;const TcpHeader&gt;&amp; tcpHeader) const;</span>
+<span id="L398"><span class="lineNum">     398</span>                 :             : </span>
+<span id="L399"><span class="lineNum">     399</span>                 :             :     /** Utility: returns true if the connection is not yet accepted by the application */</span>
+<span id="L400"><span class="lineNum">     400</span>                 :<span class="tlaGNC">      688936 :     virtual bool isToBeAccepted() const { return listeningSocketId != -1; }</span></span>
+<span id="L401"><span class="lineNum">     401</span>                 :             : </span>
+<span id="L402"><span class="lineNum">     402</span>                 :             :   public:</span>
+<span id="L403"><span class="lineNum">     403</span>                 :             :     /** Utility: send ACK */</span>
+<span id="L404"><span class="lineNum">     404</span>                 :             :     virtual void sendAck();</span>
+<span id="L405"><span class="lineNum">     405</span>                 :             : </span>
+<span id="L406"><span class="lineNum">     406</span>                 :             :     /**</span>
+<span id="L407"><span class="lineNum">     407</span>                 :             :      * Utility: Send data from sendQueue, at most congestionWindow.</span>
+<span id="L408"><span class="lineNum">     408</span>                 :             :      */</span>
+<span id="L409"><span class="lineNum">     409</span>                 :             :     virtual bool sendData(uint32_t congestionWindow);</span>
+<span id="L410"><span class="lineNum">     410</span>                 :             : </span>
+<span id="L411"><span class="lineNum">     411</span>                 :             :     /** Utility: sends 1 bytes as &quot;probe&quot;, called by the &quot;persist&quot; mechanism */</span>
+<span id="L412"><span class="lineNum">     412</span>                 :             :     virtual bool sendProbe();</span>
+<span id="L413"><span class="lineNum">     413</span>                 :             : </span>
+<span id="L414"><span class="lineNum">     414</span>                 :             :     /**</span>
+<span id="L415"><span class="lineNum">     415</span>                 :             :      * Makes the octet of a zero-window probe that the receiver did not accept unsent</span>
+<span id="L416"><span class="lineNum">     416</span>                 :             :      * data again: snd_max and snd_nxt go back to snd_una, and the retransmission queue</span>
+<span id="L417"><span class="lineNum">     417</span>                 :             :      * forgets the octet. Only in the persist state, where the probe octet alone is in</span>
+<span id="L418"><span class="lineNum">     418</span>                 :             :      * flight.</span>
+<span id="L419"><span class="lineNum">     419</span>                 :             :      */</span>
+<span id="L420"><span class="lineNum">     420</span>                 :             :     virtual void unsendWindowProbe();</span>
+<span id="L421"><span class="lineNum">     421</span>                 :             : </span>
+<span id="L422"><span class="lineNum">     422</span>                 :             :     /** Utility: sends a keepalive probe, a segment without data with SEG.SEQ = SND.UNA - 1, which the peer answers with an ACK (RFC 9293 section 3.8.4) */</span>
+<span id="L423"><span class="lineNum">     423</span>                 :             :     virtual void sendKeepAliveProbe();</span>
+<span id="L424"><span class="lineNum">     424</span>                 :             : </span>
+<span id="L425"><span class="lineNum">     425</span>                 :             :     /** Utility: sends a segment without data with SEG.SEQ = SND.UNA - 1, which the peer answers with an ACK (Linux tcp_xmit_probe_skb()): the keepalive probe, and the zero-window probe of Linux */</span>
+<span id="L426"><span class="lineNum">     426</span>                 :             :     virtual void sendSegmentBelowWindow(const char *name);</span>
+<span id="L427"><span class="lineNum">     427</span>                 :             : </span>
+<span id="L428"><span class="lineNum">     428</span>                 :             :     /** Utility: retransmit one segment from snd_una */</span>
+<span id="L429"><span class="lineNum">     429</span>                 :             :     virtual void retransmitOneSegment(bool called_at_rto);</span>
+<span id="L430"><span class="lineNum">     430</span>                 :             : </span>
+<span id="L431"><span class="lineNum">     431</span>                 :             :     /**</span>
+<span id="L432"><span class="lineNum">     432</span>                 :             :      * RFC 8985 section 7.3 loss probe: send one segment of new data if the data</span>
+<span id="L433"><span class="lineNum">     433</span>                 :             :      * and the receive window allow it, else the FIN again, else the last segment</span>
+<span id="L434"><span class="lineNum">     434</span>                 :             :      * again. Returns true if a segment was sent.</span>
+<span id="L435"><span class="lineNum">     435</span>                 :             :      */</span>
+<span id="L436"><span class="lineNum">     436</span>                 :             :     virtual bool sendTlpProbe();</span>
+<span id="L437"><span class="lineNum">     437</span>                 :             : </span>
+<span id="L438"><span class="lineNum">     438</span>                 :             :     /**</span>
+<span id="L439"><span class="lineNum">     439</span>                 :             :      * Called at a retransmission timeout: marks the outstanding data lost in the</span>
+<span id="L440"><span class="lineNum">     440</span>                 :             :      * retransmission queue, as Linux tcp_timeout_mark_lost() does. Without SACK,</span>
+<span id="L441"><span class="lineNum">     441</span>                 :             :      * it also removes the inferred SACKs and the retransmitted marks.</span>
+<span id="L442"><span class="lineNum">     442</span>                 :             :      */</span>
+<span id="L443"><span class="lineNum">     443</span>                 :             :     virtual void markOutstandingLostOnRto();</span>
+<span id="L444"><span class="lineNum">     444</span>                 :             : </span>
+<span id="L445"><span class="lineNum">     445</span>                 :             :     /** Utility: retransmit all from snd_una to snd_max */</span>
+<span id="L446"><span class="lineNum">     446</span>                 :             :     virtual void retransmitData();</span>
+<span id="L447"><span class="lineNum">     447</span>                 :             : </span>
+<span id="L448"><span class="lineNum">     448</span>                 :             :     /** Utility: sends RST */</span>
+<span id="L449"><span class="lineNum">     449</span>                 :             :     virtual void sendRst(uint32_t seqNo);</span>
+<span id="L450"><span class="lineNum">     450</span>                 :             :     /** Utility: sends RST; does not use connection state */</span>
+<span id="L451"><span class="lineNum">     451</span>                 :             :     virtual void sendRst(uint32_t seq, L3Address src, L3Address dest, int srcPort, int destPort, bool withTimestamp = false);</span>
+<span id="L452"><span class="lineNum">     452</span>                 :             : </span>
+<span id="L453"><span class="lineNum">     453</span>                 :             :     /** Utility: sends the RST of a user abort, with the TS option if it is enabled (RFC 7323 section 5.2) */</span>
+<span id="L454"><span class="lineNum">     454</span>                 :             :     virtual void sendAbortRst();</span>
+<span id="L455"><span class="lineNum">     455</span>                 :             :     /** Utility: sends RST+ACK; does not use connection state */</span>
+<span id="L456"><span class="lineNum">     456</span>                 :             :     virtual void sendRstAck(uint32_t seq, uint32_t ack, L3Address src, L3Address dest, int srcPort, int destPort, bool withTimestamp = false);</span>
+<span id="L457"><span class="lineNum">     457</span>                 :             : </span>
+<span id="L458"><span class="lineNum">     458</span>                 :             :     /** Utility: sends FIN */</span>
+<span id="L459"><span class="lineNum">     459</span>                 :             :     virtual void sendFin();</span>
+<span id="L460"><span class="lineNum">     460</span>                 :             : </span>
+<span id="L461"><span class="lineNum">     461</span>                 :             :     /**</span>
+<span id="L462"><span class="lineNum">     462</span>                 :             :      * Utility: sends one segment of 'bytes' bytes from snd_nxt, and advances snd_nxt.</span>
+<span id="L463"><span class="lineNum">     463</span>                 :             :      * sendData(), sendProbe() and retransmitData() internally all rely on this one.</span>
+<span id="L464"><span class="lineNum">     464</span>                 :             :      * Returns the number of bytes sent.</span>
+<span id="L465"><span class="lineNum">     465</span>                 :             :      */</span>
+<span id="L466"><span class="lineNum">     466</span>                 :             :     virtual uint32_t sendSegment(uint32_t bytes);</span>
+<span id="L467"><span class="lineNum">     467</span>                 :             : </span>
+<span id="L468"><span class="lineNum">     468</span>                 :             :     /** Puts the data of a SEND command into the send queue, and starts the busy time of TCP_INFO. */</span>
+<span id="L469"><span class="lineNum">     469</span>                 :             :     virtual void enqueueSendCommandData(Packet *packet);</span>
+<span id="L470"><span class="lineNum">     470</span>                 :             : </span>
+<span id="L471"><span class="lineNum">     471</span>                 :             :     /** Utility: adds control info to segment and sends it to IP */</span>
+<span id="L472"><span class="lineNum">     472</span>                 :             :     virtual void sendToIP(Packet *tcpSegment, const Ptr&lt;TcpHeader&gt;&amp; tcpHeader);</span>
+<span id="L473"><span class="lineNum">     473</span>                 :             : </span>
+<span id="L474"><span class="lineNum">     474</span>                 :             :     /** AccECN: the ACE value that feeds back an IP ECN codepoint in the handshake (RFC 9768 Tables 2 and 3) */</span>
+<span id="L475"><span class="lineNum">     475</span>                 :             :     static uint8_t accEcnReflectedAce(int ipEcnCodepoint);</span>
+<span id="L476"><span class="lineNum">     476</span>                 :             : </span>
+<span id="L477"><span class="lineNum">     477</span>                 :             :     /** Utility: the IP ECN codepoint of a received segment, IP_ECN_NOT_ECT without one */</span>
+<span id="L478"><span class="lineNum">     478</span>                 :             :     static int receivedEcnCodepoint(Packet *tcpSegment);</span>
+<span id="L479"><span class="lineNum">     479</span>                 :             : </span>
+<span id="L480"><span class="lineNum">     480</span>                 :             :     /** AccECN: reads the ACE field of an ACK that makes progress, and counts the CE marks that it reports (RFC 9768 section 3.2.2.5) */</span>
+<span id="L481"><span class="lineNum">     481</span>                 :             :     virtual void processAccEcnAce(const Ptr&lt;const TcpHeader&gt;&amp; tcpHeader);</span>
+<span id="L482"><span class="lineNum">     482</span>                 :             :     /** AccECN receiver: counts the CE mark and the payload bytes of a received segment (RFC 9768 section 3.2). */</span>
+<span id="L483"><span class="lineNum">     483</span>                 :             :     virtual void countAccEcnReceived(Packet *tcpSegment, int payloadLength);</span>
+<span id="L484"><span class="lineNum">     484</span>                 :             :     /**</span>
+<span id="L485"><span class="lineNum">     485</span>                 :             :      * AccECN (RFC 9768 section 3.2.3): whether the next segment after the handshake</span>
+<span id="L486"><span class="lineNum">     486</span>                 :             :      * carries the AccECN option, and with which fields. order: 0 (kind 172) or 1</span>
+<span id="L487"><span class="lineNum">     487</span>                 :             :      * (kind 174); wanted: the number of fields to send if they fit; required: the</span>
+<span id="L488"><span class="lineNum">     488</span>                 :             :      * fewest fields to send, those that changed since the last option.</span>
+<span id="L489"><span class="lineNum">     489</span>                 :             :      */</span>
+<span id="L490"><span class="lineNum">     490</span>                 :             :     virtual bool getAccEcnOptionFields(int&amp; order, int&amp; wanted, int&amp; required) const;</span>
+<span id="L491"><span class="lineNum">     491</span>                 :             :     /** Appends the AccECN option with the fields that fit in the free option space. */</span>
+<span id="L492"><span class="lineNum">     492</span>                 :             :     virtual void appendAccEcnOption(const Ptr&lt;TcpHeader&gt;&amp; tcpHeader, int order, int wanted, int required);</span>
+<span id="L493"><span class="lineNum">     493</span>                 :             :     /**</span>
+<span id="L494"><span class="lineNum">     494</span>                 :             :      * AccECN: the option bytes in use, for the fit of the AccECN option: the real</span>
+<span id="L495"><span class="lineNum">     495</span>                 :             :      * length, or with accEcnOptionPolicy=&quot;linux&quot; the length of the Linux layout</span>
+<span id="L496"><span class="lineNum">     496</span>                 :             :      * (NOP, NOP, TS and NOP, NOP, SACK).</span>
+<span id="L497"><span class="lineNum">     497</span>                 :             :      */</span>
+<span id="L498"><span class="lineNum">     498</span>                 :             :     virtual unsigned int getAccEcnOptionSpaceUsed(const Ptr&lt;TcpHeader&gt;&amp; tcpHeader) const;</span>
+<span id="L499"><span class="lineNum">     499</span>                 :             :     /** AccECN: whether an option of the given number of fields fits after the used option bytes. */</span>
+<span id="L500"><span class="lineNum">     500</span>                 :             :     virtual bool accEcnOptionFits(unsigned int used, int numFields, bool sack) const;</span>
+<span id="L501"><span class="lineNum">     501</span>                 :             : </span>
+<span id="L502"><span class="lineNum">     502</span>                 :             :     /** Utility: start SYN-REXMIT timer */</span>
+<span id="L503"><span class="lineNum">     503</span>                 :             :     virtual void startSynRexmitTimer();</span>
+<span id="L504"><span class="lineNum">     504</span>                 :             : </span>
+<span id="L505"><span class="lineNum">     505</span>                 :             :     /** Utility: signal to user that connection timed out */</span>
+<span id="L506"><span class="lineNum">     506</span>                 :             :     virtual void signalConnectionTimeout();</span>
+<span id="L507"><span class="lineNum">     507</span>                 :             : </span>
+<span id="L508"><span class="lineNum">     508</span>                 :             :   protected:</span>
+<span id="L509"><span class="lineNum">     509</span>                 :             :     /** Utility: send IP packet */</span>
+<span id="L510"><span class="lineNum">     510</span>                 :             :     virtual void sendToIP(Packet *pkt, const Ptr&lt;TcpHeader&gt;&amp; tcpHeader, L3Address src, L3Address dest);</span>
+<span id="L511"><span class="lineNum">     511</span>                 :             : </span>
+<span id="L512"><span class="lineNum">     512</span>                 :             :     /** Utility: sends packet to application */</span>
+<span id="L513"><span class="lineNum">     513</span>                 :             :     virtual void sendToApp(cMessage *msg);</span>
+<span id="L514"><span class="lineNum">     514</span>                 :             : </span>
+<span id="L515"><span class="lineNum">     515</span>                 :             :     /** Utility: sends status indication (TCP_I_xxx) to application */</span>
+<span id="L516"><span class="lineNum">     516</span>                 :             :     virtual void sendIndicationToApp(int code, const int id = 0);</span>
+<span id="L517"><span class="lineNum">     517</span>                 :             : </span>
+<span id="L518"><span class="lineNum">     518</span>                 :             :     /** Utility: sends TCP_I_AVAILABLE indication with TcpAvailableInfo to application */</span>
+<span id="L519"><span class="lineNum">     519</span>                 :             :     virtual void sendAvailableIndicationToApp();</span>
+<span id="L520"><span class="lineNum">     520</span>                 :             : </span>
+<span id="L521"><span class="lineNum">     521</span>                 :             :     /** Utility: sends TCP_I_ESTABLISHED indication with TcpConnectInfo to application */</span>
+<span id="L522"><span class="lineNum">     522</span>                 :             :     virtual void sendEstabIndicationToApp();</span>
+<span id="L523"><span class="lineNum">     523</span>                 :             : </span>
+<span id="L524"><span class="lineNum">     524</span>                 :             :     /** Utility: sends data or data notification to application */</span>
+<span id="L525"><span class="lineNum">     525</span>                 :             :     virtual void sendAvailableDataToApp();</span>
+<span id="L526"><span class="lineNum">     526</span>                 :             : </span>
+<span id="L527"><span class="lineNum">     527</span>                 :             :     /** Utility: takes the next delivery to the application from the receive queue, at most up to endSeqNo; with urgentOutOfBand, never across the urgent mark; nullptr: no data */</span>
+<span id="L528"><span class="lineNum">     528</span>                 :             :     virtual Packet *extractDataForApp(uint32_t endSeqNo);</span>
+<span id="L529"><span class="lineNum">     529</span>                 :             : </span>
+<span id="L530"><span class="lineNum">     530</span>                 :             :     /** urgentOutOfBand: a received urgent pointer, the octet after the urgent data (Linux tcp_check_urg()) */</span>
+<span id="L531"><span class="lineNum">     531</span>                 :             :     virtual void processUrgentPointer(uint32_t urgentPointer);</span>
+<span id="L532"><span class="lineNum">     532</span>                 :             : </span>
+<span id="L533"><span class="lineNum">     533</span>                 :             :   public:</span>
+<span id="L534"><span class="lineNum">     534</span>                 :             :     /** Utility: prints local/remote addr/port and app gate index/socketId */</span>
+<span id="L535"><span class="lineNum">     535</span>                 :             :     virtual void printConnBrief() const;</span>
+<span id="L536"><span class="lineNum">     536</span>                 :             :     /** Utility: prints important header fields */</span>
+<span id="L537"><span class="lineNum">     537</span>                 :             :     static void printSegmentBrief(Packet *tcpSegment, const Ptr&lt;const TcpHeader&gt;&amp; tcpHeader);</span>
+<span id="L538"><span class="lineNum">     538</span>                 :             :     /** Utility: returns name of TCP_S_xxx constants */</span>
+<span id="L539"><span class="lineNum">     539</span>                 :             :     static const char *stateName(int state);</span>
+<span id="L540"><span class="lineNum">     540</span>                 :             :     /** Utility: returns name of TCP_E_xxx constants */</span>
+<span id="L541"><span class="lineNum">     541</span>                 :             :     static const char *eventName(int event);</span>
+<span id="L542"><span class="lineNum">     542</span>                 :             :     /** Utility: returns name of TCP_I_xxx constants */</span>
+<span id="L543"><span class="lineNum">     543</span>                 :             :     static const char *indicationName(int code);</span>
+<span id="L544"><span class="lineNum">     544</span>                 :             :     /** Utility: returns name of TCPOPTION_xxx constants */</span>
+<span id="L545"><span class="lineNum">     545</span>                 :             :     static const char *optionName(int option);</span>
+<span id="L546"><span class="lineNum">     546</span>                 :             :     /** Utility: update receiver queue related variables and statistics - called before setting rcv_wnd */</span>
+<span id="L547"><span class="lineNum">     547</span>                 :             :     virtual void updateRcvQueueVars();</span>
+<span id="L548"><span class="lineNum">     548</span>                 :             : </span>
+<span id="L549"><span class="lineNum">     549</span>                 :             :     /**</span>
+<span id="L550"><span class="lineNum">     550</span>                 :             :      * The truesize of the skb of a received TCP segment in Linux, from a tun device as</span>
+<span id="L551"><span class="lineNum">     551</span>                 :             :      * packetdrill uses, and struct sk_buff (232 bytes): a small packet with</span>
+<span id="L552"><span class="lineNum">     552</span>                 :             :      * skb_shared_info (320 bytes) in a power-of-two allocation, a larger one in a page</span>
+<span id="L553"><span class="lineNum">     553</span>                 :             :      * and pages of the largest order up to 3 that the rest fills.</span>
+<span id="L554"><span class="lineNum">     554</span>                 :             :      */</span>
+<span id="L555"><span class="lineNum">     555</span>                 :             :     static uint32_t linuxSkbTruesize(uint32_t payloadBytes);</span>
+<span id="L556"><span class="lineNum">     556</span>                 :             :     /**</span>
+<span id="L557"><span class="lineNum">     557</span>                 :             :      * The time that the send buffer limits the sender (Linux TCP_CHRONO_SNDBUF_LIMITED):</span>
+<span id="L558"><span class="lineNum">     558</span>                 :             :      * it runs while the application writer is blocked, no unsent data waits, and data</span>
+<span id="L559"><span class="lineNum">     559</span>                 :             :      * is in flight. Called at each event that can change this condition.</span>
+<span id="L560"><span class="lineNum">     560</span>                 :             :      */</span>
+<span id="L561"><span class="lineNum">     561</span>                 :             :     virtual void updateSndbufLimitedChrono();</span>
+<span id="L562"><span class="lineNum">     562</span>                 :             :     /** Charges the receive buffer with a received data segment (rcvSkbChain). */</span>
+<span id="L563"><span class="lineNum">     563</span>                 :             :     virtual void chargeRcvBuffer(uint32_t payloadBytes);</span>
+<span id="L564"><span class="lineNum">     564</span>                 :             :     /** Releases the receive buffer for the data that the application read. */</span>
+<span id="L565"><span class="lineNum">     565</span>                 :             :     virtual void releaseRcvBuffer(uint64_t readBytes);</span>
+<span id="L566"><span class="lineNum">     566</span>                 :             :     /** windowAutoTuning: the growth of the receive buffer with out-of-order data that end at endSeq */</span>
+<span id="L567"><span class="lineNum">     567</span>                 :             :     virtual void growRcvBufferForOutOfOrderData(uint32_t endSeq);</span>
+<span id="L568"><span class="lineNum">     568</span>                 :             :     /** windowAutoTuning: the receive space becomes newSpace, and the buffer grows to its window (Linux tcp_rcvbuf_grow()) */</span>
+<span id="L569"><span class="lineNum">     569</span>                 :             :     virtual void growRcvBuffer(uint32_t newSpace);</span>
+<span id="L570"><span class="lineNum">     570</span>                 :             :     /** windowAutoTuning: the receive space at the end of the handshake (Linux tcp_init_buffer_space()) */</span>
+<span id="L571"><span class="lineNum">     571</span>                 :             :     virtual void initRcvSpace();</span>
+<span id="L572"><span class="lineNum">     572</span>                 :             :     /** windowAutoTuning: Dynamic Right-Sizing at each read of the application (Linux tcp_rcv_space_adjust()) */</span>
+<span id="L573"><span class="lineNum">     573</span>                 :             :     virtual void adjustRcvSpace();</span>
+<span id="L574"><span class="lineNum">     574</span>                 :             : </span>
+<span id="L575"><span class="lineNum">     575</span>                 :             :     /** The receive RTT of Linux: a sample without timestamps, once per window (tcp_rcv_rtt_measure()) */</span>
+<span id="L576"><span class="lineNum">     576</span>                 :             :     virtual void measureRcvRtt();</span>
+<span id="L577"><span class="lineNum">     577</span>                 :             :     /** The receive RTT of Linux: a sample from the TSecr of a segment of at least one MSS (tcp_rcv_rtt_measure_ts()) */</span>
+<span id="L578"><span class="lineNum">     578</span>                 :             :     virtual void measureRcvRttTs(const Ptr&lt;const TcpHeader&gt;&amp; tcpHeader, uint32_t payloadLength);</span>
+<span id="L579"><span class="lineNum">     579</span>                 :             :     /** The receive RTT of Linux: the update of the estimate by a sample (tcp_rcv_rtt_update()) */</span>
+<span id="L580"><span class="lineNum">     580</span>                 :             :     virtual void updateRcvRtt(uint32_t sampleUs, bool winDep);</span>
+<span id="L581"><span class="lineNum">     581</span>                 :             : </span>
+<span id="L582"><span class="lineNum">     582</span>                 :             :     /** Utility: returns true when receive queue has enough space for store the tcpHeader */</span>
+<span id="L583"><span class="lineNum">     583</span>                 :             :     virtual bool hasEnoughSpaceForSegmentInReceiveQueue(Packet *tcpSegment, const Ptr&lt;const TcpHeader&gt;&amp; tcpHeader);</span>
+<span id="L584"><span class="lineNum">     584</span>                 :             : </span>
+<span id="L585"><span class="lineNum">     585</span>                 :             :     /** Utility: the window that the receiver can offer now, from its free receive buffer,</span>
+<span id="L586"><span class="lineNum">     586</span>                 :             :      *  before the rule that the window does not shrink (Linux __tcp_select_window()).</span>
+<span id="L587"><span class="lineNum">     587</span>                 :             :      *  It changes no state.</span>
+<span id="L588"><span class="lineNum">     588</span>                 :             :      */</span>
+<span id="L589"><span class="lineNum">     589</span>                 :             :     virtual uint32_t selectRcvWnd();</span>
+<span id="L590"><span class="lineNum">     590</span>                 :             : </span>
+<span id="L591"><span class="lineNum">     591</span>                 :             :     /** Utility: update receive window (rcv_wnd), and calculate scaled value if window scaling enabled.</span>
+<span id="L592"><span class="lineNum">     592</span>                 :             :      *  Returns the (scaled) receive window size.</span>
+<span id="L593"><span class="lineNum">     593</span>                 :             :      */</span>
+<span id="L594"><span class="lineNum">     594</span>                 :             :     virtual uint16_t updateRcvWnd();</span>
+<span id="L595"><span class="lineNum">     595</span>                 :             : </span>
+<span id="L596"><span class="lineNum">     596</span>                 :             :     /** Utility: the window field of a SYN or a SYN-ACK, which is not scaled; call after updateRcvWnd(). */</span>
+<span id="L597"><span class="lineNum">     597</span>                 :             :     virtual uint16_t synWindow();</span>
+<span id="L598"><span class="lineNum">     598</span>                 :             : </span>
+<span id="L599"><span class="lineNum">     599</span>                 :             :     /** Utility: update window information (snd_wnd, snd_wl1, snd_wl2) */</span>
+<span id="L600"><span class="lineNum">     600</span>                 :             :     /**</span>
+<span id="L601"><span class="lineNum">     601</span>                 :             :      * FlightSize for the ssthresh of fast retransmit (RFC 5681 equation (4)): the data</span>
+<span id="L602"><span class="lineNum">     602</span>                 :             :      * that was sent but is not cumulatively acknowledged. Step 2 of RFC 5681 section</span>
+<span id="L603"><span class="lineNum">     603</span>                 :             :      * 3.2 leaves out the data that Limited Transmit sent on the duplicate ACKs.</span>
+<span id="L604"><span class="lineNum">     604</span>                 :             :      */</span>
+<span id="L605"><span class="lineNum">     605</span>                 :             :     virtual uint32_t getFlightSize() const;</span>
+<span id="L606"><span class="lineNum">     606</span>                 :             : </span>
+<span id="L607"><span class="lineNum">     607</span>                 :             :     virtual void updateWndInfo(const Ptr&lt;const TcpHeader&gt;&amp; tcpHeader, bool doAlways = false);</span>
+<span id="L608"><span class="lineNum">     608</span>                 :             : </span>
+<span id="L609"><span class="lineNum">     609</span>                 :             :     /**</span>
+<span id="L610"><span class="lineNum">     610</span>                 :             :      * The MSS that congestion control counts with: snd_mss less the space of the</span>
+<span id="L611"><span class="lineNum">     611</span>                 :             :      * TCP options that every segment of the established connection carries.</span>
+<span id="L612"><span class="lineNum">     612</span>                 :             :      */</span>
+<span id="L613"><span class="lineNum">     613</span>                 :             :     virtual uint32_t calculateEffectiveMss();</span>
+<span id="L614"><span class="lineNum">     614</span>                 :             : </span>
+<span id="L615"><span class="lineNum">     615</span>                 :             :     /** mss = -1: snd_mss and the announced MSS take the MSS of the address family of the peer, 1460 for IPv4 and 1440 for IPv6 */</span>
+<span id="L616"><span class="lineNum">     616</span>                 :             :     virtual void resolveAddressFamilyMss();</span>
+<span id="L617"><span class="lineNum">     617</span>                 :             : </span>
+<span id="L618"><span class="lineNum">     618</span>                 :             :     /** The path MTU search of RFC 4821 (mtuProbing): the MSS of the peer, limited by TCP_MAXSEG (Linux mss_clamp) */</span>
+<span id="L619"><span class="lineNum">     619</span>                 :             :     virtual uint32_t getMssClamp() const;</span>
+<span id="L620"><span class="lineNum">     620</span>                 :             :     /** The payload of a segment of this MTU, without the options of each segment, at most getMssClamp() (Linux tcp_mtu_to_mss()) */</span>
+<span id="L621"><span class="lineNum">     621</span>                 :             :     virtual uint32_t mtuToMss(uint32_t mtu) const;</span>
+<span id="L622"><span class="lineNum">     622</span>                 :             :     /** The MTU of a segment with this payload (Linux tcp_mss_to_mtu()) */</span>
+<span id="L623"><span class="lineNum">     623</span>                 :             :     virtual uint32_t mssToMtu(uint32_t mss) const;</span>
+<span id="L624"><span class="lineNum">     624</span>                 :             :     /** An ICMP error lowered the MSS in SYN_SENT: the next SYN announces it, and a SYN with data goes again at once (Linux tcp_v4_mtu_reduced()) */</span>
+<span id="L625"><span class="lineNum">     625</span>                 :             :     virtual void retransmitSynAfterMtuReduction(uint32_t newMss);</span>
+<span id="L626"><span class="lineNum">     626</span>                 :             :     /** A new route MTU bounds the path MTU search (Linux tcp_sync_mss()) */</span>
+<span id="L627"><span class="lineNum">     627</span>                 :             :     virtual void limitMtuSearch(uint32_t mtu);</span>
+<span id="L628"><span class="lineNum">     628</span>                 :             :     /** The route MTU of TcpSocket::setPathMtu() bounds the MSS */</span>
+<span id="L629"><span class="lineNum">     629</span>                 :             :     virtual void limitMssByPathMtuSockopt();</span>
+<span id="L630"><span class="lineNum">     630</span>                 :             :     /** Arms the path MTU search when the MSS is settled (Linux tcp_mtup_init()) */</span>
+<span id="L631"><span class="lineNum">     631</span>                 :             :     virtual void initMtuProbing();</span>
+<span id="L632"><span class="lineNum">     632</span>                 :             :     /** The payload of the probe to send now; 0: wait for room for a probe; -1: no probe (Linux tcp_mtu_probe()) */</span>
+<span id="L633"><span class="lineNum">     633</span>                 :             :     virtual int64_t getMtuProbeBytes(uint32_t buffered, uint32_t congestionWindow, uint32_t bytesInFlight) const;</span>
+<span id="L634"><span class="lineNum">     634</span>                 :             :     /** The peer acknowledged the probe (Linux tcp_mtup_probe_success()) */</span>
+<span id="L635"><span class="lineNum">     635</span>                 :             :     virtual void mtuProbeSucceeded();</span>
+<span id="L636"><span class="lineNum">     636</span>                 :             :     /** The probe is lost (Linux tcp_mtup_probe_failed()) */</span>
+<span id="L637"><span class="lineNum">     637</span>                 :             :     virtual void mtuProbeFailed();</span>
+<span id="L638"><span class="lineNum">     638</span>                 :             : </span>
+<span id="L639"><span class="lineNum">     639</span>                 :             :   public:</span>
+<span id="L640"><span class="lineNum">     640</span>                 :<span class="tlaGNC">        5909 :     TcpConnection() {}</span></span>
+<span id="L641"><span class="lineNum">     641</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     TcpConnection(const TcpConnection&amp; other) {} // FIXME kludge</span></span>
+<span id="L642"><span class="lineNum">     642</span>                 :             :     void initialize();</span>
+<span id="L643"><span class="lineNum">     643</span>                 :             : </span>
+<span id="L644"><span class="lineNum">     644</span>                 :             :     /**</span>
+<span id="L645"><span class="lineNum">     645</span>                 :             :      * The &quot;normal&quot; constructor.</span>
+<span id="L646"><span class="lineNum">     646</span>                 :             :      */</span>
+<span id="L647"><span class="lineNum">     647</span>                 :             :     void initConnection(Tcp *mod, int socketId);</span>
+<span id="L648"><span class="lineNum">     648</span>                 :             : </span>
+<span id="L649"><span class="lineNum">     649</span>                 :             :     /**</span>
+<span id="L650"><span class="lineNum">     650</span>                 :             :      * Destructor.</span>
+<span id="L651"><span class="lineNum">     651</span>                 :             :      */</span>
+<span id="L652"><span class="lineNum">     652</span>                 :             :     virtual ~TcpConnection();</span>
+<span id="L653"><span class="lineNum">     653</span>                 :             : </span>
+<span id="L654"><span class="lineNum">     654</span>                 :<span class="tlaUNC">           0 :     int getTtl() const { return ttl; }</span></span>
+<span id="L655"><span class="lineNum">     655</span>                 :<span class="tlaGNC tlaBgGNC">        2057 :     int getSocketId() const { return socketId; }</span></span>
+<span id="L656"><span class="lineNum">     656</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     void setSocketId(int newSocketId) { ASSERT(socketId == -1); socketId = newSocketId; }</span></span>
+<span id="L657"><span class="lineNum">     657</span>                 :<span class="tlaUNC">           0 :     int getListeningSocketId() const { return listeningSocketId; }</span></span>
+<span id="L658"><span class="lineNum">     658</span>                 :             : </span>
+<span id="L659"><span class="lineNum">     659</span>                 :<span class="tlaGNC tlaBgGNC">        3157 :     int getLocalPort() const { return localPort; }</span></span>
+<span id="L660"><span class="lineNum">     660</span>                 :<span class="tlaGNC">           1 :     const L3Address&amp; getLocalAddress() const { return localAddr; }</span></span>
+<span id="L661"><span class="lineNum">     661</span>                 :             : </span>
+<span id="L662"><span class="lineNum">     662</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     int getRemotePort() const { return remotePort; }</span></span>
+<span id="L663"><span class="lineNum">     663</span>                 :<span class="tlaGNC tlaBgGNC">           9 :     const L3Address&amp; getRemoteAddress() const { return remoteAddr; }</span></span>
+<span id="L664"><span class="lineNum">     664</span>                 :             : </span>
+<span id="L665"><span class="lineNum">     665</span>                 :             :     /**</span>
+<span id="L666"><span class="lineNum">     666</span>                 :             :      * This method gets invoked from TCP when a segment arrives which</span>
+<span id="L667"><span class="lineNum">     667</span>                 :             :      * doesn't belong to an existing connection. TCP creates a temporary</span>
+<span id="L668"><span class="lineNum">     668</span>                 :             :      * connection object so that it can call this method, then immediately</span>
+<span id="L669"><span class="lineNum">     669</span>                 :             :      * deletes it.</span>
+<span id="L670"><span class="lineNum">     670</span>                 :             :      */</span>
+<span id="L671"><span class="lineNum">     671</span>                 :             :     virtual void segmentArrivalWhileClosed(Packet *tcpSegment, const Ptr&lt;const TcpHeader&gt;&amp; tcpHeader, L3Address src, L3Address dest);</span>
+<span id="L672"><span class="lineNum">     672</span>                 :             : </span>
+<span id="L673"><span class="lineNum">     673</span>                 :             :     /** @name Various getters **/</span>
+<span id="L674"><span class="lineNum">     674</span>                 :             :     //@{</span>
+<span id="L675"><span class="lineNum">     675</span>                 :<span class="tlaGNC">       53058 :     int getFsmState() const { return fsm.getState(); }</span></span>
+<span id="L676"><span class="lineNum">     676</span>                 :<span class="tlaGNC">      457359 :     const TcpStateVariables *getState() const { return state; }</span></span>
+<span id="L677"><span class="lineNum">     677</span>                 :<span class="tlaGNC">     2289820 :     TcpStateVariables *getStateForUpdate() { return state; }</span></span>
+<span id="L678"><span class="lineNum">     678</span>                 :<span class="tlaGNC">      593895 :     const TcpSendQueue *getSendQueue() const { return sendQueue; }</span></span>
+<span id="L679"><span class="lineNum">     679</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     TcpSendQueue *getSendQueueForUpdate() { return sendQueue; }</span></span>
+<span id="L680"><span class="lineNum">     680</span>                 :<span class="tlaGNC tlaBgGNC">      696082 :     const TcpSackRexmitQueue *getRexmitQueue() const { return rexmitQueue; }</span></span>
+<span id="L681"><span class="lineNum">     681</span>                 :<span class="tlaGNC">      274128 :     TcpSackRexmitQueue *getRexmitQueueForUpdate() { return rexmitQueue; }</span></span>
+<span id="L682"><span class="lineNum">     682</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     const TcpReceiveQueue *getReceiveQueue() const { return receiveQueue; }</span></span>
+<span id="L683"><span class="lineNum">     683</span>                 :<span class="tlaUNC">           0 :     TcpReceiveQueue *getReceiveQueueForUpdate() { return receiveQueue; }</span></span>
+<span id="L684"><span class="lineNum">     684</span>                 :<span class="tlaUNC">           0 :     const TcpAlgorithm *getTcpAlgorithm() const { return tcpAlgorithm; }</span></span>
+<span id="L685"><span class="lineNum">     685</span>                 :<span class="tlaGNC tlaBgGNC">        3089 :     TcpAlgorithm *getTcpAlgorithmForUpdate() { return tcpAlgorithm; }</span></span>
+<span id="L686"><span class="lineNum">     686</span>                 :             : </span>
+<span id="L687"><span class="lineNum">     687</span>                 :             :     /**</span>
+<span id="L688"><span class="lineNum">     688</span>                 :             :      * Cancels and deletes a timer of the algorithm. The connection owns the timers, so it</span>
+<span id="L689"><span class="lineNum">     689</span>                 :             :      * deletes them in its own context: the algorithm module deletes itself in its context.</span>
+<span id="L690"><span class="lineNum">     690</span>                 :             :      */</span>
+<span id="L691"><span class="lineNum">     691</span>                 :<span class="tlaGNC">       34316 :     void deleteTimer(cMessage *timer) { Enter_Method_Silent(); delete cancelEvent(timer); }</span></span>
+<span id="L692"><span class="lineNum">     692</span>                 :             : </span>
+<span id="L693"><span class="lineNum">     693</span>                 :<span class="tlaGNC">      305546 :     Tcp *getTcpMain() { return tcpMain; }</span></span>
+<span id="L694"><span class="lineNum">     694</span>                 :             :     //@}</span>
+<span id="L695"><span class="lineNum">     695</span>                 :             : </span>
+<span id="L696"><span class="lineNum">     696</span>                 :             :     /**</span>
+<span id="L697"><span class="lineNum">     697</span>                 :             :      * Process self-messages (timers).</span>
+<span id="L698"><span class="lineNum">     698</span>                 :             :      * Normally returns true. A return value of false means that the</span>
+<span id="L699"><span class="lineNum">     699</span>                 :             :      * connection structure must be deleted by the caller (TCP).</span>
+<span id="L700"><span class="lineNum">     700</span>                 :             :      */</span>
+<span id="L701"><span class="lineNum">     701</span>                 :             :     virtual bool processTimer(cMessage *msg);</span>
+<span id="L702"><span class="lineNum">     702</span>                 :             : </span>
+<span id="L703"><span class="lineNum">     703</span>                 :             :     /**</span>
+<span id="L704"><span class="lineNum">     704</span>                 :             :      * Process incoming TCP segment. Normally returns true. A return value</span>
+<span id="L705"><span class="lineNum">     705</span>                 :             :      * of false means that the connection structure must be deleted by the</span>
+<span id="L706"><span class="lineNum">     706</span>                 :             :      * caller (TCP).</span>
+<span id="L707"><span class="lineNum">     707</span>                 :             :      */</span>
+<span id="L708"><span class="lineNum">     708</span>                 :             :     virtual bool processTCPSegment(Packet *tcpSegment, const Ptr&lt;const TcpHeader&gt;&amp; tcpHeader, L3Address srcAddr, L3Address destAddr);</span>
+<span id="L709"><span class="lineNum">     709</span>                 :             : </span>
+<span id="L710"><span class="lineNum">     710</span>                 :             :     /**</span>
+<span id="L711"><span class="lineNum">     711</span>                 :             :      * Process commands from the application.</span>
+<span id="L712"><span class="lineNum">     712</span>                 :             :      * Normally returns true. A return value of false means that the</span>
+<span id="L713"><span class="lineNum">     713</span>                 :             :      * connection structure must be deleted by the caller (TCP).</span>
+<span id="L714"><span class="lineNum">     714</span>                 :             :      */</span>
+<span id="L715"><span class="lineNum">     715</span>                 :             :     virtual bool processAppCommand(cMessage *msg);</span>
+<span id="L716"><span class="lineNum">     716</span>                 :             : </span>
+<span id="L717"><span class="lineNum">     717</span>                 :             :     virtual void handleMessage(cMessage *msg);</span>
+<span id="L718"><span class="lineNum">     718</span>                 :             : </span>
+<span id="L719"><span class="lineNum">     719</span>                 :             :     /**</span>
+<span id="L720"><span class="lineNum">     720</span>                 :             :      * Process an ICMPv4 error indication for this connection.</span>
+<span id="L721"><span class="lineNum">     721</span>                 :             :      * Hard errors (port/protocol unreachable) abort connections in SYN_SENT state.</span>
+<span id="L722"><span class="lineNum">     722</span>                 :             :      * All other cases send a soft TCP_I_ICMPv4_ERROR notification to the app.</span>
+<span id="L723"><span class="lineNum">     723</span>                 :             :      * Returns false if the connection has moved to CLOSED.</span>
+<span id="L724"><span class="lineNum">     724</span>                 :             :      */</span>
+<span id="L725"><span class="lineNum">     725</span>                 :             :     virtual bool processIcmpv4Error(Indication *indication);</span>
+<span id="L726"><span class="lineNum">     726</span>                 :             : </span>
+<span id="L727"><span class="lineNum">     727</span>                 :             :     /**</span>
+<span id="L728"><span class="lineNum">     728</span>                 :             :      * Process an ICMPv6 error indication for this connection.</span>
+<span id="L729"><span class="lineNum">     729</span>                 :             :      * Hard errors (port unreachable, admin prohibited) abort connections in SYN_SENT state.</span>
+<span id="L730"><span class="lineNum">     730</span>                 :             :      * All other cases send a soft TCP_I_ICMPv6_ERROR notification to the app.</span>
+<span id="L731"><span class="lineNum">     731</span>                 :             :      * Returns false if the connection has moved to CLOSED.</span>
+<span id="L732"><span class="lineNum">     732</span>                 :             :      */</span>
+<span id="L733"><span class="lineNum">     733</span>                 :             :     virtual bool processIcmpv6Error(Indication *indication);</span>
+<span id="L734"><span class="lineNum">     734</span>                 :             : </span>
+<span id="L735"><span class="lineNum">     735</span>                 :             :     /**</span>
+<span id="L736"><span class="lineNum">     736</span>                 :             :      * Returns true if the given ICMPv4 type+code is a &quot;hard&quot; error</span>
+<span id="L737"><span class="lineNum">     737</span>                 :             :      * (protocol unreachable, port unreachable, admin prohibited).</span>
+<span id="L738"><span class="lineNum">     738</span>                 :             :      */</span>
+<span id="L739"><span class="lineNum">     739</span>                 :             :     static bool isHardIcmpv4Error(int type, int code);</span>
+<span id="L740"><span class="lineNum">     740</span>                 :             : </span>
+<span id="L741"><span class="lineNum">     741</span>                 :             :     /**</span>
+<span id="L742"><span class="lineNum">     742</span>                 :             :      * Returns true if the given ICMPv6 type+code is a &quot;hard&quot; error</span>
+<span id="L743"><span class="lineNum">     743</span>                 :             :      * (port unreachable, admin prohibited).</span>
+<span id="L744"><span class="lineNum">     744</span>                 :             :      */</span>
+<span id="L745"><span class="lineNum">     745</span>                 :             :     static bool isHardIcmpv6Error(int type, int code);</span>
+<span id="L746"><span class="lineNum">     746</span>                 :             : </span>
+<span id="L747"><span class="lineNum">     747</span>                 :             :     /**</span>
+<span id="L748"><span class="lineNum">     748</span>                 :             :      * Returns false if icmpSequenceCheck is on and the segment that the ICMP error quotes</span>
+<span id="L749"><span class="lineNum">     749</span>                 :             :      * has a sequence number outside SND.UNA to SND.MAX (RFC 5927 section 4.1).</span>
+<span id="L750"><span class="lineNum">     750</span>                 :             :      */</span>
+<span id="L751"><span class="lineNum">     751</span>                 :             :     virtual bool isIcmpErrorInWindow(const Packet *originalPacket) const;</span>
+<span id="L752"><span class="lineNum">     752</span>                 :             : </span>
+<span id="L753"><span class="lineNum">     753</span>                 :             :     /**</span>
+<span id="L754"><span class="lineNum">     754</span>                 :             :      * Returns true if the ICMPv4 error is &quot;Fragmentation Needed and DF Set&quot;</span>
+<span id="L755"><span class="lineNum">     755</span>                 :             :      * (type=3, code=4), used for Path MTU Discovery (RFC 1191).</span>
+<span id="L756"><span class="lineNum">     756</span>                 :             :      */</span>
+<span id="L757"><span class="lineNum">     757</span>                 :             :     static bool isFragNeeded(IcmpType type, int code);</span>
+<span id="L758"><span class="lineNum">     758</span>                 :             : </span>
+<span id="L759"><span class="lineNum">     759</span>                 :             :     /**</span>
+<span id="L760"><span class="lineNum">     760</span>                 :             :      * Returns true if the ICMPv6 error is &quot;Packet Too Big&quot;</span>
+<span id="L761"><span class="lineNum">     761</span>                 :             :      * (type=2), used for Path MTU Discovery (RFC 1981).</span>
+<span id="L762"><span class="lineNum">     762</span>                 :             :      */</span>
+<span id="L763"><span class="lineNum">     763</span>                 :             :     static bool isPacketTooBig(Icmpv6Type type, int code);</span>
+<span id="L764"><span class="lineNum">     764</span>                 :             : </span>
+<span id="L765"><span class="lineNum">     765</span>                 :             :     /**</span>
+<span id="L766"><span class="lineNum">     766</span>                 :             :      * Utility: send one new segment from snd_max if allowed (RFC 3042).</span>
+<span id="L767"><span class="lineNum">     767</span>                 :             :      */</span>
+<span id="L768"><span class="lineNum">     768</span>                 :             :     virtual void sendOneNewSegment(bool fullSegmentsOnly, uint32_t congestionWindow);</span>
+<span id="L769"><span class="lineNum">     769</span>                 :             : </span>
+<span id="L770"><span class="lineNum">     770</span>                 :             :     /**</span>
+<span id="L771"><span class="lineNum">     771</span>                 :             :      * Utility: converts a given simtime to a timestamp (TS).</span>
+<span id="L772"><span class="lineNum">     772</span>                 :             :      */</span>
+<span id="L773"><span class="lineNum">     773</span>                 :             :     static uint32_t convertSimtimeToTS(simtime_t simtime);</span>
+<span id="L774"><span class="lineNum">     774</span>                 :             : </span>
+<span id="L775"><span class="lineNum">     775</span>                 :             :     /**</span>
+<span id="L776"><span class="lineNum">     776</span>                 :             :      * Utility: converts a given timestamp (TS) to a simtime.</span>
+<span id="L777"><span class="lineNum">     777</span>                 :             :      */</span>
+<span id="L778"><span class="lineNum">     778</span>                 :             :     static simtime_t convertTSToSimtime(uint32_t timestamp);</span>
+<span id="L779"><span class="lineNum">     779</span>                 :             : </span>
+<span id="L780"><span class="lineNum">     780</span>                 :             :     /**</span>
+<span id="L781"><span class="lineNum">     781</span>                 :             :      * Utility: checks if send queue is empty (no data to send).</span>
+<span id="L782"><span class="lineNum">     782</span>                 :             :      */</span>
+<span id="L783"><span class="lineNum">     783</span>                 :             :     virtual bool isSendQueueEmpty();</span>
+<span id="L784"><span class="lineNum">     784</span>                 :             : </span>
+<span id="L785"><span class="lineNum">     785</span>                 :             :     friend class Tcp;</span>
+<span id="L786"><span class="lineNum">     786</span>                 :             : };</span>
+<span id="L787"><span class="lineNum">     787</span>                 :             : </span>
+<span id="L788"><span class="lineNum">     788</span>                 :             : } // namespace tcp</span>
+<span id="L789"><span class="lineNum">     789</span>                 :             : </span>
+<span id="L790"><span class="lineNum">     790</span>                 :             : } // namespace inet</span>
+<span id="L791"><span class="lineNum">     791</span>                 :             : </span>
+<span id="L792"><span class="lineNum">     792</span>                 :             : #endif</span>
+<span id="L793"><span class="lineNum">     793</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

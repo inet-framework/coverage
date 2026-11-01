@@ -1,0 +1,707 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - routing/pim/modes/src/inet/routing/pim/modes/PimSm.cc - functions</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../index.html">top level</a> - <a href="index.html">routing/pim/modes/src/inet/routing/pim/modes</a> - PimSm.cc<span style="font-size: 80%;"> (<a href="PimSm.cc.gcov.html">source</a> / functions)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">66.5&nbsp;%</td>
+            <td class="headerCovTableEntry">1556</td>
+            <td class="headerCovTableEntry">1034</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryLo">74.2&nbsp;%</td>
+            <td class="headerCovTableEntry">89</td>
+            <td class="headerCovTableEntry">66</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryLo">50.6&nbsp;%</td>
+            <td class="headerCovTableEntry">808</td>
+            <td class="headerCovTableEntry">409</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <center>
+          <table cellpadding=1 cellspacing=1 border=0>
+            <tr><td><br></td></tr>
+            <tr>
+              <td class="tableHead">Function Name <span  title="Click to sort table by function name" class="tableHeadSort"><img src="../../../../../../../../glass.png" width=10 height=14 alt="Sort by function name" title="Click to sort table by function name" border=0></span></td>
+              
+              <td class="tableHead">Hit count <span  title="Click to sort table by function hit count" class="tableHeadSort"><a href="PimSm.cc.func-c.html"><img src="../../../../../../../../updown.png" width=10 height=14 alt="Sort by function hit count" title="Click to sort table by function hit count" border=0></a></span></td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L2302">inet::PimSm::DownstreamInterface::isInImmediateOlist() const</a></td>
+              
+              <td class="coverFnHi">202</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L2324">inet::PimSm::DownstreamInterface::isInInheritedOlist() const</a></td>
+              
+              <td class="coverFnHi">4837</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L2399">inet::PimSm::DownstreamInterface::startPrunePendingTimer(double)</a></td>
+              
+              <td class="coverFnHi">14</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L2297">inet::PimSm::DownstreamInterface::~DownstreamInterface()</a></td>
+              
+              <td class="coverFnHi">155</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1860">inet::PimSm::IamDR(inet::NetworkInterface*)</a></td>
+              
+              <td class="coverFnLo">0</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L2279">inet::PimSm::PimsmInterface::PimsmInterface(inet::PimSm::Route*, inet::NetworkInterface*)</a></td>
+              
+              <td class="coverFnHi">215</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L2290">inet::PimSm::PimsmInterface::startExpiryTimer(double)</a></td>
+              
+              <td class="coverFnHi">35</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L2284">inet::PimSm::PimsmInterface::~PimsmInterface()</a></td>
+              
+              <td class="coverFnHi">215</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L2145">inet::PimSm::Route::Route(inet::PimSm*, inet::PimSm::RouteType, inet::L3Address, inet::L3Address)</a></td>
+              
+              <td class="coverFnHi">70</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L2231">inet::PimSm::Route::addDownstreamInterface(inet::PimSm::DownstreamInterface*)</a></td>
+              
+              <td class="coverFnHi">155</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L2203">inet::PimSm::Route::findDownstreamInterface(inet::NetworkInterface*)</a></td>
+              
+              <td class="coverFnLo">0</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L2185">inet::PimSm::Route::findDownstreamInterfaceByInterfaceId(int)</a></td>
+              
+              <td class="coverFnHi">2525</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L2195">inet::PimSm::Route::getDownstreamInterfaceByInterfaceId(int)</a></td>
+              
+              <td class="coverFnHi">19</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L2213">inet::PimSm::Route::isImmediateOlistNull()</a></td>
+              
+              <td class="coverFnHi">107</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L2222">inet::PimSm::Route::isInheritedOlistNull()</a></td>
+              
+              <td class="coverFnHi">782</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L2250">inet::PimSm::Route::removeDownstreamInterface(unsigned int)</a></td>
+              
+              <td class="coverFnLo">0</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L2178">inet::PimSm::Route::startJoinTimer(double)</a></td>
+              
+              <td class="coverFnHi">30</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L2163">inet::PimSm::Route::startKeepAliveTimer(double)</a></td>
+              
+              <td class="coverFnHi">32</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L2171">inet::PimSm::Route::startRegisterStopTimer(double)</a></td>
+              
+              <td class="coverFnHi">42</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L2262">inet::PimSm::Route::updateRoute()</a></td>
+              
+              <td class="coverFnHi">1030</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L2153">inet::PimSm::Route::~Route()</a></td>
+              
+              <td class="coverFnHi">70</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L2000">inet::PimSm::addNewRouteG(inet::L3Address, int)</a></td>
+              
+              <td class="coverFnHi">38</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L2043">inet::PimSm::addNewRouteSG(inet::L3Address, inet::L3Address, int)</a></td>
+              
+              <td class="coverFnHi">32</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1249">inet::PimSm::addSsmReceiver(inet::NetworkInterface*, inet::L3Address, inet::L3Address)</a></td>
+              
+              <td class="coverFnHi">3</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L2134">inet::PimSm::cancelAndDeleteTimer(omnetpp::cMessage*&amp;)</a></td>
+              
+              <td class="coverFnHi">62</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1897">inet::PimSm::clearRoutes()</a></td>
+              
+              <td class="coverFnLo">0</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L2095">inet::PimSm::createMulticastRoute(inet::PimSm::Route*)</a></td>
+              
+              <td class="coverFnHi">70</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1875">inet::PimSm::deleteMulticastRoute(inet::PimSm::Route*)</a></td>
+              
+              <td class="coverFnLo">0</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1468">inet::PimSm::designatedRouterAddressHasChanged(inet::NetworkInterface*)</a></td>
+              
+              <td class="coverFnHi">116</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L2119">inet::PimSm::findRouteG(inet::L3Address)</a></td>
+              
+              <td class="coverFnHi">1851</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L2126">inet::PimSm::findRouteSG(inet::L3Address, inet::L3Address)</a></td>
+              
+              <td class="coverFnHi">5245</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1704">inet::PimSm::forwardMulticastData(inet::Packet*, int)</a></td>
+              
+              <td class="coverFnHi">5</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1932">inet::PimSm::getEncapsulatedAddresses(inet::Packet*, inet::L3Address&amp;, inet::L3Address&amp;) const</a></td>
+              
+              <td class="coverFnHi">3460</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1868">inet::PimSm::getIncomingInterface(inet::NetworkInterface*)</a></td>
+              
+              <td class="coverFnHi">3444</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1949">inet::PimSm::getRpForGroup(inet::L3Address const&amp;) const</a></td>
+              
+              <td class="coverFnHi">98</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1923">inet::PimSm::getUnspecifiedAddress() const</a></td>
+              
+              <td class="coverFnHi">1930</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L126">inet::PimSm::handleCrashOperation(inet::LifecycleOperation*)</a></td>
+              
+              <td class="coverFnLo">0</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L164">inet::PimSm::handleMessageWhenUp(omnetpp::cMessage*)</a></td>
+              
+              <td class="coverFnHi">738</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L79">inet::PimSm::handleStartOperation(inet::LifecycleOperation*)</a></td>
+              
+              <td class="coverFnHi">83</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L119">inet::PimSm::handleStopOperation(inet::LifecycleOperation*)</a></td>
+              
+              <td class="coverFnLo">0</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1473">inet::PimSm::iAmDRHasChanged(inet::NetworkInterface*, bool)</a></td>
+              
+              <td class="coverFnHi">58</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L50">inet::PimSm::initialize(int)</a></td>
+              
+              <td class="coverFnHi">1992</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1412">inet::PimSm::joinDesiredChanged(inet::PimSm::Route*)</a></td>
+              
+              <td class="coverFnHi">75</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1211">inet::PimSm::multicastListenerSourcesChanged(inet::NetworkInterface*, inet::L3Address, inet::McastSourceFilterMode, std::vector&lt;inet::L3Address, std::allocator&lt;inet::L3Address&gt; &gt; const&amp;)</a></td>
+              
+              <td class="coverFnHi">15</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1349">inet::PimSm::multicastPacketArrivedOnNonRpfInterface(inet::PimSm::Route*, int)</a></td>
+              
+              <td class="coverFnHi">4</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1297">inet::PimSm::multicastPacketArrivedOnRpfInterface(inet::PimSm::Route*)</a></td>
+              
+              <td class="coverFnHi">2492</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1380">inet::PimSm::multicastPacketForwarded(inet::Packet*)</a></td>
+              
+              <td class="coverFnHi">1717</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1197">inet::PimSm::multicastReceiverAdded(inet::NetworkInterface*, inet::L3Address)</a></td>
+              
+              <td class="coverFnHi">13</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1185">inet::PimSm::multicastReceiverRemoved(inet::NetworkInterface*, inet::L3Address)</a></td>
+              
+              <td class="coverFnHi">6</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L841">inet::PimSm::processAssertG(inet::PimSm::PimsmInterface*, inet::PimBase::AssertMetric const&amp;)</a></td>
+              
+              <td class="coverFnLo">0</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L688">inet::PimSm::processAssertPacket(inet::Packet*)</a></td>
+              
+              <td class="coverFnLo">0</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L733">inet::PimSm::processAssertSG(inet::PimSm::PimsmInterface*, inet::PimBase::AssertMetric const&amp;)</a></td>
+              
+              <td class="coverFnLo">0</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1083">inet::PimSm::processAssertTimer(omnetpp::cMessage*)</a></td>
+              
+              <td class="coverFnLo">0</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L970">inet::PimSm::processExpiryTimer(omnetpp::cMessage*)</a></td>
+              
+              <td class="coverFnLo">0</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L397">inet::PimSm::processJoinG(inet::L3Address, inet::L3Address, inet::L3Address, int, inet::NetworkInterface*)</a></td>
+              
+              <td class="coverFnHi">26</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L351">inet::PimSm::processJoinPrunePacket(inet::Packet*)</a></td>
+              
+              <td class="coverFnHi">62</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L460">inet::PimSm::processJoinSG(inet::L3Address, inet::L3Address, inet::L3Address, int, inet::NetworkInterface*)</a></td>
+              
+              <td class="coverFnHi">22</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L514">inet::PimSm::processJoinSGrpt(inet::L3Address, inet::L3Address, inet::L3Address, int, inet::NetworkInterface*)</a></td>
+              
+              <td class="coverFnLo">0</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1015">inet::PimSm::processJoinTimer(omnetpp::cMessage*)</a></td>
+              
+              <td class="coverFnHi">11</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L934">inet::PimSm::processKeepAliveTimer(omnetpp::cMessage*)</a></td>
+              
+              <td class="coverFnLo">0</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L519">inet::PimSm::processPruneG(inet::L3Address, inet::L3Address, inet::NetworkInterface*)</a></td>
+              
+              <td class="coverFnHi">7</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1038">inet::PimSm::processPrunePendingTimer(omnetpp::cMessage*)</a></td>
+              
+              <td class="coverFnHi">14</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L553">inet::PimSm::processPruneSG(inet::L3Address, inet::L3Address, inet::L3Address, inet::NetworkInterface*)</a></td>
+              
+              <td class="coverFnHi">7</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L587">inet::PimSm::processPruneSGrpt(inet::L3Address, inet::L3Address, inet::L3Address, inet::NetworkInterface*)</a></td>
+              
+              <td class="coverFnLo">0</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L597">inet::PimSm::processRegisterPacket(inet::Packet*)</a></td>
+              
+              <td class="coverFnHi">26</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L662">inet::PimSm::processRegisterStopPacket(inet::Packet*)</a></td>
+              
+              <td class="coverFnHi">26</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L946">inet::PimSm::processRegisterStopTimer(omnetpp::cMessage*)</a></td>
+              
+              <td class="coverFnHi">16</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L262">inet::PimSm::receiveSignal(omnetpp::cComponent*, int, omnetpp::cObject*, omnetpp::cObject*)</a></td>
+              
+              <td class="coverFnHi">3822</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L2110">inet::PimSm::removeRoute(inet::PimSm::Route*)</a></td>
+              
+              <td class="coverFnLo">0</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1275">inet::PimSm::removeSsmReceiver(inet::NetworkInterface*, inet::L3Address, inet::L3Address)</a></td>
+              
+              <td class="coverFnLo">0</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1959">inet::PimSm::resolveRpfNeighbor(inet::NetworkInterface*, inet::L3Address const&amp;)</a></td>
+              
+              <td class="coverFnHi">47</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1128">inet::PimSm::restartExpiryTimer(inet::PimSm::Route*, inet::NetworkInterface*, int)</a></td>
+              
+              <td class="coverFnLo">0</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L2140">inet::PimSm::restartTimer(omnetpp::cMessage*, double)</a></td>
+              
+              <td class="coverFnHi">772</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1660">inet::PimSm::sendPIMAssert(inet::L3Address, inet::L3Address, inet::PimBase::AssertMetric, inet::NetworkInterface*, bool)</a></td>
+              
+              <td class="coverFnLo">0</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1482">inet::PimSm::sendPIMJoin(inet::L3Address, inet::L3Address, inet::L3Address, inet::PimSm::RouteType)</a></td>
+              
+              <td class="coverFnHi">48</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1521">inet::PimSm::sendPIMPrune(inet::L3Address, inet::L3Address, inet::L3Address, inet::PimSm::RouteType)</a></td>
+              
+              <td class="coverFnHi">14</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1607">inet::PimSm::sendPIMRegister(inet::Packet*, inet::L3Address, int)</a></td>
+              
+              <td class="coverFnHi">10</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1558">inet::PimSm::sendPIMRegisterNull(inet::L3Address, inet::L3Address)</a></td>
+              
+              <td class="coverFnHi">16</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1635">inet::PimSm::sendPIMRegisterStop(inet::L3Address, inet::L3Address, inet::L3Address, inet::L3Address)</a></td>
+              
+              <td class="coverFnHi">26</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1686">inet::PimSm::sendToIP(inet::Packet*, inet::L3Address, inet::L3Address, int, short)</a></td>
+              
+              <td class="coverFnHi">114</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L132">inet::PimSm::stopPIMRouting()</a></td>
+              
+              <td class="coverFnLo">0</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1153">inet::PimSm::unroutableMulticastPacketArrived(inet::L3Address, inet::L3Address)</a></td>
+              
+              <td class="coverFnHi">66</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1834">inet::PimSm::updateAssertTrackingDesired(inet::PimSm::PimsmInterface*)</a></td>
+              
+              <td class="coverFnLo">0</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1816">inet::PimSm::updateCouldAssert(inet::PimSm::DownstreamInterface*)</a></td>
+              
+              <td class="coverFnLo">0</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1776">inet::PimSm::updateDesignatedRouterAddress(inet::NetworkInterface*)</a></td>
+              
+              <td class="coverFnHi">232</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1744">inet::PimSm::updateJoinDesired(inet::PimSm::Route*)</a></td>
+              
+              <td class="coverFnHi">107</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L1975">inet::PimSm::updateUpstreamRpfNeighbor(inet::NetworkInterface*)</a></td>
+              
+              <td class="coverFnHi">116</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L41">inet::PimSm::~PimSm()</a></td>
+              
+              <td class="coverFnHi">83</td>
+              
+              
+            </tr>
+            <tr>
+              <td class="coverFn"><a href="PimSm.cc.gcov.html#L2407">inet::operator&lt;&lt;(std::basic_ostream&lt;char, std::char_traits&lt;char&gt; &gt;&amp;, inet::PimSm::Route const&amp;)</a></td>
+              
+              <td class="coverFnLo">0</td>
+              
+              
+            </tr>
+          </table>
+          <br>
+          </center>
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

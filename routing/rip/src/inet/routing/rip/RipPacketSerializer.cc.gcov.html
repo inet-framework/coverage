@@ -1,0 +1,163 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - routing/rip/src/inet/routing/rip/RipPacketSerializer.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">routing/rip/src/inet/routing/rip</a> - RipPacketSerializer.cc<span style="font-size: 80%;"> (source / <a href="RipPacketSerializer.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">42.1&nbsp;%</td>
+            <td class="headerCovTableEntry">38</td>
+            <td class="headerCovTableEntry">16</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryLo">50.0&nbsp;%</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">1</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryLo">33.3&nbsp;%</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntry">2</td>
+          </tr>
+                  <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2020 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #include &quot;inet/routing/rip/RipPacketSerializer.h&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : </span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &quot;inet/common/packet/serializer/ChunkSerializerRegistry.h&quot;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &quot;inet/routing/rip/RipPacket_m.h&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : </span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : namespace inet {</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : </span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : // TODO</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : // The inet::Rip uses RipPacket and RipEntry for IPv4 (RIPv2, see RFC 1058)</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : // and for IPv6 (RIPng, see RFC 2080).</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : // The serializer accepts only RFC1058 packets with IPv4 addresses.</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : </span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : Register_Serializer(RipPacket, RipPacketSerializer);</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             : </span>
+<span id="L22"><span class="lineNum">      22</span>                 :             : void RipPacketSerializer::serializeFields(MemoryOutputStream&amp; stream, const Ptr&lt;const Chunk&gt;&amp; chunk) const</span>
+<span id="L23"><span class="lineNum">      23</span>                 :<span class="tlaGNC tlaBgGNC">        5841 : {</span></span>
+<span id="L24"><span class="lineNum">      24</span>                 :<span class="tlaGNC">        5841 :     const auto&amp; ripPacket = staticPtrCast&lt;const RipPacket&gt;(chunk);</span></span>
+<span id="L25"><span class="lineNum">      25</span>                 :             : </span>
+<span id="L26"><span class="lineNum">      26</span>                 :<span class="tlaGNC">        5841 :     stream.writeUint8(ripPacket-&gt;getCommand());</span></span>
+<span id="L27"><span class="lineNum">      27</span>                 :<span class="tlaGNC">        5841 :     stream.writeUint8(ripPacket-&gt;getVersion()); // RIP version</span></span>
+<span id="L28"><span class="lineNum">      28</span>                 :             : </span>
+<span id="L29"><span class="lineNum">      29</span>                 :<span class="tlaGNC">        5841 :     stream.writeUint16Be(ripPacket-&gt;getUnused1()); // &quot;must be zero&quot; field (RFC 2453); the entry count is implied by the payload length</span></span>
+<span id="L30"><span class="lineNum">      30</span>                 :<span class="tlaGNC">        5841 :     int numEntries = ripPacket-&gt;getEntryArraySize();</span></span>
+<span id="L31"><span class="lineNum">      31</span>                 :             : </span>
+<span id="L32"><span class="lineNum">      32</span>                 :             :     // iterate over each entry and write to stream</span>
+<span id="L33"><span class="lineNum">      33</span>         [<span class="tlaGBC" title="Branch 0 was taken 36391 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5841 times"> + </span>]:<span class="tlaGNC">       42232 :     for (int i = 0; i &lt; numEntries; ++i) {</span></span>
+<span id="L34"><span class="lineNum">      34</span>                 :<span class="tlaGNC">       36391 :         const RipEntry&amp; entry = ripPacket-&gt;getEntry(i);</span></span>
+<span id="L35"><span class="lineNum">      35</span>                 :<span class="tlaGNC">       36391 :         stream.writeUint16Be(entry.addressFamilyId);</span></span>
+<span id="L36"><span class="lineNum">      36</span>                 :<span class="tlaGNC">       36391 :         stream.writeUint16Be(entry.routeTag);</span></span>
+<span id="L37"><span class="lineNum">      37</span>                 :<span class="tlaGNC">       36391 :         stream.writeIpv4Address(entry.address.toIpv4());</span></span>
+<span id="L38"><span class="lineNum">      38</span>                 :<span class="tlaGNC">       36391 :         stream.writeIpv4Address(Ipv4Address::makeNetmask(entry.prefixLength));</span></span>
+<span id="L39"><span class="lineNum">      39</span>                 :<span class="tlaGNC">       36391 :         stream.writeIpv4Address(entry.nextHop.toIpv4());</span></span>
+<span id="L40"><span class="lineNum">      40</span>                 :<span class="tlaGNC">       36391 :         stream.writeUint32Be(entry.metric);</span></span>
+<span id="L41"><span class="lineNum">      41</span>                 :<span class="tlaGNC">       36391 :     }</span></span>
+<span id="L42"><span class="lineNum">      42</span>                 :<span class="tlaGNC">        5841 : }</span></span>
+<span id="L43"><span class="lineNum">      43</span>                 :             : </span>
+<span id="L44"><span class="lineNum">      44</span>                 :             : const Ptr&lt;Chunk&gt; RipPacketSerializer::deserializeFields(MemoryInputStream&amp; stream, const std::type_info&amp;) const</span>
+<span id="L45"><span class="lineNum">      45</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L46"><span class="lineNum">      46</span>                 :<span class="tlaUNC">           0 :     auto ripPacket = makeShared&lt;RipPacket&gt;();</span></span>
+<span id="L47"><span class="lineNum">      47</span>                 :             : </span>
+<span id="L48"><span class="lineNum">      48</span>                 :<span class="tlaUNC">           0 :     ripPacket-&gt;setCommand((inet::RipCommand)stream.readUint8());</span></span>
+<span id="L49"><span class="lineNum">      49</span>                 :<span class="tlaUNC">           0 :     ripPacket-&gt;setVersion(stream.readUint8());</span></span>
+<span id="L50"><span class="lineNum">      50</span>                 :             : </span>
+<span id="L51"><span class="lineNum">      51</span>                 :<span class="tlaUNC">           0 :     ripPacket-&gt;setUnused1(stream.readUint16Be()); // &quot;must be zero&quot; field (RFC 2453);</span></span>
+<span id="L52"><span class="lineNum">      52</span>                 :             :     // each Route Table Entry is RIP_RTE_SIZE (20 B): AFI(2) + routeTag(2) + address(4) + netmask(4) + nextHop(4) + metric(4)</span>
+<span id="L53"><span class="lineNum">      53</span>                 :<span class="tlaUNC">           0 :     int numEntries = stream.getRemainingLength().get&lt;B&gt;() / RIP_RTE_SIZE.get&lt;B&gt;();</span></span>
+<span id="L54"><span class="lineNum">      54</span>                 :<span class="tlaUNC">           0 :     ripPacket-&gt;setEntryArraySize(numEntries);</span></span>
+<span id="L55"><span class="lineNum">      55</span>                 :             : </span>
+<span id="L56"><span class="lineNum">      56</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     for (int i = 0; i &lt; numEntries; ++i) {</span></span>
+<span id="L57"><span class="lineNum">      57</span>                 :<span class="tlaUNC">           0 :         RipEntry entry = {};</span></span>
+<span id="L58"><span class="lineNum">      58</span>                 :             : </span>
+<span id="L59"><span class="lineNum">      59</span>                 :<span class="tlaUNC">           0 :         entry.addressFamilyId = (inet::RipAf)stream.readUint16Be();</span></span>
+<span id="L60"><span class="lineNum">      60</span>                 :             :         // TODO Valid addressFamilyId values: 0, 2, 0xFFFF</span>
+<span id="L61"><span class="lineNum">      61</span>                 :             :         // 0 and 2 means IPv4, 0xFFFF means Authentication packet</span>
+<span id="L62"><span class="lineNum">      62</span>                 :<span class="tlaUNC">           0 :         entry.routeTag = stream.readUint16Be();</span></span>
+<span id="L63"><span class="lineNum">      63</span>                 :<span class="tlaUNC">           0 :         entry.address = stream.readIpv4Address();</span></span>
+<span id="L64"><span class="lineNum">      64</span>                 :<span class="tlaUNC">           0 :         Ipv4Address netmask = stream.readIpv4Address();</span></span>
+<span id="L65"><span class="lineNum">      65</span>                 :<span class="tlaUNC">           0 :         entry.prefixLength = netmask.getNetmaskLength();</span></span>
+<span id="L66"><span class="lineNum">      66</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         if (netmask != Ipv4Address::makeNetmask(entry.prefixLength))</span></span>
+<span id="L67"><span class="lineNum">      67</span>                 :<span class="tlaUNC">           0 :             ripPacket-&gt;markIncorrect(); // netmask can not be converted into prefixLength       //TODO should replace prefixLength to netmask</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :<span class="tlaUNC">           0 :         entry.nextHop = stream.readIpv4Address();</span></span>
+<span id="L69"><span class="lineNum">      69</span>                 :<span class="tlaUNC">           0 :         entry.metric = stream.readUint32Be();</span></span>
+<span id="L70"><span class="lineNum">      70</span>                 :             : </span>
+<span id="L71"><span class="lineNum">      71</span>                 :<span class="tlaUNC">           0 :         ripPacket-&gt;setEntry(i, entry);</span></span>
+<span id="L72"><span class="lineNum">      72</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L73"><span class="lineNum">      73</span>                 :             : </span>
+<span id="L74"><span class="lineNum">      74</span>                 :<span class="tlaUNC">           0 :     return ripPacket;</span></span>
+<span id="L75"><span class="lineNum">      75</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L76"><span class="lineNum">      76</span>                 :             : </span>
+<span id="L77"><span class="lineNum">      77</span>                 :             : } // namespace inet</span>
+<span id="L78"><span class="lineNum">      78</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - linklayer/ieee80211/mac/originator/src/inet/linklayer/ieee80211/mac/originator/OriginatorQosAckPolicy.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../../../index.html">top level</a> - <a href="index.html">linklayer/ieee80211/mac/originator/src/inet/linklayer/ieee80211/mac/originator</a> - OriginatorQosAckPolicy.cc<span style="font-size: 80%;"> (source / <a href="OriginatorQosAckPolicy.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">98.8&nbsp;%</td>
+            <td class="headerCovTableEntry">85</td>
+            <td class="headerCovTableEntry">84</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">9</td>
+            <td class="headerCovTableEntry">9</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryMed">87.1&nbsp;%</td>
+            <td class="headerCovTableEntry">70</td>
+            <td class="headerCovTableEntry">61</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2016 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #include &quot;inet/linklayer/ieee80211/mac/originator/OriginatorQosAckPolicy.h&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : </span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &lt;tuple&gt;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : </span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : namespace inet {</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : namespace ieee80211 {</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : </span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : Define_Module(OriginatorQosAckPolicy);</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : </span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : void OriginatorQosAckPolicy::initialize(int stage)</span>
+<span id="L18"><span class="lineNum">      18</span>                 :<span class="tlaGNC tlaBgGNC">       23920 : {</span></span>
+<span id="L19"><span class="lineNum">      19</span>                 :<span class="tlaGNC">       23920 :     ModeSetListener::initialize(stage);</span></span>
+<span id="L20"><span class="lineNum">      20</span>         [<span class="tlaGBC" title="Branch 0 was taken 999 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 22921 times"> + </span>]:<span class="tlaGNC">       23920 :     if (stage == INITSTAGE_LOCAL) {</span></span>
+<span id="L21"><span class="lineNum">      21</span>                 :<span class="tlaGNC">         999 :         rateSelection = check_and_cast&lt;IQosRateSelection *&gt;(getModuleByPath(par(&quot;rateSelectionModule&quot;)));</span></span>
+<span id="L22"><span class="lineNum">      22</span>                 :<span class="tlaGNC">         999 :         maxBlockAckPolicyFrameLength = par(&quot;maxBlockAckPolicyFrameLength&quot;);</span></span>
+<span id="L23"><span class="lineNum">      23</span>                 :<span class="tlaGNC">         999 :         blockAckReqThreshold = par(&quot;blockAckReqThreshold&quot;);</span></span>
+<span id="L24"><span class="lineNum">      24</span>                 :<span class="tlaGNC">         999 :         blockAckTimeout = par(&quot;blockAckTimeout&quot;);</span></span>
+<span id="L25"><span class="lineNum">      25</span>                 :<span class="tlaGNC">         999 :         ackTimeout = par(&quot;ackTimeout&quot;);</span></span>
+<span id="L26"><span class="lineNum">      26</span>                 :<span class="tlaGNC">         999 :     }</span></span>
+<span id="L27"><span class="lineNum">      27</span>                 :<span class="tlaGNC">       23920 : }</span></span>
+<span id="L28"><span class="lineNum">      28</span>                 :             : </span>
+<span id="L29"><span class="lineNum">      29</span>                 :             : bool OriginatorQosAckPolicy::isAckNeeded(const Ptr&lt;const Ieee80211MgmtHeader&gt;&amp; header) const</span>
+<span id="L30"><span class="lineNum">      30</span>                 :<span class="tlaGNC">       34781 : {</span></span>
+<span id="L31"><span class="lineNum">      31</span>                 :<span class="tlaGNC">       34781 :     return !header-&gt;getReceiverAddress().isMulticast();</span></span>
+<span id="L32"><span class="lineNum">      32</span>                 :<span class="tlaGNC">       34781 : }</span></span>
+<span id="L33"><span class="lineNum">      33</span>                 :             : </span>
+<span id="L34"><span class="lineNum">      34</span>                 :             : bool OriginatorQosAckPolicy::isBlockAckReqNeeded(InProgressFrames *frames, TxopProcedure *txop, IOriginatorBlockAckAgreementHandler *agreements) const</span>
+<span id="L35"><span class="lineNum">      35</span>                 :<span class="tlaGNC">     2617972 : {</span></span>
+<span id="L36"><span class="lineNum">      36</span>                 :<span class="tlaGNC">     2617972 :     return std::get&lt;2&gt;(computeBlockAckReqParameters(frames, txop, agreements)) != -1;</span></span>
+<span id="L37"><span class="lineNum">      37</span>                 :<span class="tlaGNC">     2617972 : }</span></span>
+<span id="L38"><span class="lineNum">      38</span>                 :             : </span>
+<span id="L39"><span class="lineNum">      39</span>                 :             : std::tuple&lt;MacAddress, SequenceNumberCyclic, Tid&gt; OriginatorQosAckPolicy::computeBlockAckReqParameters(InProgressFrames *frames, TxopProcedure *txop, IOriginatorBlockAckAgreementHandler *agreements) const</span>
+<span id="L40"><span class="lineNum">      40</span>                 :<span class="tlaGNC">     2668258 : {</span></span>
+<span id="L41"><span class="lineNum">      41</span>                 :<span class="tlaGNC">     2668258 :     using Id = std::pair&lt;MacAddress, Tid&gt;;</span></span>
+<span id="L42"><span class="lineNum">      42</span>                 :<span class="tlaGNC">     2668258 :     std::map&lt;Id, std::vector&lt;Packet *&gt;&gt; groups;</span></span>
+<span id="L43"><span class="lineNum">      43</span>         [<span class="tlaGBC" title="Branch 0 was taken 3424593 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2668258 times"> + </span>]:<span class="tlaGNC">     4025705 :     for (auto frame : frames-&gt;getOutstandingFrames()) {</span></span>
+<span id="L44"><span class="lineNum">      44</span>                 :<span class="tlaGNC">     3424593 :         auto header = frame-&gt;peekAtFront&lt;Ieee80211DataHeader&gt;();</span></span>
+<span id="L45"><span class="lineNum">      45</span>         [<span class="tlaGBC" title="Branch 0 was taken 3424577 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 16 times"> + </span>]:<span class="tlaGNC">     3424593 :         auto agreement = agreements ? agreements-&gt;getAgreement(header-&gt;getReceiverAddress(), header-&gt;getTid()) : nullptr;</span></span>
+<span id="L46"><span class="lineNum">      46</span> [<span class="tlaGBC" title="Branch 0 was taken 3424577 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 16 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 3424577 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">     3424593 :         if (agreement &amp;&amp; agreement-&gt;getIsAddbaResponseReceived() &amp;&amp; agreement-&gt;containsSequence(header-&gt;getSequenceNumber()))</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 3424574 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3 times"> + </span>]
+<span id="L47"><span class="lineNum">      47</span>                 :<span class="tlaGNC">     3424574 :             groups[{header-&gt;getReceiverAddress(), header-&gt;getTid()}].push_back(frame);</span></span>
+<span id="L48"><span class="lineNum">      48</span>                 :<span class="tlaGNC">     3424593 :     }</span></span>
+<span id="L49"><span class="lineNum">      49</span>         [<span class="tlaGBC" title="Branch 0 was taken 1608277 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1059981 times"> + </span>]:<span class="tlaGNC">     2668258 :     if (groups.empty())</span></span>
+<span id="L50"><span class="lineNum">      50</span>                 :<span class="tlaGNC">     1608277 :         return std::make_tuple(MacAddress::UNSPECIFIED_ADDRESS, SequenceNumberCyclic(0), Tid(-1));</span></span>
+<span id="L51"><span class="lineNum">      51</span>                 :<span class="tlaGNC">     1059981 :     auto candidate = frames-&gt;peekFrameToTransmit();</span></span>
+<span id="L52"><span class="lineNum">      52</span>         [<span class="tlaGBC" title="Branch 0 was taken 1014449 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 45532 times"> + </span>]:<span class="tlaGNC">     1059981 :     auto data = candidate ? dynamicPtrCast&lt;const Ieee80211DataHeader&gt;(candidate-&gt;peekAtFront&lt;Ieee80211MacHeader&gt;()) : nullptr;</span></span>
+<span id="L53"><span class="lineNum">      53</span>                 :<span class="tlaGNC">     1059981 :     auto result = std::make_tuple(MacAddress::UNSPECIFIED_ADDRESS, SequenceNumberCyclic(0), Tid(-1));</span></span>
+<span id="L54"><span class="lineNum">      54</span>                 :<span class="tlaGNC">     1059981 :     simtime_t oldestArrival = SIMTIME_MAX;</span></span>
+<span id="L55"><span class="lineNum">      55</span>         [<span class="tlaGBC" title="Branch 0 was taken 1059985 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1059981 times"> + </span>]:<span class="tlaGNC">     1059985 :     for (const auto&amp; entry : groups) {</span></span>
+<span id="L56"><span class="lineNum">      56</span>                 :<span class="tlaGNC">     1059985 :         const auto&amp; id = entry.first;</span></span>
+<span id="L57"><span class="lineNum">      57</span>                 :<span class="tlaGNC">     1059985 :         auto agreement = agreements-&gt;getAgreement(id.first, id.second);</span></span>
+<span id="L58"><span class="lineNum">      58</span>                 :             :         // INET BAR policy defers a short group only for DATA within that group's window.</span>
+<span id="L59"><span class="lineNum">      59</span> [<span class="tlaGBC" title="Branch 0 was taken 791195 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 268790 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 744016 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 47179 times"> + </span>]:<span class="tlaGNC">     1059985 :         if ((int)entry.second.size() &lt; blockAckReqThreshold &amp;&amp; data &amp;&amp;</span></span>
+<span id="L60"><span class="lineNum">      60</span> [<span class="tlaGBC" title="Branch 0 was taken 743895 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 121 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 743864 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 31 times"> + </span>]:<span class="tlaGNC">     1059985 :             data-&gt;getReceiverAddress() == id.first &amp;&amp; data-&gt;getTid() == id.second &amp;&amp;</span></span>
+<span id="L61"><span class="lineNum">      61</span>         [<span class="tlaGBC" title="Branch 0 was taken 743602 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 262 times"> + </span>]:<span class="tlaGNC">     1059985 :             agreement-&gt;containsSequence(frames-&gt;getCandidateSequenceNumber(candidate)))</span></span>
+<span id="L62"><span class="lineNum">      62</span>                 :<span class="tlaGNC">      743602 :             continue;</span></span>
+<span id="L63"><span class="lineNum">      63</span>                 :<span class="tlaGNC">      316383 :         auto start = agreement-&gt;getStartingSequenceNumber();</span></span>
+<span id="L64"><span class="lineNum">      64</span>                 :<span class="tlaGNC">      316383 :         int oldestOffset = -1;</span></span>
+<span id="L65"><span class="lineNum">      65</span>                 :<span class="tlaGNC">      316383 :         simtime_t arrival = SIMTIME_MAX;</span></span>
+<span id="L66"><span class="lineNum">      66</span>         [<span class="tlaGBC" title="Branch 0 was taken 1442806 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 316383 times"> + </span>]:<span class="tlaGNC">     1442806 :         for (auto frame : entry.second) {</span></span>
+<span id="L67"><span class="lineNum">      67</span>                 :<span class="tlaGNC">     1442806 :             auto sequence = frame-&gt;peekAtFront&lt;Ieee80211DataHeader&gt;()-&gt;getSequenceNumber();</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :<span class="tlaGNC">     1442806 :             int offset = OriginatorBlockAckAgreement::computeSequenceDistance(start, sequence);</span></span>
+<span id="L69"><span class="lineNum">      69</span> [<span class="tlaGBC" title="Branch 0 was taken 316383 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1126423 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1126423 times"> + </span>]:<span class="tlaGNC">     1442806 :             if (oldestOffset == -1 || offset &lt; oldestOffset) {</span></span>
+<span id="L70"><span class="lineNum">      70</span>                 :<span class="tlaGNC">      316383 :                 oldestOffset = offset;</span></span>
+<span id="L71"><span class="lineNum">      71</span>                 :<span class="tlaGNC">      316383 :                 arrival = frame-&gt;getArrivalTime();</span></span>
+<span id="L72"><span class="lineNum">      72</span>                 :<span class="tlaGNC">      316383 :             }</span></span>
+<span id="L73"><span class="lineNum">      73</span>         [<span class="tlaGBC" title="Branch 0 was taken 447189 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 679234 times"> + </span>]:<span class="tlaGNC">     1126423 :             else if (offset == oldestOffset)</span></span>
+<span id="L74"><span class="lineNum">      74</span>                 :<span class="tlaGNC">      447189 :                 arrival = std::min(arrival, frame-&gt;getArrivalTime());</span></span>
+<span id="L75"><span class="lineNum">      75</span>                 :<span class="tlaGNC">     1442806 :         }</span></span>
+<span id="L76"><span class="lineNum">      76</span>                 :             :         // Map order supplies the peer/TID tie break.</span>
+<span id="L77"><span class="lineNum">      77</span> [<span class="tlaGBC" title="Branch 0 was taken 316380 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 3 times"> + </span>]:<span class="tlaGNC">      316383 :         if (std::get&lt;2&gt;(result) == -1 || arrival &lt; oldestArrival) {</span></span>
+<span id="L78"><span class="lineNum">      78</span>                 :<span class="tlaGNC">      316380 :             oldestArrival = arrival;</span></span>
+<span id="L79"><span class="lineNum">      79</span>                 :<span class="tlaGNC">      316380 :             result = std::make_tuple(id.first, start + oldestOffset, id.second);</span></span>
+<span id="L80"><span class="lineNum">      80</span>                 :<span class="tlaGNC">      316380 :         }</span></span>
+<span id="L81"><span class="lineNum">      81</span>                 :<span class="tlaGNC">      316383 :     }</span></span>
+<span id="L82"><span class="lineNum">      82</span>                 :<span class="tlaGNC">     1059981 :     return result;</span></span>
+<span id="L83"><span class="lineNum">      83</span>                 :<span class="tlaGNC">     2668258 : }</span></span>
+<span id="L84"><span class="lineNum">      84</span>                 :             : </span>
+<span id="L85"><span class="lineNum">      85</span>                 :             : AckPolicy OriginatorQosAckPolicy::computeAckPolicy(Packet *packet, const Ptr&lt;const Ieee80211DataHeader&gt;&amp; header, OriginatorBlockAckAgreement *agreement) const</span>
+<span id="L86"><span class="lineNum">      86</span>                 :<span class="tlaGNC">      546379 : {</span></span>
+<span id="L87"><span class="lineNum">      87</span>         [<span class="tlaGBC" title="Branch 0 was taken 416925 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 129454 times"> + </span>]:<span class="tlaGNC">      546379 :     if (agreement == nullptr)</span></span>
+<span id="L88"><span class="lineNum">      88</span>                 :<span class="tlaGNC">      416925 :         return AckPolicy::NORMAL_ACK;</span></span>
+<span id="L89"><span class="lineNum">      89</span> [<span class="tlaGBC" title="Branch 0 was taken 129454 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 17354 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 112100 times"> + </span>]:<span class="tlaGNC">      129454 :     if (agreement-&gt;getIsAddbaResponseReceived() &amp;&amp; header-&gt;getAMsduPresent() &amp;&amp; !agreement-&gt;isAMsduPermitted())</span></span>
+<span class="lineNum">        </span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 17354 times"> + </span>]
+<span id="L90"><span class="lineNum">      90</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         throw cRuntimeError(&quot;A-MSDU is not permitted by both ADDBA flags&quot;);</span></span>
+<span id="L91"><span class="lineNum">      91</span> [<span class="tlaGBC" title="Branch 0 was taken 129454 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 118874 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 10580 times"> + </span>]:<span class="tlaGNC tlaBgGNC">      129454 :     if (agreement-&gt;getIsAddbaResponseReceived() &amp;&amp; isBlockAckPolicyEligibleFrame(packet, header)) {</span></span>
+<span id="L92"><span class="lineNum">      92</span>         [<span class="tlaGBC" title="Branch 0 was taken 118866 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 8 times"> + </span>]:<span class="tlaGNC">      118874 :         if (checkAgreementPolicy(header, agreement))</span></span>
+<span id="L93"><span class="lineNum">      93</span>                 :<span class="tlaGNC">      118866 :             return AckPolicy::BLOCK_ACK;</span></span>
+<span id="L94"><span class="lineNum">      94</span>                 :<span class="tlaGNC">           8 :         else</span></span>
+<span id="L95"><span class="lineNum">      95</span>                 :<span class="tlaGNC">           8 :             return AckPolicy::NORMAL_ACK;</span></span>
+<span id="L96"><span class="lineNum">      96</span>                 :<span class="tlaGNC">      118874 :     }</span></span>
+<span id="L97"><span class="lineNum">      97</span>                 :<span class="tlaGNC">       10580 :     else</span></span>
+<span id="L98"><span class="lineNum">      98</span>                 :<span class="tlaGNC">       10580 :         return AckPolicy::NORMAL_ACK;</span></span>
+<span id="L99"><span class="lineNum">      99</span>                 :<span class="tlaGNC">      129454 : }</span></span>
+<span id="L100"><span class="lineNum">     100</span>                 :             : </span>
+<span id="L101"><span class="lineNum">     101</span>                 :             : bool OriginatorQosAckPolicy::isBlockAckPolicyEligibleFrame(Packet *packet, const Ptr&lt;const Ieee80211DataHeader&gt;&amp; header) const</span>
+<span id="L102"><span class="lineNum">     102</span>                 :<span class="tlaGNC">      267956 : {</span></span>
+<span id="L103"><span class="lineNum">     103</span> [<span class="tlaGBC" title="Branch 0 was taken 267956 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 241159 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 26797 times"> + </span>]:<span class="tlaGNC">      267956 :     return header-&gt;getType() == ST_DATA_WITH_QOS &amp;&amp; packet-&gt;getByteLength() &lt; maxBlockAckPolicyFrameLength;</span></span>
+<span id="L104"><span class="lineNum">     104</span>                 :<span class="tlaGNC">      267956 : }</span></span>
+<span id="L105"><span class="lineNum">     105</span>                 :             : </span>
+<span id="L106"><span class="lineNum">     106</span>                 :             : bool OriginatorQosAckPolicy::checkAgreementPolicy(const Ptr&lt;const Ieee80211DataHeader&gt;&amp; header, OriginatorBlockAckAgreement *agreement) const</span>
+<span id="L107"><span class="lineNum">     107</span>                 :<span class="tlaGNC">      118874 : {</span></span>
+<span id="L108"><span class="lineNum">     108</span> [<span class="tlaGBC" title="Branch 0 was taken 19723 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 99151 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 99151 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">      118874 :     bool aMsduOk = agreement-&gt;isAMsduPermitted() || !header-&gt;getAMsduPresent();</span></span>
+<span id="L109"><span class="lineNum">     109</span>                 :             :     // TODO bool baPolicy = agreement-&gt;getIsDelayedBlockAckPolicySupported() || !frame-&gt;getAckPolicy();</span>
+<span id="L110"><span class="lineNum">     110</span> [<span class="tlaGBC" title="Branch 0 was taken 118874 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 118866 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 8 times"> + </span>]:<span class="tlaGNC">      118874 :     return aMsduOk &amp;&amp; agreement-&gt;containsSequence(header-&gt;getSequenceNumber());</span></span>
+<span id="L111"><span class="lineNum">     111</span>                 :<span class="tlaGNC">      118874 : }</span></span>
+<span id="L112"><span class="lineNum">     112</span>                 :             : </span>
+<span id="L113"><span class="lineNum">     113</span>                 :             : //</span>
+<span id="L114"><span class="lineNum">     114</span>                 :             : // After transmitting an MPDU that requires an ACK frame as a response (see Annex G), the STA shall wait for an</span>
+<span id="L115"><span class="lineNum">     115</span>                 :             : // ACKTimeout interval, with a value of aSIFSTime + aSlotTime + aPHY-RX-START-Delay, starting at the</span>
+<span id="L116"><span class="lineNum">     116</span>                 :             : // PHY-TXEND.confirm primitive. If a PHY-RXSTART.indication primitive does not occur during the</span>
+<span id="L117"><span class="lineNum">     117</span>                 :             : // ACKTimeout interval, the STA concludes that the transmission of the MPDU has failed, and this STA shall</span>
+<span id="L118"><span class="lineNum">     118</span>                 :             : // invoke its backoff procedure upon expiration of the ACKTimeout interval.</span>
+<span id="L119"><span class="lineNum">     119</span>                 :             : //</span>
+<span id="L120"><span class="lineNum">     120</span>                 :             : simtime_t OriginatorQosAckPolicy::getAckTimeout(Packet *packet, const Ptr&lt;const Ieee80211DataOrMgmtHeader&gt;&amp; dataOrMgmtHeader) const</span>
+<span id="L121"><span class="lineNum">     121</span>                 :<span class="tlaGNC">      306436 : {</span></span>
+<span id="L122"><span class="lineNum">     122</span>         [<span class="tlaGBC" title="Branch 0 was taken 306216 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 220 times"> + </span>]:<span class="tlaGNC">      306436 :     return ackTimeout == -1 ? modeSet-&gt;getSifsTime() + modeSet-&gt;getSlotTime() + rateSelection-&gt;computeResponseAckFrameMode(packet, dataOrMgmtHeader, ResponseQueryRole::PREDICT)-&gt;getPhyRxStartDelay() : ackTimeout;</span></span>
+<span id="L123"><span class="lineNum">     123</span>                 :<span class="tlaGNC">      306436 : }</span></span>
+<span id="L124"><span class="lineNum">     124</span>                 :             : </span>
+<span id="L125"><span class="lineNum">     125</span>                 :             : simtime_t OriginatorQosAckPolicy::getBlockAckTimeout(Packet *packet, const Ptr&lt;const Ieee80211BlockAckReq&gt;&amp; blockAckReq) const</span>
+<span id="L126"><span class="lineNum">     126</span>                 :<span class="tlaGNC">       24931 : {</span></span>
+<span id="L127"><span class="lineNum">     127</span>         [<span class="tlaGBC" title="Branch 0 was taken 24722 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 209 times"> + </span>]:<span class="tlaGNC">       24931 :     return blockAckTimeout == -1 ? modeSet-&gt;getSifsTime() + modeSet-&gt;getSlotTime() + rateSelection-&gt;computeResponseBlockAckFrameMode(packet, blockAckReq, ResponseQueryRole::PREDICT)-&gt;getPhyRxStartDelay() : blockAckTimeout;</span></span>
+<span id="L128"><span class="lineNum">     128</span>                 :<span class="tlaGNC">       24931 : }</span></span>
+<span id="L129"><span class="lineNum">     129</span>                 :             : </span>
+<span id="L130"><span class="lineNum">     130</span>                 :             : } /* namespace ieee80211 */</span>
+<span id="L131"><span class="lineNum">     131</span>                 :             : } /* namespace inet */</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

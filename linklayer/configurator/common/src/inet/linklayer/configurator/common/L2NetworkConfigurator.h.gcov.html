@@ -1,0 +1,231 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - linklayer/configurator/common/src/inet/linklayer/configurator/common/L2NetworkConfigurator.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../index.html">top level</a> - <a href="index.html">linklayer/configurator/common/src/inet/linklayer/configurator/common</a> - L2NetworkConfigurator.h<span style="font-size: 80%;"> (source / <a href="L2NetworkConfigurator.h.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryMed">80.0&nbsp;%</td>
+            <td class="headerCovTableEntry">10</td>
+            <td class="headerCovTableEntry">8</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryMed">80.0&nbsp;%</td>
+            <td class="headerCovTableEntry">10</td>
+            <td class="headerCovTableEntry">8</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">2</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2013 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #ifndef __INET_L2NETWORKCONFIGURATOR_H</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : #define __INET_L2NETWORKCONFIGURATOR_H</span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : </span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &quot;inet/common/SimpleModule.h&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &lt;algorithm&gt;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : #include &lt;vector&gt;</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : </span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : #include &quot;inet/common/PatternMatcher.h&quot;</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : #include &quot;inet/common/Topology.h&quot;</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : #include &quot;inet/linklayer/ieee8021d/common/Ieee8021dInterfaceData.h&quot;</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : #include &quot;inet/networklayer/contract/IInterfaceTable.h&quot;</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : </span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : namespace inet {</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             : </span>
+<span id="L22"><span class="lineNum">      22</span>                 :             : /**</span>
+<span id="L23"><span class="lineNum">      23</span>                 :             :  * Computes L2 configuration of the network. See the NED definition for details.</span>
+<span id="L24"><span class="lineNum">      24</span>                 :             :  */</span>
+<span id="L25"><span class="lineNum">      25</span>                 :             : class INET_API L2NetworkConfigurator : public SimpleModule</span>
+<span id="L26"><span class="lineNum">      26</span>                 :             : {</span>
+<span id="L27"><span class="lineNum">      27</span>                 :             :   public:</span>
+<span id="L28"><span class="lineNum">      28</span>                 :<span class="tlaGNC tlaBgGNC">          20 :     L2NetworkConfigurator() {}</span></span>
+<span id="L29"><span class="lineNum">      29</span>                 :             :     typedef Ieee8021dInterfaceData::PortInfo PortInfo;</span>
+<span id="L30"><span class="lineNum">      30</span>                 :             : </span>
+<span id="L31"><span class="lineNum">      31</span>                 :             :   protected:</span>
+<span id="L32"><span class="lineNum">      32</span>                 :             :     class InterfaceInfo;</span>
+<span id="L33"><span class="lineNum">      33</span>                 :             : </span>
+<span id="L34"><span class="lineNum">      34</span>                 :             :     /**</span>
+<span id="L35"><span class="lineNum">      35</span>                 :             :      * Represents a node in the network.</span>
+<span id="L36"><span class="lineNum">      36</span>                 :             :      */</span>
+<span id="L37"><span class="lineNum">      37</span>                 :             :     class INET_API Node : public Topology::Node {</span>
+<span id="L38"><span class="lineNum">      38</span>                 :             :       public:</span>
+<span id="L39"><span class="lineNum">      39</span>                 :             :         cModule *module;</span>
+<span id="L40"><span class="lineNum">      40</span>                 :             :         IInterfaceTable *interfaceTable;</span>
+<span id="L41"><span class="lineNum">      41</span>                 :             :         std::vector&lt;InterfaceInfo *&gt; interfaceInfos;</span>
+<span id="L42"><span class="lineNum">      42</span>                 :             : </span>
+<span id="L43"><span class="lineNum">      43</span>                 :             :       public:</span>
+<span id="L44"><span class="lineNum">      44</span>                 :<span class="tlaGNC">         234 :         Node(cModule *module) : Topology::Node(module-&gt;getId()) { this-&gt;module = module; interfaceTable = nullptr; }</span></span>
+<span id="L45"><span class="lineNum">      45</span>         [<span class="tlaGBC" title="Branch 0 was taken 614 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 234 times"> + </span>]:<span class="tlaGNC">         848 :         ~Node() { for (size_t i = 0; i &lt; interfaceInfos.size(); i++) delete interfaceInfos[i]; }</span></span>
+<span id="L46"><span class="lineNum">      46</span>                 :             :     };</span>
+<span id="L47"><span class="lineNum">      47</span>                 :             : </span>
+<span id="L48"><span class="lineNum">      48</span>                 :             :     /**</span>
+<span id="L49"><span class="lineNum">      49</span>                 :             :      * Represents an interface in the network.</span>
+<span id="L50"><span class="lineNum">      50</span>                 :             :      */</span>
+<span id="L51"><span class="lineNum">      51</span>                 :             :     class INET_API InterfaceInfo : public cObject {</span>
+<span id="L52"><span class="lineNum">      52</span>                 :             :       public:</span>
+<span id="L53"><span class="lineNum">      53</span>                 :             :         Node *node;</span>
+<span id="L54"><span class="lineNum">      54</span>                 :             :         Node *childNode;</span>
+<span id="L55"><span class="lineNum">      55</span>                 :             :         NetworkInterface *networkInterface;</span>
+<span id="L56"><span class="lineNum">      56</span>                 :             :         PortInfo portData;</span>
+<span id="L57"><span class="lineNum">      57</span>                 :             : </span>
+<span id="L58"><span class="lineNum">      58</span>                 :             :       public:</span>
+<span id="L59"><span class="lineNum">      59</span>                 :             :         InterfaceInfo(Node *node, Node *childNode, NetworkInterface *networkInterface);</span>
+<span id="L60"><span class="lineNum">      60</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         virtual std::string getFullPath() const override { return networkInterface-&gt;getInterfaceFullPath(); }</span></span>
+<span id="L61"><span class="lineNum">      61</span>                 :             :     };</span>
+<span id="L62"><span class="lineNum">      62</span>                 :             : </span>
+<span id="L63"><span class="lineNum">      63</span>                 :             :     class INET_API Matcher {</span>
+<span id="L64"><span class="lineNum">      64</span>                 :             :       protected:</span>
+<span id="L65"><span class="lineNum">      65</span>                 :             :         bool matchesany;</span>
+<span id="L66"><span class="lineNum">      66</span>                 :             :         std::vector&lt;inet::PatternMatcher *&gt; matchers; // TODO replace with a MatchExpression once it becomes available in OMNeT++</span>
+<span id="L67"><span class="lineNum">      67</span>                 :             : </span>
+<span id="L68"><span class="lineNum">      68</span>                 :             :       public:</span>
+<span id="L69"><span class="lineNum">      69</span>                 :             :         Matcher(const char *pattern);</span>
+<span id="L70"><span class="lineNum">      70</span>                 :             :         ~Matcher();</span>
+<span id="L71"><span class="lineNum">      71</span>                 :             : </span>
+<span id="L72"><span class="lineNum">      72</span>                 :             :         bool matches(const char *s);</span>
+<span id="L73"><span class="lineNum">      73</span>                 :<span class="tlaGNC tlaBgGNC">        2461 :         bool matchesAny() { return matchesany; }</span></span>
+<span id="L74"><span class="lineNum">      74</span>                 :             :     };</span>
+<span id="L75"><span class="lineNum">      75</span>                 :             : </span>
+<span id="L76"><span class="lineNum">      76</span>                 :             :     class INET_API Link : public Topology::Link {</span>
+<span id="L77"><span class="lineNum">      77</span>                 :             :       public:</span>
+<span id="L78"><span class="lineNum">      78</span>                 :             :         InterfaceInfo *sourceInterfaceInfo;</span>
+<span id="L79"><span class="lineNum">      79</span>                 :             :         InterfaceInfo *destinationInterfaceInfo;</span>
+<span id="L80"><span class="lineNum">      80</span>                 :             : </span>
+<span id="L81"><span class="lineNum">      81</span>                 :             :       public:</span>
+<span id="L82"><span class="lineNum">      82</span>                 :<span class="tlaGNC">         614 :         Link() { sourceInterfaceInfo = nullptr; destinationInterfaceInfo = nullptr; }</span></span>
+<span id="L83"><span class="lineNum">      83</span>                 :             :     };</span>
+<span id="L84"><span class="lineNum">      84</span>                 :             : </span>
+<span id="L85"><span class="lineNum">      85</span>                 :             :     class INET_API L2Topology : public Topology {</span>
+<span id="L86"><span class="lineNum">      86</span>                 :             :       protected:</span>
+<span id="L87"><span class="lineNum">      87</span>                 :<span class="tlaGNC">         234 :         virtual Node *createNode(cModule *module) override { return new L2NetworkConfigurator::Node(module); }</span></span>
+<span id="L88"><span class="lineNum">      88</span>                 :<span class="tlaGNC">         614 :         virtual Link *createLink() override { return new L2NetworkConfigurator::Link(); }</span></span>
+<span id="L89"><span class="lineNum">      89</span>                 :             :     };</span>
+<span id="L90"><span class="lineNum">      90</span>                 :             : </span>
+<span id="L91"><span class="lineNum">      91</span>                 :             :     cXMLElement *configuration = nullptr;</span>
+<span id="L92"><span class="lineNum">      92</span>                 :             :     L2Topology topology;</span>
+<span id="L93"><span class="lineNum">      93</span>                 :             :     Node *rootNode = nullptr;</span>
+<span id="L94"><span class="lineNum">      94</span>                 :             : </span>
+<span id="L95"><span class="lineNum">      95</span>                 :             :   protected:</span>
+<span id="L96"><span class="lineNum">      96</span>                 :             :     virtual void initialize(int stage) override;</span>
+<span id="L97"><span class="lineNum">      97</span>                 :<span class="tlaGNC">         480 :     virtual int numInitStages() const override { return NUM_INIT_STAGES; }</span></span>
+<span id="L98"><span class="lineNum">      98</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     virtual void handleMessage(cMessage *msg) override { throw cRuntimeError(&quot;this module doesn't handle messages, it runs only in initialize()&quot;); }</span></span>
+<span id="L99"><span class="lineNum">      99</span>                 :             : </span>
+<span id="L100"><span class="lineNum">     100</span>                 :             :     /**</span>
+<span id="L101"><span class="lineNum">     101</span>                 :             :      * Extracts network topology by walking through the module hierarchy.</span>
+<span id="L102"><span class="lineNum">     102</span>                 :             :      * Creates vertices from modules having @networkNode property.</span>
+<span id="L103"><span class="lineNum">     103</span>                 :             :      * Creates edges from connections (wired and wireless) between network interfaces.</span>
+<span id="L104"><span class="lineNum">     104</span>                 :             :      */</span>
+<span id="L105"><span class="lineNum">     105</span>                 :             :     virtual void extractTopology(L2Topology&amp; topology);</span>
+<span id="L106"><span class="lineNum">     106</span>                 :             : </span>
+<span id="L107"><span class="lineNum">     107</span>                 :             :     /**</span>
+<span id="L108"><span class="lineNum">     108</span>                 :             :      * Computes the Layer 2 network configuration for all nodes in the network.</span>
+<span id="L109"><span class="lineNum">     109</span>                 :             :      * The result of the computation is only stored in the network configurator.</span>
+<span id="L110"><span class="lineNum">     110</span>                 :             :      */</span>
+<span id="L111"><span class="lineNum">     111</span>                 :             :     virtual void computeConfiguration();</span>
+<span id="L112"><span class="lineNum">     112</span>                 :             : </span>
+<span id="L113"><span class="lineNum">     113</span>                 :             :     /**</span>
+<span id="L114"><span class="lineNum">     114</span>                 :             :      * Prints the computed per-port Layer 2 configuration (link cost, priority,</span>
+<span id="L115"><span class="lineNum">     115</span>                 :             :      * edge flag) for every interface to the module output. Controlled by the</span>
+<span id="L116"><span class="lineNum">     116</span>                 :             :      * &quot;dumpConfiguration&quot; parameter.</span>
+<span id="L117"><span class="lineNum">     117</span>                 :             :      */</span>
+<span id="L118"><span class="lineNum">     118</span>                 :             :     virtual void dumpConfiguration();</span>
+<span id="L119"><span class="lineNum">     119</span>                 :             : </span>
+<span id="L120"><span class="lineNum">     120</span>                 :             :     // helper functions</span>
+<span id="L121"><span class="lineNum">     121</span>                 :             :     virtual bool linkContainsMatchingHostExcept(InterfaceInfo *currentInfo, Matcher&amp; hostMatcher, cModule *exceptModule);</span>
+<span id="L122"><span class="lineNum">     122</span>                 :             :     void ensureConfigurationComputed(L2Topology&amp; topology);</span>
+<span id="L123"><span class="lineNum">     123</span>                 :             :     virtual Topology::Link *findLinkOut(Node *node, int gateId);</span>
+<span id="L124"><span class="lineNum">     124</span>                 :             :     /**</span>
+<span id="L125"><span class="lineNum">     125</span>                 :             :      * Returns the default port path cost recommended for the speed of the link</span>
+<span id="L126"><span class="lineNum">     126</span>                 :             :      * attached to the given interface (IEEE 802.1D-2004, Table 17-3).</span>
+<span id="L127"><span class="lineNum">     127</span>                 :             :      */</span>
+<span id="L128"><span class="lineNum">     128</span>                 :             :     virtual unsigned int getRecommendedLinkCost(Node *node, NetworkInterface *networkInterface);</span>
+<span id="L129"><span class="lineNum">     129</span>                 :             :     void configureInterface(InterfaceInfo *interfaceInfo);</span>
+<span id="L130"><span class="lineNum">     130</span>                 :             : </span>
+<span id="L131"><span class="lineNum">     131</span>                 :             :   public:</span>
+<span id="L132"><span class="lineNum">     132</span>                 :             :     /**</span>
+<span id="L133"><span class="lineNum">     133</span>                 :             :      * Reads interface elements from the configuration file and stores result.</span>
+<span id="L134"><span class="lineNum">     134</span>                 :             :      */</span>
+<span id="L135"><span class="lineNum">     135</span>                 :             :     virtual void readInterfaceConfiguration(Node *rootNode);</span>
+<span id="L136"><span class="lineNum">     136</span>                 :             : </span>
+<span id="L137"><span class="lineNum">     137</span>                 :             :     /**</span>
+<span id="L138"><span class="lineNum">     138</span>                 :             :      * Configures the provided interface based on the current network configuration.</span>
+<span id="L139"><span class="lineNum">     139</span>                 :             :      */</span>
+<span id="L140"><span class="lineNum">     140</span>                 :             :     virtual void configureInterface(NetworkInterface *networkInterface);</span>
+<span id="L141"><span class="lineNum">     141</span>                 :             : };</span>
+<span id="L142"><span class="lineNum">     142</span>                 :             : </span>
+<span id="L143"><span class="lineNum">     143</span>                 :             : } // namespace inet</span>
+<span id="L144"><span class="lineNum">     144</span>                 :             : </span>
+<span id="L145"><span class="lineNum">     145</span>                 :             : #endif</span>
+<span id="L146"><span class="lineNum">     146</span>                 :             : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

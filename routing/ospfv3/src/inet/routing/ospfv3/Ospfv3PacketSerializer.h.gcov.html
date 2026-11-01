@@ -1,0 +1,167 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - routing/ospfv3/src/inet/routing/ospfv3/Ospfv3PacketSerializer.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">routing/ospfv3/src/inet/routing/ospfv3</a> - Ospfv3PacketSerializer.h<span style="font-size: 80%;"> (source / <a href="Ospfv3PacketSerializer.h.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2026 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #ifndef __INET_OSPFV3PACKETSERIALIZER_H</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : #define __INET_OSPFV3PACKETSERIALIZER_H</span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : </span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &quot;inet/common/packet/serializer/FieldsChunkSerializer.h&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &quot;inet/routing/ospfv3/Ospfv3Packet_m.h&quot;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : </span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : namespace inet {</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : </span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : namespace ospf {</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : class OspfPacketSerializer;</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : } // namespace ospf</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : </span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : namespace ospfv3 {</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             : </span>
+<span id="L22"><span class="lineNum">      22</span>                 :             : /**</span>
+<span id="L23"><span class="lineNum">      23</span>                 :             :  * Converts between Ospfv3Packet and binary (network byte order) OSPFv3 data</span>
+<span id="L24"><span class="lineNum">      24</span>                 :             :  * (RFC 5340 Appendix A).</span>
+<span id="L25"><span class="lineNum">      25</span>                 :             :  */</span>
+<span id="L26"><span class="lineNum">      26</span>                 :             : class INET_API Ospfv3PacketSerializer : public FieldsChunkSerializer</span>
+<span id="L27"><span class="lineNum">      27</span>                 :             : {</span>
+<span id="L28"><span class="lineNum">      28</span>                 :             :   private:</span>
+<span id="L29"><span class="lineNum">      29</span>                 :             :     static void serializeOspfHeader(MemoryOutputStream&amp; stream, const Ptr&lt;const Ospfv3Packet&gt;&amp; ospfPacket);</span>
+<span id="L30"><span class="lineNum">      30</span>                 :             :     static uint16_t deserializeOspfHeader(MemoryInputStream&amp; stream, Ptr&lt;Ospfv3Packet&gt;&amp; ospfPacket);</span>
+<span id="L31"><span class="lineNum">      31</span>                 :             : </span>
+<span id="L32"><span class="lineNum">      32</span>                 :             :     static void serializeOspfOptions(MemoryOutputStream&amp; stream, const Ospfv3Options&amp; options);</span>
+<span id="L33"><span class="lineNum">      33</span>                 :             :     static void deserializeOspfOptions(MemoryInputStream&amp; stream, Ospfv3Options&amp; options);</span>
+<span id="L34"><span class="lineNum">      34</span>                 :             : </span>
+<span id="L35"><span class="lineNum">      35</span>                 :             :     static void serializeLsaHeader(MemoryOutputStream&amp; stream, const Ospfv3LsaHeader&amp; lsaHeader);</span>
+<span id="L36"><span class="lineNum">      36</span>                 :             :     static void deserializeLsaHeader(MemoryInputStream&amp; stream, Ospfv3LsaHeader&amp; lsaHeader);</span>
+<span id="L37"><span class="lineNum">      37</span>                 :             : </span>
+<span id="L38"><span class="lineNum">      38</span>                 :             :     // a full 128-bit (16-octet) IPv6 address, per RFC 5340 -- used for the Link-LSA</span>
+<span id="L39"><span class="lineNum">      39</span>                 :             :     // Link-local Interface Address (A.4.8); address *prefixes* are variable-length</span>
+<span id="L40"><span class="lineNum">      40</span>                 :             :     // (see serializePrefixAddress)</span>
+<span id="L41"><span class="lineNum">      41</span>                 :             :     static void serializeFixedAddress(MemoryOutputStream&amp; stream, const L3Address&amp; addr);</span>
+<span id="L42"><span class="lineNum">      42</span>                 :             :     static L3Address deserializeFixedAddress(MemoryInputStream&amp; stream);</span>
+<span id="L43"><span class="lineNum">      43</span>                 :             : </span>
+<span id="L44"><span class="lineNum">      44</span>                 :             :     // an RFC 5340 A.4.1 variable-length address prefix: ((prefixLen + 31) / 32) 32-bit words</span>
+<span id="L45"><span class="lineNum">      45</span>                 :             :     static void serializePrefixAddress(MemoryOutputStream&amp; stream, const L3Address&amp; addr, uint8_t prefixLen);</span>
+<span id="L46"><span class="lineNum">      46</span>                 :             :     static L3Address deserializePrefixAddress(MemoryInputStream&amp; stream, uint8_t prefixLen);</span>
+<span id="L47"><span class="lineNum">      47</span>                 :             : </span>
+<span id="L48"><span class="lineNum">      48</span>                 :             :     // an address-prefix encoding (RFC 5340 A.4.1): 4-octet fixed part + variable-length address</span>
+<span id="L49"><span class="lineNum">      49</span>                 :             :     static void serializePrefix0(MemoryOutputStream&amp; stream, const Ospfv3LsaPrefix0&amp; prefix);</span>
+<span id="L50"><span class="lineNum">      50</span>                 :             :     static void deserializePrefix0(MemoryInputStream&amp; stream, Ospfv3LsaPrefix0&amp; prefix);</span>
+<span id="L51"><span class="lineNum">      51</span>                 :             :     static void serializePrefixMetric(MemoryOutputStream&amp; stream, const Ospfv3LsaPrefixMetric&amp; prefix);</span>
+<span id="L52"><span class="lineNum">      52</span>                 :             :     static void deserializePrefixMetric(MemoryInputStream&amp; stream, Ospfv3LsaPrefixMetric&amp; prefix);</span>
+<span id="L53"><span class="lineNum">      53</span>                 :             : </span>
+<span id="L54"><span class="lineNum">      54</span>                 :             :     static void serializeRouterLsa(MemoryOutputStream&amp; stream, const Ospfv3RouterLsa&amp; lsa);</span>
+<span id="L55"><span class="lineNum">      55</span>                 :             :     static void deserializeRouterLsa(MemoryInputStream&amp; stream, Ospfv3RouterLsa&amp; lsa);</span>
+<span id="L56"><span class="lineNum">      56</span>                 :             :     static void serializeNetworkLsa(MemoryOutputStream&amp; stream, const Ospfv3NetworkLsa&amp; lsa);</span>
+<span id="L57"><span class="lineNum">      57</span>                 :             :     static void deserializeNetworkLsa(MemoryInputStream&amp; stream, Ospfv3NetworkLsa&amp; lsa);</span>
+<span id="L58"><span class="lineNum">      58</span>                 :             :     static void serializeInterAreaPrefixLsa(MemoryOutputStream&amp; stream, const Ospfv3InterAreaPrefixLsa&amp; lsa);</span>
+<span id="L59"><span class="lineNum">      59</span>                 :             :     static void deserializeInterAreaPrefixLsa(MemoryInputStream&amp; stream, Ospfv3InterAreaPrefixLsa&amp; lsa);</span>
+<span id="L60"><span class="lineNum">      60</span>                 :             :     static void serializeLinkLsa(MemoryOutputStream&amp; stream, const Ospfv3LinkLsa&amp; lsa);</span>
+<span id="L61"><span class="lineNum">      61</span>                 :             :     static void deserializeLinkLsa(MemoryInputStream&amp; stream, Ospfv3LinkLsa&amp; lsa);</span>
+<span id="L62"><span class="lineNum">      62</span>                 :             :     static void serializeIntraAreaPrefixLsa(MemoryOutputStream&amp; stream, const Ospfv3IntraAreaPrefixLsa&amp; lsa);</span>
+<span id="L63"><span class="lineNum">      63</span>                 :             :     static void deserializeIntraAreaPrefixLsa(MemoryInputStream&amp; stream, Ospfv3IntraAreaPrefixLsa&amp; lsa);</span>
+<span id="L64"><span class="lineNum">      64</span>                 :             : </span>
+<span id="L65"><span class="lineNum">      65</span>                 :             :   protected:</span>
+<span id="L66"><span class="lineNum">      66</span>                 :             :     virtual void serializeFields(MemoryOutputStream&amp; stream, const Ptr&lt;const Chunk&gt;&amp; chunk) const override;</span>
+<span id="L67"><span class="lineNum">      67</span>                 :             :     virtual const Ptr&lt;Chunk&gt; deserializeFields(MemoryInputStream&amp; stream, const std::type_info&amp;) const override;</span>
+<span id="L68"><span class="lineNum">      68</span>                 :             : </span>
+<span id="L69"><span class="lineNum">      69</span>                 :             :   public:</span>
+<span id="L70"><span class="lineNum">      70</span>                 :<span class="tlaGNC tlaBgGNC">       25590 :     Ospfv3PacketSerializer() : FieldsChunkSerializer() {}</span></span>
+<span id="L71"><span class="lineNum">      71</span>                 :             : </span>
+<span id="L72"><span class="lineNum">      72</span>                 :             :     // Serializes a single LSA (header + body) to the stream. Exposed so setLsaChecksum() (see</span>
+<span id="L73"><span class="lineNum">      73</span>                 :             :     // Ospfv3Checksum) can compute the RFC 2328 / RFC 5340 LS Checksum (Fletcher) over a finalized LSA.</span>
+<span id="L74"><span class="lineNum">      74</span>                 :             :     static void serializeLsa(MemoryOutputStream&amp; stream, const Ospfv3Lsa&amp; lsa);</span>
+<span id="L75"><span class="lineNum">      75</span>                 :             : </span>
+<span id="L76"><span class="lineNum">      76</span>                 :             :     friend class inet::ospf::OspfPacketSerializer;</span>
+<span id="L77"><span class="lineNum">      77</span>                 :             : };</span>
+<span id="L78"><span class="lineNum">      78</span>                 :             : </span>
+<span id="L79"><span class="lineNum">      79</span>                 :             : } // namespace ospfv3</span>
+<span id="L80"><span class="lineNum">      80</span>                 :             : } // namespace inet</span>
+<span id="L81"><span class="lineNum">      81</span>                 :             : </span>
+<span id="L82"><span class="lineNum">      82</span>                 :             : #endif</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

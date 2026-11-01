@@ -1,0 +1,535 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - linklayer/ieee80211/mac/src/inet/linklayer/ieee80211/mac/Ieee80211Mac.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../../index.html">top level</a> - <a href="index.html">linklayer/ieee80211/mac/src/inet/linklayer/ieee80211/mac</a> - Ieee80211Mac.cc<span style="font-size: 80%;"> (source / <a href="Ieee80211Mac.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryMed">83.8&nbsp;%</td>
+            <td class="headerCovTableEntry">333</td>
+            <td class="headerCovTableEntry">279</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">92.3&nbsp;%</td>
+            <td class="headerCovTableEntry">26</td>
+            <td class="headerCovTableEntry">24</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryLo">70.4&nbsp;%</td>
+            <td class="headerCovTableEntry">142</td>
+            <td class="headerCovTableEntry">100</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2016 OpenSim Ltd.</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : //</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : //</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : </span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #include &quot;inet/linklayer/ieee80211/mac/Ieee80211Mac.h&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : </span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &lt;algorithm&gt;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : </span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &quot;inet/common/INETUtils.h&quot;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : #include &quot;inet/common/ModuleAccess.h&quot;</span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : #include &quot;inet/common/ProtocolTag_m.h&quot;</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : #include &quot;inet/common/packet/Message.h&quot;</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : #include &quot;inet/common/packet/Packet.h&quot;</span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : #include &quot;inet/linklayer/common/InterfaceTag_m.h&quot;</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : #include &quot;inet/linklayer/common/MacAddressTag_m.h&quot;</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : #include &quot;inet/linklayer/common/UserPriorityTag_m.h&quot;</span>
+<span id="L20"><span class="lineNum">      20</span>                 :             : #include &quot;inet/linklayer/ieee80211/llc/IIeee80211Llc.h&quot;</span>
+<span id="L21"><span class="lineNum">      21</span>                 :             : #include &quot;inet/linklayer/ieee80211/llc/LlcProtocolTag_m.h&quot;</span>
+<span id="L22"><span class="lineNum">      22</span>                 :             : #include &quot;inet/linklayer/ieee80211/mac/Ieee80211Frame_m.h&quot;</span>
+<span id="L23"><span class="lineNum">      23</span>                 :             : #include &quot;inet/linklayer/ieee80211/mac/Ieee80211SubtypeTag_m.h&quot;</span>
+<span id="L24"><span class="lineNum">      24</span>                 :             : #include &quot;inet/linklayer/ieee80211/mac/Rx.h&quot;</span>
+<span id="L25"><span class="lineNum">      25</span>                 :             : #include &quot;inet/linklayer/ieee80211/mac/contract/IContention.h&quot;</span>
+<span id="L26"><span class="lineNum">      26</span>                 :             : #include &quot;inet/linklayer/ieee80211/mac/contract/IRx.h&quot;</span>
+<span id="L27"><span class="lineNum">      27</span>                 :             : #include &quot;inet/linklayer/ieee80211/mac/contract/ITx.h&quot;</span>
+<span id="L28"><span class="lineNum">      28</span>                 :             : #include &quot;inet/networklayer/contract/IInterfaceTable.h&quot;</span>
+<span id="L29"><span class="lineNum">      29</span>                 :             : #include &quot;inet/physicallayer/wireless/ieee80211/packetlevel/Ieee80211ControlInfo_m.h&quot;</span>
+<span id="L30"><span class="lineNum">      30</span>                 :             : #include &quot;inet/physicallayer/wireless/ieee80211/packetlevel/Ieee80211Receiver.h&quot;</span>
+<span id="L31"><span class="lineNum">      31</span>                 :             : #include &quot;inet/physicallayer/wireless/ieee80211/packetlevel/Ieee80211Tag_m.h&quot;</span>
+<span id="L32"><span class="lineNum">      32</span>                 :             : #include &quot;inet/physicallayer/wireless/ieee80211/packetlevel/Ieee80211Transmitter.h&quot;</span>
+<span id="L33"><span class="lineNum">      33</span>                 :             : </span>
+<span id="L34"><span class="lineNum">      34</span>                 :             : namespace inet {</span>
+<span id="L35"><span class="lineNum">      35</span>                 :             : namespace ieee80211 {</span>
+<span id="L36"><span class="lineNum">      36</span>                 :             : </span>
+<span id="L37"><span class="lineNum">      37</span>                 :             : void Ieee80211Mac::resetPeerAssociationContext(const MacAddress&amp; peer)</span>
+<span id="L38"><span class="lineNum">      38</span>                 :<span class="tlaGNC tlaBgGNC">         218 : {</span></span>
+<span id="L39"><span class="lineNum">      39</span>                 :<span class="tlaGNC">         218 :     Enter_Method(&quot;resetPeerAssociationContext&quot;);</span></span>
+<span id="L40"><span class="lineNum">      40</span>         [<span class="tlaGBC" title="Branch 0 was taken 41 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 177 times"> + </span>]:<span class="tlaGNC">         218 :     if (hcf)</span></span>
+<span id="L41"><span class="lineNum">      41</span>                 :<span class="tlaGNC">          41 :         hcf-&gt;resetPeer(peer);</span></span>
+<span id="L42"><span class="lineNum">      42</span>                 :<span class="tlaGNC">         218 : }</span></span>
+<span id="L43"><span class="lineNum">      43</span>                 :             : </span>
+<span id="L44"><span class="lineNum">      44</span>                 :             : using namespace inet::physicallayer;</span>
+<span id="L45"><span class="lineNum">      45</span>                 :             : </span>
+<span id="L46"><span class="lineNum">      46</span>                 :             : Define_Module(Ieee80211Mac);</span>
+<span id="L47"><span class="lineNum">      47</span>                 :             : </span>
+<span id="L48"><span class="lineNum">      48</span>                 :             : simsignal_t Ieee80211Mac::frameTransmissionOutcomeSignal = cComponent::registerSignal(&quot;frameTransmissionOutcome&quot;);</span>
+<span id="L49"><span class="lineNum">      49</span>                 :             : </span>
+<span id="L50"><span class="lineNum">      50</span>                 :             : Ieee80211Mac::Ieee80211Mac()</span>
+<span id="L51"><span class="lineNum">      51</span>                 :<span class="tlaGNC">        2687 : {</span></span>
+<span id="L52"><span class="lineNum">      52</span>                 :<span class="tlaGNC">        2687 : }</span></span>
+<span id="L53"><span class="lineNum">      53</span>                 :             : </span>
+<span id="L54"><span class="lineNum">      54</span>                 :             : Ieee80211Mac::~Ieee80211Mac()</span>
+<span id="L55"><span class="lineNum">      55</span>                 :<span class="tlaGNC">        2687 : {</span></span>
+<span id="L56"><span class="lineNum">      56</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2687 times"> + </span>]:<span class="tlaGNC">        2687 :     if (pendingRadioConfigMsg)</span></span>
+<span id="L57"><span class="lineNum">      57</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         delete pendingRadioConfigMsg;</span></span>
+<span id="L58"><span class="lineNum">      58</span>                 :<span class="tlaGNC tlaBgGNC">        2687 : }</span></span>
+<span id="L59"><span class="lineNum">      59</span>                 :             : </span>
+<span id="L60"><span class="lineNum">      60</span>                 :             : void Ieee80211Mac::initialize(int stage)</span>
+<span id="L61"><span class="lineNum">      61</span>                 :<span class="tlaGNC">       64411 : {</span></span>
+<span id="L62"><span class="lineNum">      62</span>                 :<span class="tlaGNC">       64411 :     MacProtocolBase::initialize(stage);</span></span>
+<span id="L63"><span class="lineNum">      63</span>         [<span class="tlaGBC" title="Branch 0 was taken 2686 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 61725 times"> + </span>]:<span class="tlaGNC">       64411 :     if (stage == INITSTAGE_LOCAL) {</span></span>
+<span id="L64"><span class="lineNum">      64</span>                 :<span class="tlaGNC">        2686 :         modeSet = Ieee80211ModeSet::getModeSet(par(&quot;modeSet&quot;));</span></span>
+<span id="L65"><span class="lineNum">      65</span>                 :<span class="tlaGNC">        2686 :         fcsMode = parseFcsMode(par(&quot;fcsMode&quot;));</span></span>
+<span id="L66"><span class="lineNum">      66</span>                 :<span class="tlaGNC">        2686 :         mib.reference(this, &quot;mibModule&quot;, true);</span></span>
+<span id="L67"><span class="lineNum">      67</span>                 :<span class="tlaGNC">        2686 :         mib-&gt;qos = par(&quot;qosStation&quot;);</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :<span class="tlaGNC">        2686 :     }</span></span>
+<span id="L69"><span class="lineNum">      69</span>         [<span class="tlaGBC" title="Branch 0 was taken 2686 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 59039 times"> + </span>]:<span class="tlaGNC">       61725 :     else if (stage == INITSTAGE_LINK_LAYER) {</span></span>
+<span id="L70"><span class="lineNum">      70</span>                 :<span class="tlaGNC">        2686 :         cModule *llcModule = gate(&quot;upperLayerOut&quot;)-&gt;getNextGate()-&gt;getOwnerModule();</span></span>
+<span id="L71"><span class="lineNum">      71</span>                 :<span class="tlaGNC">        2686 :         llc = check_and_cast&lt;IIeee80211Llc *&gt;(llcModule);</span></span>
+<span id="L72"><span class="lineNum">      72</span>                 :<span class="tlaGNC">        2686 :         cModule *radioModule = gate(&quot;lowerLayerOut&quot;)-&gt;getNextGate()-&gt;getOwnerModule();</span></span>
+<span id="L73"><span class="lineNum">      73</span>                 :<span class="tlaGNC">        2686 :         radioModule-&gt;subscribe(IRadio::radioModeChangedSignal, this);</span></span>
+<span id="L74"><span class="lineNum">      74</span>                 :<span class="tlaGNC">        2686 :         radioModule-&gt;subscribe(IRadio::receptionStateChangedSignal, this);</span></span>
+<span id="L75"><span class="lineNum">      75</span>                 :<span class="tlaGNC">        2686 :         radioModule-&gt;subscribe(IRadio::transmissionStateChangedSignal, this);</span></span>
+<span id="L76"><span class="lineNum">      76</span>                 :<span class="tlaGNC">        2686 :         radioModule-&gt;subscribe(IRadio::receivedSignalPartChangedSignal, this);</span></span>
+<span id="L77"><span class="lineNum">      77</span>                 :<span class="tlaGNC">        2686 :         radio = check_and_cast&lt;IRadio *&gt;(radioModule);</span></span>
+<span id="L78"><span class="lineNum">      78</span>                 :<span class="tlaGNC">        2686 :         ds = check_and_cast&lt;IDs *&gt;(getSubmodule(&quot;ds&quot;));</span></span>
+<span id="L79"><span class="lineNum">      79</span>                 :<span class="tlaGNC">        2686 :         rx = check_and_cast&lt;IRx *&gt;(getSubmodule(&quot;rx&quot;));</span></span>
+<span id="L80"><span class="lineNum">      80</span>                 :<span class="tlaGNC">        2686 :         tx = check_and_cast&lt;ITx *&gt;(getSubmodule(&quot;tx&quot;));</span></span>
+<span id="L81"><span class="lineNum">      81</span>                 :<span class="tlaGNC">        2686 :         int operationalHtSpatialStreamLimit = std::min(radio-&gt;getAntenna()-&gt;getNumAntennas(),</span></span>
+<span id="L82"><span class="lineNum">      82</span>                 :<span class="tlaGNC">        2686 :                 modeSet-&gt;getMaximumNumberOfSpatialStreams());</span></span>
+<span id="L83"><span class="lineNum">      83</span>                 :<span class="tlaGNC">        2686 :         std::set&lt;Hz&gt; operationalChannelWidths;</span></span>
+<span id="L84"><span class="lineNum">      84</span>         [<span class="tlaGBC" title="Branch 0 was taken 520 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2166 times"> + </span>]:<span class="tlaGNC">        2686 :         if (modeSet-&gt;isHtOperationSupported()) {</span></span>
+<span id="L85"><span class="lineNum">      85</span>                 :<span class="tlaGNC">         520 :             const auto *transmitter = dynamic_cast&lt;const Ieee80211Transmitter *&gt;(radio-&gt;getTransmitter());</span></span>
+<span id="L86"><span class="lineNum">      86</span>                 :<span class="tlaGNC">         520 :             const auto *receiver = dynamic_cast&lt;const Ieee80211Receiver *&gt;(radio-&gt;getReceiver());</span></span>
+<span id="L87"><span class="lineNum">      87</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 520 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 520 times"> + </span>]:<span class="tlaGNC">         520 :             if (transmitter == nullptr || receiver == nullptr)</span></span>
+<span id="L88"><span class="lineNum">      88</span>                 :<span class="tlaUNC tlaBgUNC">           0 :                 throw cRuntimeError(&quot;HT operation requires Ieee80211Transmitter and Ieee80211Receiver&quot;);</span></span>
+<span id="L89"><span class="lineNum">      89</span>         [<span class="tlaGBC" title="Branch 0 was taken 1040 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 520 times"> + </span>]:<span class="tlaGNC tlaBgGNC">         520 :             for (auto channelWidth : modeSet-&gt;getHtSupportedChannelWidths())</span></span>
+<span id="L90"><span class="lineNum">      90</span>         [<span class="tlaGBC" title="Branch 0 was taken 521 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 519 times"> + </span>]:<span class="tlaGNC">        1040 :                 if (transmitter-&gt;isHtChannelWidthSupported(channelWidth) &amp;&amp;</span></span>
+<span id="L91"><span class="lineNum">      91</span>         [<span class="tlaGBC" title="Branch 0 was taken 521 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        1040 :                         receiver-&gt;isHtChannelWidthSupported(channelWidth))</span></span>
+<span id="L92"><span class="lineNum">      92</span>                 :<span class="tlaGNC">         521 :                     operationalChannelWidths.insert(channelWidth);</span></span>
+<span id="L93"><span class="lineNum">      93</span>                 :<span class="tlaGNC">         520 :         }</span></span>
+<span id="L94"><span class="lineNum">      94</span>                 :<span class="tlaGNC">        2686 :         mib-&gt;updateLocalHtCapabilities(modeSet, operationalChannelWidths, operationalHtSpatialStreamLimit);</span></span>
+<span id="L95"><span class="lineNum">      95</span>                 :<span class="tlaGNC">        2686 :         emit(modesetChangedSignal, modeSet);</span></span>
+<span id="L96"><span class="lineNum">      96</span>         [<span class="tlaGBC" title="Branch 0 was taken 2656 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 30 times"> + </span>]:<span class="tlaGNC">        2686 :         if (isUp())</span></span>
+<span id="L97"><span class="lineNum">      97</span>                 :<span class="tlaGNC">        2656 :             initializeRadioMode();</span></span>
+<span id="L98"><span class="lineNum">      98</span>                 :<span class="tlaGNC">        2686 :         rx = check_and_cast&lt;IRx *&gt;(getSubmodule(&quot;rx&quot;));</span></span>
+<span id="L99"><span class="lineNum">      99</span>                 :<span class="tlaGNC">        2686 :         tx = check_and_cast&lt;ITx *&gt;(getSubmodule(&quot;tx&quot;));</span></span>
+<span id="L100"><span class="lineNum">     100</span>                 :<span class="tlaGNC">        2686 :         dcf = check_and_cast&lt;Dcf *&gt;(getSubmodule(&quot;dcf&quot;));</span></span>
+<span id="L101"><span class="lineNum">     101</span>                 :<span class="tlaGNC">        2686 :         hcf = check_and_cast_nullable&lt;Hcf *&gt;(getSubmodule(&quot;hcf&quot;));</span></span>
+<span id="L102"><span class="lineNum">     102</span> [<span class="tlaGBC" title="Branch 0 was taken 999 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1687 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 999 times"> + </span>]:<span class="tlaGNC">        2686 :         if (mib-&gt;qos &amp;&amp; !hcf)</span></span>
+<span id="L103"><span class="lineNum">     103</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             throw cRuntimeError(&quot;Missing hcf module, required for QoS&quot;);</span></span>
+<span id="L104"><span class="lineNum">     104</span>                 :<span class="tlaGNC tlaBgGNC">        2686 :     }</span></span>
+<span id="L105"><span class="lineNum">     105</span>                 :<span class="tlaGNC">       64411 : }</span></span>
+<span id="L106"><span class="lineNum">     106</span>                 :             : </span>
+<span id="L107"><span class="lineNum">     107</span>                 :             : void Ieee80211Mac::initializeRadioMode()</span>
+<span id="L108"><span class="lineNum">     108</span>                 :<span class="tlaGNC">        2717 : {</span></span>
+<span id="L109"><span class="lineNum">     109</span>                 :<span class="tlaGNC">        2717 :     const char *initialRadioMode = par(&quot;initialRadioMode&quot;);</span></span>
+<span id="L110"><span class="lineNum">     110</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2717 times"> + </span>]:<span class="tlaGNC">        2717 :     if (!strcmp(initialRadioMode, &quot;off&quot;))</span></span>
+<span id="L111"><span class="lineNum">     111</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         radio-&gt;setRadioMode(IRadio::RADIO_MODE_OFF);</span></span>
+<span id="L112"><span class="lineNum">     112</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2717 times"> + </span>]:<span class="tlaGNC tlaBgGNC">        2717 :     else if (!strcmp(initialRadioMode, &quot;sleep&quot;))</span></span>
+<span id="L113"><span class="lineNum">     113</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         radio-&gt;setRadioMode(IRadio::RADIO_MODE_SLEEP);</span></span>
+<span id="L114"><span class="lineNum">     114</span>         [<span class="tlaGBC" title="Branch 0 was taken 2717 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC tlaBgGNC">        2717 :     else if (!strcmp(initialRadioMode, &quot;receiver&quot;))</span></span>
+<span id="L115"><span class="lineNum">     115</span>                 :<span class="tlaGNC">        2717 :         radio-&gt;setRadioMode(IRadio::RADIO_MODE_RECEIVER);</span></span>
+<span id="L116"><span class="lineNum">     116</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC tlaBgUNC">           0 :     else if (!strcmp(initialRadioMode, &quot;transmitter&quot;))</span></span>
+<span id="L117"><span class="lineNum">     117</span>                 :<span class="tlaUNC">           0 :         radio-&gt;setRadioMode(IRadio::RADIO_MODE_TRANSMITTER);</span></span>
+<span id="L118"><span class="lineNum">     118</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     else if (!strcmp(initialRadioMode, &quot;transceiver&quot;))</span></span>
+<span id="L119"><span class="lineNum">     119</span>                 :<span class="tlaUNC">           0 :         radio-&gt;setRadioMode(IRadio::RADIO_MODE_TRANSCEIVER);</span></span>
+<span id="L120"><span class="lineNum">     120</span>                 :<span class="tlaUNC">           0 :     else</span></span>
+<span id="L121"><span class="lineNum">     121</span>                 :<span class="tlaUNC">           0 :         throw cRuntimeError(&quot;Unknown initialRadioMode&quot;);</span></span>
+<span id="L122"><span class="lineNum">     122</span>                 :<span class="tlaGNC tlaBgGNC">        2717 : }</span></span>
+<span id="L123"><span class="lineNum">     123</span>                 :             : </span>
+<span id="L124"><span class="lineNum">     124</span>                 :             : const MacAddress&amp; Ieee80211Mac::isInterfaceRegistered()</span>
+<span id="L125"><span class="lineNum">     125</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L126"><span class="lineNum">     126</span>                 :             : //    if (!par(&quot;multiMac&quot;))</span>
+<span id="L127"><span class="lineNum">     127</span>                 :             : //        return MacAddress::UNSPECIFIED_ADDRESS;</span>
+<span id="L128"><span class="lineNum">     128</span>                 :<span class="tlaUNC">           0 :     IInterfaceTable *ift = findModuleFromPar&lt;IInterfaceTable&gt;(par(&quot;interfaceTableModule&quot;), this);</span></span>
+<span id="L129"><span class="lineNum">     129</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (!ift)</span></span>
+<span id="L130"><span class="lineNum">     130</span>                 :<span class="tlaUNC">           0 :         return MacAddress::UNSPECIFIED_ADDRESS;</span></span>
+<span id="L131"><span class="lineNum">     131</span>                 :<span class="tlaUNC">           0 :     cModule *interfaceModule = findModuleUnderContainingNode(this);</span></span>
+<span id="L132"><span class="lineNum">     132</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (!interfaceModule)</span></span>
+<span id="L133"><span class="lineNum">     133</span>                 :<span class="tlaUNC">           0 :         throw cRuntimeError(&quot;NIC module not found in the host&quot;);</span></span>
+<span id="L134"><span class="lineNum">     134</span>                 :<span class="tlaUNC">           0 :     std::string interfaceName = utils::stripnonalnum(interfaceModule-&gt;getFullName());</span></span>
+<span id="L135"><span class="lineNum">     135</span>                 :<span class="tlaUNC">           0 :     NetworkInterface *e = ift-&gt;findInterfaceByName(interfaceName.c_str());</span></span>
+<span id="L136"><span class="lineNum">     136</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :     if (e)</span></span>
+<span id="L137"><span class="lineNum">     137</span>                 :<span class="tlaUNC">           0 :         return e-&gt;getMacAddress();</span></span>
+<span id="L138"><span class="lineNum">     138</span>                 :<span class="tlaUNC">           0 :     return MacAddress::UNSPECIFIED_ADDRESS;</span></span>
+<span id="L139"><span class="lineNum">     139</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L140"><span class="lineNum">     140</span>                 :             : </span>
+<span id="L141"><span class="lineNum">     141</span>                 :             : void Ieee80211Mac::configureNetworkInterface()</span>
+<span id="L142"><span class="lineNum">     142</span>                 :<span class="tlaGNC tlaBgGNC">        2686 : {</span></span>
+<span id="L143"><span class="lineNum">     143</span>                 :             :     // TODO the mib module should use the mac address from NetworkInterface</span>
+<span id="L144"><span class="lineNum">     144</span>                 :<span class="tlaGNC">        2686 :     mib-&gt;address = networkInterface-&gt;getMacAddress();</span></span>
+<span id="L145"><span class="lineNum">     145</span>                 :<span class="tlaGNC">        2686 :     networkInterface-&gt;setMtu(par(&quot;mtu&quot;));</span></span>
+<span id="L146"><span class="lineNum">     146</span>                 :             :     // capabilities</span>
+<span id="L147"><span class="lineNum">     147</span>                 :<span class="tlaGNC">        2686 :     networkInterface-&gt;setBroadcast(true);</span></span>
+<span id="L148"><span class="lineNum">     148</span>                 :<span class="tlaGNC">        2686 :     networkInterface-&gt;setMulticast(true);</span></span>
+<span id="L149"><span class="lineNum">     149</span>                 :<span class="tlaGNC">        2686 :     networkInterface-&gt;setPointToPoint(false);</span></span>
+<span id="L150"><span class="lineNum">     150</span>                 :<span class="tlaGNC">        2686 : }</span></span>
+<span id="L151"><span class="lineNum">     151</span>                 :             : </span>
+<span id="L152"><span class="lineNum">     152</span>                 :             : void Ieee80211Mac::handleMessageWhenUp(cMessage *message)</span>
+<span id="L153"><span class="lineNum">     153</span>                 :<span class="tlaGNC">     5687389 : {</span></span>
+<span id="L154"><span class="lineNum">     154</span>         [<span class="tlaGBC" title="Branch 0 was taken 107495 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5579894 times"> + </span>]:<span class="tlaGNC">     5687389 :     if (message-&gt;arrivedOn(&quot;mgmtIn&quot;)) {</span></span>
+<span id="L155"><span class="lineNum">     155</span>         [<span class="tlaGBC" title="Branch 0 was taken 2188 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 105307 times"> + </span>]:<span class="tlaGNC">      107495 :         if (!message-&gt;isPacket())</span></span>
+<span id="L156"><span class="lineNum">     156</span>                 :<span class="tlaGNC">        2188 :             handleUpperCommand(message);</span></span>
+<span id="L157"><span class="lineNum">     157</span>                 :<span class="tlaGNC">      105307 :         else</span></span>
+<span id="L158"><span class="lineNum">     158</span>                 :<span class="tlaGNC">      105307 :             handleMgmtPacket(check_and_cast&lt;Packet *&gt;(message));</span></span>
+<span id="L159"><span class="lineNum">     159</span>                 :<span class="tlaGNC">      107495 :     }</span></span>
+<span id="L160"><span class="lineNum">     160</span>                 :<span class="tlaGNC">     5579894 :     else</span></span>
+<span id="L161"><span class="lineNum">     161</span>                 :<span class="tlaGNC">     5579894 :         LayeredProtocolBase::handleMessageWhenUp(message);</span></span>
+<span id="L162"><span class="lineNum">     162</span>                 :<span class="tlaGNC">     5687389 : }</span></span>
+<span id="L163"><span class="lineNum">     163</span>                 :             : </span>
+<span id="L164"><span class="lineNum">     164</span>                 :             : void Ieee80211Mac::handleSelfMessage(cMessage *msg)</span>
+<span id="L165"><span class="lineNum">     165</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L166"><span class="lineNum">     166</span>                 :<span class="tlaUNC">           0 :     ASSERT(false);</span></span>
+<span id="L167"><span class="lineNum">     167</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L168"><span class="lineNum">     168</span>                 :             : </span>
+<span id="L169"><span class="lineNum">     169</span>                 :             : void Ieee80211Mac::handleMgmtPacket(Packet *packet)</span>
+<span id="L170"><span class="lineNum">     170</span>                 :<span class="tlaGNC tlaBgGNC">      105307 : {</span></span>
+<span id="L171"><span class="lineNum">     171</span>                 :<span class="tlaGNC">      105307 :     const auto&amp; header = makeShared&lt;Ieee80211MgmtHeader&gt;();</span></span>
+<span id="L172"><span class="lineNum">     172</span>                 :<span class="tlaGNC">      105307 :     header-&gt;setType((Ieee80211FrameType)packet-&gt;getTag&lt;Ieee80211SubtypeReq&gt;()-&gt;getSubtype());</span></span>
+<span id="L173"><span class="lineNum">     173</span>                 :<span class="tlaGNC">      105307 :     header-&gt;setReceiverAddress(packet-&gt;getTag&lt;MacAddressReq&gt;()-&gt;getDestAddress());</span></span>
+<span id="L174"><span class="lineNum">     174</span> [<span class="tlaGBC" title="Branch 0 was taken 105307 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 102691 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2616 times"> + </span>]:<span class="tlaGNC">      105307 :     if (mib-&gt;mode == Ieee80211Mib::INFRASTRUCTURE &amp;&amp; mib-&gt;bssStationData.stationType == Ieee80211Mib::ACCESS_POINT)</span></span>
+<span id="L175"><span class="lineNum">     175</span>                 :<span class="tlaGNC">      102691 :         header-&gt;setAddress3(mib-&gt;bssData.bssid);</span></span>
+<span id="L176"><span class="lineNum">     176</span>                 :<span class="tlaGNC">      105307 :     packet-&gt;insertAtFront(header);</span></span>
+<span id="L177"><span class="lineNum">     177</span>                 :<span class="tlaGNC">      105307 :     packet-&gt;insertAtBack(makeShared&lt;Ieee80211MacTrailer&gt;());</span></span>
+<span id="L178"><span class="lineNum">     178</span>                 :<span class="tlaGNC">      105307 :     processUpperFrame(packet, header);</span></span>
+<span id="L179"><span class="lineNum">     179</span>                 :<span class="tlaGNC">      105307 : }</span></span>
+<span id="L180"><span class="lineNum">     180</span>                 :             : </span>
+<span id="L181"><span class="lineNum">     181</span>                 :             : void Ieee80211Mac::handleUpperPacket(Packet *packet)</span>
+<span id="L182"><span class="lineNum">     182</span>                 :<span class="tlaGNC">     2458251 : {</span></span>
+<span id="L183"><span class="lineNum">     183</span> [<span class="tlaGBC" title="Branch 0 was taken 452709 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2005542 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 428421 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 24288 times"> + </span>]:<span class="tlaGNC">     2458251 :     if (mib-&gt;mode == Ieee80211Mib::INFRASTRUCTURE &amp;&amp; mib-&gt;bssStationData.stationType == Ieee80211Mib::STATION &amp;&amp; !mib-&gt;bssStationData.isAssociated) {</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 152 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 428269 times"> + </span>]
+<span id="L184"><span class="lineNum">     184</span>                 :<span class="tlaGNC">         152 :         EV &lt;&lt; &quot;STA is not associated with an access point, discarding packet &quot; &lt;&lt; packet &lt;&lt; &quot;\n&quot;;</span></span>
+<span id="L185"><span class="lineNum">     185</span>                 :<span class="tlaGNC">         152 :         PacketDropDetails details;</span></span>
+<span id="L186"><span class="lineNum">     186</span>                 :<span class="tlaGNC">         152 :         details.setReason(OTHER_PACKET_DROP);</span></span>
+<span id="L187"><span class="lineNum">     187</span>                 :<span class="tlaGNC">         152 :         emit(packetDroppedSignal, packet, &amp;details);</span></span>
+<span id="L188"><span class="lineNum">     188</span>                 :<span class="tlaGNC">         152 :         delete packet;</span></span>
+<span id="L189"><span class="lineNum">     189</span>                 :<span class="tlaGNC">         152 :         return;</span></span>
+<span id="L190"><span class="lineNum">     190</span>                 :<span class="tlaGNC">         152 :     }</span></span>
+<span id="L191"><span class="lineNum">     191</span>                 :<span class="tlaGNC">     2458099 :     encapsulate(packet);</span></span>
+<span id="L192"><span class="lineNum">     192</span>                 :<span class="tlaGNC">     2458099 :     const auto&amp; header = packet-&gt;peekAtFront&lt;Ieee80211DataOrMgmtHeader&gt;();</span></span>
+<span id="L193"><span class="lineNum">     193</span> [<span class="tlaGBC" title="Branch 0 was taken 452557 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2005542 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 24288 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 428269 times"> + </span>]:<span class="tlaGNC">     2458099 :     if (mib-&gt;mode == Ieee80211Mib::INFRASTRUCTURE &amp;&amp; mib-&gt;bssStationData.stationType == Ieee80211Mib::ACCESS_POINT) {</span></span>
+<span id="L194"><span class="lineNum">     194</span>                 :<span class="tlaGNC">       24288 :         auto receiverAddress = header-&gt;getReceiverAddress();</span></span>
+<span id="L195"><span class="lineNum">     195</span>         [<span class="tlaGBC" title="Branch 0 was taken 3825 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 20463 times"> + </span>]:<span class="tlaGNC">       24288 :         if (!receiverAddress.isMulticast()) {</span></span>
+<span id="L196"><span class="lineNum">     196</span>                 :<span class="tlaGNC">        3825 :             auto it = mib-&gt;bssAccessPointData.stations.find(receiverAddress);</span></span>
+<span id="L197"><span class="lineNum">     197</span> [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 3825 times"> + </span>][<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 3825 times"> + </span>]:<span class="tlaGNC">        3825 :             if (it == mib-&gt;bssAccessPointData.stations.end() || it-&gt;second != Ieee80211Mib::ASSOCIATED) {</span></span>
+<span class="lineNum">        </span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 3825 times"> + </span>]
+<span id="L198"><span class="lineNum">     198</span>                 :<span class="tlaUNC tlaBgUNC">           0 :                 EV &lt;&lt; &quot;STA with MAC address &quot; &lt;&lt; receiverAddress &lt;&lt; &quot; not associated with this AP, dropping frame\n&quot;;</span></span>
+<span id="L199"><span class="lineNum">     199</span>                 :<span class="tlaUNC">           0 :                 PacketDropDetails details;</span></span>
+<span id="L200"><span class="lineNum">     200</span>                 :<span class="tlaUNC">           0 :                 details.setReason(OTHER_PACKET_DROP);</span></span>
+<span id="L201"><span class="lineNum">     201</span>                 :<span class="tlaUNC">           0 :                 emit(packetDroppedSignal, packet, &amp;details);</span></span>
+<span id="L202"><span class="lineNum">     202</span>                 :<span class="tlaUNC">           0 :                 delete packet;</span></span>
+<span id="L203"><span class="lineNum">     203</span>                 :<span class="tlaUNC">           0 :                 return;</span></span>
+<span id="L204"><span class="lineNum">     204</span>                 :<span class="tlaUNC">           0 :             }</span></span>
+<span id="L205"><span class="lineNum">     205</span>                 :<span class="tlaGNC tlaBgGNC">        3825 :         }</span></span>
+<span id="L206"><span class="lineNum">     206</span>                 :<span class="tlaGNC">       24288 :     }</span></span>
+<span id="L207"><span class="lineNum">     207</span>                 :<span class="tlaGNC">     2458099 :     processUpperFrame(packet, header);</span></span>
+<span id="L208"><span class="lineNum">     208</span>                 :<span class="tlaGNC">     2458099 : }</span></span>
+<span id="L209"><span class="lineNum">     209</span>                 :             : </span>
+<span id="L210"><span class="lineNum">     210</span>                 :             : void Ieee80211Mac::handleLowerPacket(Packet *packet)</span>
+<span id="L211"><span class="lineNum">     211</span>                 :<span class="tlaGNC">     3121393 : {</span></span>
+<span id="L212"><span class="lineNum">     212</span>         [<span class="tlaGBC" title="Branch 0 was taken 2949861 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 171532 times"> + </span>]:<span class="tlaGNC">     3121393 :     if (rx-&gt;lowerFrameReceived(packet)) {</span></span>
+<span id="L213"><span class="lineNum">     213</span>                 :<span class="tlaGNC">     2949861 :         auto header = packet-&gt;peekAtFront&lt;Ieee80211MacHeader&gt;();</span></span>
+<span id="L214"><span class="lineNum">     214</span>                 :<span class="tlaGNC">     2949861 :         processLowerFrame(packet, header);</span></span>
+<span id="L215"><span class="lineNum">     215</span>                 :<span class="tlaGNC">     2949861 :     }</span></span>
+<span id="L216"><span class="lineNum">     216</span>                 :<span class="tlaGNC">      171532 :     else { // corrupted frame received</span></span>
+<span id="L217"><span class="lineNum">     217</span>         [<span class="tlaGBC" title="Branch 0 was taken 95181 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 76351 times"> + </span>]:<span class="tlaGNC">      171532 :         if (mib-&gt;qos)</span></span>
+<span id="L218"><span class="lineNum">     218</span>                 :<span class="tlaGNC">       95181 :             hcf-&gt;corruptedFrameReceived();</span></span>
+<span id="L219"><span class="lineNum">     219</span>                 :<span class="tlaGNC">       76351 :         else</span></span>
+<span id="L220"><span class="lineNum">     220</span>                 :<span class="tlaGNC">       76351 :             dcf-&gt;corruptedFrameReceived();</span></span>
+<span id="L221"><span class="lineNum">     221</span>                 :<span class="tlaGNC">      171532 :     }</span></span>
+<span id="L222"><span class="lineNum">     222</span>                 :<span class="tlaGNC">     3121393 : }</span></span>
+<span id="L223"><span class="lineNum">     223</span>                 :             : </span>
+<span id="L224"><span class="lineNum">     224</span>                 :             : void Ieee80211Mac::handleUpperCommand(cMessage *msg)</span>
+<span id="L225"><span class="lineNum">     225</span>                 :<span class="tlaGNC">        2189 : {</span></span>
+<span id="L226"><span class="lineNum">     226</span>         [<span class="tlaGBC" title="Branch 0 was taken 2189 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">        2189 :     if (msg-&gt;getKind() == RADIO_C_CONFIGURE) {</span></span>
+<span id="L227"><span class="lineNum">     227</span>                 :<span class="tlaGNC">        2189 :         EV_DEBUG &lt;&lt; &quot;Passing on command &quot; &lt;&lt; msg-&gt;getName() &lt;&lt; &quot; to physical layer\n&quot;;</span></span>
+<span id="L228"><span class="lineNum">     228</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2189 times"> + </span>]:<span class="tlaGNC">        2189 :         if (pendingRadioConfigMsg != nullptr) {</span></span>
+<span id="L229"><span class="lineNum">     229</span>                 :             :             // merge contents of the old command into the new one, then delete it</span>
+<span id="L230"><span class="lineNum">     230</span>                 :<span class="tlaUNC tlaBgUNC">           0 :             Ieee80211ConfigureRadioCommand *oldConfigureCommand = check_and_cast&lt;Ieee80211ConfigureRadioCommand *&gt;(pendingRadioConfigMsg-&gt;getControlInfo());</span></span>
+<span id="L231"><span class="lineNum">     231</span>                 :<span class="tlaUNC">           0 :             Ieee80211ConfigureRadioCommand *newConfigureCommand = check_and_cast&lt;Ieee80211ConfigureRadioCommand *&gt;(msg-&gt;getControlInfo());</span></span>
+<span id="L232"><span class="lineNum">     232</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             if (newConfigureCommand-&gt;getChannelNumber() == -1 &amp;&amp; oldConfigureCommand-&gt;getChannelNumber() != -1)</span></span>
+<span id="L233"><span class="lineNum">     233</span>                 :<span class="tlaUNC">           0 :                 newConfigureCommand-&gt;setChannelNumber(oldConfigureCommand-&gt;getChannelNumber());</span></span>
+<span id="L234"><span class="lineNum">     234</span> [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>][<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :             if (std::isnan(newConfigureCommand-&gt;getBitrate().get&lt;bps&gt;()) &amp;&amp; !std::isnan(oldConfigureCommand-&gt;getBitrate().get&lt;bps&gt;()))</span></span>
+<span class="lineNum">        </span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]
+<span id="L235"><span class="lineNum">     235</span>                 :<span class="tlaUNC">           0 :                 newConfigureCommand-&gt;setBitrate(oldConfigureCommand-&gt;getBitrate());</span></span>
+<span id="L236"><span class="lineNum">     236</span>                 :<span class="tlaUNC">           0 :             delete pendingRadioConfigMsg;</span></span>
+<span id="L237"><span class="lineNum">     237</span>                 :<span class="tlaUNC">           0 :             pendingRadioConfigMsg = nullptr;</span></span>
+<span id="L238"><span class="lineNum">     238</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L239"><span class="lineNum">     239</span>                 :             : </span>
+<span id="L240"><span class="lineNum">     240</span> [<span class="tlaGBC" title="Branch 0 was taken 2188 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 1751 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 437 times"> + </span>]:<span class="tlaGNC tlaBgGNC">        2189 :         if (rx-&gt;isMediumFree() &amp;&amp; !tx-&gt;hasTransmission()) { // TODO this should be just the physical channel sense!!!!</span></span>
+<span id="L241"><span class="lineNum">     241</span>                 :<span class="tlaGNC">        1751 :             EV_DEBUG &lt;&lt; &quot;Sending it down immediately\n&quot;;</span></span>
+<span id="L242"><span class="lineNum">     242</span>                 :             : //            PhyControlInfo *phyControlInfo = dynamic_cast&lt;PhyControlInfo *&gt;(msg-&gt;getControlInfo());</span>
+<span id="L243"><span class="lineNum">     243</span>                 :             : //            if (phyControlInfo)</span>
+<span id="L244"><span class="lineNum">     244</span>                 :             : //                phyControlInfo-&gt;setAdaptiveSensitivity(true);</span>
+<span id="L245"><span class="lineNum">     245</span>                 :             :             // end dynamic power</span>
+<span id="L246"><span class="lineNum">     246</span>                 :<span class="tlaGNC">        1751 :             sendDown(msg);</span></span>
+<span id="L247"><span class="lineNum">     247</span>                 :<span class="tlaGNC">        1751 :         }</span></span>
+<span id="L248"><span class="lineNum">     248</span>                 :<span class="tlaGNC">         438 :         else {</span></span>
+<span id="L249"><span class="lineNum">     249</span>                 :             :             // TODO waiting potentially indefinitely?! wtf?!</span>
+<span id="L250"><span class="lineNum">     250</span>                 :<span class="tlaGNC">         438 :             EV_DEBUG &lt;&lt; &quot;Delaying &quot; &lt;&lt; msg-&gt;getName() &lt;&lt; &quot; until next IDLE or DEFER state\n&quot;;</span></span>
+<span id="L251"><span class="lineNum">     251</span>                 :<span class="tlaGNC">         438 :             pendingRadioConfigMsg = msg;</span></span>
+<span id="L252"><span class="lineNum">     252</span>                 :<span class="tlaGNC">         438 :         }</span></span>
+<span id="L253"><span class="lineNum">     253</span>                 :<span class="tlaGNC">        2189 :     }</span></span>
+<span id="L254"><span class="lineNum">     254</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     else {</span></span>
+<span id="L255"><span class="lineNum">     255</span>                 :<span class="tlaUNC">           0 :         throw cRuntimeError(&quot;Unrecognized command from mgmt layer: (%s)%s msgkind=%d&quot;, msg-&gt;getClassName(), msg-&gt;getName(), msg-&gt;getKind());</span></span>
+<span id="L256"><span class="lineNum">     256</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L257"><span class="lineNum">     257</span>                 :<span class="tlaGNC tlaBgGNC">        2189 : }</span></span>
+<span id="L258"><span class="lineNum">     258</span>                 :             : </span>
+<span id="L259"><span class="lineNum">     259</span>                 :             : void Ieee80211Mac::encapsulate(Packet *packet)</span>
+<span id="L260"><span class="lineNum">     260</span>                 :<span class="tlaGNC">     2458099 : {</span></span>
+<span id="L261"><span class="lineNum">     261</span>                 :<span class="tlaGNC">     2458099 :     packet-&gt;addTagIfAbsent&lt;LlcProtocolTag&gt;()-&gt;setProtocol(packet-&gt;getTag&lt;PacketProtocolTag&gt;()-&gt;getProtocol());</span></span>
+<span id="L262"><span class="lineNum">     262</span>                 :<span class="tlaGNC">     2458099 :     auto macAddressReq = packet-&gt;getTag&lt;MacAddressReq&gt;();</span></span>
+<span id="L263"><span class="lineNum">     263</span>                 :<span class="tlaGNC">     2458099 :     auto destAddress = macAddressReq-&gt;getDestAddress();</span></span>
+<span id="L264"><span class="lineNum">     264</span>                 :<span class="tlaGNC">     2458099 :     const auto&amp; header = makeShared&lt;Ieee80211DataHeader&gt;();</span></span>
+<span id="L265"><span class="lineNum">     265</span>                 :<span class="tlaGNC">     2458099 :     header-&gt;setTransmitterAddress(mib-&gt;address);</span></span>
+<span id="L266"><span class="lineNum">     266</span>         [<span class="tlaGBC" title="Branch 0 was taken 2005542 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 452557 times"> + </span>]:<span class="tlaGNC">     2458099 :     if (mib-&gt;mode == Ieee80211Mib::INDEPENDENT)</span></span>
+<span id="L267"><span class="lineNum">     267</span>                 :<span class="tlaGNC">     2005542 :         header-&gt;setReceiverAddress(destAddress);</span></span>
+<span id="L268"><span class="lineNum">     268</span>         [<span class="tlaGBC" title="Branch 0 was taken 452557 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">      452557 :     else if (mib-&gt;mode == Ieee80211Mib::INFRASTRUCTURE) {</span></span>
+<span id="L269"><span class="lineNum">     269</span>         [<span class="tlaGBC" title="Branch 0 was taken 24288 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 428269 times"> + </span>]:<span class="tlaGNC">      452557 :         if (mib-&gt;bssStationData.stationType == Ieee80211Mib::ACCESS_POINT) {</span></span>
+<span id="L270"><span class="lineNum">     270</span>                 :<span class="tlaGNC">       24288 :             header-&gt;setFromDS(true);</span></span>
+<span id="L271"><span class="lineNum">     271</span>                 :<span class="tlaGNC">       24288 :             header-&gt;setAddress3(mib-&gt;address);</span></span>
+<span id="L272"><span class="lineNum">     272</span>                 :<span class="tlaGNC">       24288 :             header-&gt;setReceiverAddress(destAddress);</span></span>
+<span id="L273"><span class="lineNum">     273</span>                 :<span class="tlaGNC">       24288 :         }</span></span>
+<span id="L274"><span class="lineNum">     274</span>         [<span class="tlaGBC" title="Branch 0 was taken 428269 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">      428269 :         else if (mib-&gt;bssStationData.stationType == Ieee80211Mib::STATION) {</span></span>
+<span id="L275"><span class="lineNum">     275</span>                 :<span class="tlaGNC">      428269 :             header-&gt;setToDS(true);</span></span>
+<span id="L276"><span class="lineNum">     276</span>                 :<span class="tlaGNC">      428269 :             header-&gt;setReceiverAddress(mib-&gt;bssData.bssid);</span></span>
+<span id="L277"><span class="lineNum">     277</span>                 :<span class="tlaGNC">      428269 :             header-&gt;setAddress3(destAddress);</span></span>
+<span id="L278"><span class="lineNum">     278</span>                 :<span class="tlaGNC">      428269 :         }</span></span>
+<span id="L279"><span class="lineNum">     279</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         else</span></span>
+<span id="L280"><span class="lineNum">     280</span>                 :<span class="tlaUNC">           0 :             throw cRuntimeError(&quot;Unknown station type&quot;);</span></span>
+<span id="L281"><span class="lineNum">     281</span>                 :<span class="tlaGNC tlaBgGNC">      452557 :     }</span></span>
+<span id="L282"><span class="lineNum">     282</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     else</span></span>
+<span id="L283"><span class="lineNum">     283</span>                 :<span class="tlaUNC">           0 :         throw cRuntimeError(&quot;Unknown mode&quot;);</span></span>
+<span id="L284"><span class="lineNum">     284</span>         [<span class="tlaGBC" title="Branch 0 was taken 939898 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1518201 times"> + </span>]:<span class="tlaGNC tlaBgGNC">     2458099 :     if (auto userPriorityReq = packet-&gt;findTag&lt;UserPriorityReq&gt;()) {</span></span>
+<span id="L285"><span class="lineNum">     285</span>                 :             :         // make it a QoS frame, and set TID</span>
+<span id="L286"><span class="lineNum">     286</span>                 :<span class="tlaGNC">      939898 :         header-&gt;setType(ST_DATA_WITH_QOS);</span></span>
+<span id="L287"><span class="lineNum">     287</span>                 :<span class="tlaGNC">      939898 :         header-&gt;addChunkLength(QOSCONTROL_PART_LENGTH);</span></span>
+<span id="L288"><span class="lineNum">     288</span>                 :<span class="tlaGNC">      939898 :         header-&gt;setTid(userPriorityReq-&gt;getUserPriority());</span></span>
+<span id="L289"><span class="lineNum">     289</span>                 :<span class="tlaGNC">      939898 :     }</span></span>
+<span id="L290"><span class="lineNum">     290</span>                 :<span class="tlaGNC">     2458099 :     packet-&gt;insertAtFront(header);</span></span>
+<span id="L291"><span class="lineNum">     291</span>                 :<span class="tlaGNC">     2458099 :     packet-&gt;insertAtBack(makeShared&lt;Ieee80211MacTrailer&gt;());</span></span>
+<span id="L292"><span class="lineNum">     292</span>                 :<span class="tlaGNC">     2458099 :     auto packetProtocolTag = packet-&gt;addTagIfAbsent&lt;PacketProtocolTag&gt;();</span></span>
+<span id="L293"><span class="lineNum">     293</span>                 :<span class="tlaGNC">     2458099 :     packetProtocolTag-&gt;setProtocol(&amp;Protocol::ieee80211Mac);</span></span>
+<span id="L294"><span class="lineNum">     294</span>                 :<span class="tlaGNC">     2458099 : }</span></span>
+<span id="L295"><span class="lineNum">     295</span>                 :             : </span>
+<span id="L296"><span class="lineNum">     296</span>                 :             : void Ieee80211Mac::decapsulate(Packet *packet)</span>
+<span id="L297"><span class="lineNum">     297</span>                 :<span class="tlaGNC">     1148450 : {</span></span>
+<span id="L298"><span class="lineNum">     298</span>                 :<span class="tlaGNC">     1148450 :     const auto&amp; header = packet-&gt;popAtFront&lt;Ieee80211DataOrMgmtHeader&gt;();</span></span>
+<span id="L299"><span class="lineNum">     299</span>                 :<span class="tlaGNC">     1148450 :     auto packetProtocolTag = packet-&gt;addTagIfAbsent&lt;PacketProtocolTag&gt;();</span></span>
+<span id="L300"><span class="lineNum">     300</span>         [<span class="tlaGBC" title="Branch 0 was taken 1051576 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 96874 times"> + </span>]:<span class="tlaGNC">     1148450 :     if (dynamicPtrCast&lt;const Ieee80211DataHeader&gt;(header))</span></span>
+<span id="L301"><span class="lineNum">     301</span>                 :<span class="tlaGNC">     1051576 :         packetProtocolTag-&gt;setProtocol(llc-&gt;getProtocol());</span></span>
+<span id="L302"><span class="lineNum">     302</span>         [<span class="tlaGBC" title="Branch 0 was taken 96874 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">       96874 :     else if (dynamicPtrCast&lt;const Ieee80211MgmtHeader&gt;(header))</span></span>
+<span id="L303"><span class="lineNum">     303</span>                 :<span class="tlaGNC">       96874 :         packetProtocolTag-&gt;setProtocol(&amp;Protocol::ieee80211Mgmt);</span></span>
+<span id="L304"><span class="lineNum">     304</span>                 :<span class="tlaGNC">     1148450 :     auto macAddressInd = packet-&gt;addTagIfAbsent&lt;MacAddressInd&gt;();</span></span>
+<span id="L305"><span class="lineNum">     305</span>         [<span class="tlaGBC" title="Branch 0 was taken 743029 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 405421 times"> + </span>]:<span class="tlaGNC">     1148450 :     if (mib-&gt;mode == Ieee80211Mib::INDEPENDENT) {</span></span>
+<span id="L306"><span class="lineNum">     306</span>                 :<span class="tlaGNC">      743029 :         macAddressInd-&gt;setSrcAddress(header-&gt;getTransmitterAddress());</span></span>
+<span id="L307"><span class="lineNum">     307</span>                 :<span class="tlaGNC">      743029 :         macAddressInd-&gt;setDestAddress(header-&gt;getReceiverAddress());</span></span>
+<span id="L308"><span class="lineNum">     308</span>                 :<span class="tlaGNC">      743029 :     }</span></span>
+<span id="L309"><span class="lineNum">     309</span>         [<span class="tlaGBC" title="Branch 0 was taken 405421 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">      405421 :     else if (mib-&gt;mode == Ieee80211Mib::INFRASTRUCTURE) {</span></span>
+<span id="L310"><span class="lineNum">     310</span>         [<span class="tlaGBC" title="Branch 0 was taken 157507 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 247914 times"> + </span>]:<span class="tlaGNC">      405421 :         if (mib-&gt;bssStationData.stationType == Ieee80211Mib::ACCESS_POINT) {</span></span>
+<span id="L311"><span class="lineNum">     311</span>                 :<span class="tlaGNC">      157507 :             macAddressInd-&gt;setSrcAddress(header-&gt;getTransmitterAddress());</span></span>
+<span id="L312"><span class="lineNum">     312</span>                 :<span class="tlaGNC">      157507 :             macAddressInd-&gt;setDestAddress(header-&gt;getAddress3());</span></span>
+<span id="L313"><span class="lineNum">     313</span>                 :<span class="tlaGNC">      157507 :         }</span></span>
+<span id="L314"><span class="lineNum">     314</span>         [<span class="tlaGBC" title="Branch 0 was taken 247914 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">      247914 :         else if (mib-&gt;bssStationData.stationType == Ieee80211Mib::STATION) {</span></span>
+<span id="L315"><span class="lineNum">     315</span>                 :<span class="tlaGNC">      247914 :             macAddressInd-&gt;setSrcAddress(header-&gt;getAddress3());</span></span>
+<span id="L316"><span class="lineNum">     316</span>                 :<span class="tlaGNC">      247914 :             macAddressInd-&gt;setDestAddress(header-&gt;getReceiverAddress());</span></span>
+<span id="L317"><span class="lineNum">     317</span>                 :<span class="tlaGNC">      247914 :         }</span></span>
+<span id="L318"><span class="lineNum">     318</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         else</span></span>
+<span id="L319"><span class="lineNum">     319</span>                 :<span class="tlaUNC">           0 :             throw cRuntimeError(&quot;Unknown station type&quot;);</span></span>
+<span id="L320"><span class="lineNum">     320</span>                 :<span class="tlaGNC tlaBgGNC">      405421 :     }</span></span>
+<span id="L321"><span class="lineNum">     321</span>                 :<span class="tlaUNC tlaBgUNC">           0 :     else</span></span>
+<span id="L322"><span class="lineNum">     322</span>                 :<span class="tlaUNC">           0 :         throw cRuntimeError(&quot;Unknown mode&quot;);</span></span>
+<span id="L323"><span class="lineNum">     323</span>         [<span class="tlaGBC" title="Branch 0 was taken 332432 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 816018 times"> + </span>]:<span class="tlaGNC tlaBgGNC">     1148450 :     if (header-&gt;getType() == ST_DATA_WITH_QOS) {</span></span>
+<span id="L324"><span class="lineNum">     324</span>                 :<span class="tlaGNC">      332432 :         auto dataHeader = dynamicPtrCast&lt;const Ieee80211DataHeader&gt;(header);</span></span>
+<span id="L325"><span class="lineNum">     325</span>                 :<span class="tlaGNC">      332432 :         int tid = dataHeader-&gt;getTid();</span></span>
+<span id="L326"><span class="lineNum">     326</span>         [<span class="tlaGBC" title="Branch 0 was taken 332432 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">      332432 :         if (tid &lt; 8)</span></span>
+<span id="L327"><span class="lineNum">     327</span>                 :<span class="tlaGNC">      332432 :             packet-&gt;addTagIfAbsent&lt;UserPriorityInd&gt;()-&gt;setUserPriority(tid);</span></span>
+<span id="L328"><span class="lineNum">     328</span>                 :<span class="tlaGNC">      332432 :     }</span></span>
+<span id="L329"><span class="lineNum">     329</span>                 :<span class="tlaGNC">     1148450 :     packet-&gt;addTagIfAbsent&lt;InterfaceInd&gt;()-&gt;setInterfaceId(networkInterface-&gt;getInterfaceId());</span></span>
+<span id="L330"><span class="lineNum">     330</span>                 :<span class="tlaGNC">     1148450 :     packet-&gt;popAtBack&lt;Ieee80211MacTrailer&gt;(B(4));</span></span>
+<span id="L331"><span class="lineNum">     331</span>                 :<span class="tlaGNC">     1148450 : }</span></span>
+<span id="L332"><span class="lineNum">     332</span>                 :             : </span>
+<span id="L333"><span class="lineNum">     333</span>                 :             : void Ieee80211Mac::receiveSignal(cComponent *source, simsignal_t signalID, intval_t value, cObject *details)</span>
+<span id="L334"><span class="lineNum">     334</span>                 :<span class="tlaGNC">    25470155 : {</span></span>
+<span id="L335"><span class="lineNum">     335</span>                 :<span class="tlaGNC">    25470155 :     Enter_Method(&quot;%s&quot;, cComponent::getSignalName(signalID));</span></span>
+<span id="L336"><span class="lineNum">     336</span>                 :             : </span>
+<span id="L337"><span class="lineNum">     337</span>         [<span class="tlaGBC" title="Branch 0 was taken 10284500 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 15185655 times"> + </span>]:<span class="tlaGNC">    25470155 :     if (signalID == IRadio::receptionStateChangedSignal) {</span></span>
+<span id="L338"><span class="lineNum">     338</span>                 :<span class="tlaGNC">    10284500 :         rx-&gt;receptionStateChanged(static_cast&lt;IRadio::ReceptionState&gt;(value));</span></span>
+<span id="L339"><span class="lineNum">     339</span>                 :<span class="tlaGNC">    10284500 :     }</span></span>
+<span id="L340"><span class="lineNum">     340</span>         [<span class="tlaGBC" title="Branch 0 was taken 7872338 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 7313317 times"> + </span>]:<span class="tlaGNC">    15185655 :     else if (signalID == IRadio::transmissionStateChangedSignal) {</span></span>
+<span id="L341"><span class="lineNum">     341</span>                 :<span class="tlaGNC">     7872338 :         auto oldTransmissionState = transmissionState;</span></span>
+<span id="L342"><span class="lineNum">     342</span>                 :<span class="tlaGNC">     7872338 :         transmissionState = static_cast&lt;IRadio::TransmissionState&gt;(value);</span></span>
+<span id="L343"><span class="lineNum">     343</span> [<span class="tlaGBC" title="Branch 0 was taken 1967999 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5904339 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 1967999 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">     7872338 :         bool transmissionFinished = (oldTransmissionState == IRadio::TRANSMISSION_STATE_TRANSMITTING &amp;&amp; transmissionState == IRadio::TRANSMISSION_STATE_IDLE);</span></span>
+<span id="L344"><span class="lineNum">     344</span>         [<span class="tlaGBC" title="Branch 0 was taken 1967999 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 5904339 times"> + </span>]:<span class="tlaGNC">     7872338 :         if (transmissionFinished) {</span></span>
+<span id="L345"><span class="lineNum">     345</span>                 :<span class="tlaGNC">     1967999 :             tx-&gt;radioTransmissionFinished();</span></span>
+<span id="L346"><span class="lineNum">     346</span>                 :<span class="tlaGNC">     1967999 :             EV_DEBUG &lt;&lt; &quot;changing radio to receiver mode\n&quot;;</span></span>
+<span id="L347"><span class="lineNum">     347</span>                 :<span class="tlaGNC">     1967999 :             configureRadioMode(IRadio::RADIO_MODE_RECEIVER); // FIXME this is in a very wrong place!!! should be done explicitly from coordination function!</span></span>
+<span id="L348"><span class="lineNum">     348</span>                 :<span class="tlaGNC">     1967999 :         }</span></span>
+<span id="L349"><span class="lineNum">     349</span>                 :<span class="tlaGNC">     7872338 :         rx-&gt;transmissionStateChanged(transmissionState);</span></span>
+<span id="L350"><span class="lineNum">     350</span>                 :<span class="tlaGNC">     7872338 :     }</span></span>
+<span id="L351"><span class="lineNum">     351</span>         [<span class="tlaGBC" title="Branch 0 was taken 3374244 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3939073 times"> + </span>]:<span class="tlaGNC">     7313317 :     else if (signalID == IRadio::receivedSignalPartChangedSignal) {</span></span>
+<span id="L352"><span class="lineNum">     352</span>                 :<span class="tlaGNC">     3374244 :         rx-&gt;receivedSignalPartChanged(static_cast&lt;IRadioSignal::SignalPart&gt;(value));</span></span>
+<span id="L353"><span class="lineNum">     353</span>                 :<span class="tlaGNC">     3374244 :     }</span></span>
+<span id="L354"><span class="lineNum">     354</span>                 :<span class="tlaGNC">    25470155 : }</span></span>
+<span id="L355"><span class="lineNum">     355</span>                 :             : </span>
+<span id="L356"><span class="lineNum">     356</span>                 :             : void Ieee80211Mac::configureRadioMode(IRadio::RadioMode radioMode)</span>
+<span id="L357"><span class="lineNum">     357</span>                 :<span class="tlaGNC">     3936189 : {</span></span>
+<span id="L358"><span class="lineNum">     358</span>         [<span class="tlaGBC" title="Branch 0 was taken 3936189 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:<span class="tlaGNC">     3936189 :     if (radio-&gt;getRadioMode() != radioMode) {</span></span>
+<span id="L359"><span class="lineNum">     359</span>                 :<span class="tlaGNC">     3936189 :         ConfigureRadioCommand *configureCommand = new ConfigureRadioCommand();</span></span>
+<span id="L360"><span class="lineNum">     360</span>                 :<span class="tlaGNC">     3936189 :         configureCommand-&gt;setRadioMode(radioMode);</span></span>
+<span id="L361"><span class="lineNum">     361</span>                 :<span class="tlaGNC">     3936189 :         auto request = new Request(&quot;configureRadioMode&quot;, RADIO_C_CONFIGURE);</span></span>
+<span id="L362"><span class="lineNum">     362</span>                 :<span class="tlaGNC">     3936189 :         request-&gt;setControlInfo(configureCommand);</span></span>
+<span id="L363"><span class="lineNum">     363</span>                 :<span class="tlaGNC">     3936189 :         sendDown(request);</span></span>
+<span id="L364"><span class="lineNum">     364</span>                 :<span class="tlaGNC">     3936189 :     }</span></span>
+<span id="L365"><span class="lineNum">     365</span>                 :<span class="tlaGNC">     3936189 : }</span></span>
+<span id="L366"><span class="lineNum">     366</span>                 :             : </span>
+<span id="L367"><span class="lineNum">     367</span>                 :             : void Ieee80211Mac::sendUp(cMessage *msg)</span>
+<span id="L368"><span class="lineNum">     368</span>                 :<span class="tlaGNC">      906622 : {</span></span>
+<span id="L369"><span class="lineNum">     369</span>                 :<span class="tlaGNC">      906622 :     Enter_Method(&quot;sendUp(\&quot;%s\&quot;)&quot;, msg-&gt;getName());</span></span>
+<span id="L370"><span class="lineNum">     370</span>                 :<span class="tlaGNC">      906622 :     take(msg);</span></span>
+<span id="L371"><span class="lineNum">     371</span>                 :<span class="tlaGNC">      906622 :     MacProtocolBase::sendUp(msg);</span></span>
+<span id="L372"><span class="lineNum">     372</span>                 :<span class="tlaGNC">      906622 : }</span></span>
+<span id="L373"><span class="lineNum">     373</span>                 :             : </span>
+<span id="L374"><span class="lineNum">     374</span>                 :             : void Ieee80211Mac::sendUpFrame(Packet *frame)</span>
+<span id="L375"><span class="lineNum">     375</span>                 :<span class="tlaGNC">     1148450 : {</span></span>
+<span id="L376"><span class="lineNum">     376</span>                 :<span class="tlaGNC">     1148450 :     Enter_Method(&quot;sendUpFrame(\&quot;%s\&quot;)&quot;, frame-&gt;getName());</span></span>
+<span id="L377"><span class="lineNum">     377</span>                 :<span class="tlaGNC">     1148450 :     take(frame);</span></span>
+<span id="L378"><span class="lineNum">     378</span>                 :<span class="tlaGNC">     1148450 :     const auto&amp; header = frame-&gt;peekAtFront&lt;Ieee80211DataOrMgmtHeader&gt;();</span></span>
+<span id="L379"><span class="lineNum">     379</span>                 :<span class="tlaGNC">     1148450 :     decapsulate(frame);</span></span>
+<span id="L380"><span class="lineNum">     380</span>         [<span class="tlaGBC" title="Branch 0 was taken 96874 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1051576 times"> + </span>]:<span class="tlaGNC">     1148450 :     if (!(header-&gt;getType() &amp; 0x30))</span></span>
+<span id="L381"><span class="lineNum">     381</span>                 :<span class="tlaGNC">       96874 :         send(frame, &quot;mgmtOut&quot;);</span></span>
+<span id="L382"><span class="lineNum">     382</span>                 :<span class="tlaGNC">     1051576 :     else</span></span>
+<span id="L383"><span class="lineNum">     383</span>                 :<span class="tlaGNC">     1051576 :         ds-&gt;processDataFrame(frame, dynamicPtrCast&lt;const Ieee80211DataHeader&gt;(header));</span></span>
+<span id="L384"><span class="lineNum">     384</span>                 :<span class="tlaGNC">     1148450 : }</span></span>
+<span id="L385"><span class="lineNum">     385</span>                 :             : </span>
+<span id="L386"><span class="lineNum">     386</span>                 :             : void Ieee80211Mac::sendDownFrame(Packet *frame)</span>
+<span id="L387"><span class="lineNum">     387</span>                 :<span class="tlaGNC">     1968190 : {</span></span>
+<span id="L388"><span class="lineNum">     388</span>                 :<span class="tlaGNC">     1968190 :     Enter_Method(&quot;sendDownFrame(\&quot;%s\&quot;)&quot;, frame-&gt;getName());</span></span>
+<span id="L389"><span class="lineNum">     389</span>                 :<span class="tlaGNC">     1968190 :     take(frame);</span></span>
+<span id="L390"><span class="lineNum">     390</span>                 :<span class="tlaGNC">     1968190 :     configureRadioMode(IRadio::RADIO_MODE_TRANSMITTER);</span></span>
+<span id="L391"><span class="lineNum">     391</span>                 :<span class="tlaGNC">     1968190 :     frame-&gt;addTagIfAbsent&lt;PacketProtocolTag&gt;()-&gt;setProtocol(&amp;Protocol::ieee80211Mac);</span></span>
+<span id="L392"><span class="lineNum">     392</span>                 :<span class="tlaGNC">     1968190 :     sendDown(frame);</span></span>
+<span id="L393"><span class="lineNum">     393</span>                 :<span class="tlaGNC">     1968190 : }</span></span>
+<span id="L394"><span class="lineNum">     394</span>                 :             : </span>
+<span id="L395"><span class="lineNum">     395</span>                 :             : void Ieee80211Mac::sendDownPendingRadioConfigMsg()</span>
+<span id="L396"><span class="lineNum">     396</span>                 :<span class="tlaGNC">     3855153 : {</span></span>
+<span id="L397"><span class="lineNum">     397</span> [<span class="tlaGBC" title="Branch 0 was taken 874 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 3854279 times"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 438 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 436 times"> + </span>]:<span class="tlaGNC">     3855153 :     if (pendingRadioConfigMsg != nullptr &amp;&amp; !tx-&gt;hasTransmission()) {</span></span>
+<span id="L398"><span class="lineNum">     398</span>                 :<span class="tlaGNC">         438 :         auto message = pendingRadioConfigMsg;</span></span>
+<span id="L399"><span class="lineNum">     399</span>                 :<span class="tlaGNC">         438 :         pendingRadioConfigMsg = nullptr;</span></span>
+<span id="L400"><span class="lineNum">     400</span>                 :<span class="tlaGNC">         438 :         sendDown(message);</span></span>
+<span id="L401"><span class="lineNum">     401</span>                 :<span class="tlaGNC">         438 :     }</span></span>
+<span id="L402"><span class="lineNum">     402</span>                 :<span class="tlaGNC">     3855153 : }</span></span>
+<span id="L403"><span class="lineNum">     403</span>                 :             : </span>
+<span id="L404"><span class="lineNum">     404</span>                 :             : void Ieee80211Mac::processUpperFrame(Packet *packet, const Ptr&lt;const Ieee80211DataOrMgmtHeader&gt;&amp; header)</span>
+<span id="L405"><span class="lineNum">     405</span>                 :<span class="tlaGNC">     2708659 : {</span></span>
+<span id="L406"><span class="lineNum">     406</span>                 :<span class="tlaGNC">     2708659 :     Enter_Method(&quot;processUpperFrame(\&quot;%s\&quot;)&quot;, packet-&gt;getName());</span></span>
+<span id="L407"><span class="lineNum">     407</span>                 :<span class="tlaGNC">     2708659 :     take(packet);</span></span>
+<span id="L408"><span class="lineNum">     408</span>                 :<span class="tlaGNC">     2708659 :     EV_INFO &lt;&lt; &quot;Frame &quot; &lt;&lt; packet &lt;&lt; &quot; received from higher layer, receiver = &quot; &lt;&lt; header-&gt;getReceiverAddress() &lt;&lt; &quot;\n&quot;;</span></span>
+<span id="L409"><span class="lineNum">     409</span>                 :<span class="tlaGNC">     2708659 :     ASSERT(!header-&gt;getReceiverAddress().isUnspecified());</span></span>
+<span id="L410"><span class="lineNum">     410</span>         [<span class="tlaGBC" title="Branch 0 was taken 1028001 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1680658 times"> + </span>]:<span class="tlaGNC">     2708659 :     if (mib-&gt;qos)</span></span>
+<span id="L411"><span class="lineNum">     411</span>                 :<span class="tlaGNC">     1028001 :         hcf-&gt;processUpperFrame(packet, header);</span></span>
+<span id="L412"><span class="lineNum">     412</span>                 :<span class="tlaGNC">     1680658 :     else</span></span>
+<span id="L413"><span class="lineNum">     413</span>                 :<span class="tlaGNC">     1680658 :         dcf-&gt;processUpperFrame(packet, header);</span></span>
+<span id="L414"><span class="lineNum">     414</span>                 :<span class="tlaGNC">     2708659 : }</span></span>
+<span id="L415"><span class="lineNum">     415</span>                 :             : </span>
+<span id="L416"><span class="lineNum">     416</span>                 :             : void Ieee80211Mac::processLowerFrame(Packet *packet, const Ptr&lt;const Ieee80211MacHeader&gt;&amp; header)</span>
+<span id="L417"><span class="lineNum">     417</span>                 :<span class="tlaGNC">     2949963 : {</span></span>
+<span id="L418"><span class="lineNum">     418</span>                 :<span class="tlaGNC">     2949963 :     Enter_Method(&quot;processLowerFrame(\&quot;%s\&quot;)&quot;, packet-&gt;getName());</span></span>
+<span id="L419"><span class="lineNum">     419</span>                 :<span class="tlaGNC">     2949963 :     take(packet);</span></span>
+<span id="L420"><span class="lineNum">     420</span>         [<span class="tlaGBC" title="Branch 0 was taken 913508 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2036455 times"> + </span>]:<span class="tlaGNC">     2949963 :     if (mib-&gt;qos)</span></span>
+<span id="L421"><span class="lineNum">     421</span>                 :<span class="tlaGNC">      913508 :         hcf-&gt;processLowerFrame(packet, header);</span></span>
+<span id="L422"><span class="lineNum">     422</span>                 :<span class="tlaGNC">     2036455 :     else</span></span>
+<span id="L423"><span class="lineNum">     423</span>                 :             :         // TODO what if the received frame is ST_DATA_WITH_QOS? drop?</span>
+<span id="L424"><span class="lineNum">     424</span>                 :<span class="tlaGNC">     2036455 :         dcf-&gt;processLowerFrame(packet, header);</span></span>
+<span id="L425"><span class="lineNum">     425</span>                 :<span class="tlaGNC">     2949963 : }</span></span>
+<span id="L426"><span class="lineNum">     426</span>                 :             : </span>
+<span id="L427"><span class="lineNum">     427</span>                 :             : // FIXME</span>
+<span id="L428"><span class="lineNum">     428</span>                 :             : void Ieee80211Mac::handleStartOperation(LifecycleOperation *operation)</span>
+<span id="L429"><span class="lineNum">     429</span>                 :<span class="tlaGNC">        2717 : {</span></span>
+<span id="L430"><span class="lineNum">     430</span>         [<span class="tlaGBC" title="Branch 0 was taken 2656 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 61 times"> + </span>]:<span class="tlaGNC">        2717 :     if (!operation)</span></span>
+<span id="L431"><span class="lineNum">     431</span>                 :<span class="tlaGNC">        2656 :         return; // do nothing when called from initialize()</span></span>
+<span id="L432"><span class="lineNum">     432</span>                 :             : </span>
+<span id="L433"><span class="lineNum">     433</span>                 :<span class="tlaGNC">          61 :     initializeRadioMode();</span></span>
+<span id="L434"><span class="lineNum">     434</span>                 :<span class="tlaGNC">          61 : }</span></span>
+<span id="L435"><span class="lineNum">     435</span>                 :             : </span>
+<span id="L436"><span class="lineNum">     436</span>                 :             : // FIXME</span>
+<span id="L437"><span class="lineNum">     437</span>                 :             : void Ieee80211Mac::handleStopOperation(LifecycleOperation *operation)</span>
+<span id="L438"><span class="lineNum">     438</span>                 :<span class="tlaGNC">          47 : {</span></span>
+<span id="L439"><span class="lineNum">     439</span>                 :<span class="tlaGNC">          47 : }</span></span>
+<span id="L440"><span class="lineNum">     440</span>                 :             : </span>
+<span id="L441"><span class="lineNum">     441</span>                 :             : // FIXME</span>
+<span id="L442"><span class="lineNum">     442</span>                 :             : void Ieee80211Mac::handleCrashOperation(LifecycleOperation *operation)</span>
+<span id="L443"><span class="lineNum">     443</span>                 :<span class="tlaGNC">          43 : {</span></span>
+<span id="L444"><span class="lineNum">     444</span>                 :<span class="tlaGNC">          43 : }</span></span>
+<span id="L445"><span class="lineNum">     445</span>                 :             : </span>
+<span id="L446"><span class="lineNum">     446</span>                 :             : } // namespace ieee80211</span>
+<span id="L447"><span class="lineNum">     447</span>                 :             : } // namespace inet</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

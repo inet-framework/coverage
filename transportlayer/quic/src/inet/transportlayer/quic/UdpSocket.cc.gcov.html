@@ -1,0 +1,235 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - inet - transportlayer/quic/src/inet/transportlayer/quic/UdpSocket.cc</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">transportlayer/quic/src/inet/transportlayer/quic</a> - UdpSocket.cc<span style="font-size: 80%;"> (source / <a href="UdpSocket.cc.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">inet</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryMed">78.3&nbsp;%</td>
+            <td class="headerCovTableEntry">92</td>
+            <td class="headerCovTableEntry">72</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-11-01 21:13:01</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">92.9&nbsp;%</td>
+            <td class="headerCovTableEntry">14</td>
+            <td class="headerCovTableEntry">13</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="headerItem">Branches:</td>
+            <td class="headerCovTableEntryLo">63.3&nbsp;%</td>
+            <td class="headerCovTableEntry">30</td>
+            <td class="headerCovTableEntry">19</td>
+          </tr>
+                  <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">             Branch data     Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>                 :             : //</span>
+<span id="L2"><span class="lineNum">       2</span>                 :             : // Copyright (C) 2019-2024 Timo Völker, Ekaterina Volodina</span>
+<span id="L3"><span class="lineNum">       3</span>                 :             : // Copyright (C) 2025 OpenSim Ltd.</span>
+<span id="L4"><span class="lineNum">       4</span>                 :             : //</span>
+<span id="L5"><span class="lineNum">       5</span>                 :             : // SPDX-License-Identifier: LGPL-3.0-or-later</span>
+<span id="L6"><span class="lineNum">       6</span>                 :             : //</span>
+<span id="L7"><span class="lineNum">       7</span>                 :             : </span>
+<span id="L8"><span class="lineNum">       8</span>                 :             : #include &quot;UdpSocket.h&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>                 :             : #include &quot;AppSocket.h&quot;</span>
+<span id="L10"><span class="lineNum">      10</span>                 :             : #include &quot;QueueAppSocket.h&quot;</span>
+<span id="L11"><span class="lineNum">      11</span>                 :             : #include &quot;inet/networklayer/common/L3AddressTag_m.h&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>                 :             : #include &quot;inet/transportlayer/common/L4PortTag_m.h&quot;</span>
+<span id="L13"><span class="lineNum">      13</span>                 :             : </span>
+<span id="L14"><span class="lineNum">      14</span>                 :             : #include &quot;inet/transportlayer/contract/quic/QuicCommand_m.h&quot;</span>
+<span id="L15"><span class="lineNum">      15</span>                 :             : #include &quot;inet/networklayer/common/FragmentationTag_m.h&quot;</span>
+<span id="L16"><span class="lineNum">      16</span>                 :             : </span>
+<span id="L17"><span class="lineNum">      17</span>                 :             : namespace inet {</span>
+<span id="L18"><span class="lineNum">      18</span>                 :             : namespace quic {</span>
+<span id="L19"><span class="lineNum">      19</span>                 :             : </span>
+<span id="L20"><span class="lineNum">      20</span>                 :<span class="tlaGNC tlaBgGNC">         124 : UdpSocket::UdpSocket(Quic *quicSimpleMod): quicSimpleMod(quicSimpleMod)</span></span>
+<span id="L21"><span class="lineNum">      21</span>                 :<span class="tlaGNC">         124 : {</span></span>
+<span id="L22"><span class="lineNum">      22</span>                 :<span class="tlaGNC">         124 :     socket.setOutputGate(quicSimpleMod-&gt;gate(&quot;udpOut&quot;));</span></span>
+<span id="L23"><span class="lineNum">      23</span>                 :<span class="tlaGNC">         124 : }</span></span>
+<span id="L24"><span class="lineNum">      24</span>                 :             : </span>
+<span id="L25"><span class="lineNum">      25</span>                 :<span class="tlaGNC">         124 : UdpSocket::~UdpSocket() { }</span></span>
+<span id="L26"><span class="lineNum">      26</span>                 :             : </span>
+<span id="L27"><span class="lineNum">      27</span>                 :             : void UdpSocket::processPacket(Packet *pkt)</span>
+<span id="L28"><span class="lineNum">      28</span>                 :<span class="tlaGNC">          70 : {</span></span>
+<span id="L29"><span class="lineNum">      29</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 70 times"> + </span>]:<span class="tlaGNC">          70 :     if (!isListening()) {</span></span>
+<span id="L30"><span class="lineNum">      30</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         throw cRuntimeError(&quot;UdpSocket::processPacket: Unexpected packet&quot;);</span></span>
+<span id="L31"><span class="lineNum">      31</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L32"><span class="lineNum">      32</span>         [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 68 times"> + </span>]:<span class="tlaGNC tlaBgGNC">          70 :     if (dynamicPtrCast&lt;const InitialPacketHeader&gt;(pkt-&gt;peekAtFront()) == nullptr) {</span></span>
+<span id="L33"><span class="lineNum">      33</span>                 :<span class="tlaGNC">           2 :         EV_WARN &lt;&lt; &quot;UdpSocket::processPacket: received a packet on a listening socket that is not a QUIC Initial packet. Ignore.&quot;;</span></span>
+<span id="L34"><span class="lineNum">      34</span>                 :<span class="tlaGNC">           2 :         return;</span></span>
+<span id="L35"><span class="lineNum">      35</span>                 :<span class="tlaGNC">           2 :     }</span></span>
+<span id="L36"><span class="lineNum">      36</span>                 :<span class="tlaGNC">          68 :     auto&amp; tags = pkt-&gt;getTags();</span></span>
+<span id="L37"><span class="lineNum">      37</span>                 :<span class="tlaGNC">          68 :     L3Address remoteAddr = tags.getTag&lt;L3AddressInd&gt;()-&gt;getSrcAddress();</span></span>
+<span id="L38"><span class="lineNum">      38</span>                 :<span class="tlaGNC">          68 :     uint16_t remotePort = (uint16_t)tags.getTag&lt;L4PortInd&gt;()-&gt;getSrcPort();</span></span>
+<span id="L39"><span class="lineNum">      39</span>                 :             : </span>
+<span id="L40"><span class="lineNum">      40</span>                 :             :     // create AppSocket that queues indications for the new connection</span>
+<span id="L41"><span class="lineNum">      41</span>                 :<span class="tlaGNC">          68 :     AppSocket *queueAppSocket = new QueueAppSocket(quicSimpleMod);</span></span>
+<span id="L42"><span class="lineNum">      42</span>                 :<span class="tlaGNC">          68 :     queueAppSocket-&gt;setUdpSocket(this);</span></span>
+<span id="L43"><span class="lineNum">      43</span>                 :             : </span>
+<span id="L44"><span class="lineNum">      44</span>                 :             :     // create new connection and handle the (INIT) packet</span>
+<span id="L45"><span class="lineNum">      45</span>                 :<span class="tlaGNC">          68 :     Connection *connection = quicSimpleMod-&gt;createConnection(this, queueAppSocket, remoteAddr, remotePort);</span></span>
+<span id="L46"><span class="lineNum">      46</span>                 :<span class="tlaGNC">          68 :     connection-&gt;processPackets(pkt);</span></span>
+<span id="L47"><span class="lineNum">      47</span>                 :             : </span>
+<span id="L48"><span class="lineNum">      48</span>                 :<span class="tlaGNC">          68 :     connectionQueue.push(connection);</span></span>
+<span id="L49"><span class="lineNum">      49</span>                 :             : </span>
+<span id="L50"><span class="lineNum">      50</span>                 :             :     // notify the app about the new connection</span>
+<span id="L51"><span class="lineNum">      51</span>                 :<span class="tlaGNC">          68 :     listeningAppSocket-&gt;sendConnectionAvailable();</span></span>
+<span id="L52"><span class="lineNum">      52</span>                 :<span class="tlaGNC">          68 : }</span></span>
+<span id="L53"><span class="lineNum">      53</span>                 :             : </span>
+<span id="L54"><span class="lineNum">      54</span>                 :             : int UdpSocket::getSocketId()</span>
+<span id="L55"><span class="lineNum">      55</span>                 :<span class="tlaGNC">         173 : {</span></span>
+<span id="L56"><span class="lineNum">      56</span>                 :<span class="tlaGNC">         173 :     return socket.getSocketId();</span></span>
+<span id="L57"><span class="lineNum">      57</span>                 :<span class="tlaGNC">         173 : }</span></span>
+<span id="L58"><span class="lineNum">      58</span>                 :             : </span>
+<span id="L59"><span class="lineNum">      59</span>                 :             : bool UdpSocket::match(L3Address addr, uint16_t port)</span>
+<span id="L60"><span class="lineNum">      60</span>                 :<span class="tlaGNC">          73 : {</span></span>
+<span id="L61"><span class="lineNum">      61</span> [<span class="tlaGBC" title="Branch 0 was taken 73 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>][<span class="tlaGBC" title="Branch 0 was taken 72 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:<span class="tlaGNC">          73 :     return (this-&gt;localAddr == addr &amp;&amp; this-&gt;localPort == port);</span></span>
+<span id="L62"><span class="lineNum">      62</span>                 :<span class="tlaGNC">          73 : }</span></span>
+<span id="L63"><span class="lineNum">      63</span>                 :             : </span>
+<span id="L64"><span class="lineNum">      64</span>                 :             : void UdpSocket::sendto(L3Address remoteAddr, uint16_t remotePort, Packet *pkt)</span>
+<span id="L65"><span class="lineNum">      65</span>                 :<span class="tlaGNC">      336507 : {</span></span>
+<span id="L66"><span class="lineNum">      66</span>                 :             :     // send all QUIC packets with Don't Fragment bit set in IP header</span>
+<span id="L67"><span class="lineNum">      67</span>                 :<span class="tlaGNC">      336507 :     pkt-&gt;addTag&lt;FragmentationReq&gt;()-&gt;setDontFragment(true);</span></span>
+<span id="L68"><span class="lineNum">      68</span>                 :<span class="tlaGNC">      336507 :     socket.sendTo(pkt, remoteAddr, (int)remotePort);</span></span>
+<span id="L69"><span class="lineNum">      69</span>                 :<span class="tlaGNC">      336507 : }</span></span>
+<span id="L70"><span class="lineNum">      70</span>                 :             : </span>
+<span id="L71"><span class="lineNum">      71</span>                 :             : Connection *UdpSocket::popConnection()</span>
+<span id="L72"><span class="lineNum">      72</span>                 :<span class="tlaGNC">          67 : {</span></span>
+<span id="L73"><span class="lineNum">      73</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 67 times"> + </span>]:<span class="tlaGNC">          67 :     if (connectionQueue.empty()) {</span></span>
+<span id="L74"><span class="lineNum">      74</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         return nullptr;</span></span>
+<span id="L75"><span class="lineNum">      75</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L76"><span class="lineNum">      76</span>                 :<span class="tlaGNC tlaBgGNC">          67 :     Connection *connection = connectionQueue.front();</span></span>
+<span id="L77"><span class="lineNum">      77</span>                 :<span class="tlaGNC">          67 :     connectionQueue.pop();</span></span>
+<span id="L78"><span class="lineNum">      78</span>                 :<span class="tlaGNC">          67 :     return connection;</span></span>
+<span id="L79"><span class="lineNum">      79</span>                 :<span class="tlaGNC">          67 : }</span></span>
+<span id="L80"><span class="lineNum">      80</span>                 :             : </span>
+<span id="L81"><span class="lineNum">      81</span>                 :             : void UdpSocket::bind(L3Address addr, uint16_t port)</span>
+<span id="L82"><span class="lineNum">      82</span>                 :<span class="tlaGNC">         196 : {</span></span>
+<span id="L83"><span class="lineNum">      83</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 196 times"> + </span>]:<span class="tlaGNC">         196 :     if (port == 0) {</span></span>
+<span id="L84"><span class="lineNum">      84</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         throw cRuntimeError(&quot;UdpSocket::bind: cannot bind to port 0&quot;);</span></span>
+<span id="L85"><span class="lineNum">      85</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L86"><span class="lineNum">      86</span>         [<span class="tlaGBC" title="Branch 0 was taken 72 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 124 times"> + </span>]:<span class="tlaGNC tlaBgGNC">         196 :     if (localPort != 0) {</span></span>
+<span id="L87"><span class="lineNum">      87</span>                 :             :         // already bound</span>
+<span id="L88"><span class="lineNum">      88</span>                 :<span class="tlaGNC">          72 :         return;</span></span>
+<span id="L89"><span class="lineNum">      89</span>                 :<span class="tlaGNC">          72 :     }</span></span>
+<span id="L90"><span class="lineNum">      90</span>                 :<span class="tlaGNC">         124 :     localAddr = addr;</span></span>
+<span id="L91"><span class="lineNum">      91</span>                 :<span class="tlaGNC">         124 :     localPort = port;</span></span>
+<span id="L92"><span class="lineNum">      92</span>                 :<span class="tlaGNC">         124 :     socket.bind(addr, (int)port);</span></span>
+<span id="L93"><span class="lineNum">      93</span>                 :<span class="tlaGNC">         124 : }</span></span>
+<span id="L94"><span class="lineNum">      94</span>                 :             : </span>
+<span id="L95"><span class="lineNum">      95</span>                 :             : void UdpSocket::listen(AppSocket *appSocket)</span>
+<span id="L96"><span class="lineNum">      96</span>                 :<span class="tlaGNC">          61 : {</span></span>
+<span id="L97"><span class="lineNum">      97</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 61 times"> + </span>]:<span class="tlaGNC">          61 :     if (appSocket == nullptr) {</span></span>
+<span id="L98"><span class="lineNum">      98</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         throw cRuntimeError(&quot;UdpSocket::listen: called with appSocket=nullptr, not valid&quot;);</span></span>
+<span id="L99"><span class="lineNum">      99</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L100"><span class="lineNum">     100</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 61 times"> + </span>]:<span class="tlaGNC tlaBgGNC">          61 :     if (listeningAppSocket == appSocket) {</span></span>
+<span id="L101"><span class="lineNum">     101</span>                 :             :         // already listening for this app socket</span>
+<span id="L102"><span class="lineNum">     102</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         return;</span></span>
+<span id="L103"><span class="lineNum">     103</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L104"><span class="lineNum">     104</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 61 times"> + </span>]:<span class="tlaGNC tlaBgGNC">          61 :     if (listeningAppSocket != nullptr) {</span></span>
+<span id="L105"><span class="lineNum">     105</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         throw cRuntimeError(&quot;UdpSocket::listen: Already listening for another app socket&quot;);</span></span>
+<span id="L106"><span class="lineNum">     106</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L107"><span class="lineNum">     107</span>                 :<span class="tlaGNC tlaBgGNC">          61 :     listeningAppSocket = appSocket;</span></span>
+<span id="L108"><span class="lineNum">     108</span>                 :<span class="tlaGNC">          61 : }</span></span>
+<span id="L109"><span class="lineNum">     109</span>                 :             : </span>
+<span id="L110"><span class="lineNum">     110</span>                 :             : void UdpSocket::unlisten()</span>
+<span id="L111"><span class="lineNum">     111</span>                 :<span class="tlaUNC tlaBgUNC">           0 : {</span></span>
+<span id="L112"><span class="lineNum">     112</span>                 :<span class="tlaUNC">           0 :     listeningAppSocket = nullptr;</span></span>
+<span id="L113"><span class="lineNum">     113</span>                 :<span class="tlaUNC">           0 : }</span></span>
+<span id="L114"><span class="lineNum">     114</span>                 :             : </span>
+<span id="L115"><span class="lineNum">     115</span>                 :             : bool UdpSocket::isListening()</span>
+<span id="L116"><span class="lineNum">     116</span>                 :<span class="tlaGNC tlaBgGNC">          70 : {</span></span>
+<span id="L117"><span class="lineNum">     117</span>                 :<span class="tlaGNC">          70 :     return (listeningAppSocket != nullptr);</span></span>
+<span id="L118"><span class="lineNum">     118</span>                 :<span class="tlaGNC">          70 : }</span></span>
+<span id="L119"><span class="lineNum">     119</span>                 :             : </span>
+<span id="L120"><span class="lineNum">     120</span>                 :             : void UdpSocket::destroy()</span>
+<span id="L121"><span class="lineNum">     121</span>                 :<span class="tlaGNC">          49 : {</span></span>
+<span id="L122"><span class="lineNum">     122</span>                 :<span class="tlaGNC">          49 :     socket.destroy();</span></span>
+<span id="L123"><span class="lineNum">     123</span>                 :<span class="tlaGNC">          49 : }</span></span>
+<span id="L124"><span class="lineNum">     124</span>                 :             : </span>
+<span id="L125"><span class="lineNum">     125</span>                 :             : void UdpSocket::saveToken(uint32_t token, L3Address remoteAddr)</span>
+<span id="L126"><span class="lineNum">     126</span>                 :<span class="tlaGNC">           8 : {</span></span>
+<span id="L127"><span class="lineNum">     127</span>                 :<span class="tlaGNC">           8 :     EV_DEBUG &lt;&lt; &quot;UdpSocket::saveToken(&quot; &lt;&lt; token &lt;&lt; &quot;, &quot; &lt;&lt; remoteAddr &lt;&lt; &quot;)&quot; &lt;&lt; endl;</span></span>
+<span id="L128"><span class="lineNum">     128</span>                 :<span class="tlaGNC">           8 :     auto result = tokenRemoteIpMap.insert({ token, remoteAddr });</span></span>
+<span id="L129"><span class="lineNum">     129</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 8 times"> + </span>]:<span class="tlaGNC">           8 :     if (result.second == false) {</span></span>
+<span id="L130"><span class="lineNum">     130</span>                 :<span class="tlaUNC tlaBgUNC">           0 :         EV_INFO &lt;&lt; &quot;UdpSocket::saveToken: The given token is already in the map.&quot; &lt;&lt; endl;</span></span>
+<span id="L131"><span class="lineNum">     131</span>         [<span class="tlaUNC" title="Branch 0 was not executed"> # </span><span class="tlaUNC" title="Branch 1 was not executed"> # </span>]:<span class="tlaUNC">           0 :         if (result.first-&gt;second != remoteAddr) {</span></span>
+<span id="L132"><span class="lineNum">     132</span>                 :<span class="tlaUNC">           0 :             throw cRuntimeError(&quot;UdpSocket::saveToken: Got the same token for another remoteAddr.&quot;);</span></span>
+<span id="L133"><span class="lineNum">     133</span>                 :<span class="tlaUNC">           0 :         }</span></span>
+<span id="L134"><span class="lineNum">     134</span>                 :<span class="tlaUNC">           0 :     }</span></span>
+<span id="L135"><span class="lineNum">     135</span>                 :<span class="tlaGNC tlaBgGNC">           8 : }</span></span>
+<span id="L136"><span class="lineNum">     136</span>                 :             : </span>
+<span id="L137"><span class="lineNum">     137</span>                 :             : bool UdpSocket::doesTokenExist(uint32_t token, L3Address remoteAddr)</span>
+<span id="L138"><span class="lineNum">     138</span>                 :<span class="tlaGNC">           2 : {</span></span>
+<span id="L139"><span class="lineNum">     139</span>                 :<span class="tlaGNC">           2 :     auto it = tokenRemoteIpMap.find(token);</span></span>
+<span id="L140"><span class="lineNum">     140</span> [<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>][<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:<span class="tlaGNC">           2 :     if (it != tokenRemoteIpMap.end() &amp;&amp; it-&gt;second == remoteAddr) {</span></span>
+<span class="lineNum">        </span>         [<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]
+<span id="L141"><span class="lineNum">     141</span>                 :<span class="tlaGNC">           1 :         tokenRemoteIpMap.erase(token);</span></span>
+<span id="L142"><span class="lineNum">     142</span>                 :<span class="tlaGNC">           1 :         return true;</span></span>
+<span id="L143"><span class="lineNum">     143</span>                 :<span class="tlaGNC">           1 :     }</span></span>
+<span id="L144"><span class="lineNum">     144</span>                 :<span class="tlaGNC">           1 :     EV_DEBUG &lt;&lt; &quot;UdpSocket::doesTokenExist: token &quot; &lt;&lt; token &lt;&lt; &quot; not found or address &quot; &lt;&lt; remoteAddr &lt;&lt; &quot; does not match&quot; &lt;&lt; endl;</span></span>
+<span id="L145"><span class="lineNum">     145</span>                 :<span class="tlaGNC">           1 :     return false;</span></span>
+<span id="L146"><span class="lineNum">     146</span>                 :<span class="tlaGNC">           2 : }</span></span>
+<span id="L147"><span class="lineNum">     147</span>                 :             : </span>
+<span id="L148"><span class="lineNum">     148</span>                 :             : } /* namespace quic */</span>
+<span id="L149"><span class="lineNum">     149</span>                 :             : } /* namespace inet */</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>
