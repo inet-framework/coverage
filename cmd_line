@@ -1,0 +1,1 @@
+genhtml /home/runner/work/inet/inet/report/coverage.lcov --output-directory=/home/runner/work/inet/inet/report/html --branch-coverage --demangle-cpp --quiet --title=inet
