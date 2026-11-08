@@ -3,15 +3,15 @@
   "src/inet/applications": {
    "branches": {
     "found": 3616,
-    "hit": 1844
+    "hit": 1849
    },
    "functions": {
     "found": 834,
-    "hit": 615
+    "hit": 618
    },
    "lines": {
     "found": 10859,
-    "hit": 7099
+    "hit": 7121
    }
   },
   "src/inet/clock": {
@@ -30,16 +30,16 @@
   },
   "src/inet/common": {
    "branches": {
-    "found": 32974,
-    "hit": 12248
+    "found": 33122,
+    "hit": 12455
    },
    "functions": {
-    "found": 21141,
-    "hit": 13602
+    "found": 21208,
+    "hit": 13735
    },
    "lines": {
-    "found": 22561,
-    "hit": 13418
+    "found": 22625,
+    "hit": 13593
    }
   },
   "src/inet/emulation": {
@@ -72,16 +72,16 @@
   },
   "src/inet/linklayer": {
    "branches": {
-    "found": 16440,
-    "hit": 10702
+    "found": 16778,
+    "hit": 11035
    },
    "functions": {
-    "found": 2984,
-    "hit": 2439
+    "found": 3021,
+    "hit": 2487
    },
    "lines": {
-    "found": 32764,
-    "hit": 25685
+    "found": 33169,
+    "hit": 26230
    }
   },
   "src/inet/mobility": {
@@ -100,16 +100,16 @@
   },
   "src/inet/networklayer": {
    "branches": {
-    "found": 13504,
-    "hit": 8730
+    "found": 13644,
+    "hit": 8910
    },
    "functions": {
-    "found": 3050,
-    "hit": 2397
+    "found": 3058,
+    "hit": 2410
    },
    "lines": {
-    "found": 32154,
-    "hit": 23536
+    "found": 32354,
+    "hit": 23839
    }
   },
   "src/inet/networks": {
@@ -184,16 +184,16 @@
   },
   "src/inet/queueing": {
    "branches": {
-    "found": 3280,
-    "hit": 1704
+    "found": 3284,
+    "hit": 1712
    },
    "functions": {
     "found": 1026,
     "hit": 708
    },
    "lines": {
-    "found": 6011,
-    "hit": 4404
+    "found": 6027,
+    "hit": 4420
    }
   },
   "src/inet/routing": {
@@ -212,16 +212,16 @@
   },
   "src/inet/transportlayer": {
    "branches": {
-    "found": 15302,
-    "hit": 9793
+    "found": 15356,
+    "hit": 9913
    },
    "functions": {
-    "found": 2439,
-    "hit": 1943
+    "found": 2443,
+    "hit": 1957
    },
    "lines": {
-    "found": 35252,
-    "hit": 24994
+    "found": 35321,
+    "hit": 25172
    }
   },
   "src/inet/visualizer": {
@@ -240,12 +240,12 @@
   }
  },
  "change": {
-  "branches": 0.8391,
-  "functions": 0.6341,
-  "lines": 0.5211
+  "branches": 0.4206,
+  "functions": 0.3326,
+  "lines": 0.3445
  },
- "commit": "f5612791b773bc83f654dbfdefa26e243f756c86",
- "date": "2026-10-29T15:31:14+01:00",
+ "commit": "7ec0d4d3f3e0e0e1357e2449b0bdcbb6ef0e1ce4",
+ "date": "2026-11-06T11:36:06+01:00",
  "files": {
   "src/inet/applications/base/ApplicationBase.cc": {
    "branches": {
@@ -558,7 +558,7 @@
   "src/inet/applications/ethernet/EthernetSocketIo.cc": {
    "branches": {
     "found": 30,
-    "hit": 22
+    "hit": 23
    },
    "functions": {
     "found": 10,
@@ -566,7 +566,7 @@
    },
    "lines": {
     "found": 96,
-    "hit": 71
+    "hit": 72
    }
   },
   "src/inet/applications/ethernet/EthernetSocketIo.h": {
@@ -1146,15 +1146,15 @@
   "src/inet/applications/tcpapp/TcpEchoApp.cc": {
    "branches": {
     "found": 28,
-    "hit": 12
+    "hit": 16
    },
    "functions": {
     "found": 16,
-    "hit": 13
+    "hit": 15
    },
    "lines": {
     "found": 140,
-    "hit": 100
+    "hit": 117
    }
   },
   "src/inet/applications/tcpapp/TcpEchoApp.h": {
@@ -1486,11 +1486,11 @@
    },
    "functions": {
     "found": 17,
-    "hit": 16
+    "hit": 17
    },
    "lines": {
     "found": 172,
-    "hit": 162
+    "hit": 166
    }
   },
   "src/inet/applications/udpapp/UdpBasicApp.h": {
@@ -2311,8 +2311,8 @@
     "hit": 76
    },
    "functions": {
-    "found": 426,
-    "hit": 417
+    "found": 430,
+    "hit": 421
    },
    "lines": {
     "found": 22,
@@ -2605,8 +2605,8 @@
     "hit": 38
    },
    "functions": {
-    "found": 94,
-    "hit": 47
+    "found": 95,
+    "hit": 48
    },
    "lines": {
     "found": 143,
@@ -2741,12 +2741,12 @@
   },
   "src/inet/common/IntrusivePtr.h": {
    "branches": {
-    "found": 7060,
-    "hit": 3259
+    "found": 7084,
+    "hit": 3291
    },
    "functions": {
-    "found": 8005,
-    "hit": 6289
+    "found": 8040,
+    "hit": 6350
    },
    "lines": {
     "found": 87,
@@ -2938,11 +2938,11 @@
   "src/inet/common/ModuleAccess.h": {
    "branches": {
     "found": 902,
-    "hit": 294
+    "hit": 296
    },
    "functions": {
     "found": 140,
-    "hit": 88
+    "hit": 89
    },
    "lines": {
     "found": 67,
@@ -3008,11 +3008,11 @@
   "src/inet/common/ModuleRefByPar.h": {
    "branches": {
     "found": 588,
-    "hit": 220
+    "hit": 225
    },
    "functions": {
     "found": 181,
-    "hit": 159
+    "hit": 162
    },
    "lines": {
     "found": 33,
@@ -3263,8 +3263,8 @@
     "hit": 32
    },
    "functions": {
-    "found": 1632,
-    "hit": 1297
+    "found": 1638,
+    "hit": 1310
    },
    "lines": {
     "found": 17,
@@ -3558,11 +3558,11 @@
    },
    "functions": {
     "found": 36,
-    "hit": 14
+    "hit": 17
    },
    "lines": {
     "found": 344,
-    "hit": 180
+    "hit": 197
    }
   },
   "src/inet/common/Topology.h": {
@@ -3708,11 +3708,11 @@
   "src/inet/common/clock/ClockUserModuleMixinImpl.h": {
    "branches": {
     "found": 576,
-    "hit": 141
+    "hit": 142
    },
    "functions": {
     "found": 224,
-    "hit": 98
+    "hit": 99
    },
    "lines": {
     "found": 123,
@@ -5472,11 +5472,11 @@
   "src/inet/common/packet/Packet.h": {
    "branches": {
     "found": 2566,
-    "hit": 990
+    "hit": 993
    },
    "functions": {
-    "found": 806,
-    "hit": 638
+    "found": 811,
+    "hit": 645
    },
    "lines": {
     "found": 455,
@@ -5486,7 +5486,7 @@
   "src/inet/common/packet/PacketFilter.cc": {
    "branches": {
     "found": 122,
-    "hit": 88
+    "hit": 89
    },
    "functions": {
     "found": 18,
@@ -5494,7 +5494,7 @@
    },
    "lines": {
     "found": 266,
-    "hit": 233
+    "hit": 234
    }
   },
   "src/inet/common/packet/PacketFilter.h": {
@@ -5555,16 +5555,16 @@
   },
   "src/inet/common/packet/chunk/BitCountChunk.cc": {
    "branches": {
-    "found": 52,
-    "hit": 1
+    "found": 64,
+    "hit": 21
    },
    "functions": {
     "found": 19,
-    "hit": 1
+    "hit": 5
    },
    "lines": {
-    "found": 98,
-    "hit": 6
+    "found": 99,
+    "hit": 33
    }
   },
   "src/inet/common/packet/chunk/BitCountChunk.h": {
@@ -5574,25 +5574,25 @@
    },
    "functions": {
     "found": 10,
-    "hit": 3
+    "hit": 5
    },
    "lines": {
     "found": 10,
-    "hit": 3
+    "hit": 5
    }
   },
   "src/inet/common/packet/chunk/BitsChunk.cc": {
    "branches": {
-    "found": 56,
-    "hit": 20
+    "found": 68,
+    "hit": 28
    },
    "functions": {
     "found": 19,
-    "hit": 6
+    "hit": 7
    },
    "lines": {
-    "found": 108,
-    "hit": 44
+    "found": 109,
+    "hit": 49
    }
   },
   "src/inet/common/packet/chunk/BitsChunk.h": {
@@ -5602,25 +5602,25 @@
    },
    "functions": {
     "found": 11,
-    "hit": 3
+    "hit": 5
    },
    "lines": {
     "found": 11,
-    "hit": 3
+    "hit": 5
    }
   },
   "src/inet/common/packet/chunk/ByteCountChunk.cc": {
    "branches": {
-    "found": 72,
-    "hit": 52
+    "found": 78,
+    "hit": 57
    },
    "functions": {
     "found": 19,
     "hit": 13
    },
    "lines": {
-    "found": 103,
-    "hit": 69
+    "found": 104,
+    "hit": 70
    }
   },
   "src/inet/common/packet/chunk/ByteCountChunk.h": {
@@ -5639,16 +5639,16 @@
   },
   "src/inet/common/packet/chunk/BytesChunk.cc": {
    "branches": {
-    "found": 64,
-    "hit": 38
+    "found": 76,
+    "hit": 48
    },
    "functions": {
     "found": 21,
     "hit": 13
    },
    "lines": {
-    "found": 121,
-    "hit": 84
+    "found": 122,
+    "hit": 85
    }
   },
   "src/inet/common/packet/chunk/BytesChunk.h": {
@@ -5667,30 +5667,30 @@
   },
   "src/inet/common/packet/chunk/Chunk.cc": {
    "branches": {
-    "found": 48,
-    "hit": 29
+    "found": 94,
+    "hit": 71
    },
    "functions": {
-    "found": 20,
-    "hit": 13
+    "found": 22,
+    "hit": 15
    },
    "lines": {
-    "found": 145,
-    "hit": 82
+    "found": 176,
+    "hit": 112
    }
   },
   "src/inet/common/packet/chunk/Chunk.h": {
    "branches": {
-    "found": 6850,
-    "hit": 1644
+    "found": 6862,
+    "hit": 1676
    },
    "functions": {
-    "found": 1149,
-    "hit": 675
+    "found": 1151,
+    "hit": 682
    },
    "lines": {
-    "found": 190,
-    "hit": 135
+    "found": 203,
+    "hit": 148
    }
   },
   "src/inet/common/packet/chunk/EmptyChunk.cc": {
@@ -5779,16 +5779,16 @@
   },
   "src/inet/common/packet/chunk/SequenceChunk.cc": {
    "branches": {
-    "found": 216,
-    "hit": 152
+    "found": 222,
+    "hit": 161
    },
    "functions": {
-    "found": 28,
-    "hit": 20
+    "found": 31,
+    "hit": 23
    },
    "lines": {
-    "found": 321,
-    "hit": 239
+    "found": 336,
+    "hit": 257
    }
   },
   "src/inet/common/packet/chunk/SequenceChunk.h": {
@@ -5798,17 +5798,17 @@
    },
    "functions": {
     "found": 16,
-    "hit": 10
+    "hit": 12
    },
    "lines": {
     "found": 16,
-    "hit": 10
+    "hit": 12
    }
   },
   "src/inet/common/packet/chunk/SliceChunk.cc": {
    "branches": {
-    "found": 86,
-    "hit": 42
+    "found": 90,
+    "hit": 44
    },
    "functions": {
     "found": 17,
@@ -5822,15 +5822,15 @@
   "src/inet/common/packet/chunk/SliceChunk.h": {
    "branches": {
     "found": 32,
-    "hit": 9
+    "hit": 12
    },
    "functions": {
     "found": 20,
-    "hit": 13
+    "hit": 14
    },
    "lines": {
     "found": 20,
-    "hit": 13
+    "hit": 14
    }
   },
   "src/inet/common/packet/chunk/StreamBufferChunk.cc": {
@@ -5892,7 +5892,7 @@
   "src/inet/common/packet/dissector/PacketDissector.cc": {
    "branches": {
     "found": 26,
-    "hit": 18
+    "hit": 21
    },
    "functions": {
     "found": 18,
@@ -5900,7 +5900,7 @@
    },
    "lines": {
     "found": 115,
-    "hit": 91
+    "hit": 106
    }
   },
   "src/inet/common/packet/dissector/PacketDissector.h": {
@@ -5948,15 +5948,15 @@
   "src/inet/common/packet/printer/PacketPrinter.cc": {
    "branches": {
     "found": 168,
-    "hit": 58
+    "hit": 74
    },
    "functions": {
     "found": 25,
-    "hit": 13
+    "hit": 16
    },
    "lines": {
     "found": 276,
-    "hit": 125
+    "hit": 163
    }
   },
   "src/inet/common/packet/printer/PacketPrinter.h": {
@@ -6045,8 +6045,8 @@
   },
   "src/inet/common/packet/recorder/PcapRecorder.cc": {
    "branches": {
-    "found": 182,
-    "hit": 116
+    "found": 186,
+    "hit": 118
    },
    "functions": {
     "found": 14,
@@ -6193,8 +6193,8 @@
     "hit": 4
    },
    "lines": {
-    "found": 31,
-    "hit": 23
+    "found": 32,
+    "hit": 24
    }
   },
   "src/inet/common/packet/serializer/ChunkSerializerRegistry.h": {
@@ -6242,7 +6242,7 @@
   "src/inet/common/packet/serializer/SequenceChunkSerializer.cc": {
    "branches": {
     "found": 20,
-    "hit": 18
+    "hit": 19
    },
    "functions": {
     "found": 2,
@@ -6250,7 +6250,7 @@
    },
    "lines": {
     "found": 23,
-    "hit": 18
+    "hit": 19
    }
   },
   "src/inet/common/packet/serializer/SliceChunkSerializer.cc": {
@@ -6325,12 +6325,12 @@
   },
   "src/inet/common/packet/tag/SharingTagSet.h": {
    "branches": {
-    "found": 738,
-    "hit": 488
+    "found": 748,
+    "hit": 498
    },
    "functions": {
-    "found": 477,
-    "hit": 449
+    "found": 484,
+    "hit": 458
    },
    "lines": {
     "found": 101,
@@ -6511,8 +6511,8 @@
     "hit": 8
    },
    "functions": {
-    "found": 124,
-    "hit": 98
+    "found": 126,
+    "hit": 101
    },
    "lines": {
     "found": 22,
@@ -7025,16 +7025,16 @@
   },
   "src/inet/linklayer/base/MacRelayUnitBase.cc": {
    "branches": {
-    "found": 78,
-    "hit": 42
+    "found": 88,
+    "hit": 53
    },
    "functions": {
-    "found": 7,
-    "hit": 6
+    "found": 8,
+    "hit": 7
    },
    "lines": {
-    "found": 88,
-    "hit": 74
+    "found": 101,
+    "hit": 88
    }
   },
   "src/inet/linklayer/base/MacRelayUnitBase.h": {
@@ -7133,6 +7133,20 @@
    "lines": {
     "found": 9,
     "hit": 0
+   }
+  },
+  "src/inet/linklayer/common/EtherType.cc": {
+   "branches": {
+    "found": 4,
+    "hit": 4
+   },
+   "functions": {
+    "found": 2,
+    "hit": 2
+   },
+   "lines": {
+    "found": 12,
+    "hit": 12
    }
   },
   "src/inet/linklayer/common/ExampleQosClassifier.cc": {
@@ -7278,7 +7292,7 @@
   "src/inet/linklayer/common/VlanTagType.h": {
    "branches": {
     "found": 26,
-    "hit": 22
+    "hit": 24
    },
    "functions": {
     "found": 26,
@@ -7614,7 +7628,7 @@
   "src/inet/linklayer/ethernet/base/EthernetMacBase.cc": {
    "branches": {
     "found": 204,
-    "hit": 126
+    "hit": 127
    },
    "functions": {
     "found": 31,
@@ -7879,16 +7893,16 @@
   },
   "src/inet/linklayer/ethernet/common/EthernetMacProtocolDissector.cc": {
    "branches": {
-    "found": 4,
-    "hit": 3
+    "found": 10,
+    "hit": 8
    },
    "functions": {
     "found": 1,
     "hit": 1
    },
    "lines": {
-    "found": 25,
-    "hit": 18
+    "found": 30,
+    "hit": 22
    }
   },
   "src/inet/linklayer/ethernet/common/EthernetMacProtocolPrinter.cc": {
@@ -8005,16 +8019,16 @@
   },
   "src/inet/linklayer/ethernet/common/PacketDirectionReverser.cc": {
    "branches": {
-    "found": 54,
-    "hit": 50
+    "found": 56,
+    "hit": 52
    },
    "functions": {
     "found": 2,
     "hit": 2
    },
    "lines": {
-    "found": 86,
-    "hit": 85
+    "found": 89,
+    "hit": 88
    }
   },
   "src/inet/linklayer/ethernet/common/RelayInterfaceLearner.cc": {
@@ -8048,7 +8062,7 @@
   "src/inet/linklayer/ethernet/common/RelayInterfaceSelector.cc": {
    "branches": {
     "found": 96,
-    "hit": 44
+    "hit": 45
    },
    "functions": {
     "found": 5,
@@ -8056,7 +8070,7 @@
    },
    "lines": {
     "found": 92,
-    "hit": 86
+    "hit": 87
    }
   },
   "src/inet/linklayer/ethernet/common/RelayInterfaceSelector.h": {
@@ -8243,30 +8257,30 @@
   },
   "src/inet/linklayer/ethernet/modular/EthernetMacHeaderChecker.cc": {
    "branches": {
-    "found": 16,
-    "hit": 16
+    "found": 22,
+    "hit": 22
    },
    "functions": {
     "found": 4,
     "hit": 4
    },
    "lines": {
-    "found": 45,
-    "hit": 45
+    "found": 52,
+    "hit": 52
    }
   },
   "src/inet/linklayer/ethernet/modular/EthernetMacHeaderInserter.cc": {
    "branches": {
-    "found": 10,
-    "hit": 9
+    "found": 16,
+    "hit": 15
    },
    "functions": {
     "found": 2,
     "hit": 2
    },
    "lines": {
-    "found": 27,
-    "hit": 27
+    "found": 29,
+    "hit": 29
    }
   },
   "src/inet/linklayer/ethernet/modular/EthernetMacLayer.cc": {
@@ -8314,15 +8328,15 @@
   "src/inet/linklayer/ethernet/modular/EthernetSocketCommandProcessor.cc": {
    "branches": {
     "found": 14,
-    "hit": 0
+    "hit": 6
    },
    "functions": {
     "found": 4,
-    "hit": 0
+    "hit": 4
    },
    "lines": {
     "found": 39,
-    "hit": 0
+    "hit": 23
    }
   },
   "src/inet/linklayer/ethernet/modular/EthernetSocketCommandProcessor.h": {
@@ -8332,39 +8346,39 @@
    },
    "functions": {
     "found": 1,
-    "hit": 0
+    "hit": 1
    },
    "lines": {
     "found": 1,
-    "hit": 0
+    "hit": 1
    }
   },
   "src/inet/linklayer/ethernet/modular/EthernetSocketPacketProcessor.cc": {
    "branches": {
     "found": 22,
-    "hit": 0
+    "hit": 8
    },
    "functions": {
     "found": 3,
-    "hit": 0
+    "hit": 3
    },
    "lines": {
     "found": 39,
-    "hit": 0
+    "hit": 33
    }
   },
   "src/inet/linklayer/ethernet/modular/EthernetSocketTable.cc": {
    "branches": {
     "found": 28,
-    "hit": 0
+    "hit": 11
    },
    "functions": {
     "found": 6,
-    "hit": 0
+    "hit": 4
    },
    "lines": {
     "found": 46,
-    "hit": 0
+    "hit": 28
    }
   },
   "src/inet/linklayer/ethernet/modular/EthernetSocketTable.h": {
@@ -8374,11 +8388,11 @@
    },
    "functions": {
     "found": 1,
-    "hit": 0
+    "hit": 1
    },
    "lines": {
     "found": 1,
-    "hit": 0
+    "hit": 1
    }
   },
   "src/inet/linklayer/ethernet/modular/EthernetTypeOrLengthChecker.cc": {
@@ -8719,16 +8733,16 @@
   },
   "src/inet/linklayer/ieee80211/mac/aggregation/MpduDeaggregation.cc": {
    "branches": {
-    "found": 4,
-    "hit": 0
+    "found": 38,
+    "hit": 28
    },
    "functions": {
-    "found": 1,
-    "hit": 0
+    "found": 4,
+    "hit": 4
    },
    "lines": {
-    "found": 22,
-    "hit": 0
+    "found": 55,
+    "hit": 53
    }
   },
   "src/inet/linklayer/ieee80211/mac/aggregation/MsduAggregation.cc": {
@@ -11884,15 +11898,15 @@
   "src/inet/linklayer/ieee8021d/relay/Ieee8021dRelay.cc": {
    "branches": {
     "found": 134,
-    "hit": 55
+    "hit": 58
    },
    "functions": {
     "found": 13,
     "hit": 13
    },
    "lines": {
-    "found": 199,
-    "hit": 164
+    "found": 200,
+    "hit": 168
    }
   },
   "src/inet/linklayer/ieee8021d/relay/Ieee8021dRelay.h": {
@@ -12107,30 +12121,30 @@
   },
   "src/inet/linklayer/ieee8021q/Ieee8021qTagEpdHeaderChecker.cc": {
    "branches": {
-    "found": 18,
-    "hit": 13
+    "found": 22,
+    "hit": 18
    },
    "functions": {
     "found": 5,
-    "hit": 4
+    "hit": 5
    },
    "lines": {
-    "found": 54,
-    "hit": 47
+    "found": 61,
+    "hit": 59
    }
   },
   "src/inet/linklayer/ieee8021q/Ieee8021qTagEpdHeaderInserter.cc": {
    "branches": {
-    "found": 44,
-    "hit": 31
+    "found": 70,
+    "hit": 59
    },
    "functions": {
-    "found": 2,
-    "hit": 2
+    "found": 4,
+    "hit": 4
    },
    "lines": {
-    "found": 58,
-    "hit": 57
+    "found": 86,
+    "hit": 85
    }
   },
   "src/inet/linklayer/ieee8021q/Ieee8021qTagEpdProtocolDissector.cc": {
@@ -12145,6 +12159,20 @@
    "lines": {
     "found": 18,
     "hit": 11
+   }
+  },
+  "src/inet/linklayer/ieee8021q/Ieee8021qTagEpdProtocolPrinter.cc": {
+   "branches": {
+    "found": 6,
+    "hit": 5
+   },
+   "functions": {
+    "found": 1,
+    "hit": 1
+   },
+   "lines": {
+    "found": 6,
+    "hit": 4
    }
   },
   "src/inet/linklayer/ieee8021q/Ieee8021qTagHeaderSerializer.cc": {
@@ -12191,16 +12219,16 @@
   },
   "src/inet/linklayer/ieee8021q/Ieee8021qTagTpidHeaderInserter.cc": {
    "branches": {
-    "found": 42,
-    "hit": 0
+    "found": 62,
+    "hit": 34
    },
    "functions": {
-    "found": 2,
-    "hit": 0
+    "found": 4,
+    "hit": 4
    },
    "lines": {
-    "found": 52,
-    "hit": 0
+    "found": 78,
+    "hit": 70
    }
   },
   "src/inet/linklayer/ieee8021q/PcpClassifier.cc": {
@@ -12807,8 +12835,8 @@
   },
   "src/inet/linklayer/mrp/MrpRelay.cc": {
    "branches": {
-    "found": 196,
-    "hit": 61
+    "found": 194,
+    "hit": 73
    },
    "functions": {
     "found": 13,
@@ -12816,7 +12844,7 @@
    },
    "lines": {
     "found": 269,
-    "hit": 173
+    "hit": 196
    }
   },
   "src/inet/linklayer/ppp/Ppp.cc": {
@@ -13029,6 +13057,34 @@
     "hit": 2
    }
   },
+  "src/inet/linklayer/vlan/Ieee8021adPolicy.cc": {
+   "branches": {
+    "found": 208,
+    "hit": 147
+   },
+   "functions": {
+    "found": 17,
+    "hit": 16
+   },
+   "lines": {
+    "found": 254,
+    "hit": 219
+   }
+  },
+  "src/inet/linklayer/vlan/Ieee8021adPolicy.h": {
+   "branches": {
+    "found": 4,
+    "hit": 4
+   },
+   "functions": {
+    "found": 8,
+    "hit": 3
+   },
+   "lines": {
+    "found": 8,
+    "hit": 3
+   }
+  },
   "src/inet/linklayer/vlan/VlanIdMaps.cc": {
    "branches": {
     "found": 54,
@@ -13045,12 +13101,12 @@
   },
   "src/inet/linklayer/vlan/VlanIdMaps.h": {
    "branches": {
-    "found": 8,
-    "hit": 8
+    "found": 12,
+    "hit": 12
    },
    "functions": {
-    "found": 2,
-    "hit": 2
+    "found": 3,
+    "hit": 3
    },
    "lines": {
     "found": 6,
@@ -14333,16 +14389,16 @@
   },
   "src/inet/networklayer/common/InterfaceTable.cc": {
    "branches": {
-    "found": 252,
-    "hit": 153
+    "found": 256,
+    "hit": 166
    },
    "functions": {
     "found": 35,
     "hit": 30
    },
    "lines": {
-    "found": 378,
-    "hit": 267
+    "found": 380,
+    "hit": 278
    }
   },
   "src/inet/networklayer/common/InterfaceTable.h": {
@@ -14585,16 +14641,16 @@
   },
   "src/inet/networklayer/configurator/base/L3NetworkConfiguratorBase.cc": {
    "branches": {
-    "found": 270,
-    "hit": 231
+    "found": 388,
+    "hit": 324
    },
    "functions": {
-    "found": 26,
-    "hit": 25
+    "found": 33,
+    "hit": 32
    },
    "lines": {
-    "found": 533,
-    "hit": 474
+    "found": 710,
+    "hit": 634
    }
   },
   "src/inet/networklayer/configurator/base/L3NetworkConfiguratorBase.h": {
@@ -14607,8 +14663,8 @@
     "hit": 13
    },
    "lines": {
-    "found": 26,
-    "hit": 24
+    "found": 29,
+    "hit": 27
    }
   },
   "src/inet/networklayer/configurator/base/NetworkConfiguratorBase.cc": {
@@ -14697,16 +14753,16 @@
   },
   "src/inet/networklayer/configurator/ipv4/Ipv4NetworkConfigurator.cc": {
    "branches": {
-    "found": 882,
-    "hit": 667
+    "found": 894,
+    "hit": 684
    },
    "functions": {
     "found": 63,
     "hit": 59
    },
    "lines": {
-    "found": 1563,
-    "hit": 1349
+    "found": 1576,
+    "hit": 1376
    }
   },
   "src/inet/networklayer/configurator/ipv4/Ipv4NetworkConfigurator.h": {
@@ -14781,16 +14837,16 @@
   },
   "src/inet/networklayer/configurator/ipv6/Ipv6NetworkConfigurator.cc": {
    "branches": {
-    "found": 558,
-    "hit": 375
+    "found": 566,
+    "hit": 382
    },
    "functions": {
     "found": 25,
     "hit": 22
    },
    "lines": {
-    "found": 900,
-    "hit": 780
+    "found": 905,
+    "hit": 785
    }
   },
   "src/inet/networklayer/configurator/ipv6/Ipv6NetworkConfigurator.h": {
@@ -14810,7 +14866,7 @@
   "src/inet/networklayer/configurator/ipv6/Ipv6NodeConfigurator.cc": {
    "branches": {
     "found": 74,
-    "hit": 61
+    "hit": 62
    },
    "functions": {
     "found": 8,
@@ -14818,7 +14874,7 @@
    },
    "lines": {
     "found": 116,
-    "hit": 107
+    "hit": 108
    }
   },
   "src/inet/networklayer/configurator/ipv6/Ipv6NodeConfigurator.h": {
@@ -15593,16 +15649,16 @@
   },
   "src/inet/networklayer/icmpv6/Ipv6NeighbourDiscovery.cc": {
    "branches": {
-    "found": 502,
-    "hit": 386
+    "found": 500,
+    "hit": 384
    },
    "functions": {
-    "found": 67,
-    "hit": 63
+    "found": 68,
+    "hit": 64
    },
    "lines": {
-    "found": 1525,
-    "hit": 1300
+    "found": 1528,
+    "hit": 1301
    }
   },
   "src/inet/networklayer/icmpv6/Ipv6NeighbourDiscovery.h": {
@@ -16266,7 +16322,7 @@
   "src/inet/networklayer/ipv4/Ipv4.cc": {
    "branches": {
     "found": 464,
-    "hit": 365
+    "hit": 366
    },
    "functions": {
     "found": 53,
@@ -16274,7 +16330,7 @@
    },
    "lines": {
     "found": 1124,
-    "hit": 954
+    "hit": 956
    }
   },
   "src/inet/networklayer/ipv4/Ipv4.h": {
@@ -16601,16 +16657,16 @@
   },
   "src/inet/networklayer/ipv6/Ipv6.cc": {
    "branches": {
-    "found": 492,
-    "hit": 368
+    "found": 490,
+    "hit": 369
    },
    "functions": {
     "found": 54,
     "hit": 50
    },
    "lines": {
-    "found": 1120,
-    "hit": 950
+    "found": 1117,
+    "hit": 949
    }
   },
   "src/inet/networklayer/ipv6/Ipv6.h": {
@@ -16770,7 +16826,7 @@
   "src/inet/networklayer/ipv6/Ipv6InterfaceData.cc": {
    "branches": {
     "found": 304,
-    "hit": 204
+    "hit": 205
    },
    "functions": {
     "found": 59,
@@ -16882,15 +16938,15 @@
   "src/inet/networklayer/ipv6/Ipv6RoutingTable.cc": {
    "branches": {
     "found": 340,
-    "hit": 208
+    "hit": 237
    },
    "functions": {
     "found": 61,
-    "hit": 45
+    "hit": 48
    },
    "lines": {
     "found": 677,
-    "hit": 467
+    "hit": 522
    }
   },
   "src/inet/networklayer/ipv6/Ipv6RoutingTable.h": {
@@ -16910,7 +16966,7 @@
   "src/inet/networklayer/ipv6/Mipv6InterfaceData.cc": {
    "branches": {
     "found": 2,
-    "hit": 1
+    "hit": 2
    },
    "functions": {
     "found": 3,
@@ -16918,7 +16974,7 @@
    },
    "lines": {
     "found": 23,
-    "hit": 17
+    "hit": 18
    }
   },
   "src/inet/networklayer/ipv6/Mipv6InterfaceData.h": {
@@ -16928,11 +16984,11 @@
    },
    "functions": {
     "found": 15,
-    "hit": 5
+    "hit": 6
    },
    "lines": {
     "found": 21,
-    "hit": 11
+    "hit": 12
    }
   },
   "src/inet/networklayer/ipv6tunneling/Ipv6Tunnel.cc": {
@@ -17012,11 +17068,11 @@
    },
    "functions": {
     "found": 34,
-    "hit": 27
+    "hit": 26
    },
    "lines": {
     "found": 229,
-    "hit": 154
+    "hit": 151
    }
   },
   "src/inet/networklayer/mipv6/BindingUpdateList.h": {
@@ -17035,8 +17091,8 @@
   },
   "src/inet/networklayer/mipv6/Mipv6.cc": {
    "branches": {
-    "found": 518,
-    "hit": 333
+    "found": 520,
+    "hit": 337
    },
    "functions": {
     "found": 81,
@@ -17044,7 +17100,7 @@
    },
    "lines": {
     "found": 1554,
-    "hit": 1144
+    "hit": 1142
    }
   },
   "src/inet/networklayer/mipv6/Mipv6.h": {
@@ -17078,15 +17134,15 @@
   "src/inet/networklayer/mipv6/MobilityHeaderSerializer.cc": {
    "branches": {
     "found": 72,
-    "hit": 36
+    "hit": 50
    },
    "functions": {
     "found": 7,
-    "hit": 5
+    "hit": 7
    },
    "lines": {
     "found": 238,
-    "hit": 92
+    "hit": 134
    }
   },
   "src/inet/networklayer/mipv6/MobilityHeaderSerializer.h": {
@@ -26682,7 +26738,7 @@
   "src/inet/queueing/filter/RedDropper.cc": {
    "branches": {
     "found": 106,
-    "hit": 71
+    "hit": 75
    },
    "functions": {
     "found": 7,
@@ -27073,16 +27129,16 @@
   },
   "src/inet/queueing/marker/EcnMarker.cc": {
    "branches": {
-    "found": 18,
-    "hit": 8
+    "found": 22,
+    "hit": 12
    },
    "functions": {
     "found": 3,
     "hit": 2
    },
    "lines": {
-    "found": 53,
-    "hit": 45
+    "found": 69,
+    "hit": 61
    }
   },
   "src/inet/queueing/marker/PacketLabeler.cc": {
@@ -31036,7 +31092,7 @@
   "src/inet/transportlayer/contract/tcp/TcpSocket.cc": {
    "branches": {
     "found": 192,
-    "hit": 136
+    "hit": 138
    },
    "functions": {
     "found": 41,
@@ -31044,7 +31100,7 @@
    },
    "lines": {
     "found": 435,
-    "hit": 374
+    "hit": 380
    }
   },
   "src/inet/transportlayer/contract/tcp/TcpSocket.h": {
@@ -31054,17 +31110,17 @@
    },
    "functions": {
     "found": 23,
-    "hit": 13
+    "hit": 14
    },
    "lines": {
     "found": 27,
-    "hit": 17
+    "hit": 18
    }
   },
   "src/inet/transportlayer/contract/udp/UdpSocket.cc": {
    "branches": {
     "found": 62,
-    "hit": 35
+    "hit": 36
    },
    "functions": {
     "found": 29,
@@ -31072,7 +31128,7 @@
    },
    "lines": {
     "found": 274,
-    "hit": 198
+    "hit": 199
    }
   },
   "src/inet/transportlayer/contract/udp/UdpSocket.h": {
@@ -33289,16 +33345,16 @@
   },
   "src/inet/transportlayer/tcp/Tcp.cc": {
    "branches": {
-    "found": 236,
-    "hit": 162
+    "found": 286,
+    "hit": 203
    },
    "functions": {
-    "found": 50,
-    "hit": 47
+    "found": 55,
+    "hit": 53
    },
    "lines": {
-    "found": 612,
-    "hit": 507
+    "found": 681,
+    "hit": 579
    }
   },
   "src/inet/transportlayer/tcp/Tcp.h": {
@@ -33317,16 +33373,16 @@
   },
   "src/inet/transportlayer/tcp/TcpAlgorithm.h": {
    "branches": {
-    "found": 4,
-    "hit": 3
+    "found": 6,
+    "hit": 5
    },
    "functions": {
     "found": 18,
     "hit": 11
    },
    "lines": {
-    "found": 38,
-    "hit": 31
+    "found": 40,
+    "hit": 33
    }
   },
   "src/inet/transportlayer/tcp/TcpConnection.h": {
@@ -33336,11 +33392,11 @@
    },
    "functions": {
     "found": 25,
-    "hit": 16
+    "hit": 17
    },
    "lines": {
     "found": 34,
-    "hit": 25
+    "hit": 26
    }
   },
   "src/inet/transportlayer/tcp/TcpConnectionBase.cc": {
@@ -33353,14 +33409,14 @@
     "hit": 14
    },
    "lines": {
-    "found": 541,
-    "hit": 447
+    "found": 542,
+    "hit": 448
    }
   },
   "src/inet/transportlayer/tcp/TcpConnectionEventProc.cc": {
    "branches": {
     "found": 282,
-    "hit": 212
+    "hit": 215
    },
    "functions": {
     "found": 11,
@@ -33374,7 +33430,7 @@
   "src/inet/transportlayer/tcp/TcpConnectionRcvSegment.cc": {
    "branches": {
     "found": 786,
-    "hit": 683
+    "hit": 691
    },
    "functions": {
     "found": 17,
@@ -33382,13 +33438,13 @@
    },
    "lines": {
     "found": 1026,
-    "hit": 932
+    "hit": 938
    }
   },
   "src/inet/transportlayer/tcp/TcpConnectionSackUtil.cc": {
    "branches": {
     "found": 76,
-    "hit": 68
+    "hit": 69
    },
    "functions": {
     "found": 2,
@@ -33402,15 +33458,15 @@
   "src/inet/transportlayer/tcp/TcpConnectionUtil.cc": {
    "branches": {
     "found": 2014,
-    "hit": 1694
+    "hit": 1722
    },
    "functions": {
     "found": 116,
     "hit": 115
    },
    "lines": {
-    "found": 2507,
-    "hit": 2395
+    "found": 2505,
+    "hit": 2411
    }
   },
   "src/inet/transportlayer/tcp/TcpReceiveQueue.cc": {
@@ -33444,7 +33500,7 @@
   "src/inet/transportlayer/tcp/TcpSackRexmitQueue.cc": {
    "branches": {
     "found": 284,
-    "hit": 233
+    "hit": 235
    },
    "functions": {
     "found": 31,
@@ -33503,12 +33559,12 @@
     "hit": 37
    },
    "functions": {
-    "found": 7,
-    "hit": 7
+    "found": 9,
+    "hit": 8
    },
    "lines": {
-    "found": 82,
-    "hit": 82
+    "found": 102,
+    "hit": 92
    }
   },
   "src/inet/transportlayer/tcp/flavours/DcTcp.h": {
@@ -33523,20 +33579,6 @@
    "lines": {
     "found": 4,
     "hit": 4
-   }
-  },
-  "src/inet/transportlayer/tcp/flavours/DcTcpFamily.cc": {
-   "branches": {
-    "found": 0,
-    "hit": 0
-   },
-   "functions": {
-    "found": 3,
-    "hit": 1
-   },
-   "lines": {
-    "found": 24,
-    "hit": 10
    }
   },
   "src/inet/transportlayer/tcp/flavours/DumbTcp.cc": {
@@ -33626,7 +33668,7 @@
   "src/inet/transportlayer/tcp/flavours/Rfc6582Recovery.cc": {
    "branches": {
     "found": 12,
-    "hit": 10
+    "hit": 11
    },
    "functions": {
     "found": 5,
@@ -33682,7 +33724,7 @@
   "src/inet/transportlayer/tcp/flavours/TcpAlgorithmBase.cc": {
    "branches": {
     "found": 414,
-    "hit": 349
+    "hit": 353
    },
    "functions": {
     "found": 54,
@@ -33690,7 +33732,7 @@
    },
    "lines": {
     "found": 688,
-    "hit": 642
+    "hit": 645
    }
   },
   "src/inet/transportlayer/tcp/flavours/TcpAlgorithmBase.h": {
@@ -33738,7 +33780,7 @@
   "src/inet/transportlayer/tcp/flavours/TcpCubic.cc": {
    "branches": {
     "found": 130,
-    "hit": 118
+    "hit": 125
    },
    "functions": {
     "found": 16,
@@ -33746,7 +33788,7 @@
    },
    "lines": {
     "found": 222,
-    "hit": 220
+    "hit": 221
    }
   },
   "src/inet/transportlayer/tcp/flavours/TcpCubic.h": {
@@ -33906,7 +33948,7 @@
   "src/inet/transportlayer/tcp/flavours/TcpVegas.cc": {
    "branches": {
     "found": 92,
-    "hit": 76
+    "hit": 80
    },
    "functions": {
     "found": 8,
@@ -33914,7 +33956,7 @@
    },
    "lines": {
     "found": 217,
-    "hit": 201
+    "hit": 204
    }
   },
   "src/inet/transportlayer/tcp/flavours/TcpVegas.h": {
@@ -33934,15 +33976,15 @@
   "src/inet/transportlayer/tcp/flavours/TcpWestwood.cc": {
    "branches": {
     "found": 46,
-    "hit": 25
+    "hit": 36
    },
    "functions": {
     "found": 9,
-    "hit": 7
+    "hit": 8
    },
    "lines": {
     "found": 133,
-    "hit": 102
+    "hit": 122
    }
   },
   "src/inet/transportlayer/tcp/flavours/TcpWestwood.h": {
@@ -34073,16 +34115,16 @@
   },
   "src/inet/transportlayer/tcp_common/TcpSpoof.cc": {
    "branches": {
-    "found": 4,
-    "hit": 0
+    "found": 6,
+    "hit": 5
    },
    "functions": {
     "found": 5,
-    "hit": 0
+    "hit": 5
    },
    "lines": {
-    "found": 43,
-    "hit": 0
+    "found": 46,
+    "hit": 45
    }
   },
   "src/inet/transportlayer/tcp_common/headers/tcphdr.h": {
@@ -36175,101 +36217,101 @@
  "suites": {
   "fingerprint": {
    "branches": {
-    "found": 116190,
-    "hit": 50631
+    "found": 116874,
+    "hit": 50766
    },
    "functions": {
-    "found": 39526,
-    "hit": 24004
+    "found": 39642,
+    "hit": 24044
    },
    "lines": {
-    "found": 210454,
-    "hit": 125562
+    "found": 211208,
+    "hit": 125741
    }
   },
   "module": {
    "branches": {
-    "found": 116174,
-    "hit": 38325
+    "found": 116858,
+    "hit": 39126
    },
    "functions": {
-    "found": 39513,
-    "hit": 17410
+    "found": 39629,
+    "hit": 17651
    },
    "lines": {
-    "found": 210402,
-    "hit": 90154
+    "found": 211156,
+    "hit": 91566
    }
   },
   "packet": {
    "branches": {
-    "found": 116172,
-    "hit": 1004
+    "found": 116856,
+    "hit": 1155
    },
    "functions": {
-    "found": 39519,
-    "hit": 1378
+    "found": 39635,
+    "hit": 1432
    },
    "lines": {
-    "found": 210388,
-    "hit": 2673
+    "found": 211142,
+    "hit": 2839
    }
   },
   "protocol": {
    "branches": {
-    "found": 116174,
-    "hit": 24530
+    "found": 116858,
+    "hit": 26020
    },
    "functions": {
-    "found": 39522,
-    "hit": 12948
+    "found": 39637,
+    "hit": 13604
    },
    "lines": {
-    "found": 210411,
-    "hit": 55908
+    "found": 211164,
+    "hit": 58395
    }
   },
   "queueing": {
    "branches": {
-    "found": 116172,
+    "found": 116856,
     "hit": 1913
    },
    "functions": {
-    "found": 39524,
-    "hit": 1787
+    "found": 39640,
+    "hit": 1791
    },
    "lines": {
-    "found": 210407,
+    "found": 211161,
     "hit": 5164
    }
   },
   "unit": {
    "branches": {
-    "found": 116172,
-    "hit": 6716
+    "found": 116856,
+    "hit": 7018
    },
    "functions": {
-    "found": 39514,
-    "hit": 5522
+    "found": 39630,
+    "hit": 5732
    },
    "lines": {
-    "found": 210382,
-    "hit": 14574
+    "found": 211136,
+    "hit": 15078
    }
   }
  },
  "totals": {
   "branches": {
-   "found": 116190,
-   "hit": 61397
+   "found": 116874,
+   "hit": 62250
   },
   "functions": {
-   "found": 39526,
-   "hit": 26966
+   "found": 39642,
+   "hit": 27177
   },
   "lines": {
-   "found": 210454,
-   "hit": 142746
+   "found": 211208,
+   "hit": 143985
   }
  }
 }
